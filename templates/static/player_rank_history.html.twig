@@ -1,0 +1,168 @@
+{% extends 'static/player/_base_profile.html.twig' %}
+
+{% set activeMenuItem = 'charts' %}
+
+{% block player_profile_content %}
+    <h1 class="title is-3">Historia rankingu</h1>
+
+    <div x-data="rankMilestonesData({{ playerId }})" x-init="fetchMilestones()" class="box">
+        <h2 class="title is-5">Kamienie milowe</h2>
+
+        <template x-if="loading">
+            <p>Ładowanie...</p>
+        </template>
+
+        <template x-if="error">
+            <article class="message is-danger">
+                <div class="message-body" x-text="error"></div>
+            </article>
+        </template>
+
+        <div x-show="!loading && !error">
+            <table class="table is-bordered is-hoverable is-fullwidth">
+                <thead>
+                <tr>
+                    <th>Kamień milowy</th>
+                    <th>Data</th>
+                    <th>Turniej</th>
+                    <th>Osiągnięty rank</th>
+                </tr>
+                </thead>
+                <tbody>
+                <template x-for="milestone in milestones" :key="`${milestone.milestone}-${milestone.tournamentId}`">
+                    <tr>
+                        <td class="text-center" x-text="milestone.milestone"></td>
+                        <td class="text-center" x-text="milestone.date"></td>
+                        <td x-text="milestone.tournamentName"></td>
+                        <td class="text-center" x-text="formatFloat(milestone.rank)"></td>
+                    </tr>
+                </template>
+                <template x-if="!milestones.length">
+                    <tr>
+                        <td colspan="4" class="text-center">Brak danych</td>
+                    </tr>
+                </template>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div x-data="rankHistoryData({{ playerId }})" x-init="fetchHistory()" class="box">
+        <h2 class="title is-5">Wykres rankingu</h2>
+
+        <template x-if="loading">
+            <p>Ładowanie...</p>
+        </template>
+
+        <template x-if="error">
+            <article class="message is-danger">
+                <div class="message-body" x-text="error"></div>
+            </article>
+        </template>
+
+        <div x-show="!loading && !error">
+            <template x-if="history.length">
+                <div>
+                    <div style="overflow-x: auto;">
+                        <svg :viewBox="`0 0 ${chartWidth} ${chartHeight}`" width="100%" style="min-width: 600px; display: block;">
+                            <line :x1="padding" :y1="chartHeight - padding" :x2="chartWidth - padding" :y2="chartHeight - padding" stroke="#ccc"></line>
+                            <line :x1="padding" :y1="padding" :x2="padding" :y2="chartHeight - padding" stroke="#ccc"></line>
+                            <polyline :points="polylinePoints" fill="none" stroke="#3273dc" stroke-width="2"></polyline>
+                            <template x-for="point in chartPoints" :key="point.index">
+                                <circle :cx="point.x" :cy="point.y" r="2.5" fill="#3273dc"></circle>
+                            </template>
+                        </svg>
+                    </div>
+                    <div class="is-size-7" style="display: flex; justify-content: space-between;">
+                        <span x-text="history[0]?.date ?? ''"></span>
+                        <span x-text="history[history.length - 1]?.date ?? ''"></span>
+                    </div>
+                </div>
+            </template>
+
+            <template x-if="!history.length">
+                <p>Brak danych do wykresu.</p>
+            </template>
+        </div>
+    </div>
+{% endblock %}
+
+{% block player_profile_scripts %}
+    <script>
+        function rankMilestonesData(playerId) {
+            return {
+                playerId,
+                loading: true,
+                error: '',
+                milestones: [],
+                async fetchMilestones() {
+                    try {
+                        let response = await fetch(`/api/players/${this.playerId}/rank-history/milestones`);
+                        if (!response.ok) {
+                            throw new Error('Nie udało się pobrać kamieni milowych');
+                        }
+                        let data = await response.json();
+                        this.milestones = data.milestones;
+                    } catch (error) {
+                        console.error('Błąd:', error);
+                        this.error = error.message;
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+                formatFloat(value) {
+                    return Number(value).toFixed(2);
+                }
+            };
+        }
+
+        function rankHistoryData(playerId) {
+            return {
+                playerId,
+                loading: true,
+                error: '',
+                history: [],
+                chartWidth: 920,
+                chartHeight: 320,
+                padding: 30,
+                async fetchHistory() {
+                    try {
+                        let response = await fetch(`/api/players/${this.playerId}/rank-history`);
+                        if (!response.ok) {
+                            throw new Error('Nie udało się pobrać historii rankingu');
+                        }
+                        let data = await response.json();
+                        this.history = data.history;
+                    } catch (error) {
+                        console.error('Błąd:', error);
+                        this.error = error.message;
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+                get chartPoints() {
+                    if (!this.history.length) {
+                        return [];
+                    }
+
+                    const ranks = this.history.map(point => Number(point.rank));
+                    const minRank = Math.min(...ranks);
+                    const maxRank = Math.max(...ranks);
+                    const rankRange = maxRank - minRank || 1;
+                    const stepX = this.history.length > 1
+                        ? (this.chartWidth - this.padding * 2) / (this.history.length - 1)
+                        : 0;
+
+                    return this.history.map((point, index) => {
+                        const x = this.padding + (index * stepX);
+                        const y = this.chartHeight - this.padding - (((Number(point.rank) - minRank) / rankRange) * (this.chartHeight - this.padding * 2));
+                        return { index, x, y };
+                    });
+                },
+                get polylinePoints() {
+                    return this.chartPoints.map(point => `${point.x},${point.y}`).join(' ');
+                }
+            };
+        }
+    </script>
+{% endblock %}

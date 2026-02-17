@@ -1,0 +1,39 @@
+<div class="box" x-data="streakRecordsTableData({{ playerId }}, '{{ endpoint }}'{% if min is defined %}, {{ min }}{% endif %})" x-init="fetchRows()">
+    <h2 class="title is-5">{{ title }}</h2>
+
+    <template x-if="loading">
+        <p>Ładowanie...</p>
+    </template>
+
+    <template x-if="error">
+        <article class="message is-danger">
+            <div class="message-body" x-text="error"></div>
+        </article>
+    </template>
+
+    <div x-show="!loading && !error">
+        <table class="table is-bordered is-hoverable is-fullwidth">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Seria</th>
+                <th>Turnieje</th>
+            </tr>
+            </thead>
+            <tbody>
+            <template x-for="row in rows" :key="row.position">
+                <tr>
+                    <td class="text-center" x-text="row.position"></td>
+                    <td class="text-center" x-text="row.streak"></td>
+                    <td x-text="row.tournaments"></td>
+                </tr>
+            </template>
+            <template x-if="!rows.length">
+                <tr>
+                    <td colspan="3" class="text-center">Brak danych</td>
+                </tr>
+            </template>
+            </tbody>
+        </table>
+    </div>
+</div>

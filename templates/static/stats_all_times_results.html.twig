@@ -1,0 +1,84 @@
+{% extends 'static/stats/_base_stats.html.twig' %}
+
+{% set activeStatsItem = 'all_times_results' %}
+
+{% block stats_content %}
+    <div x-data="allTimesResultsData()" x-init="fetchRows()">
+        <h1 class="title is-3">Miejsca w turniejach</h1>
+
+        <template x-if="loading">
+            <p>Ładowanie...</p>
+        </template>
+
+        <template x-if="error">
+            <article class="message is-danger">
+                <div class="message-body" x-text="error"></div>
+            </article>
+        </template>
+
+        <div x-show="!loading && !error">
+            <div style="overflow-x: auto;">
+                <table class="table is-bordered is-hoverable is-fullwidth">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Zawodnik</th>
+                        <th>1.</th>
+                        <th>2.</th>
+                        <th>3.</th>
+                        <th>4.</th>
+                        <th>5.</th>
+                        <th>6.</th>
+                        <th>1-3</th>
+                        <th>1-6</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <template x-for="row in rows" :key="row.playerId">
+                        <tr>
+                            <td class="text-center" x-text="row.position"></td>
+                            <td><a :href="`/players/${row.playerId}`" x-text="row.playerName"></a></td>
+                            <td class="text-center" x-text="row.first"></td>
+                            <td class="text-center" x-text="row.second"></td>
+                            <td class="text-center" x-text="row.third"></td>
+                            <td class="text-center" x-text="row.fourth"></td>
+                            <td class="text-center" x-text="row.fifth"></td>
+                            <td class="text-center" x-text="row.sixth"></td>
+                            <td class="text-center" x-text="row.oneToThree"></td>
+                            <td class="text-center" x-text="row.oneToSix"></td>
+                        </tr>
+                    </template>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        function allTimesResultsData() {
+            return {
+                loading: true,
+                error: '',
+                rows: [],
+                async fetchRows() {
+                    try {
+                        let response = await fetch('/api/stats/all-times-results');
+                        if (!response.ok) {
+                            throw new Error('Nie udało się pobrać danych statystyk');
+                        }
+
+                        let data = await response.json();
+                        this.rows = data.rows;
+                    } catch (error) {
+                        console.error('Błąd:', error);
+                        this.error = error.message;
+                    } finally {
+                        this.loading = false;
+                    }
+                }
+            };
+        }
+    </script>
+{% endblock %}

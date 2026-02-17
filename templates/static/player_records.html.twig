@@ -1,0 +1,82 @@
+{% extends 'static/player/_base_profile.html.twig' %}
+
+{% set activeMenuItem = 'records' %}
+
+{% block player_profile_content %}
+    <h1 class="title is-3">Rekordy zawodnika</h1>
+
+    {% include 'static/player/records/tables/most_points.html.twig' with { playerId: playerId } %}
+    {% include 'static/player/records/tables/least_points.html.twig' with { playerId: playerId } %}
+    {% include 'static/player/records/tables/points_highest_sum.html.twig' with { playerId: playerId } %}
+    {% include 'static/player/records/tables/points_lowest_sum.html.twig' with { playerId: playerId } %}
+    {% include 'static/player/records/tables/opponent_most_points.html.twig' with { playerId: playerId } %}
+    {% include 'static/player/records/tables/opponent_least_points.html.twig' with { playerId: playerId } %}
+    {% include 'static/player/records/tables/highest_win.html.twig' with { playerId: playerId } %}
+    {% include 'static/player/records/tables/highest_lose.html.twig' with { playerId: playerId } %}
+    {% include 'static/player/records/tables/highest_draw.html.twig' with { playerId: playerId } %}
+    {% include 'static/player/records/tables/lost_with_most_points.html.twig' with { playerId: playerId } %}
+    {% include 'static/player/records/tables/won_with_least_points.html.twig' with { playerId: playerId } %}
+    {% include 'static/player/records/tables/won_with_most_points_by_opponent.html.twig' with { playerId: playerId } %}
+    {% include 'static/player/records/tables/lost_with_least_points_by_opponent.html.twig' with { playerId: playerId } %}
+    {% include 'static/player/records/tables/win_streak.html.twig' with { playerId: playerId } %}
+    {% include 'static/player/records/tables/lose_streak.html.twig' with { playerId: playerId } %}
+    {% include 'static/player/records/tables/streak_by_points.html.twig' with { playerId: playerId } %}
+    {% include 'static/player/records/tables/streak_by_sum.html.twig' with { playerId: playerId } %}
+    {% include 'static/player/records/tables/win_streak_by_player.html.twig' with { playerId: playerId } %}
+    {% include 'static/player/records/tables/lose_streak_by_player.html.twig' with { playerId: playerId } %}
+{% endblock %}
+
+{% block player_profile_scripts %}
+    <script>
+        function gameRecordsTableData(playerId, endpoint) {
+            return {
+                loading: true,
+                error: '',
+                rows: [],
+                async fetchRows() {
+                    try {
+                        let response = await fetch(`/api/players/${playerId}/records/${endpoint}`);
+                        if (!response.ok) {
+                            throw new Error('Nie udało się pobrać danych');
+                        }
+                        let data = await response.json();
+                        this.rows = data.rows;
+                    } catch (error) {
+                        console.error('Błąd:', error);
+                        this.error = error.message;
+                    } finally {
+                        this.loading = false;
+                    }
+                }
+            };
+        }
+
+        function streakRecordsTableData(playerId, endpoint, min = null) {
+            return {
+                loading: true,
+                error: '',
+                rows: [],
+                async fetchRows() {
+                    try {
+                        const query = min !== null ? `?min=${min}` : '';
+                        let response = await fetch(`/api/players/${playerId}/records/${endpoint}${query}`);
+                        if (!response.ok) {
+                            throw new Error('Nie udało się pobrać danych');
+                        }
+                        let data = await response.json();
+                        this.rows = data.rows;
+                    } catch (error) {
+                        console.error('Błąd:', error);
+                        this.error = error.message;
+                    } finally {
+                        this.loading = false;
+                    }
+                }
+            };
+        }
+
+        function streakByPlayerRecordsTableData(playerId, endpoint) {
+            return streakRecordsTableData(playerId, endpoint);
+        }
+    </script>
+{% endblock %}

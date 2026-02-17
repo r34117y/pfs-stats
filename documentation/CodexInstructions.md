@@ -1,0 +1,13 @@
+- This project is rewriting the old Scrabble statistics page (https://scrabble.stats.org.pl/). Whenever you are not sure about something you can refer to that page.
+- AlpineJS is used as a frontend library
+- Bulma is used as CSS framework
+- Pages should look good on all devices (desktop, mobile)
+- Be aware of DB schema (for now we are only interested in tables starting with PFS)
+- Try to create and use reusable components, but be sure that you don't break anything while introducing DRY
+- Type of files you should consider creating:
+  - Symfony Controller (used only to render the basic twig template, no data is fetched within the controller)
+  - Twig template (contains the HTML skeleton of the page and the relevant AlpineJS code)
+  - ApiResource (represents a single endpoint)
+  - Provider / Processor - according to ApiPlatform best practices
+  - Console Command - use classes provided by Symfony
+  - Service - the executor of business logic (should be usable by API Platform state management classes and console commands)

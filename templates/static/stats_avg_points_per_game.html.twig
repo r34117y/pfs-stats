@@ -1,0 +1,88 @@
+{% extends 'static/stats/_base_stats.html.twig' %}
+
+{% set activeStatsItem = 'avg_points_per_game' %}
+
+{% block stats_content %}
+    <div x-data="avgPointsPerGameData()" x-init="fetchRows()">
+        <h1 class="title is-3">Średnia punktów na grę</h1>
+
+        <template x-if="loading">
+            <p>Ładowanie...</p>
+        </template>
+
+        <template x-if="error">
+            <article class="message is-danger">
+                <div class="message-body" x-text="error"></div>
+            </article>
+        </template>
+
+        <div x-show="!loading && !error">
+            <div style="overflow-x: auto;">
+                <table class="table is-bordered is-hoverable is-fullwidth">
+                    <thead>
+                    <tr>
+                        <th @click="sort('position')" style="cursor: pointer;">#</th>
+                        <th @click="sort('playerName')" style="cursor: pointer;">Zawodnik</th>
+                        <th @click="sort('averagePoints')" style="cursor: pointer;">Średnia</th>
+                        <th @click="sort('last24MonthsAveragePoints')" style="cursor: pointer;">Ost 24 mies.</th>
+                        <th @click="sort('last12MonthsAveragePoints')" style="cursor: pointer;">Ost 12 mies.</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <template x-for="row in rows" :key="row.playerId">
+                        <tr>
+                            <td class="text-center" x-text="row.position"></td>
+                            <td><a :href="`/players/${row.playerId}`" x-text="row.playerName"></a></td>
+                            <td class="text-center" x-text="formatFloat(row.averagePoints)"></td>
+                            <td class="text-center" x-text="formatFloat(row.last24MonthsAveragePoints)"></td>
+                            <td class="text-center" x-text="formatFloat(row.last12MonthsAveragePoints)"></td>
+                        </tr>
+                    </template>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        function avgPointsPerGameData() {
+            return {
+                loading: true,
+                error: '',
+                rows: [],
+                sortCol: 'averagePoints',
+                sortAsc: true,
+                async fetchRows() {
+                    try {
+                        let response = await fetch('/api/stats/avg-points-per-game');
+                        if (!response.ok) {
+                            throw new Error('Nie udało się pobrać średniej punktów');
+                        }
+
+                        let data = await response.json();
+                        this.rows = data.rows;
+                    } catch (error) {
+                        console.error('Błąd:', error);
+                        this.error = error.message;
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+                sort(col) {
+                    if (this.sortCol === col) this.sortAsc = !this.sortAsc;
+                    this.sortCol = col;
+                    this.rows.sort((a, b) => {
+                        if (a[this.sortCol] < b[this.sortCol]) return this.sortAsc ? 1 : -1;
+                        if (a[this.sortCol] > b[this.sortCol]) return this.sortAsc ? -1 : 1;
+                        return 0;
+                    });
+                },
+                formatFloat(value) {
+                    return Number(value).toFixed(2);
+                }
+            };
+        }
+    </script>
+{% endblock %}

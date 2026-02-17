@@ -1,0 +1,137 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div style="margin-top: 32px;">
+        <div x-data="tournamentDetailsData({{ tournamentId }})" x-init="fetchDetails()" class="box">
+            <h1 class="title is-3">Szczegóły turnieju</h1>
+
+            <template x-if="loading">
+                <p>Ładowanie...</p>
+            </template>
+
+            <template x-if="error">
+                <article class="message is-danger">
+                    <div class="message-body" x-text="error"></div>
+                </article>
+            </template>
+
+            <div x-show="!loading && !error">
+                <p><strong>Nazwa:</strong> <span x-text="details.name"></span></p>
+                <p><strong>Data:</strong> <span x-text="details.date"></span></p>
+                <p><strong>Sędzia:</strong> <span x-text="details.refereeName ?? 'brak danych'"></span></p>
+                <p><strong>Adres:</strong> <span x-text="details.address ?? 'brak danych'"></span></p>
+            </div>
+        </div>
+
+        <div x-data="tournamentResultsData({{ tournamentId }})" x-init="fetchResults()" class="box">
+            <h2 class="title is-5">Wyniki turnieju</h2>
+
+            <template x-if="loading">
+                <p>Ładowanie...</p>
+            </template>
+
+            <template x-if="error">
+                <article class="message is-danger">
+                    <div class="message-body" x-text="error"></div>
+                </article>
+            </template>
+
+            <div x-show="!loading && !error">
+                <div style="overflow-x: auto;">
+                    <table class="table is-bordered is-hoverable is-fullwidth">
+                        <thead>
+                        <tr>
+                            <th>Pozycja</th>
+                            <th>Zawodnik</th>
+                            <th>Rank przed</th>
+                            <th>L. wygranych</th>
+                            <th>Suma punktów zdobytych</th>
+                            <th>Diff</th>
+                            <th>Suma punktów (obaj)</th>
+                            <th>Skalp</th>
+                            <th>Rank uzyskany</th>
+                            <th>Śr. rank przeciwnika</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <template x-for="row in rows" :key="row.playerId">
+                            <tr>
+                                <td class="text-center" x-text="row.position"></td>
+                                <td>
+                                    <template x-if="row.gamesCount > 0">
+                                        <a :href="`/tournaments/${tournamentId}/players/${row.playerId}`" x-text="row.playerName"></a>
+                                    </template>
+                                    <template x-if="row.gamesCount === 0">
+                                        <span x-text="row.playerName"></span>
+                                    </template>
+                                </td>
+                                <td class="text-center" x-text="formatFloat(row.rankBefore)"></td>
+                                <td class="text-center" x-text="row.wins"></td>
+                                <td class="text-center" x-text="row.totalPointsScored"></td>
+                                <td class="text-center" x-text="row.diff"></td>
+                                <td class="text-center" x-text="row.sumPoints"></td>
+                                <td class="text-center" x-text="formatFloat(row.scalp)"></td>
+                                <td class="text-center" x-text="formatFloat(row.rankAchieved)"></td>
+                                <td class="text-center" x-text="formatFloat(row.avgOpponentRank)"></td>
+                            </tr>
+                        </template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        function tournamentDetailsData(tournamentId) {
+            return {
+                loading: true,
+                error: '',
+                details: null,
+                async fetchDetails() {
+                    try {
+                        let response = await fetch(`/api/tournaments/${tournamentId}/details`);
+                        if (!response.ok) {
+                            throw new Error('Nie udało się pobrać szczegółów turnieju');
+                        }
+                        this.details = await response.json();
+                    } catch (error) {
+                        console.error('Błąd:', error);
+                        this.error = error.message;
+                    } finally {
+                        this.loading = false;
+                    }
+                }
+            };
+        }
+
+        function tournamentResultsData(tournamentId) {
+            return {
+                tournamentId,
+                loading: true,
+                error: '',
+                rows: [],
+                async fetchResults() {
+                    try {
+                        let response = await fetch(`/api/tournaments/${tournamentId}/results`);
+                        if (!response.ok) {
+                            throw new Error('Nie udało się pobrać wyników turnieju');
+                        }
+                        let data = await response.json();
+                        this.rows = data.rows;
+                    } catch (error) {
+                        console.error('Błąd:', error);
+                        this.error = error.message;
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+                formatFloat(value) {
+                    return Number(value).toFixed(2);
+                }
+            };
+        }
+    </script>
+{% endblock %}

@@ -1,0 +1,94 @@
+{% extends 'static/stats/_base_stats.html.twig' %}
+
+{% set activeStatsItem = 'games_won' %}
+
+{% block stats_content %}
+    <div x-data="gamesWonData()" x-init="fetchRows()">
+        <h1 class="title is-3">Wygrane gry</h1>
+
+        <template x-if="loading">
+            <p>Ładowanie...</p>
+        </template>
+
+        <template x-if="error">
+            <article class="message is-danger">
+                <div class="message-body" x-text="error"></div>
+            </article>
+        </template>
+
+        <div x-show="!loading && !error">
+            <div style="overflow-x: auto;">
+                <table class="table is-bordered is-hoverable is-fullwidth">
+                    <thead>
+                    <tr>
+                        <th @click="sort('position')" style="cursor: pointer;">#</th>
+                        <th @click="sort('playerName')" style="cursor: pointer;">Zawodnik</th>
+                        <th @click="sort('gamesWon')" style="cursor: pointer;">Wygranych</th>
+                        <th @click="sort('gamesWonPercent')" style="cursor: pointer;">%</th>
+                        <th @click="sort('gamesWon24Months')" style="cursor: pointer;">Ost 24 mies.</th>
+                        <th @click="sort('gamesWon24MonthsPercent')" style="cursor: pointer;">%</th>
+                        <th @click="sort('gamesWon12Months')" style="cursor: pointer;">Ost 12 mies.</th>
+                        <th @click="sort('gamesWon12MonthsPercent')" style="cursor: pointer;">%</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <template x-for="row in rows" :key="row.playerId">
+                        <tr>
+                            <td class="text-center" x-text="row.position"></td>
+                            <td><a :href="`/players/${row.playerId}`" x-text="row.playerName"></a></td>
+                            <td class="text-center" x-text="row.gamesWon"></td>
+                            <td class="text-center" x-text="formatPercent(row.gamesWonPercent)"></td>
+                            <td class="text-center" x-text="row.gamesWon24Months"></td>
+                            <td class="text-center" x-text="formatPercent(row.gamesWon24MonthsPercent)"></td>
+                            <td class="text-center" x-text="row.gamesWon12Months"></td>
+                            <td class="text-center" x-text="formatPercent(row.gamesWon12MonthsPercent)"></td>
+                        </tr>
+                    </template>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        function gamesWonData() {
+            return {
+                loading: true,
+                error: '',
+                rows: [],
+                sortCol: 'gamesWon',
+                sortAsc: true,
+                async fetchRows() {
+                    try {
+                        let response = await fetch('/api/stats/games-won');
+                        if (!response.ok) {
+                            throw new Error('Nie udało się pobrać wygranych gier');
+                        }
+
+                        let data = await response.json();
+                        this.rows = data.rows;
+                    } catch (error) {
+                        console.error('Błąd:', error);
+                        this.error = error.message;
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+                sort(col) {
+                    if (this.sortCol === col) this.sortAsc = !this.sortAsc;
+                    this.sortCol = col;
+                    this.rows.sort((a, b) => {
+                        if (a[this.sortCol] < b[this.sortCol]) return this.sortAsc ? 1 : -1;
+                        if (a[this.sortCol] > b[this.sortCol]) return this.sortAsc ? -1 : 1;
+                        return 0;
+                    });
+                },
+                formatPercent(value) {
+                    return Number(value).toFixed(2) + '%';
+                }
+            };
+        }
+    </script>
+{% endblock %}

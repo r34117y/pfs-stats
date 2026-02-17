@@ -1,0 +1,126 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div x-data="playerTournamentSummaryData({{ tournamentId }}, {{ playerId }})" x-init="fetchSummary()" style="margin-top: 32px;">
+        <template x-if="loading">
+            <p>Ładowanie...</p>
+        </template>
+
+        <template x-if="error">
+            <article class="message is-danger">
+                <div class="message-body" x-text="error"></div>
+            </article>
+        </template>
+
+        <div x-show="!loading && !error">
+            <div class="box">
+                <h1 class="title is-4">
+                    <span x-text="summary.playerName"></span>
+                    <a class="is-size-6" :href="`/players/${summary.playerId}`">(profil)</a>
+                </h1>
+                <h2 class="subtitle is-6">
+                    <a :href="`/tournaments/${summary.tournamentId}`" x-text="summary.tournamentName"></a>
+                </h2>
+
+                <div class="columns is-multiline">
+                    <div class="column is-4"><strong>Pozycja:</strong> <span x-text="summary.stats.position"></span></div>
+                    <div class="column is-4"><strong>Rank uzyskany:</strong> <span x-text="formatFloat(summary.stats.rankAchieved)"></span></div>
+                    <div class="column is-4"><strong>Śr. rank przeciwnika:</strong> <span x-text="formatFloat(summary.stats.avgOpponentRank)"></span></div>
+                    <div class="column is-4"><strong>Śr. punktów / gra:</strong> <span x-text="formatFloat(summary.stats.avgPointsPerGame)"></span></div>
+                    <div class="column is-4"><strong>Śr. pkt przeciwnika / gra:</strong> <span x-text="formatFloat(summary.stats.avgOpponentPointsPerGame)"></span></div>
+                    <div class="column is-4"><strong>Śr. pkt / gra (wygrane):</strong> <span x-text="formatFloat(summary.stats.avgPointsPerGameWon)"></span></div>
+                    <div class="column is-4"><strong>Śr. pkt przeciwnika / gra (wygrane):</strong> <span x-text="formatFloat(summary.stats.avgOpponentPointsPerGameWon)"></span></div>
+                    <div class="column is-4"><strong>Śr. pkt / gra (przegrane):</strong> <span x-text="formatFloat(summary.stats.avgPointsPerGameLost)"></span></div>
+                    <div class="column is-4"><strong>Śr. pkt przeciwnika / gra (przegrane):</strong> <span x-text="formatFloat(summary.stats.avgOpponentPointsPerGameLost)"></span></div>
+                    <div class="column is-4"><strong>Śr. suma punktów:</strong> <span x-text="formatFloat(summary.stats.avgPointsSum)"></span></div>
+                    <div class="column is-4"><strong>Śr. diff (wygrane):</strong> <span x-text="formatFloat(summary.stats.avgDiffWon)"></span></div>
+                    <div class="column is-4"><strong>Śr. diff (przegrane):</strong> <span x-text="formatFloat(summary.stats.avgDiffLost)"></span></div>
+                </div>
+            </div>
+
+            <div class="box">
+                <h2 class="title is-5">Gry</h2>
+                <div style="overflow-x: auto;">
+                    <table class="table is-bordered is-hoverable is-fullwidth">
+                        <thead>
+                        <tr>
+                            <th>Runda</th>
+                            <th>Stół</th>
+                            <th>Pierwszy na ruchu?</th>
+                            <th>Wynik</th>
+                            <th>Przeciwnik</th>
+                            <th>Rank uzyskany</th>
+                            <th>Punkty</th>
+                            <th>Punkty stracone</th>
+                            <th>Suma punktów</th>
+                            <th>Skalp</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <template x-for="(game, idx) in games" :key="idx">
+                            <tr>
+                                <td class="text-center" x-text="game.round"></td>
+                                <td class="text-center" x-text="game.tableNumber ?? '-'"></td>
+                                <td class="text-center" x-text="game.wasFirstToPlay ? 'Tak' : 'Nie'"></td>
+                                <td class="text-center" x-text="translateResult(game.result)"></td>
+                                <td><a :href="`/tournaments/${summary.tournamentId}/players/${game.opponentId}`" x-text="game.opponentName"></a></td>
+                                <td class="text-center" x-text="formatFloat(game.achievedRank)"></td>
+                                <td class="text-center" x-text="game.points"></td>
+                                <td class="text-center" x-text="game.pointsLost"></td>
+                                <td class="text-center" x-text="game.pointsSum"></td>
+                                <td class="text-center" x-text="formatFloat(game.scalp)"></td>
+                            </tr>
+                        </template>
+                        <template x-if="!games.length">
+                            <tr>
+                                <td colspan="10" class="text-center">Brak gier dla tego zawodnika w tym turnieju.</td>
+                            </tr>
+                        </template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        function playerTournamentSummaryData(tournamentId, playerId) {
+            return {
+                loading: true,
+                error: '',
+                summary: null,
+                get games() {
+                    if (!this.summary || !Array.isArray(this.summary.games)) {
+                        return [];
+                    }
+
+                    return this.summary.games;
+                },
+                async fetchSummary() {
+                    try {
+                        let response = await fetch(`/api/tournaments/${tournamentId}/players/${playerId}/summary`);
+                        if (!response.ok) {
+                            throw new Error('Nie udało się pobrać podsumowania zawodnika');
+                        }
+                        this.summary = await response.json();
+                    } catch (error) {
+                        console.error('Błąd:', error);
+                        this.error = error.message;
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+                formatFloat(value) {
+                    return Number(value).toFixed(2);
+                },
+                translateResult(result) {
+                    if (result === 'win') return 'Wygrana';
+                    if (result === 'lose') return 'Porażka';
+                    return 'Remis';
+                }
+            };
+        }
+    </script>
+{% endblock %}

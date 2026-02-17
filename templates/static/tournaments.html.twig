@@ -1,0 +1,110 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div x-data="tournamentsData()" x-init="fetchTournaments()"
+         style="display: flex; justify-content: center; margin-top: 64px;">
+        <template x-if="loading">
+            <p>Ładowanie...</p>
+        </template>
+        <div  x-show="!loading">
+            <div class="control mb-5">
+                <input class="input" type="search" placeholder="Filtruj" @input="setSearch($event.target.value)">
+            </div>
+            {% include 'static/_partials/_pagination.html.twig' %}
+            <table class="table is-bordered is-hoverable is-fullwidth">
+                <thead>
+                <tr>
+                    <th @click="sort('startDate')">Data rozpoczęcia</th>
+                    <th @click="sort('name')">Turniej</th>
+                    <th @click="sort('tournamentRank')">Rank turnieju</th>
+                    <th @click="sort('numberOfPlayers')">Liczba graczy</th>
+                    <th @click="sort('winnerName')">Zwycięzca</th>
+                </tr>
+                </thead>
+                <tbody>
+                <template x-for="tour in pagedTournaments" :key="tour.id">
+                    <tr>
+                        <td class="text-center" x-text="tour.startDate"></td>
+                        <td><a :href="`/tournaments/${tour.id}`" x-text="tour.name"></a></td>
+                        <td class="text-center" x-text="tour.tournamentRank"></td>
+                        <td class="text-center" x-text="tour.numberOfPlayers"></td>
+                        <th class="text-center">
+                            <a x-text="tour.winnerName" :href="`/players/${tour.winnerId}`"></a>
+                        </th>
+                    </tr>
+                </template>
+                </tbody>
+            </table>
+            {% include 'static/_partials/_pagination.html.twig' %}
+        </div>
+    </div>
+    <script>
+        function tournamentsData() {
+            return {
+                search: '',
+                sortCol: 'id',
+                sortAsc: false,
+                pageSize: 50,
+                curPage: 1,
+                tournaments: [],
+                loading: true,
+                async fetchTournaments() {
+                    try {
+                        let response = await fetch('http://127.0.0.1:8000/api/tournaments');
+                        if (!response.ok) {
+                            throw new Error('Błąd ładowania danych');
+                        }
+                        let data = await response.json();
+                        this.tournaments = data.tournaments;
+                    } catch (error) {
+                        console.error('Błąd:', error);
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+                sort(col) {
+                    if (this.sortCol === col) this.sortAsc = !this.sortAsc;
+                    this.sortCol = col;
+                    this.tournaments.sort((a, b) => {
+                        if (a[this.sortCol] < b[this.sortCol]) return this.sortAsc ? 1 : -1;
+                        if (a[this.sortCol] > b[this.sortCol]) return this.sortAsc ? -1 : 1;
+                        return 0;
+                    });
+                },
+                nextPage() {
+                    if((this.curPage * this.pageSize) < this.tournaments.length) {
+                        this.curPage++;
+                    }
+                },
+                previousPage() {
+                    if(this.curPage > 1) {
+                        this.curPage--;
+                    }
+                },
+                setSearch (search) {
+                    this.curPage = 1;
+                    this.search = search;
+                },
+                get filteredTournaments() {
+                    if (this.search === '') {
+                        return this.tournaments;
+                    }
+                    return this.tournaments.filter((row, index) => {
+                        return row.name.toLowerCase().includes(this.search.toLowerCase());
+                    })
+                },
+                get pagedTournaments() {
+                    if(this.tournaments) {
+                        const start = (this.curPage-1) * this.pageSize;
+                        const end = this.curPage * this.pageSize;
+                        return this.filteredTournaments.filter((row, index) => {
+                            return index >= start && index < end
+                        })
+                    } else {
+                        return [];
+                    }
+                }
+            };
+        }
+    </script>
+{% endblock %}

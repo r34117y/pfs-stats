@@ -1,0 +1,135 @@
+{% extends 'static/player/_base_profile.html.twig' %}
+
+{% set activeMenuItem = 'profile' %}
+
+{% block player_profile_content %}
+    <div x-data="playerProfileData({{ playerId }})" x-init="fetchProfile()">
+        <template x-if="loading">
+            <p>Ładowanie...</p>
+        </template>
+
+        <template x-if="error">
+            <article class="message is-danger">
+                <div class="message-body" x-text="error"></div>
+            </article>
+        </template>
+
+        <div x-show="!loading && !error" x-cloak>
+            <h1 class="title is-3" x-text="profile.nameShow"></h1>
+
+            <div class="columns is-multiline">
+                <div class="column is-4">
+                    <div class="box">
+                        <h2 class="title is-5">Dane osobowe</h2>
+                        <p><strong>Wiek:</strong> <span x-text="profile.age ?? 'brak danych'"></span></p>
+                        <p><strong>Zdjęcie:</strong> <span x-text="profile.photoUrl ? 'dostępne' : 'brak danych'"></span></p>
+                        <template x-if="profile.photoUrl">
+                            <figure class="image mt-4">
+                                <img :src="profile.photoUrl" alt="Zdjęcie zawodnika">
+                            </figure>
+                        </template>
+                    </div>
+                </div>
+
+                <div class="column is-8">
+                    <div class="box">
+                        <h2 class="title is-5">Turnieje</h2>
+                        <p>
+                            <strong>Pierwszy:</strong>
+                            <span x-text="formatTournament(profile.firstTournament)"></span>
+                        </p>
+                        <p>
+                            <strong>Ostatni:</strong>
+                            <span x-text="formatTournament(profile.lastTournament)"></span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="box">
+                <h2 class="title is-5">Główne statystyki</h2>
+                <div class="columns is-multiline">
+                    <div class="column is-3">
+                        <p><strong>Aktualny ranking:</strong></p>
+                        <p x-text="profile.currentRank ?? 'brak danych'"></p>
+                    </div>
+                    <div class="column is-3">
+                        <p><strong>Aktualna pozycja:</strong></p>
+                        <p x-text="profile.currentPosition ?? 'brak danych'"></p>
+                    </div>
+                    <div class="column is-3">
+                        <p><strong>Łącznie gier:</strong></p>
+                        <p x-text="profile.totalGamesPlayed"></p>
+                    </div>
+                    <div class="column is-3">
+                        <p><strong>Łącznie turniejów:</strong></p>
+                        <p x-text="profile.totalTournamentsPlayed"></p>
+                    </div>
+                    <div class="column is-3">
+                        <p><strong>Wygrane gry (łącznie):</strong></p>
+                        <p x-text="profile.totalGamesWon"></p>
+                    </div>
+                    <div class="column is-3">
+                        <p><strong>Wygrane gry (12 m-cy):</strong></p>
+                        <p x-text="profile.gamesWonLast12Months"></p>
+                    </div>
+                    <div class="column is-3">
+                        <p><strong>Wygrane turnieje (12 m-cy):</strong></p>
+                        <p x-text="profile.tournamentsWonLast12Months"></p>
+                    </div>
+                    <div class="column is-3">
+                        <p><strong>Wygrane gry (rok bieżący):</strong></p>
+                        <p x-text="profile.gamesWonCurrentYear"></p>
+                    </div>
+                    <div class="column is-3">
+                        <p><strong>Wygrane turnieje (rok bieżący):</strong></p>
+                        <p x-text="profile.tournamentsWonCurrentYear"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block player_profile_scripts %}
+    <script>
+        function playerProfileData(playerId) {
+            return {
+                playerId,
+                loading: true,
+                error: '',
+                profile: null,
+                async fetchProfile() {
+                    try {
+                        let response = await fetch(`/api/players/${this.playerId}`);
+                        if (!response.ok) {
+                            throw new Error('Nie udało się pobrać profilu zawodnika');
+                        }
+                        this.profile = await response.json();
+                    } catch (error) {
+                        console.error('Błąd:', error);
+                        this.error = error.message;
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+                formatTournament(tournament) {
+                    if (!tournament) {
+                        return 'brak danych';
+                    }
+
+                    return `${tournament.name} (${this.formatDate(tournament.date)})`;
+                },
+                formatDate(dateInt) {
+                    const dateValue = dateInt.toString();
+
+                    if (dateValue.length !== 8) {
+                        return dateValue;
+                    }
+
+                    return `${dateValue.slice(0, 4)}-${dateValue.slice(4, 6)}-${dateValue.slice(6, 8)}`;
+                }
+            };
+        }
+    </script>
+{% endblock %}

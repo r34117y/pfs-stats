@@ -1,0 +1,70 @@
+{% extends 'static/stats/_base_stats.html.twig' %}
+
+{% set activeStatsItem = 'summary' %}
+
+{% block stats_content %}
+    <div x-data="allTimeSummaryData()" x-init="fetchRows()">
+        <h1 class="title is-3">Podsumowanie</h1>
+
+        <template x-if="loading">
+            <p>Ładowanie...</p>
+        </template>
+
+        <template x-if="error">
+            <article class="message is-danger">
+                <div class="message-body" x-text="error"></div>
+            </article>
+        </template>
+
+        <div x-show="!loading && !error">
+            <div style="overflow-x: auto;">
+                <table class="table is-bordered is-hoverable is-fullwidth">
+                    <thead>
+                    <tr>
+                        <th>Statystyka</th>
+                        <th>Wartość (all times)</th>
+                        <th>Wartość (ostatnie 12 miesięcy)</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <template x-for="row in rows" :key="row.statisticName">
+                        <tr>
+                            <td x-text="row.statisticName"></td>
+                            <td class="text-center" x-text="row.allTimesValue"></td>
+                            <td class="text-center" x-text="row.last12MonthsValue"></td>
+                        </tr>
+                    </template>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        function allTimeSummaryData() {
+            return {
+                loading: true,
+                error: '',
+                rows: [],
+                async fetchRows() {
+                    try {
+                        let response = await fetch('/api/stats/all-time-summary');
+                        if (!response.ok) {
+                            throw new Error('Nie udało się pobrać podsumowania');
+                        }
+
+                        let data = await response.json();
+                        this.rows = data.rows;
+                    } catch (error) {
+                        console.error('Błąd:', error);
+                        this.error = error.message;
+                    } finally {
+                        this.loading = false;
+                    }
+                }
+            };
+        }
+    </script>
+{% endblock %}
