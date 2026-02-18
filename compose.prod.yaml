@@ -7,11 +7,14 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+      postgres:
+        condition: service_healthy
     environment:
       APP_ENV: prod
       APP_DEBUG: "0"
       APP_SECRET: ${APP_SECRET:?APP_SECRET is required}
-      DATABASE_URL: mysql://root:${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD is required}@mysql:3306/${MYSQL_DATABASE:-m1126_scrabble}?serverVersion=8.4.0&charset=utf8mb4
+      DATABASE_URL: postgresql://${POSTGRES_USER:-app}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}@postgres:5432/${POSTGRES_DB:-app}?serverVersion=17&charset=utf8
+      DATABASE_URL_MYSQL: mysql://root:${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD is required}@mysql:3306/${MYSQL_DATABASE:-m1126_scrabble}?serverVersion=8.4.0&charset=utf8mb4
 
   nginx:
     build:

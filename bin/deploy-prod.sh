@@ -20,6 +20,7 @@ Required environment variables (expected by compose.prod.yaml):
   APP_SECRET
   MYSQL_ROOT_PASSWORD
   MYSQL_PASSWORD
+  POSTGRES_PASSWORD
 
 Optional environment variables:
   MYSQL_USER
@@ -50,7 +51,7 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-for required_var in APP_SECRET MYSQL_ROOT_PASSWORD MYSQL_PASSWORD; do
+for required_var in APP_SECRET MYSQL_ROOT_PASSWORD MYSQL_PASSWORD POSTGRES_PASSWORD; do
   if [[ -z "${!required_var:-}" ]]; then
     echo "Missing required environment variable: $required_var" >&2
     exit 1

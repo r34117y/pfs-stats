@@ -19,3 +19,31 @@ Wgranie dumpa na produkcję:
  MYSQL_ROOT_PASSWORD='your-root-pass' bin/sync-db-dump-to-prod.sh --db-name m1126_scrabble
 ```
 
+Uzycie drugiego polaczenia MySQL (domyslnie aplikacja i migracje sa na PostgreSQL):
+
+```php
+<?php
+
+namespace App\Service;
+
+use Doctrine\DBAL\Connection;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
+
+final class MysqlReader
+{
+    public function __construct(
+        #[Autowire(service: 'doctrine.dbal.mysql_connection')]
+        private readonly Connection $mysqlConnection,
+    ) {
+    }
+
+    public function fetchSampleRows(int $limit = 10): array
+    {
+        return $this->mysqlConnection->fetchAllAssociative(
+            'SELECT * FROM games ORDER BY id DESC LIMIT :limit',
+            ['limit' => $limit],
+            ['limit' => \PDO::PARAM_INT]
+        );
+    }
+}
+```
