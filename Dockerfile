@@ -13,6 +13,14 @@ RUN set -eux; \
     a2enmod rewrite; \
     rm -rf /var/lib/apt/lists/*
 
+RUN printf '%s\n' \
+  '<Directory "/var/www/html/public">' \
+  '    AllowOverride All' \
+  '    Require all granted' \
+  '</Directory>' \
+  > /etc/apache2/conf-available/symfony.conf \
+  && a2enconf symfony
+
 COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
 
 WORKDIR /var/www/html
