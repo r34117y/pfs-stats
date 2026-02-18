@@ -34,7 +34,9 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
         $email = trim((string) ($payload['email'] ?? $payload['_username'] ?? ''));
         $password = (string) ($payload['password'] ?? $payload['_password'] ?? '');
 
-        $request->getSession()->set(SecurityRequestAttributes::LAST_USERNAME, $email);
+        if (!$this->isStatelessRequest($request) && $request->hasSession()) {
+            $request->getSession()->set(SecurityRequestAttributes::LAST_USERNAME, $email);
+        }
 
         $badges = [new RememberMeBadge()];
 
@@ -51,8 +53,10 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
-        if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
-            return new RedirectResponse($targetPath);
+        if (!$this->isStatelessRequest($request) && $request->hasSession()) {
+            if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
+                return new RedirectResponse($targetPath);
+            }
         }
 
         if ($this->wantsJsonResponse($request)) {
@@ -104,6 +108,11 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
         $contentType = (string) $request->headers->get('Content-Type');
 
         return str_contains($contentType, 'application/json');
+    }
+
+    private function isStatelessRequest(Request $request): bool
+    {
+        return (bool) $request->attributes->get('_stateless', false);
     }
 
     /**
