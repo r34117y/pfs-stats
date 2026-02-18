@@ -63,7 +63,7 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
             return new JsonResponse(['status' => 'ok']);
         }
 
-        return new RedirectResponse($this->urlGenerator->generate('app_ranking_page'));
+        return new RedirectResponse($this->urlGenerator->generate('app_user_profile_page'));
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): Response

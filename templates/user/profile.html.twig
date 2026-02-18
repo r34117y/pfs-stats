@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Profil uzytkownika{% endblock %}
+
+{% block body %}
+    <section class="section" x-data="userProfile()" x-init="load()">
+        <h1 class="title is-3">Twoj profil</h1>
+
+        <article class="message is-danger" x-show="error" x-cloak>
+            <div class="message-body" x-text="error"></div>
+        </article>
+
+        <div class="box" x-show="loading" x-cloak>
+            Ladowanie...
+        </div>
+
+        <div class="box" x-show="!loading && !error && profile" x-cloak>
+            <p><strong>Email:</strong> <span x-text="profile.email"></span></p>
+            <p><strong>Rok urodzenia:</strong> <span x-text="profile.yearOfBirth ?? '-'"></span></p>
+            <p><strong>Zdjecie:</strong> <span x-text="profile.photo ?? '-'"></span></p>
+            <p><strong>Player ID:</strong> <span x-text="profile.playerId ?? '-'"></span></p>
+            <p><strong>Role:</strong> <span x-text="(profile.roles || []).join(', ')"></span></p>
+        </div>
+    </section>
+
+    <script>
+        function userProfile() {
+            return {
+                loading: true,
+                error: '',
+                profile: null,
+                async load() {
+                    this.loading = true;
+                    this.error = '';
+
+                    try {
+                        const response = await fetch('{{ path('app_user_profile_data') }}', {
+                            method: 'GET',
+                            headers: { 'Accept': 'application/json' },
+                            credentials: 'include'
+                        });
+
+                        if (!response.ok) {
+                            this.error = 'Nie udalo sie pobrac danych profilu.';
+                            return;
+                        }
+
+                        this.profile = await response.json();
+                    } catch (e) {
+                        this.error = 'Blad podczas laczenia z serwerem.';
+                    } finally {
+                        this.loading = false;
+                    }
+                }
+            };
+        }
+    </script>
+{% endblock %}
