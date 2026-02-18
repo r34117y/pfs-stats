@@ -7,10 +7,12 @@ use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\ClubsList\ClubsList;
 use App\ApiResource\ClubsList\ClubsListClub;
 use Doctrine\DBAL\Connection;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class ClubsListProvider implements ProviderInterface
 {
     public function __construct(
+        #[Autowire(service: 'doctrine.dbal.mysql_connection')]
         private Connection $connection,
     ) {
     }

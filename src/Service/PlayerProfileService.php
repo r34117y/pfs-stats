@@ -5,11 +5,13 @@ namespace App\Service;
 use App\ApiResource\PlayerProfile\PlayerProfile;
 use App\ApiResource\PlayerProfile\PlayerProfileTournament;
 use Doctrine\DBAL\Connection;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class PlayerProfileService
 {
     public function __construct(
+        #[Autowire(service: 'doctrine.dbal.mysql_connection')]
         private Connection $connection,
     ) {
     }

@@ -5,11 +5,13 @@ namespace App\Service;
 use App\ApiResource\PlayerGameBalance\PlayerGameBalance;
 use App\ApiResource\PlayerGameBalance\PlayerGameBalanceRow;
 use Doctrine\DBAL\Connection;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class PlayerGameBalanceService
 {
     public function __construct(
+        #[Autowire(service: 'doctrine.dbal.mysql_connection')]
         private Connection $connection,
     ) {
     }

@@ -7,11 +7,13 @@ use App\ApiResource\TournamentDetails\TournamentResultRow;
 use App\ApiResource\TournamentDetails\TournamentResults;
 use DateTime;
 use Doctrine\DBAL\Connection;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class TournamentDetailsService
 {
     public function __construct(
+        #[Autowire(service: 'doctrine.dbal.mysql_connection')]
         private Connection $connection,
     ) {
     }

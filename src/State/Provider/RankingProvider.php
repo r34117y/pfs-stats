@@ -7,10 +7,12 @@ use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\Ranking\GetRanking;
 use App\ApiResource\Ranking\RankingRow;
 use Doctrine\DBAL\Connection;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class RankingProvider implements ProviderInterface
 {
     public function __construct(
+        #[Autowire(service: 'doctrine.dbal.mysql_connection')]
         private Connection $connection,
     ) {
     }

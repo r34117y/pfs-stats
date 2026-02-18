@@ -8,10 +8,12 @@ use App\ApiResource\TournamentsList\TournamentsList;
 use App\ApiResource\TournamentsList\TournamentsListTournament;
 use DateTime;
 use Doctrine\DBAL\Connection;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class TournamentListProvider implements ProviderInterface
 {
     public function __construct(
+        #[Autowire(service: 'doctrine.dbal.mysql_connection')]
         private Connection $connection,
     ) {
     }

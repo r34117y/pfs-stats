@@ -16,10 +16,12 @@ use App\ApiResource\Stats\TournamentsCount;
 use App\ApiResource\Stats\TournamentsCountRow;
 use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class StatsService
 {
     public function __construct(
+        #[Autowire(service: 'doctrine.dbal.mysql_connection')]
         private Connection $connection,
     ) {
     }
