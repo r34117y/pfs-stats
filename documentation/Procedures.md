@@ -11,6 +11,10 @@ Utworzenie bazy danych (w kontenerze mysql). Hasło w compose.yaml
 
 ```bash
 mysql -u root -p < m1126_scrabble.sql 
+# Wersja z logiem
+mysql -u root -p < m1126_scrabble.sql 2> import.log
+# Wyświetlanie progresu
+pv m1126_scrabble.sql | mysql -u root -p
 ```
 
 Wgranie dumpa na produkcję:
