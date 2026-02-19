@@ -138,9 +138,8 @@
                     this.success = '';
 
                     try {
-                        const response = await fetch('{{ path('app_user_profile_data') }}', {
+                        const response = await fetch('/api/user/profile/data', {
                             method: 'GET',
-                            headers: { 'Accept': 'application/json' },
                             credentials: 'include'
                         });
 
@@ -169,7 +168,7 @@
                     formData.append('photo', file);
 
                     try {
-                        const response = await fetch('{{ path('app_user_profile_photo_upload') }}', {
+                        const response = await fetch('/api/user/profile/photo/upload', {
                             method: 'POST',
                             body: formData,
                             credentials: 'include'
@@ -193,11 +192,10 @@
                     this.success = '';
 
                     try {
-                        const response = await fetch('{{ path('app_user_profile_save') }}', {
+                        const response = await fetch('/api/user/profile/save', {
                             method: 'POST',
                             headers: {
-                                'Accept': 'application/json',
-                                'Content-Type': 'application/json'
+                                'Content-Type': 'application/ld+json'
                             },
                             credentials: 'include',
                             body: JSON.stringify({
@@ -208,7 +206,7 @@
 
                         if (!response.ok) {
                             const payload = await response.json().catch(() => ({}));
-                            this.error = payload.message ?? 'Nie udalo sie zapisac profilu.';
+                            this.error = payload.message ?? payload.description ?? 'Nie udalo sie zapisac profilu.';
                             return;
                         }
 
