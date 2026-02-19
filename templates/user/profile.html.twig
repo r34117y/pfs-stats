@@ -15,11 +15,82 @@
         </div>
 
         <div class="box" x-show="!loading && !error && profile" x-cloak>
-            <p><strong>Email:</strong> <span x-text="profile.email"></span></p>
-            <p><strong>Rok urodzenia:</strong> <span x-text="profile.yearOfBirth ?? '-'"></span></p>
-            <p><strong>Zdjecie:</strong> <span x-text="profile.photo ?? '-'"></span></p>
-            <p><strong>Player ID:</strong> <span x-text="profile.playerId ?? '-'"></span></p>
-            <p><strong>Role:</strong> <span x-text="(profile.roles || []).join(', ')"></span></p>
+            <div class="is-flex is-flex-direction-column is-align-items-center mb-5">
+                <template x-if="profile.photo">
+                    <figure class="image is-128x128">
+                        <img
+                            x-bind:src="profile.photo"
+                            alt="Zdjecie uzytkownika"
+                            style="border-radius: 9999px; object-fit: cover; border: 1px solid #dbdbdb;"
+                        >
+                    </figure>
+                </template>
+
+                <template x-if="!profile.photo">
+                    <div
+                        class="is-flex is-justify-content-center is-align-items-center"
+                        style="width: 128px; height: 128px; border-radius: 9999px; border: 1px solid #dbdbdb; background: #f5f5f5;"
+                        aria-label="Brak zdjecia"
+                    >
+                        <svg viewBox="0 0 24 24" width="64" height="64" fill="#7a7a7a" aria-hidden="true">
+                            <path d="M12 12c2.76 0 5-2.47 5-5.5S14.76 1 12 1 7 3.47 7 6.5 9.24 12 12 12Zm0 2c-4.42 0-8 2.91-8 6.5V23h16v-2.5c0-3.59-3.58-6.5-8-6.5Z"></path>
+                        </svg>
+                    </div>
+                </template>
+            </div>
+
+            <div class="field">
+                <label class="label">Zdjecie profilowe</label>
+                <div class="control">
+                    <input type="file" class="input" accept="image/*" x-ref="photoInput" x-on:change="uploadPhoto">
+                </div>
+                <p class="help">Wersja tymczasowa: upload trafia do dummy endpoint i nie jest jeszcze zapisywany trwale.</p>
+            </div>
+
+            <div class="is-flex is-justify-content-space-between is-align-items-center mb-3">
+                <h2 class="title is-5 mb-0">Dane profilu</h2>
+                <button
+                    type="button"
+                    class="button is-small is-link is-light"
+                    x-on:click="toggleEdit"
+                    x-text="editing ? 'Anuluj' : 'Edytuj'"
+                ></button>
+            </div>
+
+            <template x-if="!editing">
+                <div>
+                    <p><strong>Email:</strong> <span x-text="profile.email"></span></p>
+                    <p><strong>Data urodzenia:</strong> <span x-text="displayDateOfBirth"></span></p>
+                </div>
+            </template>
+
+            <template x-if="editing">
+                <div>
+                    <div class="field">
+                        <label class="label">Email</label>
+                        <div class="control">
+                            <input type="email" class="input" x-model.trim="form.email">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Data urodzenia</label>
+                        <div class="control">
+                            <input type="date" class="input" x-model="form.dateOfBirth">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="control">
+                            <button type="button" class="button is-primary" x-on:click="saveProfile" x-bind:disabled="saving">
+                                <span x-text="saving ? 'Zapisywanie...' : 'Zapisz'"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </template>
+
+            <article class="message is-success mt-3" x-show="success" x-cloak>
+                <div class="message-body" x-text="success"></div>
+            </article>
         </div>
     </section>
 
@@ -27,11 +98,44 @@
         function userProfile() {
             return {
                 loading: true,
+                saving: false,
+                editing: false,
                 error: '',
+                success: '',
                 profile: null,
+                form: {
+                    email: '',
+                    dateOfBirth: ''
+                },
+                get displayDateOfBirth() {
+                    if (!this.profile || !this.profile.yearOfBirth) {
+                        return '-';
+                    }
+                    return `${this.profile.yearOfBirth}-01-01`;
+                },
+                yearToDate(year) {
+                    if (!year) {
+                        return '';
+                    }
+                    return `${year}-01-01`;
+                },
+                applyProfile(profile) {
+                    this.profile = profile;
+                    this.form.email = profile.email ?? '';
+                    this.form.dateOfBirth = this.yearToDate(profile.yearOfBirth);
+                },
+                toggleEdit() {
+                    this.editing = !this.editing;
+                    this.success = '';
+                    if (this.editing && this.profile) {
+                        this.form.email = this.profile.email ?? '';
+                        this.form.dateOfBirth = this.yearToDate(this.profile.yearOfBirth);
+                    }
+                },
                 async load() {
                     this.loading = true;
                     this.error = '';
+                    this.success = '';
 
                     try {
                         const response = await fetch('{{ path('app_user_profile_data') }}', {
@@ -45,11 +149,77 @@
                             return;
                         }
 
-                        this.profile = await response.json();
+                        const profile = await response.json();
+                        this.applyProfile(profile);
                     } catch (e) {
                         this.error = 'Blad podczas laczenia z serwerem.';
                     } finally {
                         this.loading = false;
+                    }
+                },
+                async uploadPhoto(event) {
+                    this.error = '';
+                    this.success = '';
+                    const file = event.target.files?.[0];
+                    if (!file) {
+                        return;
+                    }
+
+                    const formData = new FormData();
+                    formData.append('photo', file);
+
+                    try {
+                        const response = await fetch('{{ path('app_user_profile_photo_upload') }}', {
+                            method: 'POST',
+                            body: formData,
+                            credentials: 'include'
+                        });
+
+                        if (!response.ok) {
+                            this.error = 'Nie udalo sie przeslac zdjecia.';
+                            return;
+                        }
+
+                        const result = await response.json();
+                        this.profile.photo = result.photoUrl ?? this.profile.photo;
+                        this.success = 'Zdjecie przeslane do dummy endpoint.';
+                    } catch (e) {
+                        this.error = 'Blad podczas przesylania zdjecia.';
+                    }
+                },
+                async saveProfile() {
+                    this.saving = true;
+                    this.error = '';
+                    this.success = '';
+
+                    try {
+                        const response = await fetch('{{ path('app_user_profile_save') }}', {
+                            method: 'POST',
+                            headers: {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                            },
+                            credentials: 'include',
+                            body: JSON.stringify({
+                                email: this.form.email,
+                                dateOfBirth: this.form.dateOfBirth
+                            })
+                        });
+
+                        if (!response.ok) {
+                            const payload = await response.json().catch(() => ({}));
+                            this.error = payload.message ?? 'Nie udalo sie zapisac profilu.';
+                            return;
+                        }
+
+                        const result = await response.json();
+                        this.applyProfile(result.profile);
+                        this.editing = false;
+                        this.success = 'Dane profilu zostaly zapisane.';
+                    } catch (e) {
+                        this.error = 'Blad podczas zapisywania profilu.';
+                    } finally {
+                        this.saving = false;
                     }
                 }
             };
