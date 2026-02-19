@@ -9,6 +9,7 @@ class RankingRow
         public string $nameShow,
         public string $nameAlph,
         public int $playerId,
+        public ?string $photo,
         public float $rank,
         public int $numberOfGames,
         public float $rankDelta,
