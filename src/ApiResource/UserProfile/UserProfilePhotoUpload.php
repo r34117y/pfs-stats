@@ -10,13 +10,13 @@ use App\State\Processor\UserProfilePhotoUploadProcessor;
     operations: [
         new Post(
             uriTemplate: '/user/profile/photo/upload',
-            description: 'Upload profile photo to a temporary dummy endpoint.',
-            processor: UserProfilePhotoUploadProcessor::class,
-            security: "is_granted('ROLE_USER')",
-            deserialize: false,
             inputFormats: ['multipart' => ['multipart/form-data']],
+            description: 'Upload and compress profile photo for the authenticated user.',
+            security: "is_granted('ROLE_USER')",
             output: UserProfilePhotoUploadResponse::class,
-            read: false
+            read: false,
+            deserialize: false,
+            processor: UserProfilePhotoUploadProcessor::class
         ),
     ],
 )]

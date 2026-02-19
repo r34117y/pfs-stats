@@ -4,6 +4,10 @@
 - Pages should look good on all devices (desktop, mobile)
 - Be aware of DB schema (for now we are only interested in tables starting with PFS)
 - Try to create and use reusable components, but be sure that you don't break anything while introducing DRY
+- Use the state-of-the-art modern PHP8:
+  - make classes final and readonly whenever it is appropriate
+  - make properties readonly whenever it is appropriate
+  - always type hint everything that supports type-hinting whenever possible
 - Type of files you should consider creating:
   - Symfony Controller (used only to render the basic twig template, no data is fetched within the controller)
   - Twig template (contains the HTML skeleton of the page and the relevant AlpineJS code)
