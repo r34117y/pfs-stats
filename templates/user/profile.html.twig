@@ -88,9 +88,7 @@
                 </div>
             </template>
 
-            <article class="message is-success mt-3" x-show="success" x-cloak>
-                <div class="message-body" x-text="success"></div>
-            </article>
+            <p class="help is-success mt-2" x-show="success" x-cloak x-text="success"></p>
         </div>
     </section>
 
@@ -102,6 +100,7 @@
                 editing: false,
                 error: '',
                 success: '',
+                successTimer: null,
                 profile: null,
                 form: {
                     email: '',
@@ -123,6 +122,33 @@
                     this.profile = profile;
                     this.form.email = profile.email ?? '';
                     this.form.dateOfBirth = this.yearToDate(profile.yearOfBirth);
+                },
+                normalizeProfile(rawProfile) {
+                    if (!rawProfile || typeof rawProfile !== 'object') {
+                        return null;
+                    }
+
+                    const normalized = {
+                        email: rawProfile.email ?? '',
+                        yearOfBirth: rawProfile.yearOfBirth ?? null,
+                        photo: rawProfile.photo ?? null
+                    };
+
+                    if (!normalized.email) {
+                        return null;
+                    }
+
+                    return normalized;
+                },
+                showSuccess(message, timeoutMs = 4000) {
+                    this.success = message;
+                    if (this.successTimer) {
+                        clearTimeout(this.successTimer);
+                    }
+                    this.successTimer = setTimeout(() => {
+                        this.success = '';
+                        this.successTimer = null;
+                    }, timeoutMs);
                 },
                 toggleEdit() {
                     this.editing = !this.editing;
@@ -148,7 +174,11 @@
                             return;
                         }
 
-                        const profile = await response.json();
+                        const profile = this.normalizeProfile(await response.json());
+                        if (!profile) {
+                            this.error = 'Nieprawidlowy format danych profilu.';
+                            return;
+                        }
                         this.applyProfile(profile);
                     } catch (e) {
                         this.error = 'Blad podczas laczenia z serwerem.';
@@ -181,7 +211,7 @@
 
                         const result = await response.json();
                         this.profile.photo = result.photoUrl ?? this.profile.photo;
-                        this.success = result.message ?? 'Zdjecie zostalo przeslane.';
+                        this.showSuccess(result.message ?? 'Zdjecie zostalo przeslane.');
                     } catch (e) {
                         this.error = 'Blad podczas przesylania zdjecia.';
                     }
@@ -211,9 +241,14 @@
                         }
 
                         const result = await response.json();
-                        this.applyProfile(result.profile);
+                        const profileFromResponse = this.normalizeProfile(result.profile ?? result);
+                        if (profileFromResponse) {
+                            this.applyProfile(profileFromResponse);
+                        } else {
+                            await this.load();
+                        }
                         this.editing = false;
-                        this.success = 'Dane profilu zostaly zapisane.';
+                        this.showSuccess('Dane profilu zostaly zapisane.');
                     } catch (e) {
                         this.error = 'Blad podczas zapisywania profilu.';
                     } finally {
