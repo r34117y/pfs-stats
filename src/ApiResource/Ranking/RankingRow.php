@@ -12,7 +12,7 @@ class RankingRow
         public ?string $photo,
         public float $rank,
         public int $numberOfGames,
-        public float $rankDelta,
+        public ?float $rankDelta,
         /** null if player just entered the ranking */
         public ?int $positionDelta
     )
