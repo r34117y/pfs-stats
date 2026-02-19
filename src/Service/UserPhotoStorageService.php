@@ -8,8 +8,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class UserPhotoStorageService
 {
-    private const MAX_WIDTH = 512;
-    private const MAX_HEIGHT = 512;
+    private const TARGET_SIZE = 512;
     private const JPEG_QUALITY = 82;
     private const PUBLIC_PREFIX = '/uploads/user-photos/';
 
@@ -38,26 +37,8 @@ class UserPhotoStorageService
             throw new BadRequestHttpException('Unsupported image format.');
         }
 
-        $sourceWidth = imagesx($sourceImage);
-        $sourceHeight = imagesy($sourceImage);
-
-        [$targetWidth, $targetHeight] = $this->calculateTargetSize($sourceWidth, $sourceHeight);
-
-        $targetImage = imagecreatetruecolor($targetWidth, $targetHeight);
-        imagefill($targetImage, 0, 0, imagecolorallocate($targetImage, 255, 255, 255));
-
-        imagecopyresampled(
-            $targetImage,
-            $sourceImage,
-            0,
-            0,
-            0,
-            0,
-            $targetWidth,
-            $targetHeight,
-            $sourceWidth,
-            $sourceHeight
-        );
+        $sourceImage = $this->applyExifOrientation($sourceImage, $uploadedFile);
+        $targetImage = $this->createSquareImage($sourceImage);
 
         $uploadDir = $this->getUploadDirectoryPath();
         if (!is_dir($uploadDir) && !@mkdir($uploadDir, 0775, true) && !is_dir($uploadDir)) {
@@ -98,24 +79,72 @@ class UserPhotoStorageService
         return $this->projectDir . '/public/uploads/user-photos';
     }
 
-    /**
-     * @return array{0: int, 1: int}
-     */
-    private function calculateTargetSize(int $width, int $height): array
+    private function createSquareImage(\GdImage $sourceImage): \GdImage
     {
+        $width = imagesx($sourceImage);
+        $height = imagesy($sourceImage);
         if ($width <= 0 || $height <= 0) {
             throw new BadRequestHttpException('Invalid image dimensions.');
         }
 
-        $ratio = min(
-            self::MAX_WIDTH / $width,
-            self::MAX_HEIGHT / $height,
-            1.0
+        $cropSize = min($width, $height);
+        $sourceX = (int) floor(($width - $cropSize) / 2);
+        $sourceY = (int) floor(($height - $cropSize) / 2);
+
+        $targetImage = imagecreatetruecolor(self::TARGET_SIZE, self::TARGET_SIZE);
+        imagefill($targetImage, 0, 0, imagecolorallocate($targetImage, 255, 255, 255));
+
+        imagecopyresampled(
+            $targetImage,
+            $sourceImage,
+            0,
+            0,
+            $sourceX,
+            $sourceY,
+            self::TARGET_SIZE,
+            self::TARGET_SIZE,
+            $cropSize,
+            $cropSize
         );
 
-        return [
-            max(1, (int) round($width * $ratio)),
-            max(1, (int) round($height * $ratio)),
-        ];
+        return $targetImage;
+    }
+
+    private function applyExifOrientation(\GdImage $sourceImage, UploadedFile $uploadedFile): \GdImage
+    {
+        if (!function_exists('exif_read_data')) {
+            return $sourceImage;
+        }
+
+        $mimeType = $uploadedFile->getMimeType();
+        if (!is_string($mimeType) || !str_starts_with($mimeType, 'image/jpeg')) {
+            return $sourceImage;
+        }
+
+        $exifData = @exif_read_data($uploadedFile->getPathname());
+        if (!is_array($exifData)) {
+            return $sourceImage;
+        }
+
+        $orientation = (int) ($exifData['Orientation'] ?? 1);
+
+        return match ($orientation) {
+            3 => $this->rotateImage($sourceImage, 180),
+            6 => $this->rotateImage($sourceImage, -90),
+            8 => $this->rotateImage($sourceImage, 90),
+            default => $sourceImage,
+        };
+    }
+
+    private function rotateImage(\GdImage $sourceImage, int $degrees): \GdImage
+    {
+        $rotated = imagerotate($sourceImage, $degrees, 0);
+        if (!$rotated instanceof \GdImage) {
+            return $sourceImage;
+        }
+
+        imagedestroy($sourceImage);
+
+        return $rotated;
     }
 }
