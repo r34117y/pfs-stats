@@ -9,6 +9,12 @@ composer require api
 
 Utworzenie bazy danych (w kontenerze mysql). Hasło w compose.yaml
 
+Usunąć starą bazę jeśli trzeba (mysql -u root -p)
+
+```sql
+DROP DATABASE m1126_scrabble;
+```
+
 ```bash
 mysql -u root -p < m1126_scrabble.sql 
 # Wersja z logiem
