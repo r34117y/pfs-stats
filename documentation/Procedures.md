@@ -1,33 +1,17 @@
-Tworzenie tego projektu:
+# Credentials
 
-```bash
-composer create-project symfony/skeleton scrabble-stats-api
-cd scrabble-stats-api
-composer require api
-```
+Zmienne środowiskowe trzymamy w `.env.local` (te z których korzysta docker muszą być w tym pliku).
 
+# MySQL
 
-Utworzenie bazy danych (w kontenerze mysql). Hasło w compose.yaml
-
-Usunąć starą bazę jeśli trzeba (mysql -u root -p)
-
-```sql
-DROP DATABASE m1126_scrabble;
-```
-
-```bash
-mysql -u root -p < m1126_scrabble.sql 
-# Wersja z logiem
-mysql -u root -p < m1126_scrabble.sql 2> import.log
-# Wyświetlanie progresu
-pv m1126_scrabble.sql | mysql -u root -p
-```
-
-Wgranie dumpa na produkcję:
-
-```bash
- MYSQL_ROOT_PASSWORD='your-root-pass' bin/sync-db-dump-to-prod.sh --db-name m1126_scrabble
-```
+- wysyłka na serwer: `scp -r /home/adam/projects/scrabble-stats-api/db_dump/20260219.sql  ubuntu@54.38.54.56:/var/www/pfs-stats/db_dump/`
+- usunąć starą bazę jeśli trzeba:
+  - `mysql -u root -p`
+  - `DROP DATABASE m1126_scrabble;`
+- wgrywanie dumpa
+  - `mysql -u root -p < dump.sql`
+  - wersja z logiem: `mysql -u root -p < dump.sql 2> import.log`
+  - pasek postępu: `pv dump.sql | mysql -u root -p`
 
 Uzycie drugiego polaczenia MySQL (domyslnie aplikacja i migracje sa na PostgreSQL):
 
@@ -58,27 +42,18 @@ final class MysqlReader
 }
 ```
 
----
-
-Autentykacja (Symfony Security, PostgreSQL `default` connection):
+# Autentykacja (Symfony Security, PostgreSQL `default` connection):
 
 - Encja uzytkownika: `App\Entity\User`
 - Tabela auth: `app_user`
 - Logowanie endpoint: `POST /login` (form login, endpoint gotowy; sam formularz niezaimplementowany)
 - Dla zapytan AJAX/API brak sesji zwraca `401` JSON (bez redirecta na `/login`)
 
-Po zmianach auth uruchom migracje:
-
-```bash
-php bin/console doctrine:migrations:migrate
-```
-
-Utworzenie uzytkownika (haslo jest haszowane przez Symfony):
+## Utworzenie uzytkownika (haslo jest haszowane przez Symfony):
 
 ```bash
 php bin/console app:user:create admin@scrabble.local 'Scrabble!2026' \
   --year-of-birth=1990 \
-  --photo=/uploads/users/admin.jpg \
   --player-id=1
 ```
 
@@ -93,8 +68,3 @@ Zmiana hasla istniejacego uzytkownika:
 ```bash
 php bin/console app:user:change-password admin@scrabble.local 'NewStrongPassword123!'
 ```
-
-AJAX/Alpine.js:
-
-- Wysylaj zapytania z cookies sesyjnymi: `credentials: 'include'`
-- Przy cross-origin wymagane CORS z `allow_credentials: true` (ustawione w `config/packages/nelmio_cors.yaml`)
