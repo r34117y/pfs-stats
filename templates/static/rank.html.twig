@@ -7,11 +7,13 @@
             <p>Ładowanie...</p>
         </template>
         <div  x-show="!loading">
+            <h1 class="title has-text-centered mt-5" x-text="`Ranking Polskiej Federacji Scrabble`"></h1>
+            <h6 class="has-text-centered mb-5" x-text="`Ostatni turniej: ${lastTournamentName}`"></h6>
             <div class="control mb-5">
                 <input class="input" type="search" placeholder="Filtruj" @input="setSearch($event.target.value)">
             </div>
             {% include 'static/_partials/_pagination.html.twig' %}
-            <table class="table is-bordered is-hoverable">
+            <table class="table is-bordered is-hoverable" style="width: 100%">
                 <thead>
                 <tr>
                     <th class="has-text-centered" @click="sort('position')">#</th>
@@ -71,6 +73,7 @@
                 pageSize: 50,
                 curPage: 1,
                 ranking: [],
+                lastTournamentName: '',
                 loading: true,
                 async fetchRanking() {
                     try {
@@ -80,6 +83,7 @@
                         }
                         let data = await response.json();
                         this.ranking = data.rows;
+                        this.lastTournamentName = data.lastTournamentName ?? '-';
                     } catch (error) {
                         console.error('Błąd:', error);
                     } finally {

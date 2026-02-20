@@ -25,6 +25,8 @@ class RankingProvider implements ProviderInterface
             return new GetRanking([]);
         }
 
+        $lastTournamentName = $this->loadTournamentName($latestTournamentId);
+
         $sql = "SELECT r.player, r.pos, r.rank, r.games, p.name_show, p.name_alph, p.id
                 FROM PFSRANKING r
                 INNER JOIN PFSPLAYER p ON r.player = p.id
@@ -64,7 +66,21 @@ class RankingProvider implements ProviderInterface
             );
         }
 
-        return new GetRanking($rankingRows);
+        return new GetRanking($rankingRows, $lastTournamentName);
+    }
+
+    private function loadTournamentName(int $tournamentId): ?string
+    {
+        $name = $this->connection->fetchOne(
+            'SELECT COALESCE(fullname, name) FROM PFSTOURS WHERE id = :tournamentId',
+            ['tournamentId' => $tournamentId]
+        );
+
+        if ($name === false || $name === null || $name === '') {
+            return null;
+        }
+
+        return (string) $name;
     }
 
     private function getLatestRankingTournamentId(): ?int
