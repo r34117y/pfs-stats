@@ -8,7 +8,12 @@
         </template>
         <div  x-show="!loading">
             <h1 class="title has-text-centered mt-5" x-text="`Ranking Polskiej Federacji Scrabble`"></h1>
-            <h6 class="has-text-centered mb-5" x-text="`Ostatni turniej: ${lastTournamentName}`"></h6>
+            <h6 class="has-text-centered mb-5">
+                <span>Ostatni turniej: </span>
+                <template x-if="lastTournamentId">
+                    <a :href="`/tournaments/${lastTournamentId}`" x-text="lastTournamentName"></a>
+                </template>
+            </h6>
             <div class="control mb-5">
                 <input class="input" type="search" placeholder="Filtruj" @input="setSearch($event.target.value)">
             </div>
@@ -74,6 +79,7 @@
                 curPage: 1,
                 ranking: [],
                 lastTournamentName: '',
+                lastTournamentId: null,
                 loading: true,
                 async fetchRanking() {
                     try {
@@ -84,6 +90,7 @@
                         let data = await response.json();
                         this.ranking = data.rows;
                         this.lastTournamentName = data.lastTournamentName ?? '-';
+                        this.lastTournamentId = data.lastTournamentId ?? null;
                     } catch (error) {
                         console.error('Błąd:', error);
                     } finally {

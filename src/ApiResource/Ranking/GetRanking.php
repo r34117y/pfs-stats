@@ -22,6 +22,7 @@ class GetRanking
     public function __construct(
         public array $rows,
         public ?string $lastTournamentName = null,
+        public ?int $lastTournamentId = null,
     ) {
     }
 }

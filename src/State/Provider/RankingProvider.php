@@ -66,7 +66,7 @@ class RankingProvider implements ProviderInterface
             );
         }
 
-        return new GetRanking($rankingRows, $lastTournamentName);
+        return new GetRanking($rankingRows, $lastTournamentName, $latestTournamentId);
     }
 
     private function loadTournamentName(int $tournamentId): ?string
