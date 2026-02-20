@@ -8,9 +8,10 @@ use App\ApiResource\Ranking\GetRanking;
 use App\ApiResource\Ranking\RankingRow;
 use App\Repository\UserRepository;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-class RankingProvider implements ProviderInterface
+final readonly class RankingProvider implements ProviderInterface
 {
     public function __construct(
         #[Autowire(service: 'doctrine.dbal.mysql_connection')]
@@ -18,6 +19,10 @@ class RankingProvider implements ProviderInterface
         private UserRepository $userRepository,
     ) {
     }
+
+    /**
+     * @throws Exception
+     */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): GetRanking
     {
         $latestTournamentId = $this->getLatestRankingTournamentId();
@@ -33,6 +38,7 @@ class RankingProvider implements ProviderInterface
                 WHERE turniej = :latestTournamentId
                 AND rtype='f'
                 ORDER BY r.rank DESC";
+
         $result = $this->connection->executeQuery($sql, ['latestTournamentId' => $latestTournamentId]);
         $dbRows = $result->fetchAllAssociative();
         $rankingRows = [];
