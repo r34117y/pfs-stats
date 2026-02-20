@@ -13,8 +13,8 @@ class RankingRow
         public float $rank,
         public int $numberOfGames,
         public ?float $rankDelta,
-        /** null if player just entered the ranking */
-        public ?int $positionDelta
+        /** '+' if player just entered the ranking */
+        public int|string|null $positionDelta
     )
     {
     }

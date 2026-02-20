@@ -7,6 +7,7 @@ use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\Ranking\GetRanking;
 use App\ApiResource\Ranking\RankingRow;
 use App\Repository\UserRepository;
+use App\Service\RankingSnapshotService;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -17,6 +18,7 @@ final readonly class RankingProvider implements ProviderInterface
         #[Autowire(service: 'doctrine.dbal.mysql_connection')]
         private Connection $connection,
         private UserRepository $userRepository,
+        private RankingSnapshotService $rankingSnapshotService,
     ) {
     }
 
@@ -31,42 +33,47 @@ final readonly class RankingProvider implements ProviderInterface
         }
 
         $lastTournamentName = $this->loadTournamentName($latestTournamentId);
+        $previousTournamentId = $this->getPreviousRankingTournamentId($latestTournamentId);
 
-        $sql = "SELECT r.player, r.pos, r.rank, r.games, p.name_show, p.name_alph, p.id
-                FROM PFSRANKING r
-                INNER JOIN PFSPLAYER p ON r.player = p.id
-                WHERE turniej = :latestTournamentId
-                AND rtype='f'
-                ORDER BY r.rank DESC";
+        $latestRanking = $this->rankingSnapshotService->getRankingAfterTournament($latestTournamentId);
+        $previousRanking = $previousTournamentId !== null
+            ? $this->rankingSnapshotService->getRankingAfterTournament($previousTournamentId)
+            : [];
 
-        $result = $this->connection->executeQuery($sql, ['latestTournamentId' => $latestTournamentId]);
-        $dbRows = $result->fetchAllAssociative();
+        $previousRankingByPlayer = [];
+        foreach ($previousRanking as $row) {
+            $previousRankingByPlayer[$row['playerId']] = [
+                'rank' => $row['rank'],
+                'position' => $row['position'],
+            ];
+        }
+
         $rankingRows = [];
-        $photosByPlayerId = $this->loadPhotosByPlayerId($dbRows);
-        $participants = $this->loadParticipantsInTournament($latestTournamentId);
-        $previousRankingByPlayer = $this->loadPreviousRankingByPlayer($latestTournamentId);
+        $photosByPlayerId = $this->loadPhotosByPlayerId($latestRanking);
 
-        foreach ($dbRows as $row) {
-            $playerId = (int) $row['id'];
+        foreach ($latestRanking as $row) {
+            $playerId = $row['playerId'];
             $rankDelta = null;
             $positionDelta = null;
 
-            if (isset($participants[$playerId]) && isset($previousRankingByPlayer[$playerId])) {
+            if (isset($previousRankingByPlayer[$playerId])) {
                 $previous = $previousRankingByPlayer[$playerId];
-                $currentRank = (float) $row['rank'];
-                $currentPosition = (int) $row['pos'];
+                $currentRank = $row['rank'];
+                $currentPosition = $row['position'];
                 $rankDelta = round($currentRank - $previous['rank'], 2);
                 $positionDelta = $previous['position'] - $currentPosition;
+            } elseif ($previousTournamentId !== null) {
+                $positionDelta = '+';
             }
 
             $rankingRows[] = new RankingRow(
-                (int) $row['pos'],
-                (string) $row['name_show'],
-                (string) $row['name_alph'],
+                $row['position'],
+                $row['nameShow'],
+                $row['nameAlph'],
                 $playerId,
                 $photosByPlayerId[$playerId] ?? null,
-                (float) $row['rank'],
-                (int) $row['games'],
+                $row['rank'],
+                $row['games'],
                 $rankDelta,
                 $positionDelta
             );
@@ -100,65 +107,33 @@ final readonly class RankingProvider implements ProviderInterface
     }
 
     /**
-     * @return array<int, true>
+     * Returns the tournament id that precedes the latest ranking snapshot.
      */
-    private function loadParticipantsInTournament(int $tournamentId): array
+    private function getPreviousRankingTournamentId(int $latestTournamentId): ?int
     {
-        $rows = $this->connection->fetchAllAssociative(
-            "SELECT DISTINCT tw.player
-             FROM PFSTOURWYN tw
-             WHERE tw.turniej = :tournamentId",
-            ['tournamentId' => $tournamentId]
-        );
-
-        $participants = [];
-        foreach ($rows as $row) {
-            $participants[(int) $row['player']] = true;
-        }
-
-        return $participants;
-    }
-
-    /**
-     * @return array<int, array{rank: float, position: int}>
-     */
-    private function loadPreviousRankingByPlayer(int $latestTournamentId): array
-    {
-        $rows = $this->connection->fetchAllAssociative(
-            "SELECT r.player, r.rank, r.pos
-             FROM PFSRANKING r
-             INNER JOIN (
-                 SELECT player, MAX(turniej) AS prev_turniej
-                 FROM PFSRANKING
-                 WHERE rtype = 'f' AND turniej < :latestTournamentId
-                 GROUP BY player
-             ) prev ON prev.player = r.player AND prev.prev_turniej = r.turniej
-             WHERE r.rtype = 'f'",
+        $value = $this->connection->fetchOne(
+            "SELECT MAX(turniej)
+             FROM PFSRANKING
+             WHERE rtype = 'f' AND turniej < :latestTournamentId",
             ['latestTournamentId' => $latestTournamentId]
         );
 
-        $previousRankingByPlayer = [];
-        foreach ($rows as $row) {
-            $previousRankingByPlayer[(int) $row['player']] = [
-                'rank' => (float) $row['rank'],
-                'position' => (int) $row['pos'],
-            ];
+        if ($value === false || $value === null) {
+            return null;
         }
 
-        return $previousRankingByPlayer;
+        return (int) $value;
     }
 
     /**
-     * @param list<array<string, mixed>> $dbRows
+     * @param list<array{playerId: int, position: int, rank: float, games: int, nameShow: string, nameAlph: string}> $rankingRows
      * @return array<int, string>
      */
-    private function loadPhotosByPlayerId(array $dbRows): array
+    private function loadPhotosByPlayerId(array $rankingRows): array
     {
         $playerIds = [];
-        foreach ($dbRows as $row) {
-            if (isset($row['id'])) {
-                $playerIds[] = (int) $row['id'];
-            }
+        foreach ($rankingRows as $row) {
+            $playerIds[] = $row['playerId'];
         }
 
         $playerIds = array_values(array_unique($playerIds));
