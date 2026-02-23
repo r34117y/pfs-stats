@@ -6,6 +6,12 @@ Endpoint: GET `/`
 Type: Controller renders Twig + AlpineJS fetches table as ApiResource
 Description: Table with current ranking
 
+## Old-style ranking (API)
+
+Endpoint: GET `/api/old-rank`
+Type: ApiResource (`/old-rank` uriTemplate in API Platform)
+Description: Current ranking simulated with the historical old method (sequential recalculation from tournament `202305070` onward).
+
 ## Players List
 
 Endpoint: GET `/players`
