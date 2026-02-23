@@ -9,6 +9,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class PagesController extends AbstractController
 {
     #[Route('/', name: 'app_ranking_page')]
+    #[Route('/rank', name: 'app_current_ranking_page')]
     public function rank(): Response
     {
         return $this->render('static/rank.html.twig');
