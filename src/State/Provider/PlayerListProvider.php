@@ -21,7 +21,7 @@ class PlayerListProvider implements ProviderInterface
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): PlayersList
     {
-        $sql = "SELECT id, name_show, name_alph FROM PFSPLAYER ORDER BY name_alph ASC";
+        $sql = "SELECT id, name_show, name_alph FROM PFSPLAYER WHERE name_show <> '\"Okrutniki\" -' ORDER BY name_alph ASC";
         $result = $this->connection->executeQuery($sql);
         $rows = $result->fetchAllAssociative();
         $photosByPlayerId = $this->loadPhotosByPlayerId($rows);
