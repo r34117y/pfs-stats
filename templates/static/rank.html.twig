@@ -23,6 +23,25 @@
             margin-bottom: 1rem;
         }
 
+        .player-cell {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+
+        .player-main {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .player-mobile-meta {
+            display: none;
+            font-size: 0.85rem;
+            color: #7a7a7a;
+            line-height: 1.2;
+        }
+
         @media screen and (max-width: 768px) {
             .ranking-layout {
                 margin-top: 1rem;
@@ -30,6 +49,19 @@
 
             .ranking-header {
                 margin-bottom: 0.75rem;
+            }
+
+            .ranking-table {
+                min-width: 0;
+            }
+
+            .ranking-table th:nth-child(n+3),
+            .ranking-table td:nth-child(n+3) {
+                display: none;
+            }
+
+            .player-mobile-meta {
+                display: block;
             }
         }
     </style>
@@ -72,28 +104,31 @@
                         <tr>
                             <td class="has-text-centered" x-text="row.position + '.'"></td>
                             <td>
-                                <div class="is-flex is-align-items-center" style="gap: 0.5rem;">
-                                    <template x-if="row.photo">
-                                        <figure class="image is-32x32">
-                                            <img
-                                                x-bind:src="row.photo"
-                                                alt="Zdjecie zawodnika"
-                                                style="border-radius: 9999px; object-fit: cover; border: 1px solid #dbdbdb;"
+                                <div class="player-cell">
+                                    <div class="player-main">
+                                        <template x-if="row.photo">
+                                            <figure class="image is-32x32">
+                                                <img
+                                                    x-bind:src="row.photo"
+                                                    alt="Zdjecie zawodnika"
+                                                    style="border-radius: 9999px; object-fit: cover; border: 1px solid #dbdbdb;"
+                                                >
+                                            </figure>
+                                        </template>
+                                        <template x-if="!row.photo">
+                                            <div
+                                                class="is-flex is-justify-content-center is-align-items-center"
+                                                style="width: 32px; height: 32px; border-radius: 9999px; border: 1px solid #dbdbdb; background: #f5f5f5;"
+                                                aria-label="Brak zdjecia"
                                             >
-                                        </figure>
-                                    </template>
-                                    <template x-if="!row.photo">
-                                        <div
-                                            class="is-flex is-justify-content-center is-align-items-center"
-                                            style="width: 32px; height: 32px; border-radius: 9999px; border: 1px solid #dbdbdb; background: #f5f5f5;"
-                                            aria-label="Brak zdjecia"
-                                        >
-                                            <svg viewBox="0 0 24 24" width="18" height="18" fill="#7a7a7a" aria-hidden="true">
-                                                <path d="M12 12c2.76 0 5-2.47 5-5.5S14.76 1 12 1 7 3.47 7 6.5 9.24 12 12 12Zm0 2c-4.42 0-8 2.91-8 6.5V23h16v-2.5c0-3.59-3.58-6.5-8-6.5Z"></path>
-                                            </svg>
-                                        </div>
-                                    </template>
-                                    <a :href="`/players/${row.playerId}`" x-text="row.nameShow"></a>
+                                                <svg viewBox="0 0 24 24" width="18" height="18" fill="#7a7a7a" aria-hidden="true">
+                                                    <path d="M12 12c2.76 0 5-2.47 5-5.5S14.76 1 12 1 7 3.47 7 6.5 9.24 12 12 12Zm0 2c-4.42 0-8 2.91-8 6.5V23h16v-2.5c0-3.59-3.58-6.5-8-6.5Z"></path>
+                                                </svg>
+                                            </div>
+                                        </template>
+                                        <a :href="`/players/${row.playerId}`" x-text="row.nameShow"></a>
+                                    </div>
+                                    <div class="player-mobile-meta" x-text="formatMobileSummary(row)"></div>
                                 </div>
                             </td>
                             <td class="has-text-centered" x-text="row.rank"></td>
@@ -182,6 +217,18 @@
                     }
 
                     return formatted;
+                },
+                formatMobileSummary(row) {
+                    const gamesValue = row.numberOfGames ?? '-';
+                    const rankDelta = this.formatSigned(row.rankDelta, 2);
+                    const positionDelta = this.formatSigned(row.positionDelta);
+                    const hasAnyDelta = rankDelta !== '-' || positionDelta !== '-';
+
+                    if (!hasAnyDelta) {
+                        return `${gamesValue} g.`;
+                    }
+
+                    return `${gamesValue} g. (${rankDelta}, ${positionDelta})`;
                 },
                 nextPage() {
                     if((this.curPage * this.pageSize) < this.ranking.length) {
