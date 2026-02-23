@@ -37,7 +37,7 @@
 
         .player-mobile-meta {
             display: none;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: #7a7a7a;
             line-height: 1.2;
         }
@@ -61,7 +61,13 @@
             }
 
             .player-mobile-meta {
-                display: block;
+                display: grid;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 0.25rem;
+            }
+
+            .player-mobile-meta > span {
+                text-align: center;
             }
         }
     </style>
@@ -128,7 +134,12 @@
                                         </template>
                                         <a :href="`/players/${row.playerId}`" x-text="row.nameShow"></a>
                                     </div>
-                                    <div class="player-mobile-meta" x-text="formatMobileSummary(row)"></div>
+                                    <div class="player-mobile-meta">
+                                        <span x-text="formatMobilePlain(row.rank)"></span>
+                                        <span x-text="formatMobilePlain(row.numberOfGames)"></span>
+                                        <span x-text="formatSigned(row.rankDelta, 2)"></span>
+                                        <span x-text="formatSigned(row.positionDelta)"></span>
+                                    </div>
                                 </div>
                             </td>
                             <td class="has-text-centered" x-text="row.rank"></td>
@@ -218,17 +229,12 @@
 
                     return formatted;
                 },
-                formatMobileSummary(row) {
-                    const gamesValue = row.numberOfGames ?? '-';
-                    const rankDelta = this.formatSigned(row.rankDelta, 2);
-                    const positionDelta = this.formatSigned(row.positionDelta);
-                    const hasAnyDelta = rankDelta !== '-' || positionDelta !== '-';
-
-                    if (!hasAnyDelta) {
-                        return `${gamesValue} g.`;
+                formatMobilePlain(value) {
+                    if (parseInt(value) === 0 || value === null || value === undefined || value === '') {
+                        return '-';
                     }
 
-                    return `${gamesValue} g. (${rankDelta}, ${positionDelta})`;
+                    return value;
                 },
                 nextPage() {
                     if((this.curPage * this.pageSize) < this.ranking.length) {
