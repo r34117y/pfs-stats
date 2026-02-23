@@ -57,15 +57,14 @@ final class CalculateOldMethodCurrentRankingCommand extends Command
                 $row['position'],
                 $row['playerId'],
                 $row['playerName'],
-                number_format($row['rankExact'], 4, '.', ''),
-                $row['rankRounded'],
+                number_format($row['rankExact'], 2, '.', ''),
                 $row['games'],
                 $row['tournaments'],
             ];
         }
 
         $io->table(
-            ['Pos', 'Player ID', 'Player', 'Rank (exact)', 'Rank (rounded)', 'Games', 'Tournaments'],
+            ['Pos', 'Player ID', 'Player', 'Rank', 'Games', 'Tournaments'],
             $tableRows
         );
 
