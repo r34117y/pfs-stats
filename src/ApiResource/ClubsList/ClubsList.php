@@ -4,7 +4,7 @@ namespace App\ApiResource\ClubsList;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
-use App\ApiResource\PlayersList\PlayersListPlayer;
+use App\State\Provider\ClubsListProvider;
 
 #[ApiResource(
     operations: [
@@ -15,9 +15,8 @@ use App\ApiResource\PlayersList\PlayersListPlayer;
         ),
     ],
 )]
-class ClubsList
+final readonly class ClubsList
 {
-
     /**
      * @param ClubsListClub[] $clubs
      */
