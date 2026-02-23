@@ -1,5 +1,65 @@
 {% extends 'base.html.twig' %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .tournament-cell {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+
+        .tournament-mobile-meta {
+            display: none;
+            font-size: 0.8rem;
+            color: #7a7a7a;
+            line-height: 1.2;
+        }
+
+        @media screen and (max-width: 768px) {
+            .tournaments-table {
+                width: 100%;
+                table-layout: fixed;
+            }
+
+            .tournaments-table th:not(:nth-child(2)),
+            .tournaments-table td:not(:nth-child(2)) {
+                display: none;
+            }
+
+            .tournaments-table th:nth-child(2),
+            .tournaments-table td:nth-child(2) {
+                width: 100%;
+            }
+
+            .tournament-name-link {
+                display: block;
+                max-width: 100%;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .tournament-mobile-meta {
+                display: grid;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 0.25rem;
+                margin-top: 0.35rem;
+                padding-top: 0.35rem;
+                border-top: 1px solid #e5e5e5;
+            }
+
+            .tournament-mobile-meta > span {
+                text-align: center;
+            }
+
+            .tournament-mobile-meta > span + span {
+                border-left: 1px solid #e5e5e5;
+            }
+        }
+    </style>
+{% endblock %}
+
 {% block body %}
     <div x-data="tournamentsData()" x-init="fetchTournaments()"
          style="display: flex; justify-content: center; margin-top: 64px;">
@@ -11,23 +71,33 @@
                 <input class="input" type="search" placeholder="Filtruj" @input="setSearch($event.target.value)">
             </div>
             {% include 'static/_partials/_pagination.html.twig' with {position: 'top'} %}
-            <table class="table is-bordered is-hoverable is-fullwidth">
+            <table class="table is-bordered is-hoverable is-fullwidth tournaments-table">
                 <thead>
                 <tr>
-                    <th @click="sort('startDate')">Data rozpoczęcia</th>
-                    <th @click="sort('name')">Turniej</th>
-                    <th @click="sort('tournamentRank')">Rank turnieju</th>
-                    <th @click="sort('numberOfPlayers')">Liczba graczy</th>
-                    <th @click="sort('winnerName')">Zwycięzca</th>
+                    <th class="has-text-centered" @click="sort('startDate')">Data rozp.</th>
+                    <th class="has-text-centered" @click="sort('name')">Turniej</th>
+                    <th class="has-text-centered" @click="sort('tournamentRank')">Rank</th>
+                    <th class="has-text-centered" @click="sort('numberOfPlayers')">Graczy</th>
+                    <th class="has-text-centered" @click="sort('winnerName')">Zwycięzca</th>
                 </tr>
                 </thead>
                 <tbody>
                 <template x-for="tour in pagedTournaments" :key="tour.id">
                     <tr>
-                        <td class="text-center" x-text="tour.startDate"></td>
-                        <td><a :href="`/tournaments/${tour.id}`" x-text="tour.name"></a></td>
-                        <td class="text-center" x-text="tour.tournamentRank"></td>
-                        <td class="text-center" x-text="tour.numberOfPlayers"></td>
+                        <td class="has-text-centered" x-text="tour.startDate"></td>
+                        <td>
+                            <div class="tournament-cell">
+                                <a class="tournament-name-link" :href="`/tournaments/${tour.id}`" x-text="tour.name"></a>
+                                <div class="tournament-mobile-meta">
+                                    <span x-text="formatMobilePlain(tour.startDate)"></span>
+                                    <span x-text="formatMobilePlain(tour.tournamentRank)"></span>
+                                    <span x-text="formatMobilePlain(tour.numberOfPlayers)"></span>
+                                    <span x-text="formatMobilePlain(tour.winnerName)"></span>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="has-text-centered" x-text="tour.tournamentRank"></td>
+                        <td class="has-text-centered" x-text="tour.numberOfPlayers"></td>
                         <th class="text-center">
                             <a x-text="tour.winnerName" :href="`/players/${tour.winnerId}`"></a>
                         </th>
@@ -84,6 +154,13 @@
                 setSearch (search) {
                     this.curPage = 1;
                     this.search = search;
+                },
+                formatMobilePlain(value) {
+                    if (parseInt(value) === 0 || value === null || value === undefined || value === '') {
+                        return '-';
+                    }
+
+                    return value;
                 },
                 get filteredTournaments() {
                     if (this.search === '') {
