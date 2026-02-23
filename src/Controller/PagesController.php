@@ -14,6 +14,12 @@ class PagesController extends AbstractController
         return $this->render('static/rank.html.twig');
     }
 
+    #[Route('/old-rank', name: 'app_old_ranking_page')]
+    public function oldRank(): Response
+    {
+        return $this->render('static/old_rank.html.twig');
+    }
+
     #[Route('/players', name: 'app_players_page')]
     public function players(): Response
     {
