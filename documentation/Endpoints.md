@@ -33,6 +33,12 @@ Description: Paginated list (page size: 50) of annotated games from `PFSGCG`. Co
 - `playerName` (optional)
 - `tournamentName` (optional)
 
+## Annotated Game Details
+
+Endpoint: GET `/games/{tournamentId}-{round}-{player1Id}`
+Type: ApiResource
+Description: Returns details of a single annotated game from `PFSGCG` identified by key `{tournamentId}-{round}-{player1Id}`. Response includes `data` and `updated`.
+
 ## Games Page
 
 Endpoint: GET `/games`
