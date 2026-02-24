@@ -56,7 +56,7 @@ final readonly class OldRankingProvider implements ProviderInterface
                 nameAlph: (string) $row['playerNameAlph'],
                 playerId: $playerId,
                 photo: $photosByPlayerId[$playerId] ?? null,
-                rank: (float) $row['rankExact'],
+                rank: round($row['rankExact'], 2),
                 numberOfGames: (int) $row['games'],
                 rankDelta: null,
                 positionDelta: null,
