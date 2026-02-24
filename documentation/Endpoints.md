@@ -33,6 +33,12 @@ Description: Paginated list (page size: 50) of annotated games from `PFSGCG`. Co
 - `playerName` (optional)
 - `tournamentName` (optional)
 
+## Games Page
+
+Endpoint: GET `/games`
+Type: Controller renders Twig + AlpineJS fetches table as ApiResource
+Description: Annotated games page with paginated table and filters for player name and tournament name.
+
 ## Player profile
 
 Endpoint: GET `/players/{playerId}`

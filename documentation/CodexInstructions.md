@@ -18,3 +18,5 @@
 - There are two database connections in the app: Postgres and MySQL. Always choose the proper one
   - Users stored in postgres are connected with players stored in mysql through app_user.player_id
   - Mysql database is readonly - we never want to store anything there
+- You can execute commands in docker containers to verify that your code works as intended
+  - Containers for this project are prefixed with `scrabble-stats-api-`, for example `scrabble-stats-api-mysql-1`
