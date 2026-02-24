@@ -4,6 +4,7 @@ namespace App\ApiResource\AnnotatedGameDetails;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
+use App\GcgParser\ParsedGcg\ParsedGcg;
 use App\State\Provider\AnnotatedGameDetailsProvider;
 
 #[ApiResource(
@@ -23,6 +24,7 @@ final readonly class AnnotatedGameDetails
         public int $player1Id,
         public string $data,
         public string $updated,
+        public ParsedGcg $parsedGcg,
     ) {
     }
 }
