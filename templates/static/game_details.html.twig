@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div x-data="annotatedGameDetails('{{ gameId|e('js') }}')" x-init="fetchDetails()" style="margin-top: 2rem;">
+        <template x-if="loading">
+            <p>Ładowanie...</p>
+        </template>
+
+        <div x-show="!loading" class="box">
+            <div class="mb-4 is-flex is-justify-content-space-between is-align-items-center" style="gap: 0.5rem; flex-wrap: wrap;">
+                <h1 class="title is-4 mb-0">Zapis gry</h1>
+                <a href="/games" class="button is-light">Powrót do listy</a>
+            </div>
+
+            <template x-if="errorMessage !== ''">
+                <article class="message is-danger">
+                    <div class="message-body" x-text="errorMessage"></div>
+                </article>
+            </template>
+
+            <template x-if="errorMessage === '' && details !== null">
+                <div>
+                    <p class="mb-2"><strong>Klucz:</strong> <span x-text="gameId"></span></p>
+                    <p class="mb-4"><strong>Ostatnia aktualizacja:</strong> <span x-text="details.updated"></span></p>
+
+                    <label class="label">Treść zapisu</label>
+                    <pre style="white-space: pre-wrap; word-break: break-word;"><code x-text="details.data"></code></pre>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <script>
+        function annotatedGameDetails(gameId) {
+            return {
+                gameId,
+                details: null,
+                loading: true,
+                errorMessage: '',
+
+                async fetchDetails() {
+                    this.loading = true;
+                    this.errorMessage = '';
+
+                    try {
+                        const response = await fetch(`/api/games/${this.gameId}`);
+
+                        if (!response.ok) {
+                            throw new Error('Nie udało się pobrać szczegółów zapisu gry.');
+                        }
+
+                        this.details = await response.json();
+                    } catch (error) {
+                        console.error('Błąd:', error);
+                        this.details = null;
+                        this.errorMessage = error instanceof Error ? error.message : 'Wystąpił nieoczekiwany błąd.';
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+            };
+        }
+    </script>
+{% endblock %}

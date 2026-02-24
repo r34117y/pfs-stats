@@ -127,6 +127,14 @@ class PagesController extends AbstractController
         return $this->render('static/games.html.twig');
     }
 
+    #[Route('/games/{id<\d+-\d+-\d+>}', name: 'app_game_details_page', methods: ['GET'])]
+    public function gameDetails(string $id): Response
+    {
+        return $this->render('static/game_details.html.twig', [
+            'gameId' => $id,
+        ]);
+    }
+
     #[Route('/tournaments/{tournamentId<\d+>}', name: 'app_tournament_details_page', methods: ['GET'])]
     public function tournamentDetails(int $tournamentId): Response
     {
