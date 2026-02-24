@@ -2,8 +2,6 @@
 
 namespace App\GcgParser\ParsedGcg\Events;
 
-use App\Domain\Scrabble\Enum\EventTypeEnum;
-
 final class PlayEvent extends AbstractEvent
 {
     private array $words;

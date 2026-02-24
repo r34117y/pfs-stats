@@ -2,8 +2,6 @@
 
 namespace App\GcgParser\ParsedGcg\Events;
 
-use App\Domain\Scrabble\Enum\EventTypeEnum;
-
 /**
  * This class represents the final two moves of a Scrabble game,
  * during which the total point value of the tiles remaining on the rack

@@ -2,8 +2,6 @@
 
 namespace App\GcgParser\ParsedGcg\Events;
 
-use App\Domain\Scrabble\Enum\EventTypeEnum;
-
 class WithdrawalEvent extends AbstractEvent
 {
 
