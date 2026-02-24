@@ -16,7 +16,6 @@
                         type="search"
                         placeholder="Wpisz nazwę zawodnika"
                         x-model="playerName"
-                        @input="applyFiltersDebounced()"
                     >
                 </div>
                 <div class="column is-12-mobile is-6-tablet">
@@ -27,9 +26,11 @@
                         type="search"
                         placeholder="Wpisz nazwę turnieju"
                         x-model="tournamentName"
-                        @input="applyFiltersDebounced()"
                     >
                 </div>
+            </div>
+            <div class="mb-4">
+                <button class="button is-link" @click="applyFilters" :disabled="loading">Filtruj</button>
             </div>
 
             <div class="is-flex is-justify-content-space-between is-align-items-center mb-3" style="gap: 0.5rem; flex-wrap: wrap;">
@@ -56,10 +57,16 @@
                     </template>
                     <template x-for="(game, index) in games" :key="`${game.tournamentName}-${game.round}-${game.player1Name}-${game.player2Name}-${index}`">
                         <tr>
-                            <td x-text="game.tournamentName"></td>
+                            <td>
+                                <a :href="`/tournaments/${game.tournamentId}`" x-text="game.tournamentName"></a>
+                            </td>
                             <td class="has-text-centered" x-text="game.round"></td>
-                            <td x-text="game.player1Name"></td>
-                            <td x-text="game.player2Name"></td>
+                            <td>
+                                <a :href="`/players/${game.player1Id}`" x-text="game.player1Name"></a>
+                            </td>
+                            <td>
+                                <a :href="`/players/${game.player2Id}`" x-text="game.player2Name"></a>
+                            </td>
                         </tr>
                     </template>
                     </tbody>
@@ -85,7 +92,6 @@
                 playerName: '',
                 tournamentName: '',
                 loading: true,
-                debounceTimer: null,
 
                 async fetchGames() {
                     this.loading = true;
@@ -125,15 +131,13 @@
                     }
                 },
 
-                applyFiltersDebounced() {
-                    if (this.debounceTimer !== null) {
-                        clearTimeout(this.debounceTimer);
+                applyFilters() {
+                    if (this.loading) {
+                        return;
                     }
 
-                    this.debounceTimer = setTimeout(() => {
-                        this.page = 1;
-                        this.fetchGames();
-                    }, 300);
+                    this.page = 1;
+                    this.fetchGames();
                 },
 
                 nextPage() {

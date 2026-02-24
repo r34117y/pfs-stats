@@ -64,9 +64,12 @@ final readonly class AnnotatedGamesService
 
         $rows = $this->connection->fetchAllAssociative(
             "SELECT
+                page.tourId AS tournamentId,
                 COALESCE(t.fullname, t.name) AS tournamentName,
                 page.roundNo,
+                page.player1Id,
                 p1.name_show AS player1Name,
+                page.player2Id,
                 p2.name_show AS player2Name
             FROM (
                 SELECT
@@ -95,9 +98,12 @@ final readonly class AnnotatedGamesService
 
         $items = array_map(
             static fn (array $row): AnnotatedGamesRow => new AnnotatedGamesRow(
+                tournamentId: (int) $row['tournamentId'],
                 tournamentName: (string) $row['tournamentName'],
                 round: (int) $row['roundNo'],
+                player1Id: (int) $row['player1Id'],
                 player1Name: (string) $row['player1Name'],
+                player2Id: (int) $row['player2Id'],
                 player2Name: (string) $row['player2Name'],
             ),
             $rows
