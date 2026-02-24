@@ -43,13 +43,18 @@ final readonly class AnnotatedGamesService
         $totalItems = (int) $this->connection->fetchOne(
             "SELECT COUNT(*)
             FROM PFSGCG g
-            INNER JOIN PFSTOURS t ON t.id = g.turniej
+            INNER JOIN PFSTOURS t ON t.id = g.tour
+            INNER JOIN PFSTOURHH h
+                ON h.turniej = g.tour
+               AND h.runda = g.`round`
+               AND h.player1 = g.player1
             INNER JOIN PFSPLAYER p1 ON p1.id = g.player1
-            INNER JOIN PFSPLAYER p2 ON p2.id = g.player2
+            INNER JOIN PFSPLAYER p2 ON p2.id = h.player2
             {$whereSql}",
             $params,
             $types,
         );
+        //$totalItems = 10000; // todo optimize query
 
         $totalPages = max(1, (int) ceil($totalItems / self::PAGE_SIZE));
         $offset = ($page - 1) * self::PAGE_SIZE;
@@ -62,15 +67,19 @@ final readonly class AnnotatedGamesService
         $rows = $this->connection->fetchAllAssociative(
             "SELECT
                 COALESCE(t.fullname, t.name) AS tournamentName,
-                g.runda AS roundNo,
+                g.`round` AS roundNo,
                 p1.name_show AS player1Name,
                 p2.name_show AS player2Name
             FROM PFSGCG g
-            INNER JOIN PFSTOURS t ON t.id = g.turniej
+            INNER JOIN PFSTOURS t ON t.id = g.tour
+            INNER JOIN PFSTOURHH h
+                ON h.turniej = g.tour
+               AND h.runda = g.`round`
+               AND h.player1 = g.player1
             INNER JOIN PFSPLAYER p1 ON p1.id = g.player1
-            INNER JOIN PFSPLAYER p2 ON p2.id = g.player2
+            INNER JOIN PFSPLAYER p2 ON p2.id = h.player2
             {$whereSql}
-            ORDER BY t.dt DESC, g.turniej DESC, g.runda ASC, p1.name_show ASC, p2.name_show ASC
+            ORDER BY t.dt DESC, g.tour DESC, g.`round` ASC, p1.name_show ASC, p2.name_show ASC
             LIMIT :limit OFFSET :offset",
             $params,
             $types,
