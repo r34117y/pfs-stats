@@ -15,6 +15,8 @@ use App\GcgParser\ParsedGcg\Player;
 
 class GcgParser
 {
+    private const string SIGNED_SCORE_PATTERN = '([+\-](?:\d+|-\d+))';
+
     /**
      * @throws InvalidGcgEventException
      */
@@ -80,7 +82,7 @@ class GcgParser
             $rack = $m[2];
             $rest = $m[3];
             // Regular play: pos word +score cumulative
-            if (preg_match('/^([A-Za-z0-9]+)\s+([\p{L}?_.]+)\s*([+\-][0-9]+)\s+([0-9]+)\s*((\/[\p{L}]+)+)?$/u', $rest, $mm)) {
+            if (preg_match('/^([A-Za-z0-9]+)\s+([\p{L}?_.]+)\s*' . self::SIGNED_SCORE_PATTERN . '\s+([0-9]+)\s*((\/[\p{L}]+)+)?$/u', $rest, $mm)) {
                 $words = [$mm[2]];
                 // other words are concept existing only in Kurnik's GCG
                 // not really GCG specification, but pretty useful extension
@@ -93,60 +95,71 @@ class GcgParser
                 return new PlayEvent(
                     $player,
                     $rack,
-                    (int)$mm[3],
+                    $this->parseSignedScore($mm[3]),
                     (int)$mm[4],
                     $mm[1],
                     $words
                 );
             }
             // Pass: - +0 cumulative
-            if (preg_match('/^-\s*([+\-][0-9]+)\s+([0-9]+)$/', $rest, $mm)) {
+            if (preg_match('/^-\s*' . self::SIGNED_SCORE_PATTERN . '\s+([0-9]+)$/', $rest, $mm)) {
                 return new PassEvent(
                     $player,
                     $rack,
-                    (int)$mm[1],
+                    $this->parseSignedScore($mm[1]),
                     (int)$mm[2],
                     'todo'
                 );
             }
             // Exchange: -TILES +0 cumulative
-            if (preg_match('/^-([\p{L}?_]+)\s*([+\-][0-9]+)\s+([0-9]+)$/u', $rest, $mm)) {
+            // Per GCG spec, exchanged tiles may be unknown and represented as a count (1-7), e.g. "-4".
+            if (preg_match('/^-(?:([\p{L}?_]+)|([1-7]))\s*' . self::SIGNED_SCORE_PATTERN . '\s+([0-9]+)$/u', $rest, $mm)) {
+                $exchanged = (string) ($mm[1] !== '' ? $mm[1] : $mm[2]);
                 return new ExchangeEvent(
                     $player,
                     $rack,
-                    (int)$mm[2],
-                    (int)$mm[3],
-                    $mm[1],
+                    $this->parseSignedScore($mm[3]),
+                    (int)$mm[4],
+                    $exchanged,
                 );
             }
             // Withdrawal: -- -score cumulative
-            if (preg_match('/^--\s*([+\-][0-9]+)\s+([0-9]+)$/', $rest, $mm)) {
+            if (preg_match('/^--\s*' . self::SIGNED_SCORE_PATTERN . '\s+([0-9]+)$/', $rest, $mm)) {
                 return new WithdrawalEvent(
                     $player,
                     $rack,
-                    (int)$mm[1],
+                    $this->parseSignedScore($mm[1]),
                     (int)$mm[2],
                 );
             }
             // Challenge: (challenge) +score cumulative
-            if (preg_match('/^\(challenge\)\s*([+\-][0-9]+)\s+([0-9]+)$/', $rest, $mm)) {
+            if (preg_match('/^\(challenge\)\s*' . self::SIGNED_SCORE_PATTERN . '\s+([0-9]+)$/', $rest, $mm)) {
                 throw new \Exception('Challenge event not implemented');
             }
             // Points for last rack: (TILES) +score cumulative (allow empty rack and whitespace)
-            if (preg_match('/^\( *([\p{L}?_]+) *\)\s*([+\-][0-9]+)\s+([0-9]+)$/u', $rest, $mm)) {
+            if (preg_match('/^\( *([\p{L}?_]+) *\)\s*' . self::SIGNED_SCORE_PATTERN . '\s+([0-9]+)$/u', $rest, $mm)) {
                 return new EndgameEvent(
                     $player,
                     $rack,
-                    (int)$mm[2],
+                    $this->parseSignedScore($mm[2]),
                     (int)$mm[3],
                 );
             }
             // Time penalty: (time) -score cumulative
-            if (preg_match('/^\(time\)\s*([+\-][0-9]+)\s+([0-9]+)$/', $rest, $mm)) {
+            if (preg_match('/^\(time\)\s*' . self::SIGNED_SCORE_PATTERN . '\s+([0-9]+)$/', $rest, $mm)) {
                 throw new \Exception('Time penalty not implemented');
             }
         }
 
         throw new InvalidGcgEventException(sprintf('Invalid event: %s', $line));
+    } 
+
+    private function parseSignedScore(string $scoreToken): int
+    {
+        if (str_starts_with($scoreToken, '+-')) {
+            return -((int) substr($scoreToken, 2));
+        }
+
+        return (int) $scoreToken;
     }
 } 
