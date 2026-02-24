@@ -1,5 +1,100 @@
 {% extends 'base.html.twig' %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .game-layout {
+            display: grid;
+            grid-template-columns: minmax(320px, 520px) minmax(260px, 1fr);
+            gap: 1rem;
+        }
+
+        .scrabble-board {
+            display: grid;
+            grid-template-columns: repeat(15, 1fr);
+            gap: 2px;
+            width: min(100%, 520px);
+            aspect-ratio: 1 / 1;
+            background: #c8b487;
+            padding: 6px;
+            border-radius: 8px;
+            box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+        }
+
+        .scrabble-cell {
+            background: #f3e6c4;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 3px;
+            min-width: 0;
+            min-height: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: #5a4d2f;
+        }
+
+        .scrabble-cell.tw { background: #ef9a9a; }
+        .scrabble-cell.dw,
+        .scrabble-cell.center { background: #f8bbd0; }
+        .scrabble-cell.tl { background: #90caf9; }
+        .scrabble-cell.dl { background: #b3e5fc; }
+
+        .scrabble-tile {
+            width: 100%;
+            height: 100%;
+            border-radius: 2px;
+            background: #fef8e7;
+            border: 1px solid rgba(0, 0, 0, 0.18);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #3d3220;
+        }
+
+        .moves-list {
+            max-height: 520px;
+            overflow-y: auto;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 8px;
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.7);
+        }
+
+        .move-item {
+            width: 100%;
+            text-align: left;
+            border: 1px solid transparent;
+            background: transparent;
+            border-radius: 6px;
+            padding: 0.45rem 0.6rem;
+            cursor: pointer;
+        }
+
+        .move-item:hover {
+            background: #f7f9fc;
+            border-color: rgba(0, 0, 0, 0.08);
+        }
+
+        .move-item.is-active {
+            background: #e8f1ff;
+            border-color: #8bb8ff;
+        }
+
+        @media screen and (max-width: 960px) {
+            .game-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .moves-list {
+                max-height: 340px;
+            }
+        }
+    </style>
+{% endblock %}
+
 {% block body %}
     <div x-data="annotatedGameDetails('{{ gameId|e('js') }}')" x-init="fetchDetails()" style="margin-top: 2rem;">
         <template x-if="loading">
@@ -20,11 +115,47 @@
 
             <template x-if="errorMessage === '' && details !== null">
                 <div>
-                    <p class="mb-2"><strong>Klucz:</strong> <span x-text="gameId"></span></p>
                     <p class="mb-4"><strong>Ostatnia aktualizacja:</strong> <span x-text="details.updated"></span></p>
 
-                    <label class="label">Treść zapisu</label>
-                    <pre style="white-space: pre-wrap; word-break: break-word;"><code x-text="details.data"></code></pre>
+                    <div class="buttons mb-3">
+                        <button class="button" @click="goStart" :disabled="events.length === 0 || selectedMoveIndex === null">|&lt;</button>
+                        <button class="button" @click="goPrev" :disabled="events.length === 0 || selectedMoveIndex === null">&lt;</button>
+                        <button class="button" @click="goNext" :disabled="events.length === 0 || selectedMoveIndex === events.length - 1">&gt;</button>
+                        <button class="button" @click="goEnd" :disabled="events.length === 0 || selectedMoveIndex === events.length - 1">&gt;|</button>
+                        <button class="button is-light" @click="selectedMoveIndex = null">Wyczyść planszę</button>
+                    </div>
+
+                    <div class="game-layout">
+                        <div>
+                            {% include 'static/_partials/_board.html.twig' %}
+                        </div>
+
+                        <div>
+                            <div class="moves-list">
+                                <template x-if="events.length === 0">
+                                    <p class="has-text-grey">Brak ruchów do wyświetlenia.</p>
+                                </template>
+
+                                <template x-for="(event, index) in events" :key="event['@id'] ?? `e-${index}`">
+                                    <button
+                                        type="button"
+                                        class="move-item"
+                                        :class="{'is-active': selectedMoveIndex === index}"
+                                        @click="selectedMoveIndex = index"
+                                    >
+                                        <strong x-text="`${index + 1}. ${event.playerNick}`"></strong>
+                                        <span x-text="` • ${eventLabel(event)}`"></span>
+                                        <span x-text="` • ${formatScore(event.score)} (${event.totalScore})`"></span>
+                                    </button>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+
+                    <details class="mt-4">
+                        <summary class="is-clickable">Pokaż GCG</summary>
+                        <pre style="white-space: pre-wrap; word-break: break-word; margin-top: 0.75rem;"><code x-text="details.data"></code></pre>
+                    </details>
                 </div>
             </template>
         </div>
@@ -32,11 +163,218 @@
 
     <script>
         function annotatedGameDetails(gameId) {
+            const SIZE = 15;
+            const emptyBoard = () => Array.from({length: SIZE}, () => Array.from({length: SIZE}, () => null));
+
+            const bonusMap = {
+                '0,0': 'tw', '0,7': 'tw', '0,14': 'tw', '7,0': 'tw', '7,14': 'tw', '14,0': 'tw', '14,7': 'tw', '14,14': 'tw',
+                '1,1': 'dw', '2,2': 'dw', '3,3': 'dw', '4,4': 'dw', '10,10': 'dw', '11,11': 'dw', '12,12': 'dw', '13,13': 'dw',
+                '1,13': 'dw', '2,12': 'dw', '3,11': 'dw', '4,10': 'dw', '10,4': 'dw', '11,3': 'dw', '12,2': 'dw', '13,1': 'dw',
+                '0,3': 'dl', '0,11': 'dl', '2,6': 'dl', '2,8': 'dl', '3,0': 'dl', '3,7': 'dl', '3,14': 'dl',
+                '6,2': 'dl', '6,6': 'dl', '6,8': 'dl', '6,12': 'dl', '7,11': 'dl', '8,2': 'dl', '8,6': 'dl', '8,8': 'dl', '8,12': 'dl',
+                '11,0': 'dl', '11,7': 'dl', '11,14': 'dl', '12,6': 'dl', '12,8': 'dl', '14,3': 'dl', '14,11': 'dl',
+                '5,5': 'tl', '5,9': 'tl', '9,5': 'tl', '9,9': 'tl', '1,5': 'tl', '1,9': 'tl', '13,5': 'tl', '13,9': 'tl',
+                '5,1': 'tl', '5,13': 'tl', '9,1': 'tl', '9,13': 'tl',
+            };
+
+            const fieldToCoords = (field) => {
+                const letterFirst = /^[A-Z]/i.test(field);
+
+                if (letterFirst) {
+                    const col = field.charCodeAt(0) - 'A'.charCodeAt(0);
+                    const row = parseInt(field.slice(1), 10) - 1;
+                    return {row, col, vertical: true};
+                }
+
+                const row = parseInt(field.slice(0, -1), 10) - 1;
+                const col = field.slice(-1).toUpperCase().charCodeAt(0) - 'A'.charCodeAt(0);
+                return {row, col, vertical: false};
+            };
+
             return {
                 gameId,
                 details: null,
                 loading: true,
                 errorMessage: '',
+                board: emptyBoard(),
+                selectedMoveIndex: null,
+
+                get events() {
+                    return this.details?.parsedGcg?.events ?? [];
+                },
+
+                tileClass(row, col) {
+                    if (row === 7 && col === 7) {
+                        return 'center';
+                    }
+
+                    return bonusMap[`${row},${col}`] ?? '';
+                },
+
+                renderTile(x, y) {
+                    const tile = this.board[x][y];
+                    if (!tile) {
+                        return '';
+                    }
+
+                    return `<div class="scrabble-tile"><span>${tile.letter}</span></div>`;
+                },
+
+                renderBoardUntil(selectedMoveIndex) {
+                    this.board = emptyBoard();
+
+                    if (selectedMoveIndex === null) {
+                        return;
+                    }
+
+                    const events = this.events;
+                    for (let i = 0; i <= selectedMoveIndex && i < events.length; i++) {
+                        const event = events[i];
+                        const previousEvent = i > 0 ? events[i - 1] : null;
+
+                        if (event.type === 'p') {
+                            this.placeMove(event);
+                        } else if (event.type === 'w') {
+                            this.removePreviousMove(previousEvent);
+                        }
+                    }
+                },
+
+                placeMove(move) {
+                    const startField = move.startField;
+                    const words = move.words ?? [];
+                    const word = words.length > 0 ? words[0] : null;
+
+                    if (!startField || !word) {
+                        return;
+                    }
+
+                    const {row, col, vertical} = fieldToCoords(startField);
+
+                    for (let i = 0; i < word.length; i++) {
+                        const rune = word[i];
+                        if (rune === '.') {
+                            continue;
+                        }
+
+                        const r = vertical ? row + i : row;
+                        const c = vertical ? col : col + i;
+
+                        if (r < 0 || r >= SIZE || c < 0 || c >= SIZE) {
+                            continue;
+                        }
+
+                        this.board[r][c] = {letter: rune};
+                    }
+                },
+
+                removePreviousMove(previousEvent) {
+                    if (!previousEvent || previousEvent.type !== 'p') {
+                        return;
+                    }
+
+                    const startField = previousEvent.startField;
+                    const words = previousEvent.words ?? [];
+                    const word = words.length > 0 ? words[0] : null;
+
+                    if (!startField || !word) {
+                        return;
+                    }
+
+                    const {row, col, vertical} = fieldToCoords(startField);
+
+                    for (let i = 0; i < word.length; i++) {
+                        const rune = word[i];
+                        if (rune === '.') {
+                            continue;
+                        }
+
+                        const r = vertical ? row + i : row;
+                        const c = vertical ? col : col + i;
+
+                        if (r < 0 || r >= SIZE || c < 0 || c >= SIZE) {
+                            continue;
+                        }
+
+                        this.board[r][c] = null;
+                    }
+                },
+
+                eventLabel(event) {
+                    if (event.type === 'p') {
+                        const words = event.words ?? [];
+                        return `${event.startField} ${(words[0] ?? '')}`.trim();
+                    }
+
+                    if (event.type === 'x') {
+                        return `Wymiana ${event.exchanged ?? ''}`.trim();
+                    }
+
+                    if (event.type === 'pass') {
+                        return 'Pass';
+                    }
+
+                    if (event.type === 'w') {
+                        return 'Wycofanie po sprawdzeniu';
+                    }
+
+                    if (event.type === 'challenge') {
+                        return 'Sprawdzenie';
+                    }
+
+                    if (event.type === 'e') {
+                        return 'Koniec gry';
+                    }
+
+                    return event.type ?? 'Ruch';
+                },
+
+                formatScore(score) {
+                    if (typeof score !== 'number') {
+                        return '0';
+                    }
+
+                    return score > 0 ? `+${score}` : `${score}`;
+                },
+
+                goStart() {
+                    if (this.events.length === 0) {
+                        return;
+                    }
+
+                    this.selectedMoveIndex = 0;
+                },
+
+                goPrev() {
+                    if (this.selectedMoveIndex === null) {
+                        return;
+                    }
+
+                    this.selectedMoveIndex = this.selectedMoveIndex > 0 ? this.selectedMoveIndex - 1 : null;
+                },
+
+                goNext() {
+                    if (this.events.length === 0) {
+                        return;
+                    }
+
+                    if (this.selectedMoveIndex === null) {
+                        this.selectedMoveIndex = 0;
+                        return;
+                    }
+
+                    if (this.selectedMoveIndex < this.events.length - 1) {
+                        this.selectedMoveIndex++;
+                    }
+                },
+
+                goEnd() {
+                    if (this.events.length === 0) {
+                        return;
+                    }
+
+                    this.selectedMoveIndex = this.events.length - 1;
+                },
 
                 async fetchDetails() {
                     this.loading = true;
@@ -50,6 +388,8 @@
                         }
 
                         this.details = await response.json();
+                        this.selectedMoveIndex = this.events.length > 0 ? this.events.length - 1 : null;
+                        this.renderBoardUntil(this.selectedMoveIndex);
                     } catch (error) {
                         console.error('Błąd:', error);
                         this.details = null;
