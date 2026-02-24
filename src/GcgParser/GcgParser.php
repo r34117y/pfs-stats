@@ -114,7 +114,7 @@ class GcgParser
             }
             // Exchange: -TILES +0 cumulative
             // Per GCG spec, exchanged tiles may be unknown and represented as a count (1-7), e.g. "-4".
-            if (preg_match('/^-(?:([\p{L}?_]+)|([1-7]))\s*' . self::SIGNED_SCORE_PATTERN . '\s+([0-9]+)$/u', $rest, $mm)) {
+            if (preg_match('/^-(?:([\p{L}?_.]+)|([1-7]))\s*' . self::SIGNED_SCORE_PATTERN . '\s+([0-9]+)$/u', $rest, $mm)) {
                 $exchanged = (string) ($mm[1] !== '' ? $mm[1] : $mm[2]);
                 return new ExchangeEvent(
                     $player,
