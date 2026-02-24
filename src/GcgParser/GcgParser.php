@@ -3,6 +3,7 @@
 namespace App\GcgParser;
 
 use App\GcgParser\Exception\InvalidGcgEventException;
+use App\GcgParser\ParsedGcg\Events\ChallengeEvent;
 use App\GcgParser\ParsedGcg\Events\EndgameEvent;
 use App\GcgParser\ParsedGcg\Events\EventInterface;
 use App\GcgParser\ParsedGcg\Events\ExchangeEvent;
@@ -134,10 +135,15 @@ class GcgParser
             }
             // Challenge: (challenge) +score cumulative
             if (preg_match('/^\(challenge\)\s*' . self::SIGNED_SCORE_PATTERN . '\s+([0-9]+)$/', $rest, $mm)) {
-                throw new \Exception('Challenge event not implemented');
+                return new ChallengeEvent(
+                    $player,
+                    $rack,
+                    $this->parseSignedScore($mm[1]),
+                    (int)$mm[2],
+                );
             }
-            // Points for last rack: (TILES) +score cumulative (allow empty rack and whitespace)
-            if (preg_match('/^\( *([\p{L}?_]+) *\)\s*' . self::SIGNED_SCORE_PATTERN . '\s+([0-9]+)$/u', $rest, $mm)) {
+            // Points for last rack: (TILES) +score cumulative (tiles may be empty, e.g. "() +0 483")
+            if (preg_match('/^\( *([\p{L}?_]*) *\)\s*' . self::SIGNED_SCORE_PATTERN . '\s+([0-9]+)$/u', $rest, $mm)) {
                 return new EndgameEvent(
                     $player,
                     $rack,

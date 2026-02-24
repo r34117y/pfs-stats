@@ -5,7 +5,6 @@ namespace App\Service;
 use App\ApiResource\AnnotatedGameDetails\AnnotatedGameDetails;
 use App\GcgParser\Exception\InvalidGcgEventException;
 use App\GcgParser\GcgParser;
-use App\GcgParser\ParsedGcg\ParsedGcg;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;

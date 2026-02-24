@@ -4,6 +4,7 @@ namespace App\Command;
 
 use App\GcgParser\Exception\InvalidGcgEventException;
 use App\GcgParser\GcgParser;
+use App\GcgParser\ParsedGcg\Events\ChallengeEvent;
 use App\GcgParser\ParsedGcg\Events\EndgameEvent;
 use App\GcgParser\ParsedGcg\Events\EventInterface;
 use App\GcgParser\ParsedGcg\Events\ExchangeEvent;
@@ -174,6 +175,10 @@ final class ParseGcgCommand extends Command
 
         if ($event instanceof EndgameEvent) {
             return 'ENDGAME';
+        }
+
+        if ($event instanceof ChallengeEvent) {
+            return 'CHALLENGE';
         }
 
         if ($event instanceof WithdrawalEvent) {
