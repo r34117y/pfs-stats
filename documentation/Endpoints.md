@@ -24,6 +24,15 @@ Endpoint: GET `/tournaments`
 Type: Controller renders Twig + AlpineJS fetches table as ApiResource
 Description: Table with all the PFS tournaments
 
+## Annotated Games List
+
+Endpoint: GET `/annotated-games`
+Type: ApiResource
+Description: Paginated list (page size: 50) of annotated games from `PFSGCG`. Columns: Tournament Name, Round, Player1 Name, Player2 Name. Supports filtering by `playerName` (matches either player) and `tournamentName`. Query params:
+- `page` (default `1`)
+- `playerName` (optional)
+- `tournamentName` (optional)
+
 ## Player profile
 
 Endpoint: GET `/players/{playerId}`
