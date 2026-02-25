@@ -18,6 +18,8 @@ use App\ApiResource\Stats\GamesCount;
 use App\ApiResource\Stats\GamesCountRow;
 use App\ApiResource\Stats\GamesOver400;
 use App\ApiResource\Stats\GamesOver400Row;
+use App\ApiResource\Stats\DifferentOpponents;
+use App\ApiResource\Stats\DifferentOpponentsRow;
 use App\ApiResource\Stats\RankAllGames;
 use App\ApiResource\Stats\RankAllGamesRow;
 use App\ApiResource\Stats\HighestRank;
@@ -1044,6 +1046,70 @@ class StatsService
         }
 
         return new RankingLeaders($resultRows);
+    }
+
+    public function getDifferentOpponents(): DifferentOpponents
+    {
+        $today = new DateTimeImmutable('today');
+        $last24MonthsDateInt = (int) $today->modify('-24 months')->format('Ymd');
+        $last12MonthsDateInt = (int) $today->modify('-12 months')->format('Ymd');
+
+        $rows = $this->connection->fetchAllAssociative(
+            "WITH unique_games AS (
+                SELECT
+                    h.turniej,
+                    h.runda,
+                    h.player1,
+                    h.player2,
+                    t.dt,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY h.turniej, h.runda, LEAST(h.player1, h.player2), GREATEST(h.player1, h.player2)
+                        ORDER BY h.player1 ASC
+                    ) AS rn
+                FROM PFSTOURHH h
+                INNER JOIN PFSTOURS t ON t.id = h.turniej
+            ),
+            player_opponents AS (
+                SELECT ug.player1 AS player_id, ug.player2 AS opponent_id, ug.dt
+                FROM unique_games ug
+                WHERE ug.rn = 1
+
+                UNION ALL
+
+                SELECT ug.player2 AS player_id, ug.player1 AS opponent_id, ug.dt
+                FROM unique_games ug
+                WHERE ug.rn = 1
+            )
+            SELECT
+                p.id AS playerId,
+                p.name_show AS playerName,
+                COUNT(DISTINCT po.opponent_id) AS opponentsCount,
+                COUNT(DISTINCT CASE WHEN po.dt >= :last24MonthsDate THEN po.opponent_id ELSE NULL END) AS last24MonthsOpponentsCount,
+                COUNT(DISTINCT CASE WHEN po.dt >= :last12MonthsDate THEN po.opponent_id ELSE NULL END) AS last12MonthsOpponentsCount
+            FROM PFSPLAYER p
+            LEFT JOIN player_opponents po ON po.player_id = p.id
+            GROUP BY p.id, p.name_show
+            HAVING COUNT(po.opponent_id) > 0
+            ORDER BY last24MonthsOpponentsCount DESC, playerName ASC",
+            [
+                'last24MonthsDate' => $last24MonthsDateInt,
+                'last12MonthsDate' => $last12MonthsDateInt,
+            ]
+        );
+
+        $resultRows = [];
+        foreach ($rows as $index => $row) {
+            $resultRows[] = new DifferentOpponentsRow(
+                position: $index + 1,
+                playerId: (int) $row['playerId'],
+                playerName: (string) $row['playerName'],
+                opponentsCount: (int) $row['opponentsCount'],
+                last24MonthsOpponentsCount: (int) $row['last24MonthsOpponentsCount'],
+                last12MonthsOpponentsCount: (int) $row['last12MonthsOpponentsCount'],
+            );
+        }
+
+        return new DifferentOpponents($resultRows);
     }
 
     private function buildSummaryRow(string $statisticName, string|int $allTimesValue, string|int $last12MonthsValue): AllTimeSummaryRow
