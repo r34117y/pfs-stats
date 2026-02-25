@@ -20,6 +20,8 @@ use App\ApiResource\Stats\GamesOver400;
 use App\ApiResource\Stats\GamesOver400Row;
 use App\ApiResource\Stats\RankAllGames;
 use App\ApiResource\Stats\RankAllGamesRow;
+use App\ApiResource\Stats\HighestRank;
+use App\ApiResource\Stats\HighestRankRow;
 use App\ApiResource\Stats\GamesWon;
 use App\ApiResource\Stats\GamesWonRow;
 use App\ApiResource\Stats\TournamentsCount;
@@ -804,6 +806,88 @@ class StatsService
         }
 
         return new RankAllGames($resultRows);
+    }
+
+    public function getHighestRank(): HighestRank
+    {
+        $today = new DateTimeImmutable('today');
+        $last24MonthsDateInt = (int) $today->modify('-24 months')->format('Ymd');
+        $last12MonthsDateInt = (int) $today->modify('-12 months')->format('Ymd');
+
+        $rows = $this->connection->fetchAllAssociative(
+            "WITH unique_games AS (
+                SELECT
+                    h.turniej,
+                    h.runda,
+                    h.player1,
+                    h.player2,
+                    t.dt,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY h.turniej, h.runda, LEAST(h.player1, h.player2), GREATEST(h.player1, h.player2)
+                        ORDER BY h.player1 ASC
+                    ) AS rn
+                FROM PFSTOURHH h
+                INNER JOIN PFSTOURS t ON t.id = h.turniej
+            ),
+            player_games AS (
+                SELECT ug.player1 AS player_id, ug.dt
+                FROM unique_games ug
+                WHERE ug.rn = 1
+
+                UNION ALL
+
+                SELECT ug.player2 AS player_id, ug.dt
+                FROM unique_games ug
+                WHERE ug.rn = 1
+            ),
+            games_stats AS (
+                SELECT
+                    p.id AS playerId,
+                    p.name_show AS playerName,
+                    COUNT(pg.player_id) AS gamesCount,
+                    SUM(CASE WHEN pg.dt >= :last24MonthsDate THEN 1 ELSE 0 END) AS gamesCount24Months,
+                    SUM(CASE WHEN pg.dt >= :last12MonthsDate THEN 1 ELSE 0 END) AS gamesCount12Months
+                FROM PFSPLAYER p
+                LEFT JOIN player_games pg ON pg.player_id = p.id
+                GROUP BY p.id, p.name_show
+                HAVING COUNT(pg.player_id) >= 30
+            )
+            SELECT
+                gs.playerId,
+                gs.playerName,
+                MAX(tw.trank) AS highestRank,
+                CASE
+                    WHEN gs.gamesCount24Months >= 30 THEN MAX(CASE WHEN t.dt >= :last24MonthsDate THEN tw.trank ELSE NULL END)
+                    ELSE NULL
+                END AS highestRank24Months,
+                CASE
+                    WHEN gs.gamesCount12Months >= 30 THEN MAX(CASE WHEN t.dt >= :last12MonthsDate THEN tw.trank ELSE NULL END)
+                    ELSE NULL
+                END AS highestRank12Months
+            FROM games_stats gs
+            INNER JOIN PFSTOURWYN tw ON tw.player = gs.playerId
+            INNER JOIN PFSTOURS t ON t.id = tw.turniej
+            GROUP BY gs.playerId, gs.playerName, gs.gamesCount24Months, gs.gamesCount12Months
+            ORDER BY highestRank24Months DESC, gs.playerName ASC",
+            [
+                'last24MonthsDate' => $last24MonthsDateInt,
+                'last12MonthsDate' => $last12MonthsDateInt,
+            ]
+        );
+
+        $resultRows = [];
+        foreach ($rows as $index => $row) {
+            $resultRows[] = new HighestRankRow(
+                position: $index + 1,
+                playerId: (int) $row['playerId'],
+                playerName: (string) $row['playerName'],
+                highestRank: round((float) ($row['highestRank'] ?? 0.0), 2),
+                highestRank24Months: $row['highestRank24Months'] === null ? null : round((float) $row['highestRank24Months'], 2),
+                highestRank12Months: $row['highestRank12Months'] === null ? null : round((float) $row['highestRank12Months'], 2),
+            );
+        }
+
+        return new HighestRank($resultRows);
     }
 
     private function buildSummaryRow(string $statisticName, string|int $allTimesValue, string|int $last12MonthsValue): AllTimeSummaryRow
