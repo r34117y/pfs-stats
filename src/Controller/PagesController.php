@@ -127,6 +127,12 @@ class PagesController extends AbstractController
         return $this->render('static/stats_avg_points_sum.html.twig');
     }
 
+    #[Route('/stats/avg-points-difference', name: 'app_stats_avg_points_difference_page', methods: ['GET'])]
+    public function statsAvgPointsDifference(): Response
+    {
+        return $this->render('static/stats_avg_points_difference.html.twig');
+    }
+
     #[Route('/tournaments', name: 'app_tournaments_page')]
     public function tournaments(): Response
     {
