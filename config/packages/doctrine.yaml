@@ -40,6 +40,8 @@ when@prod:
         orm:
             auto_generate_proxy_classes: false
             proxy_dir: '%kernel.build_dir%/doctrine/orm/Proxies'
+            # Keep Doctrine caches as secondary optimization.
+            # Primary performance layer is endpoint-level Redis cache + HTTP caching.
             query_cache_driver:
                 type: pool
                 pool: doctrine.system_cache_pool
@@ -52,5 +54,6 @@ when@prod:
             pools:
                 doctrine.result_cache_pool:
                     adapter: cache.app
+                    default_lifetime: 86400
                 doctrine.system_cache_pool:
                     adapter: cache.system

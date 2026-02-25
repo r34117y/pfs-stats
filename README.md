@@ -27,3 +27,5 @@ The long-term goal is to keep Scrabble competition history accessible, transpare
 
 This README focuses on the project purpose.
 Technical and implementation documentation lives in the `documentation/` directory.
+
+Caching details are documented in `documentation/Caching.md`.
