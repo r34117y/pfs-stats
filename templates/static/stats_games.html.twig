@@ -17,25 +17,28 @@
         </template>
 
         <div x-show="!loading && !error">
+            <div class="control mb-5">
+                <input class="input" type="search" placeholder="Filtruj" @input="setSearch($event.target.value)">
+            </div>
             <div style="overflow-x: auto;">
                 <table class="table is-bordered is-hoverable is-fullwidth">
                     <thead>
                     <tr>
-                        <th @click="sort('position')" style="cursor: pointer;">#</th>
+                        <th class="has-text-centered" @click="sort('position')" style="cursor: pointer;">#</th>
                         <th @click="sort('playerName')" style="cursor: pointer;">Zawodnik</th>
-                        <th @click="sort('gamesCount')" style="cursor: pointer;">Gier</th>
-                        <th @click="sort('last24MonthsGamesCount')" style="cursor: pointer;">Ost 24 mies.</th>
-                        <th @click="sort('last12MonthsGamesCount')" style="cursor: pointer;">Ost 12 mies.</th>
+                        <th class="has-text-centered" @click="sort('gamesCount')" style="cursor: pointer;">Gier</th>
+                        <th class="has-text-centered" @click="sort('last24MonthsGamesCount')" style="cursor: pointer;">Ost 24 mies.</th>
+                        <th class="has-text-centered" @click="sort('last12MonthsGamesCount')" style="cursor: pointer;">Ost 12 mies.</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <template x-for="row in rows" :key="row.playerId">
+                    <template x-for="row in filteredRows" :key="row.playerId">
                         <tr>
-                            <td class="text-center" x-text="row.position"></td>
+                            <td class="has-text-centered" x-text="`${row.position}.`"></td>
                             <td><a :href="`/players/${row.playerId}`" x-text="row.playerName"></a></td>
-                            <td class="text-center" x-text="row.gamesCount"></td>
-                            <td class="text-center" x-text="row.last24MonthsGamesCount"></td>
-                            <td class="text-center" x-text="row.last12MonthsGamesCount"></td>
+                            <td class="has-text-centered" x-text="row.gamesCount"></td>
+                            <td class="has-text-centered" x-text="row.last24MonthsGamesCount"></td>
+                            <td class="has-text-centered" x-text="row.last12MonthsGamesCount"></td>
                         </tr>
                     </template>
                     </tbody>
@@ -51,6 +54,7 @@
             return {
                 loading: true,
                 error: '',
+                search: '',
                 rows: [],
                 sortCol: 'gamesCount',
                 sortAsc: true,
@@ -77,6 +81,19 @@
                         if (a[this.sortCol] < b[this.sortCol]) return this.sortAsc ? 1 : -1;
                         if (a[this.sortCol] > b[this.sortCol]) return this.sortAsc ? -1 : 1;
                         return 0;
+                    });
+                },
+                setSearch(search) {
+                    this.search = search;
+                },
+                get filteredRows() {
+                    if (this.search === '') {
+                        return this.rows;
+                    }
+
+                    const normalizedSearch = this.search.toLowerCase();
+                    return this.rows.filter((row) => {
+                        return (row.playerName ?? '').toLowerCase().includes(normalizedSearch);
                     });
                 }
             };
