@@ -8,6 +8,8 @@ use App\ApiResource\Stats\AllTimesResults;
 use App\ApiResource\Stats\AllTimesResultsPlayer;
 use App\ApiResource\Stats\AvgOpponentsPointsPerGame;
 use App\ApiResource\Stats\AvgOpponentsPointsPerGameRow;
+use App\ApiResource\Stats\AvgPointsSumPerGame;
+use App\ApiResource\Stats\AvgPointsSumPerGameRow;
 use App\ApiResource\Stats\AvgPointsPerGame;
 use App\ApiResource\Stats\AvgPointsPerGameRow;
 use App\ApiResource\Stats\GamesCount;
@@ -444,6 +446,84 @@ class StatsService
         }
 
         return new AvgOpponentsPointsPerGame($resultRows);
+    }
+
+    public function getAvgPointsSumPerGame(): AvgPointsSumPerGame
+    {
+        $today = new DateTimeImmutable('today');
+        $last24MonthsDateInt = (int) $today->modify('-24 months')->format('Ymd');
+        $last12MonthsDateInt = (int) $today->modify('-12 months')->format('Ymd');
+
+        $rows = $this->connection->fetchAllAssociative(
+            "WITH unique_games AS (
+                SELECT
+                    h.turniej,
+                    h.runda,
+                    h.player1,
+                    h.player2,
+                    h.result1,
+                    h.result2,
+                    t.dt,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY h.turniej, h.runda, LEAST(h.player1, h.player2), GREATEST(h.player1, h.player2)
+                        ORDER BY h.player1 ASC
+                    ) AS rn
+                FROM PFSTOURHH h
+                INNER JOIN PFSTOURS t ON t.id = h.turniej
+            ),
+            player_sum_scores AS (
+                SELECT ug.player1 AS player_id, ug.dt, (ug.result1 + ug.result2) AS points_sum
+                FROM unique_games ug
+                WHERE ug.rn = 1
+
+                UNION ALL
+
+                SELECT ug.player2 AS player_id, ug.dt, (ug.result1 + ug.result2) AS points_sum
+                FROM unique_games ug
+                WHERE ug.rn = 1
+            )
+            SELECT
+                p.id AS playerId,
+                p.name_show AS playerName,
+                AVG(ps.points_sum) AS averagePointsSum,
+                CASE
+                    WHEN SUM(CASE WHEN ps.dt >= :last24MonthsDate THEN 1 ELSE 0 END) >= 30
+                        THEN AVG(CASE WHEN ps.dt >= :last24MonthsDate THEN ps.points_sum ELSE NULL END)
+                    ELSE NULL
+                END AS last24MonthsAveragePointsSum,
+                CASE
+                    WHEN SUM(CASE WHEN ps.dt >= :last12MonthsDate THEN 1 ELSE 0 END) >= 30
+                        THEN AVG(CASE WHEN ps.dt >= :last12MonthsDate THEN ps.points_sum ELSE NULL END)
+                    ELSE NULL
+                END AS last12MonthsAveragePointsSum
+            FROM PFSPLAYER p
+            LEFT JOIN player_sum_scores ps ON ps.player_id = p.id
+            GROUP BY p.id, p.name_show
+            HAVING COUNT(ps.player_id) >= 30
+            ORDER BY last24MonthsAveragePointsSum DESC, playerName ASC",
+            [
+                'last24MonthsDate' => $last24MonthsDateInt,
+                'last12MonthsDate' => $last12MonthsDateInt,
+            ]
+        );
+
+        $resultRows = [];
+        foreach ($rows as $index => $row) {
+            $resultRows[] = new AvgPointsSumPerGameRow(
+                position: $index + 1,
+                playerId: (int) $row['playerId'],
+                playerName: (string) $row['playerName'],
+                averagePointsSum: round((float) ($row['averagePointsSum'] ?? 0.0), 2),
+                last24MonthsAveragePointsSum: $row['last24MonthsAveragePointsSum'] === null
+                    ? null
+                    : round((float) $row['last24MonthsAveragePointsSum'], 2),
+                last12MonthsAveragePointsSum: $row['last12MonthsAveragePointsSum'] === null
+                    ? null
+                    : round((float) $row['last12MonthsAveragePointsSum'], 2),
+            );
+        }
+
+        return new AvgPointsSumPerGame($resultRows);
     }
 
     private function buildSummaryRow(string $statisticName, string|int $allTimesValue, string|int $last12MonthsValue): AllTimeSummaryRow
