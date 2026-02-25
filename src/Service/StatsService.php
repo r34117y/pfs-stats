@@ -851,23 +851,32 @@ class StatsService
                 LEFT JOIN player_games pg ON pg.player_id = p.id
                 GROUP BY p.id, p.name_show
                 HAVING COUNT(pg.player_id) >= 30
+            ),
+            ranking_stats AS (
+                SELECT
+                    r.player AS playerId,
+                    MAX(r.rank) AS highestRank,
+                    MAX(CASE WHEN t.dt >= :last24MonthsDate THEN r.rank ELSE NULL END) AS highestRank24MonthsRaw,
+                    MAX(CASE WHEN t.dt >= :last12MonthsDate THEN r.rank ELSE NULL END) AS highestRank12MonthsRaw
+                FROM PFSRANKING r
+                INNER JOIN PFSTOURS t ON t.id = r.turniej
+                WHERE r.rtype = 'f'
+                GROUP BY r.player
             )
             SELECT
                 gs.playerId,
                 gs.playerName,
-                MAX(tw.trank) AS highestRank,
+                rs.highestRank AS highestRank,
                 CASE
-                    WHEN gs.gamesCount24Months >= 30 THEN MAX(CASE WHEN t.dt >= :last24MonthsDate THEN tw.trank ELSE NULL END)
+                    WHEN gs.gamesCount24Months >= 30 THEN rs.highestRank24MonthsRaw
                     ELSE NULL
                 END AS highestRank24Months,
                 CASE
-                    WHEN gs.gamesCount12Months >= 30 THEN MAX(CASE WHEN t.dt >= :last12MonthsDate THEN tw.trank ELSE NULL END)
+                    WHEN gs.gamesCount12Months >= 30 THEN rs.highestRank12MonthsRaw
                     ELSE NULL
                 END AS highestRank12Months
             FROM games_stats gs
-            INNER JOIN PFSTOURWYN tw ON tw.player = gs.playerId
-            INNER JOIN PFSTOURS t ON t.id = tw.turniej
-            GROUP BY gs.playerId, gs.playerName, gs.gamesCount24Months, gs.gamesCount12Months
+            INNER JOIN ranking_stats rs ON rs.playerId = gs.playerId
             ORDER BY highestRank24Months DESC, gs.playerName ASC",
             [
                 'last24MonthsDate' => $last24MonthsDateInt,
