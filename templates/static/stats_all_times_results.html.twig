@@ -17,6 +17,9 @@
         </template>
 
         <div x-show="!loading && !error">
+            <div class="control mb-5">
+                <input class="input" type="search" placeholder="Filtruj" @input="setSearch($event.target.value)">
+            </div>
             <div style="overflow-x: auto;">
                 <table class="table is-bordered is-hoverable is-fullwidth">
                     <thead>
@@ -34,7 +37,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <template x-for="row in rows" :key="row.playerId">
+                    <template x-for="row in filteredRows" :key="row.playerId">
                         <tr>
                             <td class="has-text-centered" x-text="`${row.position}.`"></td>
                             <td><a :href="`/players/${row.playerId}`" x-text="row.playerName"></a></td>
@@ -61,6 +64,7 @@
             return {
                 loading: true,
                 error: '',
+                search: '',
                 rows: [],
                 async fetchRows() {
                     try {
@@ -77,6 +81,19 @@
                     } finally {
                         this.loading = false;
                     }
+                },
+                setSearch(search) {
+                    this.search = search;
+                },
+                get filteredRows() {
+                    if (this.search === '') {
+                        return this.rows;
+                    }
+
+                    const normalizedSearch = this.search.toLowerCase();
+                    return this.rows.filter((row) => {
+                        return (row.playerName ?? '').toLowerCase().includes(normalizedSearch);
+                    });
                 }
             };
         }
