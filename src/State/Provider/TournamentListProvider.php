@@ -16,7 +16,7 @@ class TournamentListProvider implements ProviderInterface
     public function __construct(
         #[Autowire(service: 'doctrine.dbal.mysql_connection')]
         private Connection $connection,
-        #[Autowire(service: 'cache.app')]
+        #[Autowire(service: 'app.dataset_cache')]
         private CacheInterface $cache,
     ) {
     }

@@ -13,7 +13,7 @@ final readonly class ClubsListProvider implements ProviderInterface
 {
     public function __construct(
         private ClubsService $clubsService,
-        #[Autowire(service: 'cache.app')]
+        #[Autowire(service: 'app.dataset_cache')]
         private CacheInterface $cache,
     ) {
     }

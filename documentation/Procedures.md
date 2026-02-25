@@ -12,6 +12,8 @@ Zmienne środowiskowe trzymamy w `.env.local` (te z których korzysta docker mus
   - `mysql -u root -p < dump.sql`
   - wersja z logiem: `mysql -u root -p < dump.sql 2> import.log`
   - pasek postępu: `pv dump.sql | mysql -u root -p`
+  - po imporcie zaktualizować wersję dataset cache:
+    - `php bin/console app:dataset-version:bump`
 
 Uzycie drugiego polaczenia MySQL (domyslnie aplikacja i migracje sa na PostgreSQL):
 

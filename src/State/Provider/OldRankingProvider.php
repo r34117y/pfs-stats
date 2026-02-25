@@ -17,7 +17,7 @@ final readonly class OldRankingProvider implements ProviderInterface
     public function __construct(
         private OldMethodCurrentRankingService $oldMethodCurrentRankingService,
         private UserRepository $userRepository,
-        #[Autowire(service: 'cache.app')]
+        #[Autowire(service: 'app.dataset_cache')]
         private CacheInterface $cache,
     ) {
     }

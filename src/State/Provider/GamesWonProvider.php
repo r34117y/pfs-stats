@@ -14,7 +14,7 @@ class GamesWonProvider implements ProviderInterface
 {
     public function __construct(
         private StatsService $statsService,
-        #[Autowire(service: 'cache.app')]
+        #[Autowire(service: 'app.dataset_cache')]
         private CacheInterface $cache,
     ) {
     }

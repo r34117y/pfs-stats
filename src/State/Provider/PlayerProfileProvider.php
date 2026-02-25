@@ -15,7 +15,7 @@ final readonly class PlayerProfileProvider implements ProviderInterface
 {
     public function __construct(
         private PlayerProfileService $playerProfileService,
-        #[Autowire(service: 'cache.app')]
+        #[Autowire(service: 'app.dataset_cache')]
         private CacheInterface $cache,
     ) {
     }

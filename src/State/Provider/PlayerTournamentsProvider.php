@@ -14,7 +14,7 @@ class PlayerTournamentsProvider implements ProviderInterface
 {
     public function __construct(
         private PlayerTournamentsService $playerTournamentsService,
-        #[Autowire(service: 'cache.app')]
+        #[Autowire(service: 'app.dataset_cache')]
         private CacheInterface $cache,
     ) {
     }

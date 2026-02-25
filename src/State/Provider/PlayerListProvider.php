@@ -18,7 +18,7 @@ class PlayerListProvider implements ProviderInterface
         #[Autowire(service: 'doctrine.dbal.mysql_connection')]
         private Connection $connection,
         private UserRepository $userRepository,
-        #[Autowire(service: 'cache.app')]
+        #[Autowire(service: 'app.dataset_cache')]
         private CacheInterface $cache,
     ) {
     }

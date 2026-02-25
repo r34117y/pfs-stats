@@ -21,7 +21,7 @@ final readonly class RankingProvider implements ProviderInterface
         private Connection $connection,
         private UserRepository $userRepository,
         private RankingSnapshotService $rankingSnapshotService,
-        #[Autowire(service: 'cache.app')]
+        #[Autowire(service: 'app.dataset_cache')]
         private CacheInterface $cache,
     ) {
     }

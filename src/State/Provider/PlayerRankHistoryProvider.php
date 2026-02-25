@@ -14,7 +14,7 @@ class PlayerRankHistoryProvider implements ProviderInterface
 {
     public function __construct(
         private PlayerRankHistoryService $playerRankHistoryService,
-        #[Autowire(service: 'cache.app')]
+        #[Autowire(service: 'app.dataset_cache')]
         private CacheInterface $cache,
     ) {
     }

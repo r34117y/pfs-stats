@@ -15,7 +15,7 @@ final readonly class AnnotatedGamesProvider implements ProviderInterface
     public function __construct(
         private AnnotatedGamesService $annotatedGamesService,
         private RequestStack $requestStack,
-        #[Autowire(service: 'cache.app')]
+        #[Autowire(service: 'app.dataset_cache')]
         private CacheInterface $cache,
     ) {
     }
