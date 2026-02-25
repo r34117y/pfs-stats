@@ -210,6 +210,13 @@
                         return Number.NEGATIVE_INFINITY;
                     }
 
+                    if (['position', 'rank', 'numberOfGames', 'rankDelta', 'positionDelta'].includes(column)) {
+                        const numericValue = Number(value);
+                        if (!Number.isNaN(numericValue)) {
+                            return numericValue;
+                        }
+                    }
+
                     return value;
                 },
                 formatSigned(value, decimals = null) {
@@ -217,12 +224,16 @@
                         return '+';
                     }
 
-                    if (parseInt(value) === 0 || value === null || value === undefined || value === '') {
+                    if (value === null || value === undefined || value === '') {
                         return '-';
                     }
 
                     const numericValue = Number(value);
                     if (Number.isNaN(numericValue)) {
+                        return '-';
+                    }
+
+                    if (numericValue === 0) {
                         return '-';
                     }
 
@@ -237,7 +248,7 @@
                     return formatted;
                 },
                 formatMobilePlain(value) {
-                    if (parseInt(value) === 0 || value === null || value === undefined || value === '') {
+                    if (value === null || value === undefined || value === '') {
                         return '-';
                     }
 

@@ -67,7 +67,7 @@ final readonly class RankingProvider implements ProviderInterface
                     $previous = $previousRankingByPlayer[$playerId];
                     $currentRank = $row['rank'];
                     $currentPosition = $row['position'];
-                    $rankDelta = round($currentRank - $previous['rank'], 2);
+                    $rankDelta = $this->formatDecimal($currentRank - $previous['rank']);
                     $positionDelta = $previous['position'] - $currentPosition;
                 } elseif ($previousTournamentId !== null) {
                     $positionDelta = '+';
@@ -79,7 +79,7 @@ final readonly class RankingProvider implements ProviderInterface
                     $row['nameAlph'],
                     $playerId,
                     $photosByPlayerId[$playerId] ?? null,
-                    $row['rank'],
+                    $this->formatDecimal($row['rank']),
                     $row['games'],
                     $rankDelta,
                     $positionDelta
@@ -115,22 +115,49 @@ final readonly class RankingProvider implements ProviderInterface
     }
 
     /**
-     * Returns the tournament id that precedes the latest ranking snapshot.
+     * Returns the best previous comparison snapshot.
+     * Prefers the latest earlier snapshot with at least one rank/position change
+     * versus the latest snapshot; falls back to the immediate previous snapshot.
      */
     private function getPreviousRankingTournamentId(int $latestTournamentId): ?int
     {
         $value = $this->connection->fetchOne(
+            "SELECT MAX(previous.turniej)
+             FROM (
+                SELECT DISTINCT r.turniej
+                FROM PFSRANKING r
+                WHERE r.rtype = 'f' AND r.turniej < :latestTournamentId
+             ) previous
+             WHERE EXISTS (
+                SELECT 1
+                FROM PFSRANKING latest
+                INNER JOIN PFSRANKING prev
+                    ON prev.player = latest.player
+                   AND prev.rtype = 'f'
+                   AND prev.turniej = previous.turniej
+                WHERE latest.rtype = 'f'
+                  AND latest.turniej = :latestTournamentId
+                  AND (latest.pos <> prev.pos OR latest.rank <> prev.rank)
+             )",
+            ['latestTournamentId' => $latestTournamentId]
+        );
+
+        if ($value !== false && $value !== null) {
+            return (int) $value;
+        }
+
+        $fallback = $this->connection->fetchOne(
             "SELECT MAX(turniej)
              FROM PFSRANKING
              WHERE rtype = 'f' AND turniej < :latestTournamentId",
             ['latestTournamentId' => $latestTournamentId]
         );
 
-        if ($value === false || $value === null) {
+        if ($fallback === false || $fallback === null) {
             return null;
         }
 
-        return (int) $value;
+        return (int) $fallback;
     }
 
     /**
@@ -164,5 +191,10 @@ final readonly class RankingProvider implements ProviderInterface
         }
 
         return $photosByPlayerId;
+    }
+
+    private function formatDecimal(float $value): string
+    {
+        return number_format($value, 2, '.', '');
     }
 }

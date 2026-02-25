@@ -10,9 +10,9 @@ class RankingRow
         public string $nameAlph,
         public int $playerId,
         public ?string $photo,
-        public float $rank,
+        public string $rank,
         public int $numberOfGames,
-        public ?float $rankDelta,
+        public ?string $rankDelta,
         /** '+' if player just entered the ranking */
         public int|string|null $positionDelta
     )
