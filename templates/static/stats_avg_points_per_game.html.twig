@@ -2,10 +2,49 @@
 
 {% set activeStatsItem = 'avg_points_per_game' %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .avg-points-player-cell {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .avg-points-player-mobile-meta {
+            display: none;
+            font-size: 0.8rem;
+            color: #7a7a7a;
+            line-height: 1.2;
+        }
+
+        @media screen and (max-width: 768px) {
+            .avg-points-table th:nth-child(n+3),
+            .avg-points-table td:nth-child(n+3) {
+                display: none;
+            }
+
+            .avg-points-player-mobile-meta {
+                display: grid;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 0.25rem;
+                padding-top: 0.35rem;
+                border-top: 1px solid #e5e5e5;
+            }
+
+            .avg-points-player-mobile-meta > span {
+                text-align: center;
+            }
+
+            .avg-points-player-mobile-meta > span + span {
+                border-left: 1px solid #e5e5e5;
+            }
+        }
+    </style>
+{% endblock %}
+
 {% block stats_content %}
     <div x-data="avgPointsPerGameData()" x-init="fetchRows()">
-        <h1 class="title is-3">Średnia punktów na grę</h1>
-
         <template x-if="loading">
             <p>Ładowanie...</p>
         </template>
@@ -17,30 +56,44 @@
         </template>
 
         <div x-show="!loading && !error">
+            <div class="control mb-5">
+                <input class="input" type="search" placeholder="Filtruj" @input="setSearch($event.target.value)">
+            </div>
+            {% include 'static/_partials/_pagination.html.twig' with {position: 'top'} %}
             <div style="overflow-x: auto;">
-                <table class="table is-bordered is-hoverable is-fullwidth">
+                <table class="table is-bordered is-hoverable is-fullwidth avg-points-table">
                     <thead>
                     <tr>
-                        <th @click="sort('position')" style="cursor: pointer;">#</th>
+                        <th class="has-text-centered" @click="sort('position')" style="cursor: pointer;">#</th>
                         <th @click="sort('playerName')" style="cursor: pointer;">Zawodnik</th>
-                        <th @click="sort('averagePoints')" style="cursor: pointer;">Średnia</th>
-                        <th @click="sort('last24MonthsAveragePoints')" style="cursor: pointer;">Ost 24 mies.</th>
-                        <th @click="sort('last12MonthsAveragePoints')" style="cursor: pointer;">Ost 12 mies.</th>
+                        <th class="has-text-centered" @click="sort('averagePoints')" style="cursor: pointer;">Średnia</th>
+                        <th class="has-text-centered" @click="sort('last24MonthsAveragePoints')" style="cursor: pointer;">Ost 24 mies.</th>
+                        <th class="has-text-centered" @click="sort('last12MonthsAveragePoints')" style="cursor: pointer;">Ost 12 mies.</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <template x-for="row in rows" :key="row.playerId">
+                    <template x-for="row in pagedRows" :key="row.playerId">
                         <tr>
-                            <td class="text-center" x-text="row.position"></td>
-                            <td><a :href="`/players/${row.playerId}`" x-text="row.playerName"></a></td>
-                            <td class="text-center" x-text="formatFloat(row.averagePoints)"></td>
-                            <td class="text-center" x-text="formatFloat(row.last24MonthsAveragePoints)"></td>
-                            <td class="text-center" x-text="formatFloat(row.last12MonthsAveragePoints)"></td>
+                            <td class="has-text-centered" x-text="`${row.position}.`"></td>
+                            <td>
+                                <div class="avg-points-player-cell">
+                                    <a :href="`/players/${row.playerId}`" x-text="row.playerName"></a>
+                                    <div class="avg-points-player-mobile-meta">
+                                        <span x-text="formatFloat(row.averagePoints)"></span>
+                                        <span x-text="formatFloat(row.last24MonthsAveragePoints)"></span>
+                                        <span x-text="formatFloat(row.last12MonthsAveragePoints)"></span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="has-text-centered" x-text="formatFloat(row.averagePoints)"></td>
+                            <td class="has-text-centered" x-text="formatFloat(row.last24MonthsAveragePoints)"></td>
+                            <td class="has-text-centered" x-text="formatFloat(row.last12MonthsAveragePoints)"></td>
                         </tr>
                     </template>
                     </tbody>
                 </table>
             </div>
+            {% include 'static/_partials/_pagination.html.twig' with {position: 'bottom'} %}
         </div>
     </div>
 {% endblock %}
@@ -51,6 +104,9 @@
             return {
                 loading: true,
                 error: '',
+                search: '',
+                pageSize: 100,
+                curPage: 1,
                 rows: [],
                 sortCol: 'averagePoints',
                 sortAsc: true,
@@ -78,6 +134,41 @@
                         if (a[this.sortCol] > b[this.sortCol]) return this.sortAsc ? -1 : 1;
                         return 0;
                     });
+                },
+                nextPage() {
+                    if((this.curPage * this.pageSize) < this.filteredRows.length) {
+                        this.curPage++;
+                    }
+                },
+                previousPage() {
+                    if(this.curPage > 1) {
+                        this.curPage--;
+                    }
+                },
+                setSearch(search) {
+                    this.curPage = 1;
+                    this.search = search;
+                },
+                get filteredRows() {
+                    if (this.search === '') {
+                        return this.rows;
+                    }
+
+                    const normalizedSearch = this.search.toLowerCase();
+                    return this.rows.filter((row) => {
+                        return (row.playerName ?? '').toLowerCase().includes(normalizedSearch);
+                    });
+                },
+                get pagedRows() {
+                    if(this.rows) {
+                        const start = (this.curPage - 1) * this.pageSize;
+                        const end = this.curPage * this.pageSize;
+                        return this.filteredRows.filter((row, index) => {
+                            return index >= start && index < end;
+                        });
+                    } else {
+                        return [];
+                    }
                 },
                 formatFloat(value) {
                     return Number(value).toFixed(2);
