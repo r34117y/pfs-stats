@@ -2,6 +2,47 @@
 
 {% set activeStatsItem = 'games_count' %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .games-player-cell {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .games-player-mobile-meta {
+            display: none;
+            font-size: 0.8rem;
+            color: #7a7a7a;
+            line-height: 1.2;
+        }
+
+        @media screen and (max-width: 768px) {
+            .games-table th:nth-child(n+3),
+            .games-table td:nth-child(n+3) {
+                display: none;
+            }
+
+            .games-player-mobile-meta {
+                display: grid;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 0.25rem;
+                padding-top: 0.35rem;
+                border-top: 1px solid #e5e5e5;
+            }
+
+            .games-player-mobile-meta > span {
+                text-align: center;
+            }
+
+            .games-player-mobile-meta > span + span {
+                border-left: 1px solid #e5e5e5;
+            }
+        }
+    </style>
+{% endblock %}
+
 {% block stats_content %}
     <div x-data="gamesCountData()" x-init="fetchRows()">
         <h1 class="title is-3">Liczba gier</h1>
@@ -22,7 +63,7 @@
             </div>
             {% include 'static/_partials/_pagination.html.twig' with {position: 'top'} %}
             <div style="overflow-x: auto;">
-                <table class="table is-bordered is-hoverable is-fullwidth">
+                <table class="table is-bordered is-hoverable is-fullwidth games-table">
                     <thead>
                     <tr>
                         <th class="has-text-centered" @click="sort('position')" style="cursor: pointer;">#</th>
@@ -36,7 +77,16 @@
                     <template x-for="row in pagedRows" :key="row.playerId">
                         <tr>
                             <td class="has-text-centered" x-text="`${row.position}.`"></td>
-                            <td><a :href="`/players/${row.playerId}`" x-text="row.playerName"></a></td>
+                            <td>
+                                <div class="games-player-cell">
+                                    <a :href="`/players/${row.playerId}`" x-text="row.playerName"></a>
+                                    <div class="games-player-mobile-meta">
+                                        <span x-text="row.gamesCount"></span>
+                                        <span x-text="row.last24MonthsGamesCount"></span>
+                                        <span x-text="row.last12MonthsGamesCount"></span>
+                                    </div>
+                                </div>
+                            </td>
                             <td class="has-text-centered" x-text="row.gamesCount"></td>
                             <td class="has-text-centered" x-text="row.last24MonthsGamesCount"></td>
                             <td class="has-text-centered" x-text="row.last12MonthsGamesCount"></td>
