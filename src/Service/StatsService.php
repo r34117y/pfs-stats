@@ -22,6 +22,8 @@ use App\ApiResource\Stats\DifferentOpponents;
 use App\ApiResource\Stats\DifferentOpponentsRow;
 use App\ApiResource\Stats\MostSmallPoints;
 use App\ApiResource\Stats\MostSmallPointsRow;
+use App\ApiResource\Stats\LeastSmallPoints;
+use App\ApiResource\Stats\LeastSmallPointsRow;
 use App\ApiResource\Stats\RankAllGames;
 use App\ApiResource\Stats\RankAllGamesRow;
 use App\ApiResource\Stats\HighestRank;
@@ -1201,6 +1203,96 @@ class StatsService
         }
 
         return new MostSmallPoints($resultRows);
+    }
+
+    public function getLeastSmallPoints(): LeastSmallPoints
+    {
+        $rows = $this->connection->fetchAllAssociative(
+            "WITH unique_games AS (
+                SELECT
+                    h.turniej,
+                    h.runda,
+                    h.player1,
+                    h.player2,
+                    h.result1,
+                    h.result2,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY h.turniej, h.runda, LEAST(h.player1, h.player2), GREATEST(h.player1, h.player2)
+                        ORDER BY h.player1 ASC
+                    ) AS rn
+                FROM PFSTOURHH h
+            ),
+            game_sides AS (
+                SELECT
+                    ug.turniej,
+                    ug.runda,
+                    ug.player1 AS playerId,
+                    ug.player2 AS opponentId,
+                    ug.result1 AS points,
+                    ug.result2 AS opponentPoints
+                FROM unique_games ug
+                WHERE ug.rn = 1
+
+                UNION ALL
+
+                SELECT
+                    ug.turniej,
+                    ug.runda,
+                    ug.player2 AS playerId,
+                    ug.player1 AS opponentId,
+                    ug.result2 AS points,
+                    ug.result1 AS opponentPoints
+                FROM unique_games ug
+                WHERE ug.rn = 1
+            ),
+            ranked_games AS (
+                SELECT
+                    gs.playerId,
+                    gs.opponentId,
+                    gs.points,
+                    gs.opponentPoints,
+                    gs.turniej,
+                    gs.runda,
+                    t.dt,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY gs.playerId
+                        ORDER BY gs.points ASC, t.dt DESC, gs.turniej DESC, gs.runda ASC, gs.opponentId ASC
+                    ) AS rn
+                FROM game_sides gs
+                INNER JOIN PFSTOURS t ON t.id = gs.turniej
+                WHERE gs.points <> 0 AND gs.points <> 1
+            )
+            SELECT
+                rg.playerId,
+                p.name_show AS playerName,
+                rg.opponentId,
+                op.name_show AS opponentName,
+                rg.points,
+                CONCAT(rg.points, ':', rg.opponentPoints) AS score,
+                COALESCE(t.fullname, t.name) AS tournamentName
+            FROM ranked_games rg
+            INNER JOIN PFSPLAYER p ON p.id = rg.playerId
+            INNER JOIN PFSPLAYER op ON op.id = rg.opponentId
+            INNER JOIN PFSTOURS t ON t.id = rg.turniej
+            WHERE rg.rn = 1
+            ORDER BY rg.points ASC, t.dt DESC, rg.turniej DESC, rg.runda ASC, p.name_show ASC"
+        );
+
+        $resultRows = [];
+        foreach ($rows as $index => $row) {
+            $resultRows[] = new LeastSmallPointsRow(
+                position: $index + 1,
+                points: (int) $row['points'],
+                playerId: (int) $row['playerId'],
+                playerName: (string) $row['playerName'],
+                opponentId: (int) $row['opponentId'],
+                opponentName: (string) $row['opponentName'],
+                score: (string) $row['score'],
+                tournamentName: (string) $row['tournamentName'],
+            );
+        }
+
+        return new LeastSmallPoints($resultRows);
     }
 
     private function buildSummaryRow(string $statisticName, string|int $allTimesValue, string|int $last12MonthsValue): AllTimeSummaryRow
