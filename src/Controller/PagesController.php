@@ -139,6 +139,12 @@ class PagesController extends AbstractController
         return $this->render('static/stats_games_over_400.html.twig');
     }
 
+    #[Route('/stats/rank-all-games', name: 'app_stats_rank_all_games_page', methods: ['GET'])]
+    public function statsRankAllGames(): Response
+    {
+        return $this->render('static/stats_rank_all_games.html.twig');
+    }
+
     #[Route('/tournaments', name: 'app_tournaments_page')]
     public function tournaments(): Response
     {

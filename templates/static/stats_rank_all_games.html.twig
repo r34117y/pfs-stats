@@ -1,17 +1,17 @@
 {% extends 'static/stats/_base_stats.html.twig' %}
 
-{% set activeStatsItem = 'avg_points_difference' %}
+{% set activeStatsItem = 'rank_all_games' %}
 
 {% block stylesheets %}
     {{ parent() }}
     <style>
-        .avg-points-diff-player-cell {
+        .rank-all-games-player-cell {
             display: flex;
             flex-direction: column;
             gap: 0.35rem;
         }
 
-        .avg-points-diff-player-mobile-meta {
+        .rank-all-games-player-mobile-meta {
             display: none;
             font-size: 0.8rem;
             color: #7a7a7a;
@@ -19,12 +19,12 @@
         }
 
         @media screen and (max-width: 768px) {
-            .avg-points-diff-table th:nth-child(n+3),
-            .avg-points-diff-table td:nth-child(n+3) {
+            .rank-all-games-table th:nth-child(n+3),
+            .rank-all-games-table td:nth-child(n+3) {
                 display: none;
             }
 
-            .avg-points-diff-player-mobile-meta {
+            .rank-all-games-player-mobile-meta {
                 display: grid;
                 grid-template-columns: repeat(3, minmax(0, 1fr));
                 gap: 0.25rem;
@@ -32,11 +32,11 @@
                 border-top: 1px solid #e5e5e5;
             }
 
-            .avg-points-diff-player-mobile-meta > span {
+            .rank-all-games-player-mobile-meta > span {
                 text-align: center;
             }
 
-            .avg-points-diff-player-mobile-meta > span + span {
+            .rank-all-games-player-mobile-meta > span + span {
                 border-left: 1px solid #e5e5e5;
             }
         }
@@ -44,7 +44,7 @@
 {% endblock %}
 
 {% block stats_content %}
-    <div x-data="avgPointsDifferenceData()" x-init="fetchRows()">
+    <div x-data="rankAllGamesData()" x-init="fetchRows()">
         <template x-if="loading">
             <p>Ładowanie...</p>
         </template>
@@ -61,14 +61,14 @@
             </div>
             {% include 'static/_partials/_pagination.html.twig' with {position: 'top'} %}
             <div style="overflow-x: auto;">
-                <table class="table is-bordered is-hoverable is-fullwidth avg-points-diff-table">
+                <table class="table is-bordered is-hoverable is-fullwidth rank-all-games-table">
                     <thead>
                     <tr>
                         <th class="has-text-centered" @click="sort('position')" style="cursor: pointer;">#</th>
                         <th @click="sort('playerName')" style="cursor: pointer;">Zawodnik</th>
-                        <th class="has-text-centered" @click="sort('averagePointsDifference')" style="cursor: pointer;">Różnica</th>
-                        <th class="has-text-centered" @click="sort('last24MonthsAveragePointsDifference')" style="cursor: pointer;">Ost 24 mies.</th>
-                        <th class="has-text-centered" @click="sort('last12MonthsAveragePointsDifference')" style="cursor: pointer;">Ost 12 mies.</th>
+                        <th class="has-text-centered" @click="sort('rankAllGames')" style="cursor: pointer;">Rank</th>
+                        <th class="has-text-centered" @click="sort('rank24Months')" style="cursor: pointer;">Ost 24 mies</th>
+                        <th class="has-text-centered" @click="sort('rank12Months')" style="cursor: pointer;">Ost 12 mies</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -76,18 +76,18 @@
                         <tr>
                             <td class="has-text-centered" x-text="`${row.position}.`"></td>
                             <td>
-                                <div class="avg-points-diff-player-cell">
+                                <div class="rank-all-games-player-cell">
                                     <a :href="`/players/${row.playerId}`" x-text="row.playerName"></a>
-                                    <div class="avg-points-diff-player-mobile-meta">
-                                        <span x-text="formatFloat(row.averagePointsDifference)"></span>
-                                        <span x-text="formatFloat(row.last24MonthsAveragePointsDifference)"></span>
-                                        <span x-text="formatFloat(row.last12MonthsAveragePointsDifference)"></span>
+                                    <div class="rank-all-games-player-mobile-meta">
+                                        <span x-text="formatFloat(row.rankAllGames)"></span>
+                                        <span x-text="formatFloat(row.rank24Months)"></span>
+                                        <span x-text="formatFloat(row.rank12Months)"></span>
                                     </div>
                                 </div>
                             </td>
-                            <td class="has-text-centered" x-text="formatFloat(row.averagePointsDifference)"></td>
-                            <td class="has-text-centered" x-text="formatFloat(row.last24MonthsAveragePointsDifference)"></td>
-                            <td class="has-text-centered" x-text="formatFloat(row.last12MonthsAveragePointsDifference)"></td>
+                            <td class="has-text-centered" x-text="formatFloat(row.rankAllGames)"></td>
+                            <td class="has-text-centered" x-text="formatFloat(row.rank24Months)"></td>
+                            <td class="has-text-centered" x-text="formatFloat(row.rank12Months)"></td>
                         </tr>
                     </template>
                     </tbody>
@@ -100,7 +100,7 @@
 
 {% block javascripts %}
     <script>
-        function avgPointsDifferenceData() {
+        function rankAllGamesData() {
             return {
                 loading: true,
                 error: '',
@@ -108,13 +108,13 @@
                 pageSize: 100,
                 curPage: 1,
                 rows: [],
-                sortCol: 'last24MonthsAveragePointsDifference',
+                sortCol: 'rank24Months',
                 sortAsc: true,
                 async fetchRows() {
                     try {
-                        let response = await fetch('/api/stats/avg-points-difference');
+                        let response = await fetch('/api/stats/rank-all-games');
                         if (!response.ok) {
-                            throw new Error('Nie udało się pobrać średniej różnicy punktów');
+                            throw new Error('Nie udało się pobrać rankingu ze wszystkich gier');
                         }
 
                         let data = await response.json();

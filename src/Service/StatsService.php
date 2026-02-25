@@ -18,6 +18,8 @@ use App\ApiResource\Stats\GamesCount;
 use App\ApiResource\Stats\GamesCountRow;
 use App\ApiResource\Stats\GamesOver400;
 use App\ApiResource\Stats\GamesOver400Row;
+use App\ApiResource\Stats\RankAllGames;
+use App\ApiResource\Stats\RankAllGamesRow;
 use App\ApiResource\Stats\GamesWon;
 use App\ApiResource\Stats\GamesWonRow;
 use App\ApiResource\Stats\TournamentsCount;
@@ -706,6 +708,102 @@ class StatsService
         }
 
         return new GamesOver400($resultRows);
+    }
+
+    public function getRankAllGames(): RankAllGames
+    {
+        $today = new DateTimeImmutable('today');
+        $last24MonthsDateInt = (int) $today->modify('-24 months')->format('Ymd');
+        $last12MonthsDateInt = (int) $today->modify('-12 months')->format('Ymd');
+
+        $rows = $this->connection->fetchAllAssociative(
+            "WITH unique_games AS (
+                SELECT
+                    h.turniej,
+                    h.runda,
+                    h.player1,
+                    h.player2,
+                    h.result1,
+                    h.result2,
+                    t.dt,
+                    COALESCE(tw1.brank, 100) AS rank1,
+                    COALESCE(tw2.brank, 100) AS rank2,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY h.turniej, h.runda, LEAST(h.player1, h.player2), GREATEST(h.player1, h.player2)
+                        ORDER BY h.player1 ASC
+                    ) AS rn
+                FROM PFSTOURHH h
+                INNER JOIN PFSTOURS t ON t.id = h.turniej
+                LEFT JOIN PFSTOURWYN tw1 ON tw1.turniej = h.turniej AND tw1.player = h.player1
+                LEFT JOIN PFSTOURWYN tw2 ON tw2.turniej = h.turniej AND tw2.player = h.player2
+            ),
+            player_game_rank AS (
+                SELECT
+                    ug.player1 AS player_id,
+                    ug.dt,
+                    CASE
+                        WHEN ug.result1 > ug.result2 THEN (ug.rank2 + 50)
+                        WHEN ug.result1 < ug.result2 THEN (ug.rank2 - 50)
+                        ELSE ug.rank2
+                    END AS achieved_rank
+                FROM unique_games ug
+                WHERE ug.rn = 1
+
+                UNION ALL
+
+                SELECT
+                    ug.player2 AS player_id,
+                    ug.dt,
+                    CASE
+                        WHEN ug.result2 > ug.result1 THEN (ug.rank1 + 50)
+                        WHEN ug.result2 < ug.result1 THEN (ug.rank1 - 50)
+                        ELSE ug.rank1
+                    END AS achieved_rank
+                FROM unique_games ug
+                WHERE ug.rn = 1
+            ),
+            stats AS (
+                SELECT
+                    p.id AS playerId,
+                    p.name_show AS playerName,
+                    COUNT(pgr.player_id) AS gamesCount,
+                    AVG(pgr.achieved_rank) AS rankAllGames,
+                    SUM(CASE WHEN pgr.dt >= :last24MonthsDate THEN 1 ELSE 0 END) AS gamesCount24Months,
+                    AVG(CASE WHEN pgr.dt >= :last24MonthsDate THEN pgr.achieved_rank ELSE NULL END) AS rank24Months,
+                    SUM(CASE WHEN pgr.dt >= :last12MonthsDate THEN 1 ELSE 0 END) AS gamesCount12Months,
+                    AVG(CASE WHEN pgr.dt >= :last12MonthsDate THEN pgr.achieved_rank ELSE NULL END) AS rank12Months
+                FROM PFSPLAYER p
+                LEFT JOIN player_game_rank pgr ON pgr.player_id = p.id
+                GROUP BY p.id, p.name_show
+                HAVING COUNT(pgr.player_id) >= 30
+            )
+            SELECT
+                s.playerId,
+                s.playerName,
+                s.rankAllGames,
+                CASE WHEN s.gamesCount24Months >= 30 THEN s.rank24Months ELSE NULL END AS rank24Months,
+                CASE WHEN s.gamesCount12Months >= 30 THEN s.rank12Months ELSE NULL END AS rank12Months
+            FROM stats s
+            ORDER BY rank24Months DESC, playerName ASC",
+            [
+                'last24MonthsDate' => $last24MonthsDateInt,
+                'last12MonthsDate' => $last12MonthsDateInt,
+            ]
+        );
+
+        $resultRows = [];
+        foreach ($rows as $index => $row) {
+            $resultRows[] = new RankAllGamesRow(
+                position: $index + 1,
+                playerId: (int) $row['playerId'],
+                playerName: (string) $row['playerName'],
+                rankAllGames: round((float) ($row['rankAllGames'] ?? 0.0), 2),
+                rank24Months: $row['rank24Months'] === null ? null : round((float) $row['rank24Months'], 2),
+                rank12Months: $row['rank12Months'] === null ? null : round((float) $row['rank12Months'], 2),
+            );
+        }
+
+        return new RankAllGames($resultRows);
     }
 
     private function buildSummaryRow(string $statisticName, string|int $allTimesValue, string|int $last12MonthsValue): AllTimeSummaryRow
