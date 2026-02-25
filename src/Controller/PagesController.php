@@ -151,6 +151,12 @@ class PagesController extends AbstractController
         return $this->render('static/stats_highest_rank.html.twig');
     }
 
+    #[Route('/stats/highest-rank-position', name: 'app_stats_highest_rank_position_page', methods: ['GET'])]
+    public function statsHighestRankPosition(): Response
+    {
+        return $this->render('static/stats_highest_rank_position.html.twig');
+    }
+
     #[Route('/tournaments', name: 'app_tournaments_page')]
     public function tournaments(): Response
     {

@@ -22,6 +22,8 @@ use App\ApiResource\Stats\RankAllGames;
 use App\ApiResource\Stats\RankAllGamesRow;
 use App\ApiResource\Stats\HighestRank;
 use App\ApiResource\Stats\HighestRankRow;
+use App\ApiResource\Stats\HighestRankPosition;
+use App\ApiResource\Stats\HighestRankPositionRow;
 use App\ApiResource\Stats\GamesWon;
 use App\ApiResource\Stats\GamesWonRow;
 use App\ApiResource\Stats\TournamentsCount;
@@ -897,6 +899,62 @@ class StatsService
         }
 
         return new HighestRank($resultRows);
+    }
+
+
+    public function getHighestRankPosition(): HighestRankPosition
+    {
+        $today = new DateTimeImmutable('today');
+        $last24MonthsDateInt = (int) $today->modify('-24 months')->format('Ymd');
+        $last12MonthsDateInt = (int) $today->modify('-12 months')->format('Ymd');
+
+        $rows = $this->connection->fetchAllAssociative(
+            "WITH ranking_positions AS (
+                SELECT
+                    r.player AS playerId,
+                    p.name_show AS playerName,
+                    r.pos AS rankPosition,
+                    t.dt
+                FROM PFSRANKING r
+                INNER JOIN PFSTOURS t ON t.id = r.turniej
+                INNER JOIN PFSPLAYER p ON p.id = r.player
+                WHERE r.rtype = 'f'
+            )
+            SELECT
+                rp.playerId,
+                rp.playerName,
+                MIN(rp.rankPosition) AS highestRankPosition,
+                MIN(CASE WHEN rp.dt >= :last24MonthsDate THEN rp.rankPosition ELSE NULL END) AS highestRankPosition24Months,
+                MIN(CASE WHEN rp.dt >= :last12MonthsDate THEN rp.rankPosition ELSE NULL END) AS highestRankPosition12Months
+            FROM ranking_positions rp
+            GROUP BY rp.playerId, rp.playerName
+            ORDER BY
+                CASE WHEN highestRankPosition IS NULL THEN 1 ELSE 0 END,
+                highestRankPosition ASC,
+                CASE WHEN highestRankPosition24Months IS NULL THEN 1 ELSE 0 END,
+                highestRankPosition24Months ASC,
+                CASE WHEN highestRankPosition12Months IS NULL THEN 1 ELSE 0 END,
+                highestRankPosition12Months ASC,
+                rp.playerName ASC",
+            [
+                'last24MonthsDate' => $last24MonthsDateInt,
+                'last12MonthsDate' => $last12MonthsDateInt,
+            ]
+        );
+
+        $resultRows = [];
+        foreach ($rows as $index => $row) {
+            $resultRows[] = new HighestRankPositionRow(
+                position: $index + 1,
+                playerId: (int) $row['playerId'],
+                playerName: (string) $row['playerName'],
+                highestRankPosition: (int) $row['highestRankPosition'],
+                highestRankPosition24Months: $row['highestRankPosition24Months'] === null ? null : (int) $row['highestRankPosition24Months'],
+                highestRankPosition12Months: $row['highestRankPosition12Months'] === null ? null : (int) $row['highestRankPosition12Months'],
+            );
+        }
+
+        return new HighestRankPosition($resultRows);
     }
 
     private function buildSummaryRow(string $statisticName, string|int $allTimesValue, string|int $last12MonthsValue): AllTimeSummaryRow
