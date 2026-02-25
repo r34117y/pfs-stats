@@ -6,6 +6,8 @@ use App\ApiResource\Stats\AllTimeSummary;
 use App\ApiResource\Stats\AllTimeSummaryRow;
 use App\ApiResource\Stats\AllTimesResults;
 use App\ApiResource\Stats\AllTimesResultsPlayer;
+use App\ApiResource\Stats\AvgOpponentsPointsPerGame;
+use App\ApiResource\Stats\AvgOpponentsPointsPerGameRow;
 use App\ApiResource\Stats\AvgPointsPerGame;
 use App\ApiResource\Stats\AvgPointsPerGameRow;
 use App\ApiResource\Stats\GamesCount;
@@ -364,6 +366,72 @@ class StatsService
         }
 
         return new AvgPointsPerGame($resultRows);
+    }
+
+    public function getAvgOpponentsPointsPerGame(): AvgOpponentsPointsPerGame
+    {
+        $today = new DateTimeImmutable('today');
+        $last24MonthsDateInt = (int) $today->modify('-24 months')->format('Ymd');
+        $last12MonthsDateInt = (int) $today->modify('-12 months')->format('Ymd');
+
+        $rows = $this->connection->fetchAllAssociative(
+            "WITH unique_games AS (
+                SELECT
+                    h.turniej,
+                    h.runda,
+                    h.player1,
+                    h.player2,
+                    h.result1,
+                    h.result2,
+                    t.dt,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY h.turniej, h.runda, LEAST(h.player1, h.player2), GREATEST(h.player1, h.player2)
+                        ORDER BY h.player1 ASC
+                    ) AS rn
+                FROM PFSTOURHH h
+                INNER JOIN PFSTOURS t ON t.id = h.turniej
+            ),
+            player_opponent_scores AS (
+                SELECT ug.player1 AS player_id, ug.dt, ug.result2 AS opponent_score
+                FROM unique_games ug
+                WHERE ug.rn = 1
+
+                UNION ALL
+
+                SELECT ug.player2 AS player_id, ug.dt, ug.result1 AS opponent_score
+                FROM unique_games ug
+                WHERE ug.rn = 1
+            )
+            SELECT
+                p.id AS playerId,
+                p.name_show AS playerName,
+                AVG(pos.opponent_score) AS averageOpponentPoints,
+                AVG(CASE WHEN pos.dt >= :last24MonthsDate THEN pos.opponent_score ELSE NULL END) AS last24MonthsAverageOpponentPoints,
+                AVG(CASE WHEN pos.dt >= :last12MonthsDate THEN pos.opponent_score ELSE NULL END) AS last12MonthsAverageOpponentPoints
+            FROM PFSPLAYER p
+            LEFT JOIN player_opponent_scores pos ON pos.player_id = p.id
+            GROUP BY p.id, p.name_show
+            HAVING COUNT(pos.player_id) >= 30
+            ORDER BY last24MonthsAverageOpponentPoints DESC, playerName ASC",
+            [
+                'last24MonthsDate' => $last24MonthsDateInt,
+                'last12MonthsDate' => $last12MonthsDateInt,
+            ]
+        );
+
+        $resultRows = [];
+        foreach ($rows as $index => $row) {
+            $resultRows[] = new AvgOpponentsPointsPerGameRow(
+                position: $index + 1,
+                playerId: (int) $row['playerId'],
+                playerName: (string) $row['playerName'],
+                averageOpponentPoints: round((float) ($row['averageOpponentPoints'] ?? 0.0), 2),
+                last24MonthsAverageOpponentPoints: round((float) ($row['last24MonthsAverageOpponentPoints'] ?? 0.0), 2),
+                last12MonthsAverageOpponentPoints: round((float) ($row['last12MonthsAverageOpponentPoints'] ?? 0.0), 2),
+            );
+        }
+
+        return new AvgOpponentsPointsPerGame($resultRows);
     }
 
     private function buildSummaryRow(string $statisticName, string|int $allTimesValue, string|int $last12MonthsValue): AllTimeSummaryRow
