@@ -24,6 +24,8 @@ use App\ApiResource\Stats\HighestRank;
 use App\ApiResource\Stats\HighestRankRow;
 use App\ApiResource\Stats\HighestRankPosition;
 use App\ApiResource\Stats\HighestRankPositionRow;
+use App\ApiResource\Stats\RankingLeaders;
+use App\ApiResource\Stats\RankingLeadersRow;
 use App\ApiResource\Stats\GamesWon;
 use App\ApiResource\Stats\GamesWonRow;
 use App\ApiResource\Stats\TournamentsCount;
@@ -955,6 +957,93 @@ class StatsService
         }
 
         return new HighestRankPosition($resultRows);
+    }
+
+    public function getRankingLeaders(): RankingLeaders
+    {
+        $rows = $this->connection->fetchAllAssociative(
+            "WITH ranking_rows AS (
+                SELECT
+                    r.turniej AS tournamentId,
+                    t.dt AS tournamentDate,
+                    r.player AS playerId,
+                    p.name_show AS playerName,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY r.turniej
+                        ORDER BY r.pos ASC, r.rank DESC, r.player ASC
+                    ) AS rn
+                FROM PFSRANKING r
+                INNER JOIN PFSTOURS t ON t.id = r.turniej
+                INNER JOIN PFSPLAYER p ON p.id = r.player
+                WHERE r.rtype = 'f'
+            ),
+            leaders AS (
+                SELECT
+                    rr.tournamentId,
+                    rr.tournamentDate,
+                    rr.playerId,
+                    rr.playerName
+                FROM ranking_rows rr
+                WHERE rr.rn = 1
+            ),
+            ordered_leaders AS (
+                SELECT
+                    l.*,
+                    LAG(l.playerId) OVER (ORDER BY l.tournamentDate ASC, l.tournamentId ASC) AS previousPlayerId
+                FROM leaders l
+            ),
+            streaks_marked AS (
+                SELECT
+                    ol.*,
+                    SUM(
+                        CASE
+                            WHEN ol.previousPlayerId IS NULL OR ol.previousPlayerId <> ol.playerId THEN 1
+                            ELSE 0
+                        END
+                    ) OVER (ORDER BY ol.tournamentDate ASC, ol.tournamentId ASC) AS streakId
+                FROM ordered_leaders ol
+            ),
+            streaks AS (
+                SELECT
+                    sm.playerId,
+                    sm.playerName,
+                    MIN(sm.tournamentDate) AS firstTournamentDate,
+                    MIN(sm.tournamentId) AS firstTournamentId,
+                    MAX(sm.tournamentDate) AS lastTournamentDate,
+                    MAX(sm.tournamentId) AS lastTournamentId
+                FROM streaks_marked sm
+                GROUP BY sm.playerId, sm.playerName, sm.streakId
+            )
+            SELECT
+                s.playerId,
+                s.playerName,
+                s.firstTournamentId,
+                s.lastTournamentId,
+                COALESCE(tf.fullname, tf.name) AS firstTournamentName,
+                COALESCE(tl.fullname, tl.name) AS lastTournamentName,
+                DATEDIFF(
+                    STR_TO_DATE(CAST(s.lastTournamentDate AS CHAR), '%Y%m%d'),
+                    STR_TO_DATE(CAST(s.firstTournamentDate AS CHAR), '%Y%m%d')
+                ) + 1 AS daysOnTop
+            FROM streaks s
+            INNER JOIN PFSTOURS tf ON tf.id = s.firstTournamentId
+            INNER JOIN PFSTOURS tl ON tl.id = s.lastTournamentId
+            ORDER BY daysOnTop DESC, s.playerName ASC, s.firstTournamentDate ASC, s.firstTournamentId ASC"
+        );
+
+        $resultRows = [];
+        foreach ($rows as $index => $row) {
+            $resultRows[] = new RankingLeadersRow(
+                position: $index + 1,
+                playerId: (int) $row['playerId'],
+                playerName: (string) $row['playerName'],
+                daysOnTop: (int) $row['daysOnTop'],
+                firstTournamentName: (string) $row['firstTournamentName'],
+                lastTournamentName: (string) $row['lastTournamentName'],
+            );
+        }
+
+        return new RankingLeaders($resultRows);
     }
 
     private function buildSummaryRow(string $statisticName, string|int $allTimesValue, string|int $last12MonthsValue): AllTimeSummaryRow
