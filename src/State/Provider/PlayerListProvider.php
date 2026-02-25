@@ -9,6 +9,8 @@ use App\ApiResource\PlayersList\PlayersListPlayer;
 use App\Repository\UserRepository;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
 class PlayerListProvider implements ProviderInterface
 {
@@ -16,28 +18,34 @@ class PlayerListProvider implements ProviderInterface
         #[Autowire(service: 'doctrine.dbal.mysql_connection')]
         private Connection $connection,
         private UserRepository $userRepository,
+        #[Autowire(service: 'cache.app')]
+        private CacheInterface $cache,
     ) {
     }
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): PlayersList
     {
-        $sql = "SELECT id, name_show, name_alph FROM PFSPLAYER WHERE name_show <> '\"Okrutniki\" -' ORDER BY name_alph ASC";
-        $result = $this->connection->executeQuery($sql);
-        $rows = $result->fetchAllAssociative();
-        $photosByPlayerId = $this->loadPhotosByPlayerId($rows);
-        $players = [];
+        return $this->cache->get('api.players.list', function (ItemInterface $item): PlayersList {
+            $item->expiresAfter(600);
 
-        foreach ($rows as $player) {
-            $playerId = (int) $player['id'];
-            $players[] = new PlayersListPlayer(
-                $playerId,
-                $player['name_show'],
-                $player['name_alph'],
-                $photosByPlayerId[$playerId] ?? null,
-            );
-        }
+            $sql = "SELECT id, name_show, name_alph FROM PFSPLAYER WHERE name_show <> '\"Okrutniki\" -' ORDER BY name_alph ASC";
+            $result = $this->connection->executeQuery($sql);
+            $rows = $result->fetchAllAssociative();
+            $photosByPlayerId = $this->loadPhotosByPlayerId($rows);
+            $players = [];
 
-        return new PlayersList($players);
+            foreach ($rows as $player) {
+                $playerId = (int) $player['id'];
+                $players[] = new PlayersListPlayer(
+                    $playerId,
+                    $player['name_show'],
+                    $player['name_alph'],
+                    $photosByPlayerId[$playerId] ?? null,
+                );
+            }
+
+            return new PlayersList($players);
+        });
     }
 
     /**

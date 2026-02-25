@@ -11,6 +11,8 @@ use App\Service\RankingSnapshotService;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
 final readonly class RankingProvider implements ProviderInterface
 {
@@ -19,6 +21,8 @@ final readonly class RankingProvider implements ProviderInterface
         private Connection $connection,
         private UserRepository $userRepository,
         private RankingSnapshotService $rankingSnapshotService,
+        #[Autowire(service: 'cache.app')]
+        private CacheInterface $cache,
     ) {
     }
 
@@ -27,59 +31,63 @@ final readonly class RankingProvider implements ProviderInterface
      */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): GetRanking
     {
-        $latestTournamentId = $this->getLatestRankingTournamentId();
-        if ($latestTournamentId === null) {
-            return new GetRanking([]);
-        }
+        return $this->cache->get('api.ranking.current', function (ItemInterface $item): GetRanking {
+            $item->expiresAfter(600);
 
-        $lastTournamentName = $this->loadTournamentName($latestTournamentId);
-        $previousTournamentId = $this->getPreviousRankingTournamentId($latestTournamentId);
-
-        $latestRanking = $this->rankingSnapshotService->getRankingAfterTournament($latestTournamentId);
-        $previousRanking = $previousTournamentId !== null
-            ? $this->rankingSnapshotService->getRankingAfterTournament($previousTournamentId)
-            : [];
-
-        $previousRankingByPlayer = [];
-        foreach ($previousRanking as $row) {
-            $previousRankingByPlayer[$row['playerId']] = [
-                'rank' => $row['rank'],
-                'position' => $row['position'],
-            ];
-        }
-
-        $rankingRows = [];
-        $photosByPlayerId = $this->loadPhotosByPlayerId($latestRanking);
-
-        foreach ($latestRanking as $row) {
-            $playerId = $row['playerId'];
-            $rankDelta = null;
-            $positionDelta = null;
-
-            if (isset($previousRankingByPlayer[$playerId])) {
-                $previous = $previousRankingByPlayer[$playerId];
-                $currentRank = $row['rank'];
-                $currentPosition = $row['position'];
-                $rankDelta = round($currentRank - $previous['rank'], 2);
-                $positionDelta = $previous['position'] - $currentPosition;
-            } elseif ($previousTournamentId !== null) {
-                $positionDelta = '+';
+            $latestTournamentId = $this->getLatestRankingTournamentId();
+            if ($latestTournamentId === null) {
+                return new GetRanking([]);
             }
 
-            $rankingRows[] = new RankingRow(
-                $row['position'],
-                $row['nameShow'],
-                $row['nameAlph'],
-                $playerId,
-                $photosByPlayerId[$playerId] ?? null,
-                $row['rank'],
-                $row['games'],
-                $rankDelta,
-                $positionDelta
-            );
-        }
+            $lastTournamentName = $this->loadTournamentName($latestTournamentId);
+            $previousTournamentId = $this->getPreviousRankingTournamentId($latestTournamentId);
 
-        return new GetRanking($rankingRows, $lastTournamentName, $latestTournamentId);
+            $latestRanking = $this->rankingSnapshotService->getRankingAfterTournament($latestTournamentId);
+            $previousRanking = $previousTournamentId !== null
+                ? $this->rankingSnapshotService->getRankingAfterTournament($previousTournamentId)
+                : [];
+
+            $previousRankingByPlayer = [];
+            foreach ($previousRanking as $row) {
+                $previousRankingByPlayer[$row['playerId']] = [
+                    'rank' => $row['rank'],
+                    'position' => $row['position'],
+                ];
+            }
+
+            $rankingRows = [];
+            $photosByPlayerId = $this->loadPhotosByPlayerId($latestRanking);
+
+            foreach ($latestRanking as $row) {
+                $playerId = $row['playerId'];
+                $rankDelta = null;
+                $positionDelta = null;
+
+                if (isset($previousRankingByPlayer[$playerId])) {
+                    $previous = $previousRankingByPlayer[$playerId];
+                    $currentRank = $row['rank'];
+                    $currentPosition = $row['position'];
+                    $rankDelta = round($currentRank - $previous['rank'], 2);
+                    $positionDelta = $previous['position'] - $currentPosition;
+                } elseif ($previousTournamentId !== null) {
+                    $positionDelta = '+';
+                }
+
+                $rankingRows[] = new RankingRow(
+                    $row['position'],
+                    $row['nameShow'],
+                    $row['nameAlph'],
+                    $playerId,
+                    $photosByPlayerId[$playerId] ?? null,
+                    $row['rank'],
+                    $row['games'],
+                    $rankDelta,
+                    $positionDelta
+                );
+            }
+
+            return new GetRanking($rankingRows, $lastTournamentName, $latestTournamentId);
+        });
     }
 
     private function loadTournamentName(int $tournamentId): ?string

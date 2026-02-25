@@ -6,12 +6,17 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\PlayerProfile\PlayerProfile;
 use App\Service\PlayerProfileService;
+use DateTimeImmutable;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Contracts\Cache\CacheInterface;
 
 final readonly class PlayerProfileProvider implements ProviderInterface
 {
     public function __construct(
         private PlayerProfileService $playerProfileService,
+        #[Autowire(service: 'cache.app')]
+        private CacheInterface $cache,
     ) {
     }
 
@@ -24,6 +29,11 @@ final readonly class PlayerProfileProvider implements ProviderInterface
             throw new NotFoundHttpException('Player not found.');
         }
 
-        return $this->playerProfileService->getPlayerProfile($playerId);
+        $todayKey = (new DateTimeImmutable('today'))->format('Ymd');
+
+        return $this->cache->get(
+            sprintf('api.player_profile.%d.%s', $playerId, $todayKey),
+            fn (): PlayerProfile => $this->playerProfileService->getPlayerProfile($playerId),
+        );
     }
 }

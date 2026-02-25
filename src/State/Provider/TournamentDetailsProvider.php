@@ -6,12 +6,16 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\TournamentDetails\TournamentDetails;
 use App\Service\TournamentDetailsService;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Contracts\Cache\CacheInterface;
 
 class TournamentDetailsProvider implements ProviderInterface
 {
     public function __construct(
         private TournamentDetailsService $tournamentDetailsService,
+        #[Autowire(service: 'cache.app')]
+        private CacheInterface $cache,
     ) {
     }
 
@@ -24,6 +28,9 @@ class TournamentDetailsProvider implements ProviderInterface
             throw new NotFoundHttpException('Tournament not found.');
         }
 
-        return $this->tournamentDetailsService->getTournamentDetails($tournamentId);
+        return $this->cache->get(
+            sprintf('api.tournament_details.%d', $tournamentId),
+            fn (): TournamentDetails => $this->tournamentDetailsService->getTournamentDetails($tournamentId),
+        );
     }
 }

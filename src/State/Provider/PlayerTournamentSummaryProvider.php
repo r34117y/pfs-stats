@@ -6,12 +6,16 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\PlayerTournamentSummary\PlayerTournamentSummary;
 use App\Service\PlayerTournamentSummaryService;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Contracts\Cache\CacheInterface;
 
 class PlayerTournamentSummaryProvider implements ProviderInterface
 {
     public function __construct(
         private PlayerTournamentSummaryService $playerTournamentSummaryService,
+        #[Autowire(service: 'cache.app')]
+        private CacheInterface $cache,
     ) {
     }
 
@@ -26,6 +30,9 @@ class PlayerTournamentSummaryProvider implements ProviderInterface
             throw new NotFoundHttpException('Invalid tournament or player.');
         }
 
-        return $this->playerTournamentSummaryService->getSummary($tournamentId, $playerId);
+        return $this->cache->get(
+            sprintf('api.player_tournament_summary.%d.%d', $tournamentId, $playerId),
+            fn (): PlayerTournamentSummary => $this->playerTournamentSummaryService->getSummary($tournamentId, $playerId),
+        );
     }
 }

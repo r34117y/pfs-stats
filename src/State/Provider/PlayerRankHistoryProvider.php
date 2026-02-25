@@ -6,12 +6,16 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\PlayerRankHistory\PlayerRankHistory;
 use App\Service\PlayerRankHistoryService;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Contracts\Cache\CacheInterface;
 
 class PlayerRankHistoryProvider implements ProviderInterface
 {
     public function __construct(
         private PlayerRankHistoryService $playerRankHistoryService,
+        #[Autowire(service: 'cache.app')]
+        private CacheInterface $cache,
     ) {
     }
 
@@ -24,6 +28,9 @@ class PlayerRankHistoryProvider implements ProviderInterface
             throw new NotFoundHttpException('Player not found.');
         }
 
-        return $this->playerRankHistoryService->getRankHistory($playerId);
+        return $this->cache->get(
+            sprintf('api.player_rank_history.%d', $playerId),
+            fn (): PlayerRankHistory => $this->playerRankHistoryService->getRankHistory($playerId),
+        );
     }
 }

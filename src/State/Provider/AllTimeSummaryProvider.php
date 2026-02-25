@@ -6,16 +6,26 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\Stats\AllTimeSummary;
 use App\Service\StatsService;
+use DateTimeImmutable;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Contracts\Cache\CacheInterface;
 
-class AllTimeSummaryProvider implements ProviderInterface
+final readonly class AllTimeSummaryProvider implements ProviderInterface
 {
     public function __construct(
         private StatsService $statsService,
+        #[Autowire(service: 'cache.app')]
+        private CacheInterface $cache,
     ) {
     }
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): AllTimeSummary
     {
-        return $this->statsService->getAllTimeSummary();
+        $todayKey = (new DateTimeImmutable('today'))->format('Ymd');
+
+        return $this->cache->get(
+            sprintf('api.stats.all_time_summary.%s', $todayKey),
+            fn (): AllTimeSummary => $this->statsService->getAllTimeSummary(),
+        );
     }
 }

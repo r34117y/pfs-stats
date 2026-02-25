@@ -6,12 +6,16 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\AnnotatedGameDetails\AnnotatedGameDetails;
 use App\Service\AnnotatedGameDetailsService;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Contracts\Cache\CacheInterface;
 
 final readonly class AnnotatedGameDetailsProvider implements ProviderInterface
 {
     public function __construct(
         private AnnotatedGameDetailsService $annotatedGameDetailsService,
+        #[Autowire(service: 'cache.app')]
+        private CacheInterface $cache,
     ) {
     }
 
@@ -31,6 +35,9 @@ final readonly class AnnotatedGameDetailsProvider implements ProviderInterface
             throw new NotFoundHttpException('Invalid annotated game key values.');
         }
 
-        return $this->annotatedGameDetailsService->getByKey($tournamentId, $round, $player1Id);
+        return $this->cache->get(
+            sprintf('api.annotated_game_details.%d.%d.%d', $tournamentId, $round, $player1Id),
+            fn (): AnnotatedGameDetails => $this->annotatedGameDetailsService->getByKey($tournamentId, $round, $player1Id),
+        );
     }
 }

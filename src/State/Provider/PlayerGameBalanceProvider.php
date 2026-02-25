@@ -6,12 +6,16 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\PlayerGameBalance\PlayerGameBalance;
 use App\Service\PlayerGameBalanceService;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Contracts\Cache\CacheInterface;
 
 class PlayerGameBalanceProvider implements ProviderInterface
 {
     public function __construct(
         private PlayerGameBalanceService $playerGameBalanceService,
+        #[Autowire(service: 'cache.app')]
+        private CacheInterface $cache,
     ) {
     }
 
@@ -24,6 +28,9 @@ class PlayerGameBalanceProvider implements ProviderInterface
             throw new NotFoundHttpException('Player not found.');
         }
 
-        return $this->playerGameBalanceService->getGameBalance($playerId);
+        return $this->cache->get(
+            sprintf('api.player_game_balance.%d', $playerId),
+            fn (): PlayerGameBalance => $this->playerGameBalanceService->getGameBalance($playerId),
+        );
     }
 }
