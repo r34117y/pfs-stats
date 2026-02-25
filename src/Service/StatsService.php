@@ -406,8 +406,16 @@ class StatsService
                 p.id AS playerId,
                 p.name_show AS playerName,
                 AVG(pos.opponent_score) AS averageOpponentPoints,
-                AVG(CASE WHEN pos.dt >= :last24MonthsDate THEN pos.opponent_score ELSE NULL END) AS last24MonthsAverageOpponentPoints,
-                AVG(CASE WHEN pos.dt >= :last12MonthsDate THEN pos.opponent_score ELSE NULL END) AS last12MonthsAverageOpponentPoints
+                CASE
+                    WHEN SUM(CASE WHEN pos.dt >= :last24MonthsDate THEN 1 ELSE 0 END) >= 30
+                        THEN AVG(CASE WHEN pos.dt >= :last24MonthsDate THEN pos.opponent_score ELSE NULL END)
+                    ELSE NULL
+                END AS last24MonthsAverageOpponentPoints,
+                CASE
+                    WHEN SUM(CASE WHEN pos.dt >= :last12MonthsDate THEN 1 ELSE 0 END) >= 30
+                        THEN AVG(CASE WHEN pos.dt >= :last12MonthsDate THEN pos.opponent_score ELSE NULL END)
+                    ELSE NULL
+                END AS last12MonthsAverageOpponentPoints
             FROM PFSPLAYER p
             LEFT JOIN player_opponent_scores pos ON pos.player_id = p.id
             GROUP BY p.id, p.name_show
@@ -426,8 +434,12 @@ class StatsService
                 playerId: (int) $row['playerId'],
                 playerName: (string) $row['playerName'],
                 averageOpponentPoints: round((float) ($row['averageOpponentPoints'] ?? 0.0), 2),
-                last24MonthsAverageOpponentPoints: round((float) ($row['last24MonthsAverageOpponentPoints'] ?? 0.0), 2),
-                last12MonthsAverageOpponentPoints: round((float) ($row['last12MonthsAverageOpponentPoints'] ?? 0.0), 2),
+                last24MonthsAverageOpponentPoints: $row['last24MonthsAverageOpponentPoints'] === null
+                    ? null
+                    : round((float) $row['last24MonthsAverageOpponentPoints'], 2),
+                last12MonthsAverageOpponentPoints: $row['last12MonthsAverageOpponentPoints'] === null
+                    ? null
+                    : round((float) $row['last12MonthsAverageOpponentPoints'], 2),
             );
         }
 

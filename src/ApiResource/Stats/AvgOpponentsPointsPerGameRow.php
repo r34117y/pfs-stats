@@ -9,8 +9,8 @@ class AvgOpponentsPointsPerGameRow
         public int $playerId,
         public string $playerName,
         public float $averageOpponentPoints,
-        public float $last24MonthsAverageOpponentPoints,
-        public float $last12MonthsAverageOpponentPoints,
+        public ?float $last24MonthsAverageOpponentPoints,
+        public ?float $last12MonthsAverageOpponentPoints,
     ) {
     }
 }
