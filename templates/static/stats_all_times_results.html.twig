@@ -2,6 +2,54 @@
 
 {% set activeStatsItem = 'all_times_results' %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .results-player-cell {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .results-player-mobile-row {
+            display: none;
+            font-size: 0.8rem;
+            color: #7a7a7a;
+            line-height: 1.2;
+        }
+
+        @media screen and (max-width: 768px) {
+            .results-table th:nth-child(n+3),
+            .results-table td:nth-child(n+3) {
+                display: none;
+            }
+
+            .results-player-mobile-row {
+                display: grid;
+                gap: 0.25rem;
+                padding-top: 0.35rem;
+                border-top: 1px solid #e5e5e5;
+            }
+
+            .results-player-mobile-row--places {
+                grid-template-columns: repeat(6, minmax(0, 1fr));
+            }
+
+            .results-player-mobile-row--totals {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .results-player-mobile-row > span {
+                text-align: center;
+            }
+
+            .results-player-mobile-row > span + span {
+                border-left: 1px solid #e5e5e5;
+            }
+        }
+    </style>
+{% endblock %}
+
 {% block stats_content %}
     <div x-data="allTimesResultsData()" x-init="fetchRows()">
         <h1 class="title is-3">Miejsca w turniejach</h1>
@@ -21,7 +69,7 @@
                 <input class="input" type="search" placeholder="Filtruj" @input="setSearch($event.target.value)">
             </div>
             <div style="overflow-x: auto;">
-                <table class="table is-bordered is-hoverable is-fullwidth">
+                <table class="table is-bordered is-hoverable is-fullwidth results-table">
                     <thead>
                     <tr>
                         <th class="has-text-centered">#</th>
@@ -40,7 +88,23 @@
                     <template x-for="row in filteredRows" :key="row.playerId">
                         <tr>
                             <td class="has-text-centered" x-text="`${row.position}.`"></td>
-                            <td><a :href="`/players/${row.playerId}`" x-text="row.playerName"></a></td>
+                            <td>
+                                <div class="results-player-cell">
+                                    <a :href="`/players/${row.playerId}`" x-text="row.playerName"></a>
+                                    <div class="results-player-mobile-row results-player-mobile-row--places">
+                                        <span x-text="row.first"></span>
+                                        <span x-text="row.second"></span>
+                                        <span x-text="row.third"></span>
+                                        <span x-text="row.fourth"></span>
+                                        <span x-text="row.fifth"></span>
+                                        <span x-text="row.sixth"></span>
+                                    </div>
+                                    <div class="results-player-mobile-row results-player-mobile-row--totals">
+                                        <span x-text="row.oneToThree"></span>
+                                        <span x-text="row.oneToSix"></span>
+                                    </div>
+                                </div>
+                            </td>
                             <td class="has-text-centered" x-text="row.first"></td>
                             <td class="has-text-centered" x-text="row.second"></td>
                             <td class="has-text-centered" x-text="row.third"></td>
