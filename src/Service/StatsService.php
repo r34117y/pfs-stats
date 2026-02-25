@@ -16,6 +16,8 @@ use App\ApiResource\Stats\AvgPointsPerGame;
 use App\ApiResource\Stats\AvgPointsPerGameRow;
 use App\ApiResource\Stats\GamesCount;
 use App\ApiResource\Stats\GamesCountRow;
+use App\ApiResource\Stats\GamesOver400;
+use App\ApiResource\Stats\GamesOver400Row;
 use App\ApiResource\Stats\GamesWon;
 use App\ApiResource\Stats\GamesWonRow;
 use App\ApiResource\Stats\TournamentsCount;
@@ -604,6 +606,106 @@ class StatsService
         }
 
         return new AvgPointsDifferencePerGame($resultRows);
+    }
+
+    public function getGamesOver400(): GamesOver400
+    {
+        $today = new DateTimeImmutable('today');
+        $last24MonthsDateInt = (int) $today->modify('-24 months')->format('Ymd');
+        $last12MonthsDateInt = (int) $today->modify('-12 months')->format('Ymd');
+
+        $rows = $this->connection->fetchAllAssociative(
+            "WITH unique_games AS (
+                SELECT
+                    h.turniej,
+                    h.runda,
+                    h.player1,
+                    h.player2,
+                    h.result1,
+                    h.result2,
+                    t.dt,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY h.turniej, h.runda, LEAST(h.player1, h.player2), GREATEST(h.player1, h.player2)
+                        ORDER BY h.player1 ASC
+                    ) AS rn
+                FROM PFSTOURHH h
+                INNER JOIN PFSTOURS t ON t.id = h.turniej
+            ),
+            player_scores AS (
+                SELECT ug.player1 AS player_id, ug.dt, ug.result1 AS score
+                FROM unique_games ug
+                WHERE ug.rn = 1
+
+                UNION ALL
+
+                SELECT ug.player2 AS player_id, ug.dt, ug.result2 AS score
+                FROM unique_games ug
+                WHERE ug.rn = 1
+            ),
+            stats AS (
+                SELECT
+                    p.id AS playerId,
+                    p.name_show AS playerName,
+                    COUNT(ps.player_id) AS gamesCount,
+                    SUM(CASE WHEN ps.score > 400 THEN 1 ELSE 0 END) AS gamesOver400,
+                    SUM(CASE WHEN ps.dt >= :last24MonthsDate THEN 1 ELSE 0 END) AS gamesCount24Months,
+                    SUM(CASE WHEN ps.dt >= :last24MonthsDate AND ps.score > 400 THEN 1 ELSE 0 END) AS gamesOver40024Months,
+                    SUM(CASE WHEN ps.dt >= :last12MonthsDate THEN 1 ELSE 0 END) AS gamesCount12Months,
+                    SUM(CASE WHEN ps.dt >= :last12MonthsDate AND ps.score > 400 THEN 1 ELSE 0 END) AS gamesOver40012Months
+                FROM PFSPLAYER p
+                LEFT JOIN player_scores ps ON ps.player_id = p.id
+                GROUP BY p.id, p.name_show
+                HAVING COUNT(ps.player_id) >= 30
+            )
+            SELECT
+                s.playerId,
+                s.playerName,
+                s.gamesOver400,
+                (s.gamesOver400 * 100.0 / s.gamesCount) AS gamesOver400Percent,
+                CASE
+                    WHEN s.gamesCount24Months >= 30 THEN s.gamesOver40024Months
+                    ELSE NULL
+                END AS gamesOver40024Months,
+                CASE
+                    WHEN s.gamesCount24Months >= 30 THEN (s.gamesOver40024Months * 100.0 / s.gamesCount24Months)
+                    ELSE NULL
+                END AS gamesOver40024MonthsPercent,
+                CASE
+                    WHEN s.gamesCount12Months >= 30 THEN s.gamesOver40012Months
+                    ELSE NULL
+                END AS gamesOver40012Months,
+                CASE
+                    WHEN s.gamesCount12Months >= 30 THEN (s.gamesOver40012Months * 100.0 / s.gamesCount12Months)
+                    ELSE NULL
+                END AS gamesOver40012MonthsPercent
+            FROM stats s
+            ORDER BY gamesOver40024MonthsPercent DESC, playerName ASC",
+            [
+                'last24MonthsDate' => $last24MonthsDateInt,
+                'last12MonthsDate' => $last12MonthsDateInt,
+            ]
+        );
+
+        $resultRows = [];
+        foreach ($rows as $index => $row) {
+            $resultRows[] = new GamesOver400Row(
+                position: $index + 1,
+                playerId: (int) $row['playerId'],
+                playerName: (string) $row['playerName'],
+                gamesOver400: (int) $row['gamesOver400'],
+                gamesOver400Percent: round((float) $row['gamesOver400Percent'], 2),
+                gamesOver40024Months: $row['gamesOver40024Months'] === null ? null : (int) $row['gamesOver40024Months'],
+                gamesOver40024MonthsPercent: $row['gamesOver40024MonthsPercent'] === null
+                    ? null
+                    : round((float) $row['gamesOver40024MonthsPercent'], 2),
+                gamesOver40012Months: $row['gamesOver40012Months'] === null ? null : (int) $row['gamesOver40012Months'],
+                gamesOver40012MonthsPercent: $row['gamesOver40012MonthsPercent'] === null
+                    ? null
+                    : round((float) $row['gamesOver40012MonthsPercent'], 2),
+            );
+        }
+
+        return new GamesOver400($resultRows);
     }
 
     private function buildSummaryRow(string $statisticName, string|int $allTimesValue, string|int $last12MonthsValue): AllTimeSummaryRow
