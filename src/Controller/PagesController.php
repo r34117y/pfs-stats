@@ -169,6 +169,12 @@ class PagesController extends AbstractController
         return $this->render('static/stats_different_opponents.html.twig');
     }
 
+    #[Route('/stats/most-small-points', name: 'app_stats_most_small_points_page', methods: ['GET'])]
+    public function statsMostSmallPoints(): Response
+    {
+        return $this->render('static/stats_most_small_points.html.twig');
+    }
+
     #[Route('/tournaments', name: 'app_tournaments_page')]
     public function tournaments(): Response
     {
