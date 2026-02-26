@@ -34,6 +34,8 @@ use App\ApiResource\Stats\HighestDraw;
 use App\ApiResource\Stats\HighestDrawRow;
 use App\ApiResource\Stats\MostPointsAndLoss;
 use App\ApiResource\Stats\MostPointsAndLossRow;
+use App\ApiResource\Stats\LeastPointsAndWin;
+use App\ApiResource\Stats\LeastPointsAndWinRow;
 use App\ApiResource\Stats\RankAllGames;
 use App\ApiResource\Stats\RankAllGamesRow;
 use App\ApiResource\Stats\HighestRank;
@@ -1621,6 +1623,81 @@ class StatsService
         }
 
         return new MostPointsAndLoss($resultRows);
+    }
+
+    public function getLeastPointsAndWin(): LeastPointsAndWin
+    {
+        $rows = $this->connection->fetchAllAssociative(
+            "WITH unique_games AS (
+                SELECT
+                    h.turniej,
+                    h.runda,
+                    h.player1,
+                    h.player2,
+                    h.result1,
+                    h.result2,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY h.turniej, h.runda, LEAST(h.player1, h.player2), GREATEST(h.player1, h.player2)
+                        ORDER BY h.player1 ASC
+                    ) AS rn
+                FROM PFSTOURHH h
+            ),
+            winning_games AS (
+                SELECT
+                    ug.turniej,
+                    ug.runda,
+                    ug.player1 AS playerId,
+                    ug.player2 AS opponentId,
+                    ug.result1 AS points,
+                    CONCAT(ug.result1, ':', ug.result2) AS score
+                FROM unique_games ug
+                WHERE ug.rn = 1 AND ug.result1 > ug.result2
+
+                UNION ALL
+
+                SELECT
+                    ug.turniej,
+                    ug.runda,
+                    ug.player2 AS playerId,
+                    ug.player1 AS opponentId,
+                    ug.result2 AS points,
+                    CONCAT(ug.result2, ':', ug.result1) AS score
+                FROM unique_games ug
+                WHERE ug.rn = 1 AND ug.result2 > ug.result1
+            )
+            SELECT
+                wg.playerId,
+                p1.name_show AS playerName,
+                wg.opponentId,
+                p2.name_show AS opponentName,
+                wg.points,
+                wg.score,
+                t.id AS tournamentId,
+                t.name AS tournamentName
+            FROM winning_games wg
+            INNER JOIN PFSPLAYER p1 ON p1.id = wg.playerId
+            INNER JOIN PFSPLAYER p2 ON p2.id = wg.opponentId
+            INNER JOIN PFSTOURS t ON t.id = wg.turniej
+            ORDER BY wg.points ASC, t.dt DESC, wg.turniej DESC, wg.runda ASC, p1.name_show ASC
+            LIMIT 1000"
+        );
+
+        $resultRows = [];
+        foreach ($rows as $index => $row) {
+            $resultRows[] = new LeastPointsAndWinRow(
+                position: $index + 1,
+                points: (int) $row['points'],
+                playerId: (int) $row['playerId'],
+                playerName: (string) $row['playerName'],
+                opponentId: (int) $row['opponentId'],
+                opponentName: (string) $row['opponentName'],
+                score: (string) $row['score'],
+                tournamentId: (int) $row['tournamentId'],
+                tournamentName: (string) $row['tournamentName'],
+            );
+        }
+
+        return new LeastPointsAndWin($resultRows);
     }
 
     private function buildSummaryRow(string $statisticName, string|int $allTimesValue, string|int $last12MonthsValue): AllTimeSummaryRow
