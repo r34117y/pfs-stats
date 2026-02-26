@@ -259,6 +259,12 @@ class PagesController extends AbstractController
         return $this->render('static/stats_longest_streak_sum_min_750.html.twig');
     }
 
+    #[Route('/stats/longest-streak-sum-min-800', name: 'app_stats_longest_streak_sum_min_800_page', methods: ['GET'])]
+    public function statsLongestStreakSumMin800(): Response
+    {
+        return $this->render('static/stats_longest_streak_sum_min_800.html.twig');
+    }
+
     #[Route('/tournaments', name: 'app_tournaments_page')]
     public function tournaments(): Response
     {
