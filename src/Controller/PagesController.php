@@ -217,6 +217,12 @@ class PagesController extends AbstractController
         return $this->render('static/stats_least_points_and_win.html.twig');
     }
 
+    #[Route('/stats/most-opponent-points-and-win', name: 'app_stats_most_opponent_points_and_win_page', methods: ['GET'])]
+    public function statsMostOpponentPointsAndWin(): Response
+    {
+        return $this->render('static/stats_most_opponent_points_and_win.html.twig');
+    }
+
     #[Route('/tournaments', name: 'app_tournaments_page')]
     public function tournaments(): Response
     {
