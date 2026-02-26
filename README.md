@@ -29,3 +29,22 @@ This README focuses on the project purpose.
 Technical and implementation documentation lives in the `documentation/` directory.
 
 Caching details are documented in `documentation/Caching.md`.
+
+## Ranking Calibration Command
+
+`pfs:rank:calibrate-rd` calibrates a Glicko-2 RD threshold against historical 2-year sliding windows.
+
+Example:
+
+```bash
+php bin/console pfs:rank:calibrate-rd \
+  --alpha=0.05 --alpha=0.01 \
+  --early-games=35 --stable-games=120 \
+  --k=50 --step=P1M --window=P2Y
+```
+
+Reports are written to `var/reports/pfs-rd-calibration/<timestamp>/`:
+
+- `report.md`
+- `report.json`
+- `report.html` (optional via `--format=md,json,html`)
