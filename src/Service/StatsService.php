@@ -48,6 +48,8 @@ use App\ApiResource\Stats\LongestStreakMin350;
 use App\ApiResource\Stats\LongestStreakMin350Row;
 use App\ApiResource\Stats\LongestStreakMin400;
 use App\ApiResource\Stats\LongestStreakMin400Row;
+use App\ApiResource\Stats\LongestStreakSumMin750;
+use App\ApiResource\Stats\LongestStreakSumMin750Row;
 use App\ApiResource\Stats\RankAllGames;
 use App\ApiResource\Stats\RankAllGamesRow;
 use App\ApiResource\Stats\HighestRank;
@@ -2662,6 +2664,266 @@ class StatsService
         }
 
         return new LongestStreakMin400($resultRows);
+    }
+
+    public function getLongestStreakSumMin750(): LongestStreakSumMin750
+    {
+        $topRows = $this->connection->fetchAllAssociative(
+            "WITH eligible_players AS (
+                SELECT pg.playerId
+                FROM (
+                    SELECT hh.player1 AS playerId
+                    FROM PFSTOURHH hh
+                    WHERE hh.player1 < hh.player2
+                        AND NOT (hh.result1 = 0 AND hh.result2 = 0)
+                    UNION ALL
+                    SELECT hh.player2 AS playerId
+                    FROM PFSTOURHH hh
+                    WHERE hh.player1 < hh.player2
+                        AND NOT (hh.result1 = 0 AND hh.result2 = 0)
+                ) pg
+                GROUP BY pg.playerId
+                HAVING COUNT(*) >= 30
+            ),
+            base_games AS (
+                SELECT
+                    h.turniej,
+                    h.runda,
+                    h.player1,
+                    h.player2,
+                    h.result1,
+                    h.result2
+                FROM (
+                    SELECT
+                        hh.turniej,
+                        hh.runda,
+                        hh.player1,
+                        hh.player2,
+                        hh.result1,
+                        hh.result2
+                    FROM PFSTOURHH hh
+                    WHERE hh.player1 < hh.player2
+                        AND NOT (hh.result1 = 0 AND hh.result2 = 0)
+                    ORDER BY hh.turniej DESC, hh.runda DESC
+                    LIMIT 500
+                ) h
+            ),
+            player_games AS (
+                SELECT
+                    bg.player1 AS playerId,
+                    p1.name_show AS playerName,
+                    t.dt AS tournamentDate,
+                    bg.turniej AS tournamentId,
+                    bg.runda AS roundNo,
+                    CASE WHEN (bg.result1 + bg.result2) >= 750 THEN 1 ELSE 0 END AS criterionState
+                FROM base_games bg
+                INNER JOIN eligible_players ep1 ON ep1.playerId = bg.player1
+                INNER JOIN PFSPLAYER p1 ON p1.id = bg.player1
+                INNER JOIN PFSTOURS t ON t.id = bg.turniej
+
+                UNION ALL
+
+                SELECT
+                    bg.player2 AS playerId,
+                    p2.name_show AS playerName,
+                    t.dt AS tournamentDate,
+                    bg.turniej AS tournamentId,
+                    bg.runda AS roundNo,
+                    CASE WHEN (bg.result1 + bg.result2) >= 750 THEN 1 ELSE 0 END AS criterionState
+                FROM base_games bg
+                INNER JOIN eligible_players ep2 ON ep2.playerId = bg.player2
+                INNER JOIN PFSPLAYER p2 ON p2.id = bg.player2
+                INNER JOIN PFSTOURS t ON t.id = bg.turniej
+            )
+            SELECT
+                s.playerId,
+                s.playerName,
+                MAX(s.streakLen) AS gamesStreak
+            FROM (
+                SELECT
+                    pg.playerId,
+                    pg.playerName,
+                    @streak := IF(
+                        @prevPlayer = pg.playerId,
+                        IF(pg.criterionState = 1, IF(@prevState = 1, @streak + 1, 1), 0),
+                        IF(pg.criterionState = 1, 1, 0)
+                    ) AS streakLen,
+                    @prevState := pg.criterionState AS _prevState,
+                    @prevPlayer := pg.playerId AS _prevPlayer
+                FROM (
+                    SELECT
+                        playerId,
+                        playerName,
+                        criterionState
+                    FROM player_games
+                    ORDER BY playerId ASC, tournamentDate ASC, tournamentId ASC, roundNo ASC
+                ) pg
+                CROSS JOIN (SELECT @prevPlayer := -1, @prevState := 0, @streak := 0) vars
+            ) s
+            GROUP BY s.playerId, s.playerName
+            HAVING MAX(s.streakLen) > 0
+            ORDER BY gamesStreak DESC, s.playerName ASC
+            LIMIT 1000"
+        );
+
+        if ($topRows === []) {
+            return new LongestStreakSumMin750([]);
+        }
+
+        $playerIds = array_map(static fn (array $row): int => (int) $row['playerId'], $topRows);
+
+        $games = $this->connection->executeQuery(
+            "WITH eligible_players AS (
+                SELECT pg.playerId
+                FROM (
+                    SELECT hh.player1 AS playerId
+                    FROM PFSTOURHH hh
+                    WHERE hh.player1 < hh.player2
+                        AND NOT (hh.result1 = 0 AND hh.result2 = 0)
+                    UNION ALL
+                    SELECT hh.player2 AS playerId
+                    FROM PFSTOURHH hh
+                    WHERE hh.player1 < hh.player2
+                        AND NOT (hh.result1 = 0 AND hh.result2 = 0)
+                ) pg
+                GROUP BY pg.playerId
+                HAVING COUNT(*) >= 30
+            ),
+            base_games AS (
+                SELECT
+                    h.turniej,
+                    h.runda,
+                    h.player1,
+                    h.player2,
+                    h.result1,
+                    h.result2
+                FROM (
+                    SELECT
+                        hh.turniej,
+                        hh.runda,
+                        hh.player1,
+                        hh.player2,
+                        hh.result1,
+                        hh.result2
+                    FROM PFSTOURHH hh
+                    WHERE hh.player1 < hh.player2
+                        AND NOT (hh.result1 = 0 AND hh.result2 = 0)
+                    ORDER BY hh.turniej DESC, hh.runda DESC
+                    LIMIT 500
+                ) h
+            ),
+            player_games AS (
+                SELECT
+                    bg.player1 AS playerId,
+                    bg.turniej AS tournamentId,
+                    t.name AS tournamentName,
+                    t.dt AS tournamentDate,
+                    bg.runda AS roundNo,
+                    CASE
+                        WHEN (bg.result1 + bg.result2) >= 750 THEN 1
+                        ELSE -1
+                    END AS criterionState
+                FROM base_games bg
+                INNER JOIN eligible_players ep1 ON ep1.playerId = bg.player1
+                INNER JOIN PFSTOURS t ON t.id = bg.turniej
+
+                UNION ALL
+
+                SELECT
+                    bg.player2 AS playerId,
+                    bg.turniej AS tournamentId,
+                    t.name AS tournamentName,
+                    t.dt AS tournamentDate,
+                    bg.runda AS roundNo,
+                    CASE
+                        WHEN (bg.result1 + bg.result2) >= 750 THEN 1
+                        ELSE -1
+                    END AS criterionState
+                FROM base_games bg
+                INNER JOIN eligible_players ep2 ON ep2.playerId = bg.player2
+                INNER JOIN PFSTOURS t ON t.id = bg.turniej
+            )
+            SELECT
+                pg.playerId,
+                pg.tournamentId,
+                pg.tournamentName,
+                pg.criterionState
+            FROM player_games pg
+            WHERE pg.playerId IN (:playerIds)
+            ORDER BY pg.playerId ASC, pg.tournamentDate ASC, pg.tournamentId ASC, pg.roundNo ASC",
+            ['playerIds' => $playerIds],
+            ['playerIds' => ArrayParameterType::INTEGER]
+        )->fetchAllAssociative();
+
+        /** @var array<int, list<array{tournamentId:int,tournamentName:string,criterionState:int}>> $gamesByPlayer */
+        $gamesByPlayer = [];
+        foreach ($games as $game) {
+            $playerId = (int) $game['playerId'];
+            $gamesByPlayer[$playerId][] = [
+                'tournamentId' => (int) $game['tournamentId'],
+                'tournamentName' => (string) $game['tournamentName'],
+                'criterionState' => (int) $game['criterionState'],
+            ];
+        }
+
+        $resultRows = [];
+        foreach ($topRows as $index => $topRow) {
+            $playerId = (int) $topRow['playerId'];
+            $playerGames = $gamesByPlayer[$playerId] ?? [];
+            $currentStreak = 0;
+            $tournaments = [];
+
+            if ($playerGames !== []) {
+                $lastState = $playerGames[count($playerGames) - 1]['criterionState'];
+                for ($i = count($playerGames) - 1; $i >= 0; $i--) {
+                    if ($playerGames[$i]['criterionState'] !== $lastState) {
+                        break;
+                    }
+
+                    $currentStreak += ($lastState === 1) ? 1 : -1;
+                }
+
+                $targetStreak = (int) $topRow['gamesStreak'];
+                if ($targetStreak > 0) {
+                    $currentLength = 0;
+                    $currentTournaments = [];
+                    $bestTournaments = [];
+                    foreach ($playerGames as $game) {
+                        if ($game['criterionState'] === 1) {
+                            $currentLength++;
+                            $tid = $game['tournamentId'];
+                            if (!isset($currentTournaments[$tid])) {
+                                $currentTournaments[$tid] = [
+                                    'id' => $tid,
+                                    'name' => $game['tournamentName'],
+                                ];
+                            }
+                        } else {
+                            if ($currentLength === $targetStreak && $bestTournaments === []) {
+                                $bestTournaments = array_values($currentTournaments);
+                            }
+                            $currentLength = 0;
+                            $currentTournaments = [];
+                        }
+                    }
+                    if ($bestTournaments === [] && $currentLength === $targetStreak) {
+                        $bestTournaments = array_values($currentTournaments);
+                    }
+                    $tournaments = $bestTournaments;
+                }
+            }
+
+            $resultRows[] = new LongestStreakSumMin750Row(
+                position: $index + 1,
+                playerId: $playerId,
+                playerName: (string) $topRow['playerName'],
+                gamesStreak: (int) $topRow['gamesStreak'],
+                tournaments: $tournaments,
+                currentStreak: $currentStreak,
+            );
+        }
+
+        return new LongestStreakSumMin750($resultRows);
     }
 
     private function buildSummaryRow(string $statisticName, string|int $allTimesValue, string|int $last12MonthsValue): AllTimeSummaryRow
