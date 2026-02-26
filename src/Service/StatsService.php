@@ -40,6 +40,8 @@ use App\ApiResource\Stats\MostOpponentPointsAndWin;
 use App\ApiResource\Stats\MostOpponentPointsAndWinRow;
 use App\ApiResource\Stats\LeastOpponentPointsAndLoss;
 use App\ApiResource\Stats\LeastOpponentPointsAndLossRow;
+use App\ApiResource\Stats\LongestWinStreaks;
+use App\ApiResource\Stats\LongestWinStreaksRow;
 use App\ApiResource\Stats\RankAllGames;
 use App\ApiResource\Stats\RankAllGamesRow;
 use App\ApiResource\Stats\HighestRank;
@@ -1852,6 +1854,183 @@ class StatsService
         }
 
         return new LeastOpponentPointsAndLoss($resultRows);
+    }
+
+    public function getLongestWinStreaks(): LongestWinStreaks
+    {
+        $rows = $this->connection->fetchAllAssociative(
+            "WITH unique_games AS (
+                SELECT
+                    h.turniej,
+                    h.runda,
+                    h.player1,
+                    h.player2,
+                    h.result1,
+                    h.result2,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY h.turniej, h.runda, LEAST(h.player1, h.player2), GREATEST(h.player1, h.player2)
+                        ORDER BY h.player1 ASC
+                    ) AS rn
+                FROM PFSTOURHH h
+                WHERE NOT (h.result1 = 0 AND h.result2 = 0)
+            ),
+            player_games AS (
+                SELECT
+                    ug.player1 AS playerId,
+                    p1.name_show AS playerName,
+                    ug.turniej AS tournamentId,
+                    t.name AS tournamentName,
+                    t.dt AS tournamentDate,
+                    ug.runda AS roundNo,
+                    CASE
+                        WHEN ug.result1 > ug.result2 THEN 1
+                        WHEN ug.result1 < ug.result2 THEN -1
+                        ELSE 0
+                    END AS outcome
+                FROM unique_games ug
+                INNER JOIN PFSPLAYER p1 ON p1.id = ug.player1
+                INNER JOIN PFSTOURS t ON t.id = ug.turniej
+                WHERE ug.rn = 1
+
+                UNION ALL
+
+                SELECT
+                    ug.player2 AS playerId,
+                    p2.name_show AS playerName,
+                    ug.turniej AS tournamentId,
+                    t.name AS tournamentName,
+                    t.dt AS tournamentDate,
+                    ug.runda AS roundNo,
+                    CASE
+                        WHEN ug.result2 > ug.result1 THEN 1
+                        WHEN ug.result2 < ug.result1 THEN -1
+                        ELSE 0
+                    END AS outcome
+                FROM unique_games ug
+                INNER JOIN PFSPLAYER p2 ON p2.id = ug.player2
+                INNER JOIN PFSTOURS t ON t.id = ug.turniej
+                WHERE ug.rn = 1
+            ),
+            ordered_games AS (
+                SELECT
+                    pg.*,
+                    ROW_NUMBER() OVER (PARTITION BY pg.playerId ORDER BY pg.tournamentDate ASC, pg.tournamentId ASC, pg.roundNo ASC) AS seqAsc,
+                    ROW_NUMBER() OVER (PARTITION BY pg.playerId ORDER BY pg.tournamentDate DESC, pg.tournamentId DESC, pg.roundNo DESC) AS seqDesc,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY pg.playerId, pg.outcome
+                        ORDER BY pg.tournamentDate DESC, pg.tournamentId DESC, pg.roundNo DESC
+                    ) AS seqDescByOutcome
+                FROM player_games pg
+            ),
+            win_groups AS (
+                SELECT
+                    og.playerId,
+                    og.playerName,
+                    og.tournamentId,
+                    og.tournamentName,
+                    og.tournamentDate,
+                    og.roundNo,
+                    og.seqAsc,
+                    (og.seqAsc - ROW_NUMBER() OVER (PARTITION BY og.playerId ORDER BY og.seqAsc)) AS winGroupId
+                FROM ordered_games og
+                WHERE og.outcome = 1
+            ),
+            win_streaks AS (
+                SELECT
+                    wg.playerId,
+                    wg.playerName,
+                    COUNT(*) AS winsStreak,
+                    MIN(wg.seqAsc) AS streakStartSeq,
+                    GROUP_CONCAT(
+                        DISTINCT CONCAT(wg.tournamentId, '::', REPLACE(wg.tournamentName, '|', '/'))
+                        ORDER BY wg.tournamentDate ASC, wg.tournamentId ASC
+                        SEPARATOR '|'
+                    ) AS tournamentsSerialized
+                FROM win_groups wg
+                GROUP BY wg.playerId, wg.playerName, wg.winGroupId
+            ),
+            best_win_streak AS (
+                SELECT
+                    ws.*,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY ws.playerId
+                        ORDER BY ws.winsStreak DESC, ws.streakStartSeq ASC
+                    ) AS rn
+                FROM win_streaks ws
+            ),
+            trailing_outcome AS (
+                SELECT
+                    og.playerId,
+                    og.outcome AS lastOutcome,
+                    COUNT(*) AS trailingCount
+                FROM ordered_games og
+                INNER JOIN (
+                    SELECT
+                        playerId,
+                        outcome,
+                        (seqDesc - seqDescByOutcome) AS trailingGroupId
+                    FROM ordered_games
+                    WHERE seqDesc = 1
+                ) last_row
+                    ON last_row.playerId = og.playerId
+                    AND last_row.outcome = og.outcome
+                    AND (og.seqDesc - og.seqDescByOutcome) = last_row.trailingGroupId
+                GROUP BY og.playerId, og.outcome
+            ),
+            players AS (
+                SELECT DISTINCT
+                    og.playerId,
+                    og.playerName
+                FROM ordered_games og
+            )
+            SELECT
+                p.playerId,
+                p.playerName,
+                COALESCE(bws.winsStreak, 0) AS winsStreak,
+                bws.tournamentsSerialized AS tournamentsSerialized,
+                CASE
+                    WHEN COALESCE(to2.lastOutcome, 0) = 1 THEN COALESCE(to2.trailingCount, 0)
+                    WHEN COALESCE(to2.lastOutcome, 0) = -1 THEN -COALESCE(to2.trailingCount, 0)
+                    ELSE 0
+                END AS currentStreak
+            FROM players p
+            LEFT JOIN best_win_streak bws
+                ON bws.playerId = p.playerId AND bws.rn = 1
+            LEFT JOIN trailing_outcome to2
+                ON to2.playerId = p.playerId
+            ORDER BY winsStreak DESC, p.playerName ASC
+            LIMIT 1000"
+        );
+
+        $resultRows = [];
+        foreach ($rows as $index => $row) {
+            $tournaments = [];
+            $serialized = (string) ($row['tournamentsSerialized'] ?? '');
+            if ($serialized !== '') {
+                foreach (explode('|', $serialized) as $part) {
+                    [$id, $name] = array_pad(explode('::', $part, 2), 2, '');
+                    if ($id === '' || $name === '') {
+                        continue;
+                    }
+
+                    $tournaments[] = [
+                        'id' => (int) $id,
+                        'name' => $name,
+                    ];
+                }
+            }
+
+            $resultRows[] = new LongestWinStreaksRow(
+                position: $index + 1,
+                playerId: (int) $row['playerId'],
+                playerName: (string) $row['playerName'],
+                winsStreak: (int) $row['winsStreak'],
+                tournaments: $tournaments,
+                currentStreak: (int) $row['currentStreak'],
+            );
+        }
+
+        return new LongestWinStreaks($resultRows);
     }
 
     private function buildSummaryRow(string $statisticName, string|int $allTimesValue, string|int $last12MonthsValue): AllTimeSummaryRow

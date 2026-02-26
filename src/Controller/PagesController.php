@@ -229,6 +229,12 @@ class PagesController extends AbstractController
         return $this->render('static/stats_least_opponent_points_and_loss.html.twig');
     }
 
+    #[Route('/stats/longest-win-streaks', name: 'app_stats_longest_win_streaks_page', methods: ['GET'])]
+    public function statsLongestWinStreaks(): Response
+    {
+        return $this->render('static/stats_longest_win_streaks.html.twig');
+    }
+
     #[Route('/tournaments', name: 'app_tournaments_page')]
     public function tournaments(): Response
     {
