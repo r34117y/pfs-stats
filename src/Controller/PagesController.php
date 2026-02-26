@@ -181,6 +181,12 @@ class PagesController extends AbstractController
         return $this->render('static/stats_least_small_points.html.twig');
     }
 
+    #[Route('/stats/highest-points-sum', name: 'app_stats_highest_points_sum_page', methods: ['GET'])]
+    public function statsHighestPointsSum(): Response
+    {
+        return $this->render('static/stats_highest_points_sum.html.twig');
+    }
+
     #[Route('/tournaments', name: 'app_tournaments_page')]
     public function tournaments(): Response
     {

@@ -24,6 +24,8 @@ use App\ApiResource\Stats\MostSmallPoints;
 use App\ApiResource\Stats\MostSmallPointsRow;
 use App\ApiResource\Stats\LeastSmallPoints;
 use App\ApiResource\Stats\LeastSmallPointsRow;
+use App\ApiResource\Stats\HighestPointsSum;
+use App\ApiResource\Stats\HighestPointsSumRow;
 use App\ApiResource\Stats\RankAllGames;
 use App\ApiResource\Stats\RankAllGamesRow;
 use App\ApiResource\Stats\HighestRank;
@@ -1293,6 +1295,72 @@ class StatsService
         }
 
         return new LeastSmallPoints($resultRows);
+    }
+
+    public function getHighestPointsSum(): HighestPointsSum
+    {
+        $rows = $this->connection->fetchAllAssociative(
+            "WITH unique_games AS (
+                SELECT
+                    h.turniej,
+                    h.runda,
+                    h.player1,
+                    h.player2,
+                    h.result1,
+                    h.result2,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY h.turniej, h.runda, LEAST(h.player1, h.player2), GREATEST(h.player1, h.player2)
+                        ORDER BY h.player1 ASC
+                    ) AS rn
+                FROM PFSTOURHH h
+            ),
+            top_games AS (
+                SELECT
+                    ug.player1 AS playerId,
+                    p1.name_show AS playerName,
+                    ug.player2 AS opponentId,
+                    p2.name_show AS opponentName,
+                    (ug.result1 + ug.result2) AS points,
+                    CONCAT(ug.result1, ':', ug.result2) AS score,
+                    COALESCE(t.fullname, t.name) AS tournamentName,
+                    t.dt AS tournamentDate,
+                    ug.turniej AS tournamentId,
+                    ug.runda AS roundNo
+                FROM unique_games ug
+                INNER JOIN PFSPLAYER p1 ON p1.id = ug.player1
+                INNER JOIN PFSPLAYER p2 ON p2.id = ug.player2
+                INNER JOIN PFSTOURS t ON t.id = ug.turniej
+                WHERE ug.rn = 1
+                ORDER BY points DESC, t.dt DESC, ug.turniej DESC, ug.runda ASC, ug.player1 ASC
+                LIMIT 1000
+            )
+            SELECT
+                tg.playerId,
+                tg.playerName,
+                tg.opponentId,
+                tg.opponentName,
+                tg.points,
+                tg.score,
+                tg.tournamentName
+            FROM top_games tg
+            ORDER BY tg.points DESC, tg.tournamentDate DESC, tg.tournamentId DESC, tg.roundNo ASC, tg.playerName ASC"
+        );
+
+        $resultRows = [];
+        foreach ($rows as $index => $row) {
+            $resultRows[] = new HighestPointsSumRow(
+                position: $index + 1,
+                points: (int) $row['points'],
+                playerId: (int) $row['playerId'],
+                playerName: (string) $row['playerName'],
+                opponentId: (int) $row['opponentId'],
+                opponentName: (string) $row['opponentName'],
+                score: (string) $row['score'],
+                tournamentName: (string) $row['tournamentName'],
+            );
+        }
+
+        return new HighestPointsSum($resultRows);
     }
 
     private function buildSummaryRow(string $statisticName, string|int $allTimesValue, string|int $last12MonthsValue): AllTimeSummaryRow
