@@ -52,6 +52,10 @@ use App\ApiResource\Stats\LongestStreakSumMin750;
 use App\ApiResource\Stats\LongestStreakSumMin750Row;
 use App\ApiResource\Stats\LongestStreakSumMin800;
 use App\ApiResource\Stats\LongestStreakSumMin800Row;
+use App\ApiResource\Stats\LongestWinStreakVsPlayer;
+use App\ApiResource\Stats\LongestWinStreakVsPlayerRow;
+use App\ApiResource\Stats\HighestTournamentRankRecord;
+use App\ApiResource\Stats\HighestTournamentRankRecordRow;
 use App\ApiResource\Stats\RankAllGames;
 use App\ApiResource\Stats\RankAllGamesRow;
 use App\ApiResource\Stats\HighestRank;
@@ -3186,6 +3190,257 @@ class StatsService
         }
 
         return new LongestStreakSumMin800($resultRows);
+    }
+
+    public function getLongestWinStreakVsPlayer(): LongestWinStreakVsPlayer
+    {
+        $rows = $this->connection->fetchAllAssociative(
+            "WITH eligible_players AS (
+                SELECT pg.playerId
+                FROM (
+                    SELECT hh.player1 AS playerId
+                    FROM PFSTOURHH hh
+                    WHERE hh.player1 < hh.player2
+                        AND NOT (hh.result1 = 0 AND hh.result2 = 0)
+                    UNION ALL
+                    SELECT hh.player2 AS playerId
+                    FROM PFSTOURHH hh
+                    WHERE hh.player1 < hh.player2
+                        AND NOT (hh.result1 = 0 AND hh.result2 = 0)
+                ) pg
+                GROUP BY pg.playerId
+                HAVING COUNT(*) >= 30
+            ),
+            base_games AS (
+                SELECT
+                    g.tournamentId,
+                    g.roundNo,
+                    g.tournamentDate,
+                    g.tournamentName,
+                    g.player1,
+                    g.player2,
+                    g.result1,
+                    g.result2
+                FROM (
+                    SELECT
+                        hh.turniej AS tournamentId,
+                        hh.runda AS roundNo,
+                        t.dt AS tournamentDate,
+                        t.name AS tournamentName,
+                        hh.player1,
+                        hh.player2,
+                        hh.result1,
+                        hh.result2
+                    FROM PFSTOURHH hh
+                    INNER JOIN PFSTOURS t ON t.id = hh.turniej
+                    WHERE hh.player1 < hh.player2
+                        AND NOT (hh.result1 = 0 AND hh.result2 = 0)
+                    ORDER BY hh.turniej DESC, hh.runda DESC
+                    LIMIT 2000
+                ) g
+            ),
+            pair_games AS (
+                SELECT
+                    bg.player1 AS winnerCandidateId,
+                    p1.name_show AS winnerCandidateName,
+                    bg.player2 AS opponentId,
+                    p2.name_show AS opponentName,
+                    bg.tournamentId,
+                    bg.tournamentName,
+                    bg.tournamentDate,
+                    bg.roundNo,
+                    CASE WHEN bg.result1 > bg.result2 THEN 1 ELSE 0 END AS isWin
+                FROM base_games bg
+                INNER JOIN eligible_players ep ON ep.playerId = bg.player1
+                INNER JOIN PFSPLAYER p1 ON p1.id = bg.player1
+                INNER JOIN PFSPLAYER p2 ON p2.id = bg.player2
+
+                UNION ALL
+
+                SELECT
+                    bg.player2 AS winnerCandidateId,
+                    p2.name_show AS winnerCandidateName,
+                    bg.player1 AS opponentId,
+                    p1.name_show AS opponentName,
+                    bg.tournamentId,
+                    bg.tournamentName,
+                    bg.tournamentDate,
+                    bg.roundNo,
+                    CASE WHEN bg.result2 > bg.result1 THEN 1 ELSE 0 END AS isWin
+                FROM base_games bg
+                INNER JOIN eligible_players ep ON ep.playerId = bg.player2
+                INNER JOIN PFSPLAYER p1 ON p1.id = bg.player1
+                INNER JOIN PFSPLAYER p2 ON p2.id = bg.player2
+            ),
+            non_win_groups AS (
+                SELECT
+                    pg.*,
+                    SUM(CASE WHEN pg.isWin = 0 THEN 1 ELSE 0 END) OVER (
+                        PARTITION BY pg.winnerCandidateId, pg.opponentId
+                        ORDER BY pg.tournamentDate ASC, pg.tournamentId ASC, pg.roundNo ASC
+                        ROWS UNBOUNDED PRECEDING
+                    ) AS grp
+                FROM pair_games pg
+            ),
+            win_rows AS (
+                SELECT
+                    nwg.*,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY nwg.winnerCandidateId, nwg.opponentId, nwg.grp
+                        ORDER BY nwg.tournamentDate ASC, nwg.tournamentId ASC, nwg.roundNo ASC
+                    ) AS rnAsc,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY nwg.winnerCandidateId, nwg.opponentId, nwg.grp
+                        ORDER BY nwg.tournamentDate DESC, nwg.tournamentId DESC, nwg.roundNo DESC
+                    ) AS rnDesc
+                FROM non_win_groups nwg
+                WHERE nwg.isWin = 1
+            ),
+            win_segments AS (
+                SELECT
+                    wr.winnerCandidateId,
+                    wr.winnerCandidateName,
+                    wr.opponentId,
+                    wr.opponentName,
+                    wr.grp,
+                    COUNT(*) AS winsStreak,
+                    MAX(CASE WHEN wr.rnAsc = 1 THEN wr.tournamentId END) AS firstTournamentId,
+                    MAX(CASE WHEN wr.rnAsc = 1 THEN wr.tournamentName END) AS firstTournamentName,
+                    MAX(CASE WHEN wr.rnDesc = 1 THEN wr.tournamentId END) AS lastTournamentId,
+                    MAX(CASE WHEN wr.rnDesc = 1 THEN wr.tournamentName END) AS lastTournamentName
+                FROM win_rows wr
+                GROUP BY
+                    wr.winnerCandidateId,
+                    wr.winnerCandidateName,
+                    wr.opponentId,
+                    wr.opponentName,
+                    wr.grp
+            ),
+            best_segment_per_winner AS (
+                SELECT
+                    ws.*,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY ws.winnerCandidateId
+                        ORDER BY ws.winsStreak DESC, ws.opponentName ASC, ws.opponentId ASC
+                    ) AS rn
+                FROM win_segments ws
+            )
+            SELECT
+                bsw.winnerCandidateId AS winnerId,
+                bsw.winnerCandidateName AS winnerName,
+                bsw.opponentId,
+                bsw.opponentName,
+                bsw.winsStreak,
+                bsw.firstTournamentId,
+                bsw.firstTournamentName,
+                bsw.lastTournamentId,
+                bsw.lastTournamentName
+            FROM best_segment_per_winner bsw
+            WHERE bsw.rn = 1
+            ORDER BY bsw.winsStreak DESC, bsw.winnerCandidateName ASC
+            LIMIT 1000"
+        );
+
+        $resultRows = [];
+        foreach ($rows as $index => $row) {
+            $resultRows[] = new LongestWinStreakVsPlayerRow(
+                position: $index + 1,
+                winnerId: (int) $row['winnerId'],
+                winnerName: (string) $row['winnerName'],
+                opponentId: (int) $row['opponentId'],
+                opponentName: (string) $row['opponentName'],
+                winsStreak: (int) $row['winsStreak'],
+                firstTournamentId: (int) $row['firstTournamentId'],
+                firstTournamentName: (string) $row['firstTournamentName'],
+                lastTournamentId: (int) $row['lastTournamentId'],
+                lastTournamentName: (string) $row['lastTournamentName'],
+            );
+        }
+
+        return new LongestWinStreakVsPlayer($resultRows);
+    }
+
+    public function getHighestTournamentRankRecord(): HighestTournamentRankRecord
+    {
+        $rows = $this->connection->fetchAllAssociative(
+            "WITH eligible_players AS (
+                SELECT tw.player AS playerId
+                FROM PFSTOURWYN tw
+                GROUP BY tw.player
+                HAVING SUM(tw.games) >= 30
+            ),
+            tournament_rounds AS (
+                SELECT
+                    hh.turniej AS tournamentId,
+                    MAX(hh.runda) AS roundsCount
+                FROM PFSTOURHH hh
+                WHERE hh.player1 < hh.player2
+                    AND NOT (hh.result1 = 0 AND hh.result2 = 0)
+                GROUP BY hh.turniej
+                HAVING MAX(hh.runda) >= 6
+            ),
+            candidate_rows AS (
+                SELECT
+                    tw.player AS playerId,
+                    p.name_show AS playerName,
+                    tw.trank AS ranking,
+                    tw.gwin AS wins,
+                    tw.gdraw AS draws,
+                    tw.glost AS losses,
+                    tw.turniej AS tournamentId,
+                    t.name AS tournamentName,
+                    t.dt AS tournamentDate
+                FROM PFSTOURWYN tw
+                INNER JOIN eligible_players ep ON ep.playerId = tw.player
+                INNER JOIN tournament_rounds tr ON tr.tournamentId = tw.turniej
+                INNER JOIN PFSTOURS t ON t.id = tw.turniej
+                INNER JOIN PFSPLAYER p ON p.id = tw.player
+                WHERE tw.games >= FLOOR(0.8 * tr.roundsCount)
+            ),
+            ranked_rows AS (
+                SELECT
+                    cr.*,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY cr.playerId
+                        ORDER BY cr.ranking DESC, cr.tournamentDate DESC, cr.tournamentId DESC
+                    ) AS rn
+                FROM candidate_rows cr
+            )
+            SELECT
+                rr.playerId,
+                rr.playerName,
+                rr.ranking,
+                rr.wins,
+                rr.draws,
+                rr.losses,
+                rr.tournamentId,
+                rr.tournamentName
+            FROM ranked_rows rr
+            WHERE rr.rn = 1
+            ORDER BY rr.ranking DESC, rr.playerName ASC
+            LIMIT 1000"
+        );
+
+        $resultRows = [];
+        foreach ($rows as $index => $row) {
+            $wins = (int) $row['wins'];
+            $draws = (int) $row['draws'];
+            $losses = (int) $row['losses'];
+            $winScore = $wins + (0.5 * $draws);
+            $lossScore = $losses + (0.5 * $draws);
+
+            $resultRows[] = new HighestTournamentRankRecordRow(
+                position: $index + 1,
+                playerId: (int) $row['playerId'],
+                playerName: (string) $row['playerName'],
+                ranking: (float) $row['ranking'],
+                result: rtrim(rtrim(number_format($winScore, 1, '.', ''), '0'), '.') . ':' . rtrim(rtrim(number_format($lossScore, 1, '.', ''), '0'), '.'),
+                tournamentId: (int) $row['tournamentId'],
+                tournamentName: (string) $row['tournamentName'],
+            );
+        }
+
+        return new HighestTournamentRankRecord($resultRows);
     }
 
     private function buildSummaryRow(string $statisticName, string|int $allTimesValue, string|int $last12MonthsValue): AllTimeSummaryRow

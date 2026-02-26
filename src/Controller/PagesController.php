@@ -265,6 +265,18 @@ class PagesController extends AbstractController
         return $this->render('static/stats_longest_streak_sum_min_800.html.twig');
     }
 
+    #[Route('/stats/longest-win-streak-vs-player', name: 'app_stats_longest_win_streak_vs_player_page', methods: ['GET'])]
+    public function statsLongestWinStreakVsPlayer(): Response
+    {
+        return $this->render('static/stats_longest_win_streak_vs_player.html.twig');
+    }
+
+    #[Route('/stats/highest-tournament-rank-record', name: 'app_stats_highest_tournament_rank_record_page', methods: ['GET'])]
+    public function statsHighestTournamentRankRecord(): Response
+    {
+        return $this->render('static/stats_highest_tournament_rank_record.html.twig');
+    }
+
     #[Route('/tournaments', name: 'app_tournaments_page')]
     public function tournaments(): Response
     {
