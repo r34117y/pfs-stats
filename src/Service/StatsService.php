@@ -60,6 +60,8 @@ use App\ApiResource\Stats\LowestTournamentRankRecord;
 use App\ApiResource\Stats\LowestTournamentRankRecordRow;
 use App\ApiResource\Stats\HighestAvgSmallPoints;
 use App\ApiResource\Stats\HighestAvgSmallPointsRow;
+use App\ApiResource\Stats\LowestAvgSmallPoints;
+use App\ApiResource\Stats\LowestAvgSmallPointsRow;
 use App\ApiResource\Stats\RankAllGames;
 use App\ApiResource\Stats\RankAllGamesRow;
 use App\ApiResource\Stats\HighestRank;
@@ -3611,6 +3613,89 @@ class StatsService
         }
 
         return new HighestAvgSmallPoints($resultRows);
+    }
+
+    public function getLowestAvgSmallPoints(): LowestAvgSmallPoints
+    {
+        $rows = $this->connection->fetchAllAssociative(
+            "WITH eligible_players AS (
+                SELECT tw.player AS playerId
+                FROM PFSTOURWYN tw
+                GROUP BY tw.player
+                HAVING SUM(tw.games) >= 30
+            ),
+            tournament_rounds AS (
+                SELECT
+                    hh.turniej AS tournamentId,
+                    MAX(hh.runda) AS roundsCount
+                FROM PFSTOURHH hh
+                WHERE hh.player1 < hh.player2
+                    AND NOT (hh.result1 = 0 AND hh.result2 = 0)
+                GROUP BY hh.turniej
+                HAVING MAX(hh.runda) >= 6
+            ),
+            candidate_rows AS (
+                SELECT
+                    tw.player AS playerId,
+                    p.name_show AS playerName,
+                    tw.points AS points,
+                    tw.gwin AS wins,
+                    tw.gdraw AS draws,
+                    tw.glost AS losses,
+                    tw.turniej AS tournamentId,
+                    t.name AS tournamentName,
+                    t.dt AS tournamentDate
+                FROM PFSTOURWYN tw
+                INNER JOIN eligible_players ep ON ep.playerId = tw.player
+                INNER JOIN tournament_rounds tr ON tr.tournamentId = tw.turniej
+                INNER JOIN PFSTOURS t ON t.id = tw.turniej
+                INNER JOIN PFSPLAYER p ON p.id = tw.player
+                WHERE tw.games >= FLOOR(0.8 * tr.roundsCount)
+            ),
+            ranked_rows AS (
+                SELECT
+                    cr.*,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY cr.playerId
+                        ORDER BY cr.points ASC, cr.tournamentDate DESC, cr.tournamentId DESC
+                    ) AS rn
+                FROM candidate_rows cr
+            )
+            SELECT
+                rr.playerId,
+                rr.playerName,
+                rr.points,
+                rr.wins,
+                rr.draws,
+                rr.losses,
+                rr.tournamentId,
+                rr.tournamentName
+            FROM ranked_rows rr
+            WHERE rr.rn = 1
+            ORDER BY rr.points ASC, rr.playerName ASC
+            LIMIT 1000"
+        );
+
+        $resultRows = [];
+        foreach ($rows as $index => $row) {
+            $wins = (int) $row['wins'];
+            $draws = (int) $row['draws'];
+            $losses = (int) $row['losses'];
+            $winScore = $wins + (0.5 * $draws);
+            $lossScore = $losses + (0.5 * $draws);
+
+            $resultRows[] = new LowestAvgSmallPointsRow(
+                position: $index + 1,
+                points: (float) $row['points'],
+                playerId: (int) $row['playerId'],
+                playerName: (string) $row['playerName'],
+                result: rtrim(rtrim(number_format($winScore, 1, '.', ''), '0'), '.') . ':' . rtrim(rtrim(number_format($lossScore, 1, '.', ''), '0'), '.'),
+                tournamentId: (int) $row['tournamentId'],
+                tournamentName: (string) $row['tournamentName'],
+            );
+        }
+
+        return new LowestAvgSmallPoints($resultRows);
     }
 
     private function buildSummaryRow(string $statisticName, string|int $allTimesValue, string|int $last12MonthsValue): AllTimeSummaryRow
