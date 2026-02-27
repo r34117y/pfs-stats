@@ -234,7 +234,7 @@ class StatsService
               AND t.dt <= :toDate
               AND tw.games > 0
             GROUP BY p.id, p.name_show
-            HAVING SUM(tw.games) > 0
+            HAVING SUM(tw.games) >= 30
             ORDER BY rankValue DESC, gamesCount DESC, p.name_show ASC",
             [
                 'fromDate' => $fromDate,

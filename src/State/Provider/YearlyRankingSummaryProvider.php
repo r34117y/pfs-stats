@@ -30,7 +30,7 @@ final readonly class YearlyRankingSummaryProvider implements ProviderInterface
             $year = $defaultYear;
         }
 
-        $cacheKey = sprintf('api.stats.yearly_ranking_summary.v1.%d', $year);
+        $cacheKey = sprintf('api.stats.yearly_ranking_summary.v2.%d', $year);
 
         return $this->cache->get(
             $cacheKey,
