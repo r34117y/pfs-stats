@@ -70,6 +70,8 @@ use App\ApiResource\Stats\HighestAvgPointsDiff;
 use App\ApiResource\Stats\HighestAvgPointsDiffRow;
 use App\ApiResource\Stats\LowestAvgPointsDiff;
 use App\ApiResource\Stats\LowestAvgPointsDiffRow;
+use App\ApiResource\Stats\YearlyRankingSummary;
+use App\ApiResource\Stats\YearlyRankingSummaryRow;
 use App\ApiResource\Stats\RankAllGames;
 use App\ApiResource\Stats\RankAllGamesRow;
 use App\ApiResource\Stats\HighestRank;
@@ -146,6 +148,112 @@ class StatsService
         }
 
         return new AllTimesResults($resultRows);
+    }
+
+    public function getYearlyAllTimesResults(int $year): AllTimesResults
+    {
+        $fromDate = ((int) $year * 10000) + 101;
+        $toDate = ((int) $year * 10000) + 1231;
+
+        $rows = $this->connection->fetchAllAssociative(
+            "SELECT
+                tw.player AS playerId,
+                p.name_show AS playerName,
+                SUM(CASE WHEN tw.place = 1 THEN 1 ELSE 0 END) AS firstPlace,
+                SUM(CASE WHEN tw.place = 2 THEN 1 ELSE 0 END) AS secondPlace,
+                SUM(CASE WHEN tw.place = 3 THEN 1 ELSE 0 END) AS thirdPlace,
+                SUM(CASE WHEN tw.place = 4 THEN 1 ELSE 0 END) AS fourthPlace,
+                SUM(CASE WHEN tw.place = 5 THEN 1 ELSE 0 END) AS fifthPlace,
+                SUM(CASE WHEN tw.place = 6 THEN 1 ELSE 0 END) AS sixthPlace
+            FROM PFSTOURWYN tw
+            INNER JOIN PFSPLAYER p ON p.id = tw.player
+            INNER JOIN PFSTOURS t ON t.id = tw.turniej
+            WHERE tw.place BETWEEN 1 AND 6
+              AND t.dt >= :fromDate
+              AND t.dt <= :toDate
+            GROUP BY tw.player, p.name_show
+            ORDER BY
+                firstPlace DESC,
+                secondPlace DESC,
+                thirdPlace DESC,
+                fourthPlace DESC,
+                fifthPlace DESC,
+                sixthPlace DESC,
+                p.name_show ASC",
+            [
+                'fromDate' => $fromDate,
+                'toDate' => $toDate,
+            ]
+        );
+
+        $resultRows = [];
+        foreach ($rows as $index => $row) {
+            $first = (int) $row['firstPlace'];
+            $second = (int) $row['secondPlace'];
+            $third = (int) $row['thirdPlace'];
+            $fourth = (int) $row['fourthPlace'];
+            $fifth = (int) $row['fifthPlace'];
+            $sixth = (int) $row['sixthPlace'];
+
+            $resultRows[] = new AllTimesResultsPlayer(
+                position: $index + 1,
+                playerId: (int) $row['playerId'],
+                playerName: (string) $row['playerName'],
+                first: $first,
+                second: $second,
+                third: $third,
+                fourth: $fourth,
+                fifth: $fifth,
+                sixth: $sixth,
+                oneToThree: $first + $second + $third,
+                oneToSix: $first + $second + $third + $fourth + $fifth + $sixth,
+            );
+        }
+
+        return new AllTimesResults($resultRows);
+    }
+
+    public function getYearlyRankingSummary(int $year): YearlyRankingSummary
+    {
+        $fromDate = ((int) $year * 10000) + 101;
+        $toDate = ((int) $year * 10000) + 1231;
+
+        $rows = $this->connection->fetchAllAssociative(
+            "SELECT
+                p.id AS playerId,
+                p.name_show AS playerName,
+                SUM(tw.games) AS gamesCount,
+                CASE
+                    WHEN SUM(tw.games) > 0 THEN SUM(tw.trank * tw.games) / SUM(tw.games)
+                    ELSE 0
+                END AS rankValue
+            FROM PFSTOURWYN tw
+            INNER JOIN PFSTOURS t ON t.id = tw.turniej
+            INNER JOIN PFSPLAYER p ON p.id = tw.player
+            WHERE t.dt >= :fromDate
+              AND t.dt <= :toDate
+              AND tw.games > 0
+            GROUP BY p.id, p.name_show
+            HAVING SUM(tw.games) > 0
+            ORDER BY rankValue DESC, gamesCount DESC, p.name_show ASC",
+            [
+                'fromDate' => $fromDate,
+                'toDate' => $toDate,
+            ]
+        );
+
+        $resultRows = [];
+        foreach ($rows as $index => $row) {
+            $resultRows[] = new YearlyRankingSummaryRow(
+                position: $index + 1,
+                playerId: (int) $row['playerId'],
+                playerName: (string) $row['playerName'],
+                gamesCount: (int) $row['gamesCount'],
+                rank: (float) $row['rankValue'],
+            );
+        }
+
+        return new YearlyRankingSummary($resultRows);
     }
 
     public function getAllTimeSummary(): AllTimeSummary

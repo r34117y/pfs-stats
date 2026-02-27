@@ -319,6 +319,18 @@ class PagesController extends AbstractController
         return $this->render('static/stats_lowest_avg_points_diff.html.twig');
     }
 
+    #[Route('/stats/yearly-all-times-results', name: 'app_stats_yearly_all_times_results_page', methods: ['GET'])]
+    public function statsYearlyAllTimesResults(): Response
+    {
+        return $this->render('static/stats_yearly_all_times_results.html.twig');
+    }
+
+    #[Route('/stats/yearly-ranking-summary', name: 'app_stats_yearly_ranking_summary_page', methods: ['GET'])]
+    public function statsYearlyRankingSummary(): Response
+    {
+        return $this->render('static/stats_yearly_ranking_summary.html.twig');
+    }
+
     #[Route('/tournaments', name: 'app_tournaments_page')]
     public function tournaments(): Response
     {
