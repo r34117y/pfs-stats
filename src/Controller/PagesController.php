@@ -277,6 +277,18 @@ class PagesController extends AbstractController
         return $this->render('static/stats_highest_tournament_rank_record.html.twig');
     }
 
+    #[Route('/stats/lowest-tournament-rank-record', name: 'app_stats_lowest_tournament_rank_record_page', methods: ['GET'])]
+    public function statsLowestTournamentRankRecord(): Response
+    {
+        return $this->render('static/stats_lowest_tournament_rank_record.html.twig');
+    }
+
+    #[Route('/stats/highest-avg-small-points', name: 'app_stats_highest_avg_small_points_page', methods: ['GET'])]
+    public function statsHighestAvgSmallPoints(): Response
+    {
+        return $this->render('static/stats_highest_avg_small_points.html.twig');
+    }
+
     #[Route('/tournaments', name: 'app_tournaments_page')]
     public function tournaments(): Response
     {
