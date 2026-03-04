@@ -28,6 +28,8 @@ final readonly class PfsTournamentCalendarParser
             $tournaments[] = new CalendarTournament(
                 urlId: $urlId,
                 name: $this->normalizeWhitespace(strip_tags($name)),
+                location: $this->parseLocation($dateAndPlace),
+                startDate: $this->parseStartDate($dateAndPlace, $year),
                 endDate: $this->parseEndDate($dateAndPlace, $year),
             );
         }
@@ -46,7 +48,7 @@ final readonly class PfsTournamentCalendarParser
 
     private function parseEndDate(string $dateAndPlace, int $year): \DateTimeImmutable
     {
-        $datePart = explode(',', $this->normalizeWhitespace(strip_tags($dateAndPlace)), 2)[0];
+        [$datePart] = $this->splitDateAndLocation($dateAndPlace);
 
         if (!preg_match('/(\d{1,2})(?:\s*-\s*(\d{1,2}))?\s+([[:alpha:]]+)/u', $datePart, $match)) {
             throw new \RuntimeException(sprintf('Could not parse tournament date fragment: %s', $dateAndPlace));
@@ -61,6 +63,53 @@ final readonly class PfsTournamentCalendarParser
         }
 
         return $date;
+    }
+
+    private function parseStartDate(string $dateAndPlace, int $year): \DateTimeImmutable
+    {
+        [$datePart] = $this->splitDateAndLocation($dateAndPlace);
+
+        if (!preg_match('/(\d{1,2})(?:\s*-\s*(\d{1,2}))?\s+([[:alpha:]]+)/u', $datePart, $match)) {
+            throw new \RuntimeException(sprintf('Could not parse tournament start date fragment: %s', $dateAndPlace));
+        }
+
+        $startDay = (int) $match[1];
+        $month = $this->resolveMonthNumber($match[3]);
+        $startMonth = $month;
+
+        if (isset($match[2]) && $match[2] !== '' && $startDay > (int) $match[2]) {
+            $startMonth--;
+            if ($startMonth === 0) {
+                $startMonth = 12;
+                $year--;
+            }
+        }
+
+        $date = \DateTimeImmutable::createFromFormat('!Y-n-j', sprintf('%d-%d-%d', $year, $startMonth, $startDay));
+        if (!$date instanceof \DateTimeImmutable) {
+            throw new \RuntimeException(sprintf('Could not build tournament start date for fragment: %s', $dateAndPlace));
+        }
+
+        return $date;
+    }
+
+    private function parseLocation(string $dateAndPlace): string
+    {
+        [, $location] = $this->splitDateAndLocation($dateAndPlace);
+
+        return $location;
+    }
+
+    /**
+     * @return array{0:string,1:string}
+     */
+    private function splitDateAndLocation(string $dateAndPlace): array
+    {
+        $parts = explode(',', $this->normalizeWhitespace(strip_tags($dateAndPlace)), 2);
+        $datePart = trim($parts[0] ?? '');
+        $location = trim($parts[1] ?? '');
+
+        return [$datePart, $location];
     }
 
     private function resolveMonthNumber(string $monthName): int

@@ -15,7 +15,7 @@ final class PfsTournamentImportCheckService
         private readonly Connection $connection,
         private readonly PfsTournamentWebsiteClient $websiteClient,
         private readonly PfsTournamentCalendarParser $calendarParser,
-        private readonly PfsTournamentResultsDummyParser $resultsParser,
+        private readonly PfsTournamentResultsParser $resultsParser,
         private readonly PfsTournamentImportMatcher $matcher,
     ) {
     }
@@ -39,7 +39,7 @@ final class PfsTournamentImportCheckService
                 urlId: $calendarTournament->urlId,
                 name: $calendarTournament->name,
                 endDate: $calendarTournament->endDate,
-                rawResultsText: $this->resultsParser->parseRawResultsText($tournamentHtml),
+                results: $this->resultsParser->parse($tournamentHtml),
             );
         }
 

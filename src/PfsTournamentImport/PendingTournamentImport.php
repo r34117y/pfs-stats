@@ -9,7 +9,7 @@ final readonly class PendingTournamentImport
         public int $urlId,
         public string $name,
         public \DateTimeImmutable $endDate,
-        public string $rawResultsText,
+        public ParsedTournamentResults $results,
     ) {
     }
 

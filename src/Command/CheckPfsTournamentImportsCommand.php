@@ -80,7 +80,22 @@ final class CheckPfsTournamentImportsCommand extends Command
                 $pendingImport->endDate->format('Y-m-d'),
                 $pendingImport->inferredId,
             ));
-            $io->writeln($pendingImport->rawResultsText);
+            $io->writeln(sprintf('Parsed players: %d', count($pendingImport->results->players)));
+            $referee = $pendingImport->results->getDetailValue('Sędzia');
+            if ($referee !== null) {
+                $io->writeln(sprintf('Referee: %s', $referee));
+            }
+
+            $firstPlayer = $pendingImport->results->players[0] ?? null;
+            if ($firstPlayer !== null) {
+                $io->writeln(sprintf(
+                    'First player: %s, games=%d, scalp=%d, achieved rank=%.2f',
+                    $firstPlayer->playerName,
+                    count($firstPlayer->games),
+                    $firstPlayer->totalScalp,
+                    $firstPlayer->rankAchieved,
+                ));
+            }
         }
 
         return Command::SUCCESS;

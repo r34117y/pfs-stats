@@ -7,6 +7,8 @@ final readonly class CalendarTournament
     public function __construct(
         public int $urlId,
         public string $name,
+        public string $location,
+        public \DateTimeImmutable $startDate,
         public \DateTimeImmutable $endDate,
     ) {
     }

@@ -16,10 +16,10 @@ final class PfsTournamentImportMatcherTest extends TestCase
         $matcher = new PfsTournamentImportMatcher();
 
         $calendarTournaments = [
-            new CalendarTournament(1404, 'IV Mistrzostwa Redy', new \DateTimeImmutable('2026-01-18')),
-            new CalendarTournament(1413, 'V Wadowickie Kremówkogranie', new \DateTimeImmutable('2026-02-01')),
-            new CalendarTournament(1432, 'V Mistrzostwa Sochaczewa', new \DateTimeImmutable('2026-03-15')),
-            new CalendarTournament(1421, 'VIII Babskie granie', new \DateTimeImmutable('2026-03-14')),
+            new CalendarTournament(1404, 'IV Mistrzostwa Redy', 'Reda', new \DateTimeImmutable('2026-01-17'), new \DateTimeImmutable('2026-01-18')),
+            new CalendarTournament(1413, 'V Wadowickie Kremówkogranie', 'Wadowice', new \DateTimeImmutable('2026-01-31'), new \DateTimeImmutable('2026-02-01')),
+            new CalendarTournament(1432, 'V Mistrzostwa Sochaczewa', 'Sochaczew', new \DateTimeImmutable('2026-03-14'), new \DateTimeImmutable('2026-03-15')),
+            new CalendarTournament(1421, 'VIII Babskie granie', 'Katowice', new \DateTimeImmutable('2026-03-14'), new \DateTimeImmutable('2026-03-14')),
         ];
 
         $importedTournaments = [
@@ -46,7 +46,7 @@ final class PfsTournamentImportMatcherTest extends TestCase
         $matcher = new PfsTournamentImportMatcher();
 
         $pendingImports = $matcher->matchPendingImports(
-            [new CalendarTournament(1500, 'Today Event', new \DateTimeImmutable('2026-03-20'))],
+            [new CalendarTournament(1500, 'Today Event', 'Somewhere', new \DateTimeImmutable('2026-03-20'), new \DateTimeImmutable('2026-03-20'))],
             [],
             new \DateTimeImmutable('2026-03-20 13:00:00'),
         );
