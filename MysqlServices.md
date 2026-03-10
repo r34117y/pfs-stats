@@ -32,9 +32,9 @@
   - [x] Interface `App\Service\StatsServiceInterface` created and implemented
 - `App\Service\TournamentDetailsService` (`src/Service/TournamentDetailsService.php`)
   - [x] Interface `App\Service\TournamentDetailsServiceInterface` created and implemented
-- `App\State\Provider\PlayerListProvider` (`src/State/Provider/PlayerListProvider.php`)
-  - [x] Interface `App\State\Provider\PlayerListProviderInterface` created and implemented
-- `App\State\Provider\RankingProvider` (`src/State/Provider/RankingProvider.php`)
-  - [x] Interface `App\State\Provider\RankingProviderInterface` created and implemented
-- `App\State\Provider\TournamentListProvider` (`src/State/Provider/TournamentListProvider.php`)
-  - [x] Interface `App\State\Provider\TournamentListProviderInterface` created and implemented
+- `App\Service\PlayerListService` (`src/Service/PlayerListService.php`)
+  - [x] Interface `App\Service\PlayerListServiceInterface` created and implemented
+- `App\Service\RankingService` (`src/Service/RankingService.php`)
+  - [x] Interface `App\Service\RankingServiceInterface` created and implemented
+- `App\Service\TournamentListService` (`src/Service/TournamentListService.php`)
+  - [x] Interface `App\Service\TournamentListServiceInterface` created and implemented

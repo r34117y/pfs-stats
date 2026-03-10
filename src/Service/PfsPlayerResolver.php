@@ -7,11 +7,11 @@ use App\PfsTournamentImport\ResolvedPlayer;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-final class PfsPlayerResolver implements PfsPlayerResolverInterface {
+final readonly class PfsPlayerResolver implements PfsPlayerResolverInterface {
     public function __construct(
         #[Autowire(service: 'doctrine.dbal.mysql_connection')]
-        private readonly Connection $connection,
-        private readonly PfsNameNormalizer $nameNormalizer,
+        private Connection $connection,
+        private PfsNameNormalizer $nameNormalizer,
     ) {
     }
 
