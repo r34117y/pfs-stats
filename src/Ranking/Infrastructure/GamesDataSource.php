@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace App\Ranking\Infrastructure;
 
 use App\Ranking\Domain\WindowDefinition;
+use DateTimeImmutable;
 
 interface GamesDataSource
 {
     /**
-     * @return array{start: \DateTimeImmutable, end: \DateTimeImmutable}|null
+     * @return array{start: DateTimeImmutable, end: DateTimeImmutable}|null
      */
     public function findDateBounds(): ?array;
 
