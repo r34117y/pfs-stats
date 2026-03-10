@@ -89,7 +89,7 @@ use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-class StatsService
+class StatsService implements StatsServiceInterface
 {
     public function __construct(
         #[Autowire(service: 'doctrine.dbal.mysql_connection')]

@@ -6,8 +6,7 @@ use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-final readonly class OldMethodCurrentRankingService
-{
+final readonly class OldMethodCurrentRankingService implements OldMethodCurrentRankingServiceInterface {
     private const int WINDOW_YEARS = 2;
     private const int MIN_GAMES_FOR_LIST = 30;
     private const int MAX_GAMES_INCLUDED = 200;

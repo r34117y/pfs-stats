@@ -14,8 +14,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 
-final readonly class RankingProvider implements ProviderInterface
-{
+final readonly class RankingProvider implements ProviderInterface, RankingProviderInterface {
     public function __construct(
         #[Autowire(service: 'doctrine.dbal.mysql_connection')]
         private Connection $connection,

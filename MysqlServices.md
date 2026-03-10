@@ -1,0 +1,40 @@
+# MySQL-connected services
+
+- `App\Service\AnnotatedGameDetailsService` (`src/Service/AnnotatedGameDetailsService.php`)
+  - [x] Interface `App\Service\AnnotatedGameDetailsServiceInterface` created and implemented
+- `App\Service\AnnotatedGamesService` (`src/Service/AnnotatedGamesService.php`)
+  - [x] Interface `App\Service\AnnotatedGamesServiceInterface` created and implemented
+- `App\Service\ClubsService` (`src/Service/ClubsService.php`)
+  - [x] Interface `App\Service\ClubsServiceInterface` created and implemented
+- `App\Service\OldMethodCurrentRankingService` (`src/Service/OldMethodCurrentRankingService.php`)
+  - [x] Interface `App\Service\OldMethodCurrentRankingServiceInterface` created and implemented
+- `App\Service\PfsPlayerResolver` (`src/Service/PfsPlayerResolver.php`)
+  - [x] Interface `App\Service\PfsPlayerResolverInterface` created and implemented
+- `App\Service\PfsTournamentImportCheckService` (`src/Service/PfsTournamentImportCheckService.php`)
+  - [x] Interface `App\Service\PfsTournamentImportCheckServiceInterface` created and implemented
+- `App\Service\PfsTournamentImportComparer` (`src/Service/PfsTournamentImportComparer.php`)
+  - [x] Interface `App\Service\PfsTournamentImportComparerInterface` created and implemented
+- `App\Service\PlayerGameBalanceService` (`src/Service/PlayerGameBalanceService.php`)
+  - [x] Interface `App\Service\PlayerGameBalanceServiceInterface` created and implemented
+- `App\Service\PlayerProfileService` (`src/Service/PlayerProfileService.php`)
+  - [x] Interface `App\Service\PlayerProfileServiceInterface` created and implemented
+- `App\Service\PlayerRankHistoryService` (`src/Service/PlayerRankHistoryService.php`)
+  - [x] Interface `App\Service\PlayerRankHistoryServiceInterface` created and implemented
+- `App\Service\PlayerRecordsService` (`src/Service/PlayerRecordsService.php`)
+  - [x] Interface `App\Service\PlayerRecordsServiceInterface` created and implemented
+- `App\Service\PlayerTournamentSummaryService` (`src/Service/PlayerTournamentSummaryService.php`)
+  - [x] Interface `App\Service\PlayerTournamentSummaryServiceInterface` created and implemented
+- `App\Service\PlayerTournamentsService` (`src/Service/PlayerTournamentsService.php`)
+  - [x] Interface `App\Service\PlayerTournamentsServiceInterface` created and implemented
+- `App\Service\RankingSnapshotService` (`src/Service/RankingSnapshotService.php`)
+  - [x] Interface `App\Service\RankingSnapshotServiceInterface` created and implemented
+- `App\Service\StatsService` (`src/Service/StatsService.php`)
+  - [x] Interface `App\Service\StatsServiceInterface` created and implemented
+- `App\Service\TournamentDetailsService` (`src/Service/TournamentDetailsService.php`)
+  - [x] Interface `App\Service\TournamentDetailsServiceInterface` created and implemented
+- `App\State\Provider\PlayerListProvider` (`src/State/Provider/PlayerListProvider.php`)
+  - [x] Interface `App\State\Provider\PlayerListProviderInterface` created and implemented
+- `App\State\Provider\RankingProvider` (`src/State/Provider/RankingProvider.php`)
+  - [x] Interface `App\State\Provider\RankingProviderInterface` created and implemented
+- `App\State\Provider\TournamentListProvider` (`src/State/Provider/TournamentListProvider.php`)
+  - [x] Interface `App\State\Provider\TournamentListProviderInterface` created and implemented

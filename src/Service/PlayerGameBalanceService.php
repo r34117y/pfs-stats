@@ -8,8 +8,7 @@ use Doctrine\DBAL\Connection;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class PlayerGameBalanceService
-{
+class PlayerGameBalanceService implements PlayerGameBalanceServiceInterface {
     public function __construct(
         #[Autowire(service: 'doctrine.dbal.mysql_connection')]
         private Connection $connection,

@@ -12,8 +12,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 
-class PlayerListProvider implements ProviderInterface
-{
+class PlayerListProvider implements ProviderInterface, PlayerListProviderInterface {
     public function __construct(
         #[Autowire(service: 'doctrine.dbal.mysql_connection')]
         private Connection $connection,

@@ -11,8 +11,7 @@ use Doctrine\DBAL\Connection;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\Cache\CacheInterface;
 
-class TournamentListProvider implements ProviderInterface
-{
+class TournamentListProvider implements ProviderInterface, TournamentListProviderInterface {
     public function __construct(
         #[Autowire(service: 'doctrine.dbal.mysql_connection')]
         private Connection $connection,

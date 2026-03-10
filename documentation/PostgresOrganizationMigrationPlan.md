@@ -81,3 +81,17 @@ Po potwierdzeniu poprawności migracji:
 1. Dodać migrację usuwającą kolumny `legacy_*`.
 2. Zaostrzyć ograniczenia (`NOT NULL`) tam, gdzie biznesowo wymagane.
 3. Rozważyć deduplikację graczy między organizacjami (drugi etap, poza migracją 1:1).
+
+## Komenda importu
+Dostępna jest komenda:
+- `php bin/console app:db:import-mysql-organizations`
+
+Przykłady:
+- pełny import (czyści docelowe tabele przed importem):
+  - `php bin/console app:db:import-mysql-organizations`
+- test bez zapisu (rollback na końcu):
+  - `php bin/console app:db:import-mysql-organizations --dry-run`
+- import tylko wybranych organizacji:
+  - `php bin/console app:db:import-mysql-organizations --organizations=PFS,ANAGR`
+- import bez czyszczenia danych docelowych:
+  - `php bin/console app:db:import-mysql-organizations --no-truncate`

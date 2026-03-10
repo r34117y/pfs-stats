@@ -8,8 +8,7 @@ use Doctrine\DBAL\Connection;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class PlayerRecordsService
-{
+class PlayerRecordsService implements PlayerRecordsServiceInterface {
     private const GAME_RECORD_TYPES = [
         'most-points',
         'least-points',

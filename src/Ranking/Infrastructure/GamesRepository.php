@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Ranking\Infrastructure;
 
 use App\Ranking\Domain\WindowDefinition;
+use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-final readonly class GamesRepository implements GamesDataSource
-{
+final readonly class GamesRepository implements GamesDataSource {
     public function __construct(
         #[Autowire(service: 'doctrine.dbal.mysql_connection')]
         private Connection $connection,
@@ -17,7 +17,7 @@ final readonly class GamesRepository implements GamesDataSource
     }
 
     /**
-     * @return array{start: \DateTimeImmutable, end: \DateTimeImmutable}|null
+     * @return array{start: DateTimeImmutable, end: DateTimeImmutable}|null
      */
     public function findDateBounds(): ?array
     {
@@ -31,8 +31,8 @@ final readonly class GamesRepository implements GamesDataSource
             return null;
         }
 
-        $start = \DateTimeImmutable::createFromFormat('Ymd', (string) $row['minDt']);
-        $end = \DateTimeImmutable::createFromFormat('Ymd', (string) $row['maxDt']);
+        $start = DateTimeImmutable::createFromFormat('Ymd', (string) $row['minDt']);
+        $end = DateTimeImmutable::createFromFormat('Ymd', (string) $row['maxDt']);
 
         if ($start === false || $end === false) {
             return null;
@@ -86,7 +86,7 @@ final readonly class GamesRepository implements GamesDataSource
         );
 
         foreach ($result->iterateAssociative() as $row) {
-            $playedAt = \DateTimeImmutable::createFromFormat('Ymd', (string) $row['dt']);
+            $playedAt = DateTimeImmutable::createFromFormat('Ymd', (string) $row['dt']);
             if ($playedAt === false) {
                 continue;
             }

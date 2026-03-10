@@ -7,8 +7,7 @@ use App\PfsTournamentImport\PfsTournamentImportPlan;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-final class PfsTournamentImportComparer
-{
+final class PfsTournamentImportComparer implements PfsTournamentImportComparerInterface {
     public function __construct(
         #[Autowire(service: 'doctrine.dbal.mysql_connection')]
         private readonly Connection $connection,

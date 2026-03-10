@@ -7,8 +7,7 @@ use App\ApiResource\ClubsList\ClubsListClub;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-final readonly class ClubsService
-{
+final readonly class ClubsService implements ClubsServiceInterface {
     public function __construct(
         #[Autowire(service: 'doctrine.dbal.mysql_connection')]
         private Connection $connection,

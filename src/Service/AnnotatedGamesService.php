@@ -8,8 +8,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\ParameterType;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-final readonly class AnnotatedGamesService
-{
+final readonly class AnnotatedGamesService implements AnnotatedGamesServiceInterface {
     private const int PAGE_SIZE = 50;
 
     public function __construct(

@@ -8,8 +8,7 @@ use App\PfsTournamentImport\TournamentImportCheckResult;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-final class PfsTournamentImportCheckService
-{
+final class PfsTournamentImportCheckService implements PfsTournamentImportCheckServiceInterface {
     public function __construct(
         #[Autowire(service: 'doctrine.dbal.mysql_connection')]
         private readonly Connection $connection,
