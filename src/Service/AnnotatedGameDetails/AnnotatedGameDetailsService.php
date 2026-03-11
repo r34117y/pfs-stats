@@ -26,7 +26,10 @@ final readonly class AnnotatedGameDetailsService implements AnnotatedGameDetails
     public function getByKey(int $tournamentId, int $round, int $player1Id): AnnotatedGameDetails
     {
         $row = $this->connection->fetchAssociative(
-            'SELECT data, updated FROM PFSGCG WHERE tour = :tour AND `round` = :round AND player1 = :player1',
+            'SELECT g.data, g.updated, t.name AS tournamentName
+             FROM PFSGCG g
+             INNER JOIN PFSTOURS t ON t.id = g.tour
+             WHERE g.tour = :tour AND g.`round` = :round AND g.player1 = :player1',
             [
                 'tour' => $tournamentId,
                 'round' => $round,
@@ -47,6 +50,7 @@ final readonly class AnnotatedGameDetailsService implements AnnotatedGameDetails
 
         return new AnnotatedGameDetails(
             tournamentId: $tournamentId,
+            tournamentName: (string) $row['tournamentName'],
             round: $round,
             player1Id: $player1Id,
             data: (string) $row['data'],

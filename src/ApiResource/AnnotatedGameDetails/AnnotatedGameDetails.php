@@ -20,6 +20,7 @@ final readonly class AnnotatedGameDetails
 {
     public function __construct(
         public int $tournamentId,
+        public string $tournamentName,
         public int $round,
         public int $player1Id,
         public string $player1Name,

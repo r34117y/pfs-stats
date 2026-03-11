@@ -31,12 +31,16 @@ final readonly class AnnotatedGameDetailsServicePostgres implements AnnotatedGam
             'SELECT
                 g.data,
                 to_char(g.updated_at, \'YYYY-MM-DD HH24:MI:SS\') AS updated,
+                t.name AS tournament_name,
                 p1.name_show AS player1_name,
                 h.player2_id AS player2_id,
                 p2.name_show AS player2_name
              FROM game_record g
              INNER JOIN organization o
                 ON o.id = g.organization_id
+             INNER JOIN tournament t
+                ON t.organization_id = g.organization_id
+               AND t.id = g.tournament_id
              INNER JOIN tournament_game h
                 ON h.organization_id = g.organization_id
                AND h.tournament_id = g.tournament_id
@@ -73,6 +77,7 @@ final readonly class AnnotatedGameDetailsServicePostgres implements AnnotatedGam
 
         return new AnnotatedGameDetails(
             tournamentId: $tournamentId,
+            tournamentName: (string) $row['tournament_name'],
             round: $round,
             player1Id: $player1Id,
             player1Name: (string) $row['player1_name'],
