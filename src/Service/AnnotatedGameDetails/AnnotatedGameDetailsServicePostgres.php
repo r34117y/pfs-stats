@@ -53,6 +53,9 @@ final readonly class AnnotatedGameDetailsServicePostgres implements AnnotatedGam
             tournamentId: $tournamentId,
             round: $round,
             player1Id: $player1Id,
+            player1Name: 'TODO',
+            player2Id: 'TODO',
+            player2Name: 'TODO',
             data: (string) $row['data'],
             updated: (string) $row['updated'],
             parsedGcg: $parsedGcg

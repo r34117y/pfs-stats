@@ -23,15 +23,19 @@ final readonly class AnnotatedGamesServicePostgres implements AnnotatedGamesServ
     /**
      * @throws Exception
      */
-    public function getAnnotatedGames(int $page, ?string $playerName = null, ?string $tournamentName = null): AnnotatedGames
-    {
+    public function getAnnotatedGames(
+        int $page,
+        ?string $playerName = null,
+        ?string $tournamentName = null,
+        string $organizationCode = self::ORGANIZATION_CODE
+    ): AnnotatedGames {
         $page = max(1, $page);
         $playerFilter = trim((string) $playerName);
         $tournamentFilter = trim((string) $tournamentName);
 
         $organizationId = $this->connection->fetchOne(
             'SELECT id FROM organization WHERE code = :code LIMIT 1',
-            ['code' => self::ORGANIZATION_CODE],
+            ['code' => $organizationCode],
         );
 
         if ($organizationId === false || $organizationId === null) {
