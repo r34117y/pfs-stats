@@ -1,10 +1,12 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\PfsPlayerResolver;
 
 use App\PfsTournamentImport\PfsPlayerImportRow;
 use App\PfsTournamentImport\ResolvedPlayer;
+use App\Service\PfsNameNormalizer;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 final readonly class PfsPlayerResolver implements PfsPlayerResolverInterface {
@@ -18,6 +20,7 @@ final readonly class PfsPlayerResolver implements PfsPlayerResolverInterface {
     /**
      * @param array<string, float> $playerRanksByName
      * @return array{resolved: array<string, ResolvedPlayer>, newPlayers: list<PfsPlayerImportRow>, warnings: list<string>}
+     * @throws Exception
      */
     public function resolve(array $playerRanksByName, int $tournamentId): array
     {
@@ -58,6 +61,7 @@ final readonly class PfsPlayerResolver implements PfsPlayerResolverInterface {
 
     /**
      * @return list<array{id:int,nameShow:string,nameAlph:string,normalized:string,latestRank:?float}>
+     * @throws Exception
      */
     private function loadCatalog(int $tournamentId): array
     {
@@ -158,6 +162,9 @@ final readonly class PfsPlayerResolver implements PfsPlayerResolverInterface {
         return null;
     }
 
+    /**
+     * @throws Exception
+     */
     private function fetchNextPlayerId(): int
     {
         $value = $this->connection->fetchOne('SELECT COALESCE(MAX(id), 0) + 1 FROM PFSPLAYER');

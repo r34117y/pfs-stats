@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\PlayerTournamentSummary;
 
 use App\ApiResource\PlayerTournamentSummary\PlayerTournamentSummary;
 use App\ApiResource\PlayerTournamentSummary\PlayerTournamentSummaryGame;

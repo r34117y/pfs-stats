@@ -7,7 +7,7 @@ use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\Ranking\GetRanking;
 use App\ApiResource\Ranking\RankingRow;
 use App\Repository\UserRepository;
-use App\Service\OldMethodCurrentRankingService;
+use App\Service\OldMethodCurrentRanking\OldMethodCurrentRankingService;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;

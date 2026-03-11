@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\AnnotatedGames;
 
 use App\ApiResource\AnnotatedGames\AnnotatedGames;
 

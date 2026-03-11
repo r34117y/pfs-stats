@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\RankingSnapshot;
 
 use Doctrine\DBAL\Connection;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;

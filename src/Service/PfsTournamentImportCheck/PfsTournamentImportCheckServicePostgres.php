@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\PfsTournamentImportCheck;
 
 use App\PfsTournamentImport\ImportedTournamentRecord;
 use App\PfsTournamentImport\PendingTournamentImport;

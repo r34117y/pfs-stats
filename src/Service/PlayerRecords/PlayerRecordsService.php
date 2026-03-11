@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\PlayerRecords;
 
 use App\ApiResource\PlayerRecords\PlayerRecordsRow;
 use App\ApiResource\PlayerRecords\PlayerRecordsTable;

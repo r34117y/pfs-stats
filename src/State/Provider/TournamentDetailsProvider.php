@@ -5,7 +5,7 @@ namespace App\State\Provider;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\TournamentDetails\TournamentDetails;
-use App\Service\TournamentDetailsService;
+use App\Service\TournamentDetails\TournamentDetailsService;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Contracts\Cache\CacheInterface;

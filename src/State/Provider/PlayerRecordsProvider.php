@@ -5,7 +5,7 @@ namespace App\State\Provider;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\PlayerRecords\PlayerRecordsTable;
-use App\Service\PlayerRecordsService;
+use App\Service\PlayerRecords\PlayerRecordsService;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;

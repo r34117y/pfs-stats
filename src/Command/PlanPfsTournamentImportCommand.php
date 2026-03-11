@@ -4,7 +4,7 @@ namespace App\Command;
 
 use App\PfsTournamentImport\TournamentImportMetadata;
 use App\Service\PfsTournamentCalendarParser;
-use App\Service\PfsTournamentImportComparer;
+use App\Service\PfsTournamentImportComparer\PfsTournamentImportComparer;
 use App\Service\PfsTournamentImportPlanner;
 use App\Service\PfsTournamentImportSqlRenderer;
 use App\Service\PfsTournamentResultsParser;

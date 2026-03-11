@@ -2,7 +2,7 @@
 
 namespace App\Command;
 
-use App\Service\PfsTournamentImportCheckService;
+use App\Service\PfsTournamentImportCheck\PfsTournamentImportCheckService;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;

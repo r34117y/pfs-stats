@@ -5,7 +5,7 @@ namespace App\State\Provider;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\Stats\MostOpponentPointsAndWin;
-use App\Service\StatsService;
+use App\Service\Stats\StatsService;
 use DateTimeImmutable;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\Cache\CacheInterface;

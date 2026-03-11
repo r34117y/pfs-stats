@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\PfsPlayerResolver;
 
 use App\PfsTournamentImport\PfsPlayerImportRow;
 use App\PfsTournamentImport\ResolvedPlayer;

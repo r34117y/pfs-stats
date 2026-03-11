@@ -5,7 +5,7 @@ namespace App\State\Provider;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\TournamentsList\TournamentsList;
-use App\Service\TournamentListServiceInterface;
+use App\Service\TournamentList\TournamentListServiceInterface;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\Cache\CacheInterface;

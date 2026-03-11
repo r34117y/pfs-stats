@@ -1,21 +1,25 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\PfsTournamentImportCheck;
 
 use App\PfsTournamentImport\ImportedTournamentRecord;
 use App\PfsTournamentImport\PendingTournamentImport;
 use App\PfsTournamentImport\TournamentImportCheckResult;
+use App\Service\PfsTournamentCalendarParser;
+use App\Service\PfsTournamentImportMatcher;
+use App\Service\PfsTournamentResultsParser;
+use App\Service\PfsTournamentWebsiteClient;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-final class PfsTournamentImportCheckService implements PfsTournamentImportCheckServiceInterface {
+final readonly class PfsTournamentImportCheckService implements PfsTournamentImportCheckServiceInterface {
     public function __construct(
         #[Autowire(service: 'doctrine.dbal.mysql_connection')]
-        private readonly Connection $connection,
-        private readonly PfsTournamentWebsiteClient $websiteClient,
-        private readonly PfsTournamentCalendarParser $calendarParser,
-        private readonly PfsTournamentResultsParser $resultsParser,
-        private readonly PfsTournamentImportMatcher $matcher,
+        private Connection $connection,
+        private PfsTournamentWebsiteClient $websiteClient,
+        private PfsTournamentCalendarParser $calendarParser,
+        private PfsTournamentResultsParser $resultsParser,
+        private PfsTournamentImportMatcher $matcher,
     ) {
     }
 

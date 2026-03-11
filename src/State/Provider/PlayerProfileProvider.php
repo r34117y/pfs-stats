@@ -5,7 +5,7 @@ namespace App\State\Provider;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\PlayerProfile\PlayerProfile;
-use App\Service\PlayerProfileService;
+use App\Service\PlayerProfile\PlayerProfileService;
 use DateTimeImmutable;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;

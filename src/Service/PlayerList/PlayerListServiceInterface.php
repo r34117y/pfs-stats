@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\PlayerList;
 
 use App\ApiResource\PlayersList\PlayersList;
 

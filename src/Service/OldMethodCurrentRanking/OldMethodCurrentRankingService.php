@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\OldMethodCurrentRanking;
 
 use DateTimeImmutable;
 use Doctrine\DBAL\Connection;

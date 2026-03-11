@@ -8,13 +8,16 @@ use App\PfsTournamentImport\PfsTourHhImportRow;
 use App\PfsTournamentImport\PfsTournamentImportPlan;
 use App\PfsTournamentImport\PfsTourImportRow;
 use App\PfsTournamentImport\PfsTourWynImportRow;
+use App\PfsTournamentImport\ResolvedPlayer;
 use App\PfsTournamentImport\TournamentImportMetadata;
+use App\Service\PfsPlayerResolver\PfsPlayerResolver;
+use RuntimeException;
 
-final class PfsTournamentImportPlanner
+final readonly class PfsTournamentImportPlanner
 {
     public function __construct(
-        private readonly PfsPlayerResolver $playerResolver,
-        private readonly PfsNameNormalizer $nameNormalizer,
+        private PfsPlayerResolver $playerResolver,
+        private PfsNameNormalizer $nameNormalizer,
     ) {
     }
 
@@ -26,7 +29,7 @@ final class PfsTournamentImportPlanner
         }
 
         $playerResolution = $this->playerResolver->resolve($playerRanksByName, $metadata->tournamentId);
-        /** @var array<string, \App\PfsTournamentImport\ResolvedPlayer> $resolvedPlayers */
+        /** @var array<string, ResolvedPlayer> $resolvedPlayers */
         $resolvedPlayers = $playerResolution['resolved'];
         $warnings = $playerResolution['warnings'];
 
@@ -93,7 +96,7 @@ final class PfsTournamentImportPlanner
 
         $winnerName = $results->standings[0]->playerName ?? null;
         if ($winnerName === null || !isset($resolvedPlayers[$winnerName])) {
-            throw new \RuntimeException('Could not resolve tournament winner for PFSTOURS row.');
+            throw new RuntimeException('Could not resolve tournament winner for PFSTOURS row.');
         }
 
         $rounds = 0;
@@ -141,7 +144,7 @@ final class PfsTournamentImportPlanner
     }
 
     /**
-     * @param array<string, \App\PfsTournamentImport\ResolvedPlayer> $resolvedPlayers
+     * @param array<string, ResolvedPlayer> $resolvedPlayers
      * @param list<string> $warnings
      * @return list<PfsTourHhImportRow>
      */
@@ -218,7 +221,7 @@ final class PfsTournamentImportPlanner
     }
 
     /**
-     * @param array<string, \App\PfsTournamentImport\ResolvedPlayer> $resolvedPlayers
+     * @param array<string, ResolvedPlayer> $resolvedPlayers
      */
     private function findCanonicalPlayerName(string $name, array $resolvedPlayers): ?string
     {
@@ -289,7 +292,7 @@ final class PfsTournamentImportPlanner
     }
 
     /**
-     * @param array<string, \App\PfsTournamentImport\ResolvedPlayer> $resolvedPlayers
+     * @param array<string, ResolvedPlayer> $resolvedPlayers
      */
     private function averagePreTournamentRank(array $resolvedPlayers): float
     {

@@ -5,7 +5,7 @@ namespace App\State\Provider;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\AnnotatedGames\AnnotatedGames;
-use App\Service\AnnotatedGamesService;
+use App\Service\AnnotatedGames\AnnotatedGamesService;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Cache\CacheInterface;

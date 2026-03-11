@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\PlayerGameBalance;
 
 use App\ApiResource\PlayerGameBalance\PlayerGameBalance;
 

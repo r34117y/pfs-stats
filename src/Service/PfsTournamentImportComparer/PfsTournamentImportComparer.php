@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\PfsTournamentImportComparer;
 
 use App\PfsTournamentImport\PfsTournamentImportComparison;
 use App\PfsTournamentImport\PfsTournamentImportPlan;

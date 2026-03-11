@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\PlayerRankHistory;
 
 use App\ApiResource\PlayerRankHistory\PlayerRankHistory;
 use App\ApiResource\PlayerRankHistory\PlayerRankMilestones;

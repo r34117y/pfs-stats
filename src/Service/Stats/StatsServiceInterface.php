@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\Stats;
 
 use App\ApiResource\Stats\AllTimeSummary;
 use App\ApiResource\Stats\AllTimesResults;
