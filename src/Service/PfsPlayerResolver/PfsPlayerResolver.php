@@ -60,7 +60,7 @@ final readonly class PfsPlayerResolver implements PfsPlayerResolverInterface {
     }
 
     /**
-     * @return list<array{id:int,nameShow:string,nameAlph:string,normalized:string,latestRank:?float}>
+     * @return list<array{id:int,nameShow:string,nameAlph:string,normalized:string,latestRank:float|null}>
      * @throws Exception
      */
     private function loadCatalog(int $tournamentId): array
@@ -96,7 +96,7 @@ final readonly class PfsPlayerResolver implements PfsPlayerResolverInterface {
     }
 
     /**
-     * @param list<array{id:int,nameShow:string,nameAlph:string,normalized:string,latestRank:?float}> $catalog
+     * @param list<array{id:int,nameShow:string,nameAlph:string,normalized:string,latestRank:float|null}> $catalog
      * @param list<string> $warnings
      */
     private function resolveSinglePlayer(array $catalog, string $playerName, float $tournamentRank, array &$warnings): ?ResolvedPlayer

@@ -5,6 +5,7 @@ namespace App\Service\Clubs;
 use App\ApiResource\ClubsList\ClubsList;
 use App\ApiResource\ClubsList\ClubsListClub;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 final readonly class ClubsService implements ClubsServiceInterface {
@@ -14,6 +15,9 @@ final readonly class ClubsService implements ClubsServiceInterface {
     ) {
     }
 
+    /**
+     * @throws Exception
+     */
     public function getClubsList(): ClubsList
     {
         $rows = $this->connection->fetchAllAssociative(

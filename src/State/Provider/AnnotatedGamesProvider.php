@@ -5,7 +5,8 @@ namespace App\State\Provider;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\AnnotatedGames\AnnotatedGames;
-use App\Service\AnnotatedGames\AnnotatedGamesService;
+use App\Service\AnnotatedGames\AnnotatedGamesServiceInterface;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -13,13 +14,16 @@ use Symfony\Contracts\Cache\CacheInterface;
 final readonly class AnnotatedGamesProvider implements ProviderInterface
 {
     public function __construct(
-        private AnnotatedGamesService $annotatedGamesService,
+        private AnnotatedGamesServiceInterface $annotatedGamesService,
         private RequestStack $requestStack,
         #[Autowire(service: 'app.dataset_cache')]
         private CacheInterface $cache,
     ) {
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): AnnotatedGames
     {
         $request = $this->requestStack->getCurrentRequest();

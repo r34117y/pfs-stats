@@ -7,16 +7,20 @@ use App\ApiResource\TournamentDetails\TournamentResultRow;
 use App\ApiResource\TournamentDetails\TournamentResults;
 use DateTime;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class TournamentDetailsService implements TournamentDetailsServiceInterface {
+final readonly class TournamentDetailsService implements TournamentDetailsServiceInterface {
     public function __construct(
         #[Autowire(service: 'doctrine.dbal.mysql_connection')]
         private Connection $connection,
     ) {
     }
 
+    /**
+     * @throws Exception
+     */
     public function getTournamentDetails(int $tournamentId): TournamentDetails
     {
         $row = $this->connection->fetchAssociative(
@@ -41,6 +45,9 @@ class TournamentDetailsService implements TournamentDetailsServiceInterface {
         );
     }
 
+    /**
+     * @throws Exception
+     */
     public function getTournamentResults(int $tournamentId): TournamentResults
     {
         $tournamentExists = $this->connection->fetchOne(

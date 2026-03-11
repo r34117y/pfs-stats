@@ -6,11 +6,12 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\TournamentDetails\TournamentDetails;
 use App\Service\TournamentDetails\TournamentDetailsService;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Contracts\Cache\CacheInterface;
 
-class TournamentDetailsProvider implements ProviderInterface
+final readonly class TournamentDetailsProvider implements ProviderInterface
 {
     public function __construct(
         private TournamentDetailsService $tournamentDetailsService,
@@ -19,6 +20,9 @@ class TournamentDetailsProvider implements ProviderInterface
     ) {
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): TournamentDetails
     {
         $rawTournamentId = $uriVariables['id'] ?? $uriVariables['tournamentId'] ?? null;

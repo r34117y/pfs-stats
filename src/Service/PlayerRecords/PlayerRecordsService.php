@@ -5,11 +5,12 @@ namespace App\Service\PlayerRecords;
 use App\ApiResource\PlayerRecords\PlayerRecordsRow;
 use App\ApiResource\PlayerRecords\PlayerRecordsTable;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class PlayerRecordsService implements PlayerRecordsServiceInterface {
-    private const GAME_RECORD_TYPES = [
+final readonly class PlayerRecordsService implements PlayerRecordsServiceInterface {
+    private const array GAME_RECORD_TYPES = [
         'most-points',
         'least-points',
         'points-highest-sum',
@@ -31,6 +32,9 @@ class PlayerRecordsService implements PlayerRecordsServiceInterface {
     ) {
     }
 
+    /**
+     * @throws Exception
+     */
     public function getRecords(int $playerId, string $recordType, int $limit = 10, ?int $min = null): PlayerRecordsTable
     {
         $this->assertPlayerExists($playerId);
@@ -76,6 +80,9 @@ class PlayerRecordsService implements PlayerRecordsServiceInterface {
         });
     }
 
+    /**
+     * @throws Exception
+     */
     private function assertPlayerExists(int $playerId): void
     {
         $playerExists = $this->connection->fetchOne(
@@ -99,6 +106,7 @@ class PlayerRecordsService implements PlayerRecordsServiceInterface {
      *   tournamentId: int,
      *   round: int
      * }>
+     * @throws Exception
      */
     private function fetchPlayerGames(int $playerId): array
     {
@@ -312,8 +320,8 @@ class PlayerRecordsService implements PlayerRecordsServiceInterface {
         foreach (array_slice($streaks, 0, $limit) as $index => $streak) {
             $rows[] = new PlayerRecordsRow(
                 position: $index + 1,
-                streak: (int) $streak['streak'],
                 opponent: (string) $streak['opponent'],
+                streak: (int) $streak['streak'],
                 firstTournament: (string) $streak['firstTournament'],
                 lastTournament: (string) $streak['lastTournament'],
             );

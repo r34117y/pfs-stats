@@ -7,7 +7,8 @@ use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\Ranking\GetRanking;
 use App\ApiResource\Ranking\RankingRow;
 use App\Repository\UserRepository;
-use App\Service\OldMethodCurrentRanking\OldMethodCurrentRankingService;
+use App\Service\OldMethodCurrentRanking\OldMethodCurrentRankingServiceInterface;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -15,13 +16,16 @@ use Symfony\Contracts\Cache\ItemInterface;
 final readonly class OldRankingProvider implements ProviderInterface
 {
     public function __construct(
-        private OldMethodCurrentRankingService $oldMethodCurrentRankingService,
+        private OldMethodCurrentRankingServiceInterface $oldMethodCurrentRankingService,
         private UserRepository $userRepository,
         #[Autowire(service: 'app.dataset_cache')]
         private CacheInterface $cache,
     ) {
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): GetRanking
     {
         return $this->cache->get('api.ranking.old', function (ItemInterface $item): GetRanking {

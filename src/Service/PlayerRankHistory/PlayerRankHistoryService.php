@@ -8,16 +8,21 @@ use App\ApiResource\PlayerRankHistory\PlayerRankMilestone;
 use App\ApiResource\PlayerRankHistory\PlayerRankMilestones;
 use DateTime;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class PlayerRankHistoryService implements PlayerRankHistoryServiceInterface {
+final readonly class PlayerRankHistoryService implements PlayerRankHistoryServiceInterface
+{
     public function __construct(
         #[Autowire(service: 'doctrine.dbal.mysql_connection')]
         private Connection $connection,
     ) {
     }
 
+    /**
+     * @throws Exception
+     */
     public function getRankHistory(int $playerId): PlayerRankHistory
     {
         $historyRows = $this->fetchHistoryRows($playerId);
@@ -39,6 +44,9 @@ class PlayerRankHistoryService implements PlayerRankHistoryServiceInterface {
         return new PlayerRankHistory($history);
     }
 
+    /**
+     * @throws Exception
+     */
     public function getRankMilestones(int $playerId): PlayerRankMilestones
     {
         $historyRows = $this->fetchHistoryRows($playerId);
@@ -84,6 +92,7 @@ class PlayerRankHistoryService implements PlayerRankHistoryServiceInterface {
      *   date: string,
      *   rank: float|null
      * }>
+     * @throws Exception
      */
     private function fetchHistoryRows(int $playerId): array
     {

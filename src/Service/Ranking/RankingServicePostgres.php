@@ -5,6 +5,7 @@ namespace App\Service\Ranking;
 use App\ApiResource\Ranking\GetRanking;
 use App\ApiResource\Ranking\RankingRow;
 use App\Repository\UserRepository;
+use App\Service\RankingSnapshot\RankingSnapshotServiceInterface;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -17,7 +18,7 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
         #[Autowire(service: 'doctrine.dbal.default_connection')]
         private Connection $connection,
         private UserRepository $userRepository,
-        private RankingSnapshotServicePostgres $rankingSnapshotService,
+        private RankingSnapshotServiceInterface $rankingSnapshotService,
     ) {
     }
 

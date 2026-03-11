@@ -10,7 +10,8 @@ use Doctrine\DBAL\Exception;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-final readonly class AnnotatedGameDetailsService implements AnnotatedGameDetailsServiceInterface {
+final readonly class AnnotatedGameDetailsService implements AnnotatedGameDetailsServiceInterface
+{
     public function __construct(
         #[Autowire(service: 'doctrine.dbal.mysql_connection')]
         private Connection $connection,

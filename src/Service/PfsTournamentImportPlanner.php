@@ -10,13 +10,13 @@ use App\PfsTournamentImport\PfsTourImportRow;
 use App\PfsTournamentImport\PfsTourWynImportRow;
 use App\PfsTournamentImport\ResolvedPlayer;
 use App\PfsTournamentImport\TournamentImportMetadata;
-use App\Service\PfsPlayerResolver\PfsPlayerResolver;
+use App\Service\PfsPlayerResolver\PfsPlayerResolverInterface;
 use RuntimeException;
 
 final readonly class PfsTournamentImportPlanner
 {
     public function __construct(
-        private PfsPlayerResolver $playerResolver,
+        private PfsPlayerResolverInterface $playerResolver,
         private PfsNameNormalizer $nameNormalizer,
     ) {
     }
@@ -36,11 +36,6 @@ final readonly class PfsTournamentImportPlanner
         $resultRowsByName = [];
         foreach ($results->players as $playerResults) {
             $resultRowsByName[$playerResults->playerName] = $playerResults;
-        }
-
-        $standingsByName = [];
-        foreach ($results->standings as $standing) {
-            $standingsByName[$standing->playerName] = $standing;
         }
 
         $roundGames = $this->buildRoundGames($metadata->tournamentId, $results, $resolvedPlayers, $warnings);

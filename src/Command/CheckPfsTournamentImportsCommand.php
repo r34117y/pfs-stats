@@ -2,13 +2,14 @@
 
 namespace App\Command;
 
-use App\Service\PfsTournamentImportCheck\PfsTournamentImportCheckService;
+use App\Service\PfsTournamentImportCheck\PfsTournamentImportCheckServiceInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Throwable;
 
 #[AsCommand(
     name: 'app:pfs:tournaments:check-imports',
@@ -17,14 +18,14 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 final class CheckPfsTournamentImportsCommand extends Command
 {
     public function __construct(
-        private readonly PfsTournamentImportCheckService $checkService,
+        private readonly PfsTournamentImportCheckServiceInterface $checkService,
     ) {
         parent::__construct();
     }
 
     protected function configure(): void
     {
-        $this->addOption('year', null, InputOption::VALUE_REQUIRED, 'Calendar year to inspect.', (string) date('Y'));
+        $this->addOption('year', null, InputOption::VALUE_REQUIRED, 'Calendar year to inspect.', date('Y'));
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -40,7 +41,7 @@ final class CheckPfsTournamentImportsCommand extends Command
 
         try {
             $result = $this->checkService->check($year);
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $io->error(sprintf('Could not check tournament imports: %s', $exception->getMessage()));
 
             return Command::FAILURE;

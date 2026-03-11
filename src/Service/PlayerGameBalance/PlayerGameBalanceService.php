@@ -5,16 +5,20 @@ namespace App\Service\PlayerGameBalance;
 use App\ApiResource\PlayerGameBalance\PlayerGameBalance;
 use App\ApiResource\PlayerGameBalance\PlayerGameBalanceRow;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class PlayerGameBalanceService implements PlayerGameBalanceServiceInterface {
+final readonly class PlayerGameBalanceService implements PlayerGameBalanceServiceInterface {
     public function __construct(
         #[Autowire(service: 'doctrine.dbal.mysql_connection')]
         private Connection $connection,
     ) {
     }
 
+    /**
+     * @throws Exception
+     */
     public function getGameBalance(int $playerId): PlayerGameBalance
     {
         $playerExists = $this->connection->fetchOne(

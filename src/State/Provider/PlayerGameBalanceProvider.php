@@ -5,20 +5,24 @@ namespace App\State\Provider;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\PlayerGameBalance\PlayerGameBalance;
-use App\Service\PlayerGameBalance\PlayerGameBalanceService;
+use App\Service\PlayerGameBalance\PlayerGameBalanceServiceInterface;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Contracts\Cache\CacheInterface;
 
-class PlayerGameBalanceProvider implements ProviderInterface
+final readonly class PlayerGameBalanceProvider implements ProviderInterface
 {
     public function __construct(
-        private PlayerGameBalanceService $playerGameBalanceService,
+        private PlayerGameBalanceServiceInterface $playerGameBalanceService,
         #[Autowire(service: 'app.dataset_cache')]
         private CacheInterface $cache,
     ) {
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): PlayerGameBalance
     {
         $rawPlayerId = $uriVariables['id'] ?? $uriVariables['playerId'] ?? null;

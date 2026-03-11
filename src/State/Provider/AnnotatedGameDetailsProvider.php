@@ -5,7 +5,8 @@ namespace App\State\Provider;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\AnnotatedGameDetails\AnnotatedGameDetails;
-use App\Service\AnnotatedGameDetails\AnnotatedGameDetailsService;
+use App\Service\AnnotatedGameDetails\AnnotatedGameDetailsServiceInterface;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -13,12 +14,15 @@ use Symfony\Contracts\Cache\CacheInterface;
 final readonly class AnnotatedGameDetailsProvider implements ProviderInterface
 {
     public function __construct(
-        private AnnotatedGameDetailsService $annotatedGameDetailsService,
+        private AnnotatedGameDetailsServiceInterface $annotatedGameDetailsService,
         #[Autowire(service: 'app.dataset_cache')]
         private CacheInterface $cache,
     ) {
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): AnnotatedGameDetails
     {
         $id = (string) ($uriVariables['id'] ?? '');

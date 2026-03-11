@@ -4,17 +4,22 @@ namespace App\Service\PlayerProfile;
 
 use App\ApiResource\PlayerProfile\PlayerProfile;
 use App\ApiResource\PlayerProfile\PlayerProfileTournament;
+use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class PlayerProfileService implements PlayerProfileServiceInterface {
+final readonly class PlayerProfileService implements PlayerProfileServiceInterface {
     public function __construct(
         #[Autowire(service: 'doctrine.dbal.mysql_connection')]
         private Connection $connection,
     ) {
     }
 
+    /**
+     * @throws Exception
+     */
     public function getPlayerProfile(int $playerId): PlayerProfile
     {
         $player = $this->connection->fetchAssociative(
@@ -52,7 +57,7 @@ class PlayerProfileService implements PlayerProfileServiceInterface {
         $firstTournament = $this->fetchPlayerTournament($playerId, true);
         $lastTournament = $this->fetchPlayerTournament($playerId, false);
 
-        $today = new \DateTimeImmutable('today');
+        $today = new DateTimeImmutable('today');
         $last12Months = $today->modify('-12 months');
         $currentYearStart = $today->setDate((int) $today->format('Y'), 1, 1);
 
@@ -78,6 +83,9 @@ class PlayerProfileService implements PlayerProfileServiceInterface {
         );
     }
 
+    /**
+     * @throws Exception
+     */
     private function fetchPlayerTournament(int $playerId, bool $ascending): ?PlayerProfileTournament
     {
         $orderDirection = $ascending ? 'ASC' : 'DESC';
@@ -104,8 +112,9 @@ class PlayerProfileService implements PlayerProfileServiceInterface {
 
     /**
      * @return array{gamesWon: int|string, tournamentsWon: int|string}
+     * @throws Exception
      */
-    private function fetchWinsForPeriod(int $playerId, \DateTimeImmutable $from, \DateTimeImmutable $to): array
+    private function fetchWinsForPeriod(int $playerId, DateTimeImmutable $from, DateTimeImmutable $to): array
     {
         return $this->connection->fetchAssociative(
             "SELECT

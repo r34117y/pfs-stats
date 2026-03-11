@@ -87,9 +87,10 @@ use App\ApiResource\Stats\TournamentsCountRow;
 use DateTimeImmutable;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-class StatsService implements StatsServiceInterface
+final readonly class StatsService implements StatsServiceInterface
 {
     public function __construct(
         #[Autowire(service: 'doctrine.dbal.mysql_connection')]
@@ -97,6 +98,9 @@ class StatsService implements StatsServiceInterface
     ) {
     }
 
+    /**
+     * @throws Exception
+     */
     public function getAllTimesResults(): AllTimesResults
     {
         $rows = $this->connection->fetchAllAssociative(
@@ -150,10 +154,13 @@ class StatsService implements StatsServiceInterface
         return new AllTimesResults($resultRows);
     }
 
+    /**
+     * @throws Exception
+     */
     public function getYearlyAllTimesResults(int $year): AllTimesResults
     {
-        $fromDate = ((int) $year * 10000) + 101;
-        $toDate = ((int) $year * 10000) + 1231;
+        $fromDate = ($year * 10000) + 101;
+        $toDate = ($year * 10000) + 1231;
 
         $rows = $this->connection->fetchAllAssociative(
             "SELECT
@@ -213,10 +220,13 @@ class StatsService implements StatsServiceInterface
         return new AllTimesResults($resultRows);
     }
 
+    /**
+     * @throws Exception
+     */
     public function getYearlyRankingSummary(int $year): YearlyRankingSummary
     {
-        $fromDate = ((int) $year * 10000) + 101;
-        $toDate = ((int) $year * 10000) + 1231;
+        $fromDate = ($year * 10000) + 101;
+        $toDate = ($year * 10000) + 1231;
 
         $rows = $this->connection->fetchAllAssociative(
             "SELECT
@@ -289,6 +299,9 @@ class StatsService implements StatsServiceInterface
         return new AllTimeSummary($rows);
     }
 
+    /**
+     * @throws Exception
+     */
     public function getGamesCount(): GamesCount
     {
         $today = new DateTimeImmutable('today');
@@ -353,6 +366,9 @@ class StatsService implements StatsServiceInterface
         return new GamesCount($resultRows);
     }
 
+    /**
+     * @throws Exception
+     */
     public function getGamesWon(): GamesWon
     {
         $today = new DateTimeImmutable('today');
@@ -438,6 +454,9 @@ class StatsService implements StatsServiceInterface
         return new GamesWon($resultRows);
     }
 
+    /**
+     * @throws Exception
+     */
     public function getTournamentsCount(): TournamentsCount
     {
         $today = new DateTimeImmutable('today');
@@ -477,6 +496,9 @@ class StatsService implements StatsServiceInterface
         return new TournamentsCount($resultRows);
     }
 
+    /**
+     * @throws Exception
+     */
     public function getAvgPointsPerGame(): AvgPointsPerGame
     {
         $today = new DateTimeImmutable('today');
@@ -543,6 +565,9 @@ class StatsService implements StatsServiceInterface
         return new AvgPointsPerGame($resultRows);
     }
 
+    /**
+     * @throws Exception
+     */
     public function getAvgOpponentsPointsPerGame(): AvgOpponentsPointsPerGame
     {
         $today = new DateTimeImmutable('today');
@@ -4163,6 +4188,7 @@ class StatsService implements StatsServiceInterface
 
     /**
      * @return array<string, int|float>
+     * @throws Exception
      */
     private function calculateSummaryMetrics(?int $fromDate): array
     {

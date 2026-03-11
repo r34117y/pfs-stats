@@ -5,7 +5,7 @@ namespace App\State\Provider;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\Stats\LongestStreakMin350;
-use App\Service\Stats\StatsService;
+use App\Service\Stats\StatsServiceInterface;
 use DateTimeImmutable;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -13,7 +13,7 @@ use Symfony\Contracts\Cache\CacheInterface;
 final readonly class LongestStreakMin350Provider implements ProviderInterface
 {
     public function __construct(
-        private StatsService $statsService,
+        private StatsServiceInterface $statsService,
         #[Autowire(service: 'app.dataset_cache')]
         private CacheInterface $cache,
     ) {

@@ -5,20 +5,24 @@ namespace App\State\Provider;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\PlayerRankHistory\PlayerRankHistory;
-use App\Service\PlayerRankHistory\PlayerRankHistoryService;
+use App\Service\PlayerRankHistory\PlayerRankHistoryServiceInterface;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Contracts\Cache\CacheInterface;
 
-class PlayerRankHistoryProvider implements ProviderInterface
+final readonly class PlayerRankHistoryProvider implements ProviderInterface
 {
     public function __construct(
-        private PlayerRankHistoryService $playerRankHistoryService,
+        private PlayerRankHistoryServiceInterface $playerRankHistoryService,
         #[Autowire(service: 'app.dataset_cache')]
         private CacheInterface $cache,
     ) {
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): PlayerRankHistory
     {
         $rawPlayerId = $uriVariables['id'] ?? $uriVariables['playerId'] ?? null;

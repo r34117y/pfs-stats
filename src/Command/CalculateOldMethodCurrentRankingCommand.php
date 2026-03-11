@@ -2,7 +2,7 @@
 
 namespace App\Command;
 
-use App\Service\OldMethodCurrentRanking\OldMethodCurrentRankingService;
+use App\Service\OldMethodCurrentRanking\OldMethodCurrentRankingServiceInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -16,7 +16,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 final class CalculateOldMethodCurrentRankingCommand extends Command
 {
     public function __construct(
-        private readonly OldMethodCurrentRankingService $oldMethodCurrentRankingService,
+        private readonly OldMethodCurrentRankingServiceInterface $oldMethodCurrentRankingService,
     ) {
         parent::__construct();
     }

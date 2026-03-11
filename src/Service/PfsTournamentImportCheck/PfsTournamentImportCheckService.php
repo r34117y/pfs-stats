@@ -9,7 +9,9 @@ use App\Service\PfsTournamentCalendarParser;
 use App\Service\PfsTournamentImportMatcher;
 use App\Service\PfsTournamentResultsParser;
 use App\Service\PfsTournamentWebsiteClient;
+use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 final readonly class PfsTournamentImportCheckService implements PfsTournamentImportCheckServiceInterface {
@@ -23,9 +25,9 @@ final readonly class PfsTournamentImportCheckService implements PfsTournamentImp
     ) {
     }
 
-    public function check(int $year, ?\DateTimeImmutable $today = null): TournamentImportCheckResult
+    public function check(int $year, ?DateTimeImmutable $today = null): TournamentImportCheckResult
     {
-        $today ??= new \DateTimeImmutable('today');
+        $today ??= new DateTimeImmutable('today');
 
         $calendarHtml = $this->websiteClient->fetchCalendarHtml($year);
         $calendarTournaments = $this->calendarParser->parse($calendarHtml, $year);
@@ -55,6 +57,7 @@ final readonly class PfsTournamentImportCheckService implements PfsTournamentImp
 
     /**
      * @return list<ImportedTournamentRecord>
+     * @throws Exception
      */
     private function fetchImportedTournaments(int $year): array
     {

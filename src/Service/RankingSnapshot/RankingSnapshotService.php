@@ -3,9 +3,10 @@
 namespace App\Service\RankingSnapshot;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-class RankingSnapshotService implements RankingSnapshotServiceInterface {
+final readonly class RankingSnapshotService implements RankingSnapshotServiceInterface {
     public function __construct(
         #[Autowire(service: 'doctrine.dbal.mysql_connection')]
         private Connection $connection,
@@ -14,6 +15,7 @@ class RankingSnapshotService implements RankingSnapshotServiceInterface {
 
     /**
      * @return list<array{playerId: int, position: int, rank: float, games: int, nameShow: string, nameAlph: string}>
+     * @throws Exception
      */
     public function getRankingAfterTournament(int $tournamentId): array
     {

@@ -5,7 +5,7 @@ namespace App\State\Provider;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\Stats\YearlyAllTimesResults;
-use App\Service\Stats\StatsService;
+use App\Service\Stats\StatsServiceInterface;
 use DateTimeImmutable;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -14,7 +14,7 @@ use Symfony\Contracts\Cache\CacheInterface;
 final readonly class YearlyAllTimesResultsProvider implements ProviderInterface
 {
     public function __construct(
-        private StatsService $statsService,
+        private StatsServiceInterface $statsService,
         private RequestStack $requestStack,
         #[Autowire(service: 'app.dataset_cache')]
         private CacheInterface $cache,

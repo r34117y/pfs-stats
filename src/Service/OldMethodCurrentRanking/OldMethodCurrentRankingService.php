@@ -4,6 +4,7 @@ namespace App\Service\OldMethodCurrentRanking;
 
 use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 final readonly class OldMethodCurrentRankingService implements OldMethodCurrentRankingServiceInterface {
@@ -36,6 +37,7 @@ final readonly class OldMethodCurrentRankingService implements OldMethodCurrentR
      *      tournaments: int
      *   }>
      * }
+     * @throws Exception
      */
     public function calculateCurrentRanking(): array
     {
@@ -187,6 +189,7 @@ final readonly class OldMethodCurrentRankingService implements OldMethodCurrentR
 
     /**
      * @return array<int, array{name: string, nameSort: string}>
+     * @throws Exception
      */
     private function loadPlayerNames(): array
     {
@@ -203,6 +206,9 @@ final readonly class OldMethodCurrentRankingService implements OldMethodCurrentR
         return $result;
     }
 
+    /**
+     * @throws Exception
+     */
     private function loadLatestRankingTournamentId(): ?int
     {
         $value = $this->connection->fetchOne("SELECT MAX(turniej) FROM PFSRANKING WHERE rtype = 'f'");
@@ -216,6 +222,7 @@ final readonly class OldMethodCurrentRankingService implements OldMethodCurrentR
 
     /**
      * @return array{id: int|string, dt: int|string, name: string}|null
+     * @throws Exception
      */
     private function loadTournamentById(int $tournamentId): ?array
     {
@@ -235,6 +242,7 @@ final readonly class OldMethodCurrentRankingService implements OldMethodCurrentR
 
     /**
      * @return array<int, list<array{tournamentId: int, dateInt: int, games: int, achievedRank: float}>>
+     * @throws Exception
      */
     private function loadHistoricalTournamentResultsBeforeNewMethod(): array
     {
@@ -304,6 +312,7 @@ final readonly class OldMethodCurrentRankingService implements OldMethodCurrentR
 
     /**
      * @return array<int, array{rank: float, games: int, tournaments: int}>
+     * @throws Exception
      */
     private function loadOldMethodSnapshotBeforeNewMethod(): array
     {
@@ -339,6 +348,7 @@ final readonly class OldMethodCurrentRankingService implements OldMethodCurrentR
 
     /**
      * @return list<array{id: int|string, dt: int|string, name: string}>
+     * @throws Exception
      */
     private function loadTournamentsForSimulation(int $referenceTournamentId): array
     {
@@ -357,6 +367,7 @@ final readonly class OldMethodCurrentRankingService implements OldMethodCurrentR
 
     /**
      * @return list<int>
+     * @throws Exception
      */
     private function loadTournamentParticipants(int $tournamentId): array
     {
@@ -375,6 +386,7 @@ final readonly class OldMethodCurrentRankingService implements OldMethodCurrentR
 
     /**
      * @return list<array{player1: int, player2: int, result1: int, result2: int}>
+     * @throws Exception
      */
     private function loadUniqueTournamentGames(int $tournamentId): array
     {

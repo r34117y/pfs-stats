@@ -6,16 +6,20 @@ use App\ApiResource\PlayerTournamentSummary\PlayerTournamentSummary;
 use App\ApiResource\PlayerTournamentSummary\PlayerTournamentSummaryGame;
 use App\ApiResource\PlayerTournamentSummary\PlayerTournamentSummaryStats;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class PlayerTournamentSummaryService implements PlayerTournamentSummaryServiceInterface {
+final readonly class PlayerTournamentSummaryService implements PlayerTournamentSummaryServiceInterface {
     public function __construct(
         #[Autowire(service: 'doctrine.dbal.mysql_connection')]
         private Connection $connection,
     ) {
     }
 
+    /**
+     * @throws Exception
+     */
     public function getSummary(int $tournamentId, int $playerId): PlayerTournamentSummary
     {
         $playerTournamentRow = $this->connection->fetchAssociative(

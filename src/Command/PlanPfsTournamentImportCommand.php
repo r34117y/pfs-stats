@@ -4,7 +4,7 @@ namespace App\Command;
 
 use App\PfsTournamentImport\TournamentImportMetadata;
 use App\Service\PfsTournamentCalendarParser;
-use App\Service\PfsTournamentImportComparer\PfsTournamentImportComparer;
+use App\Service\PfsTournamentImportComparer\PfsTournamentImportComparerInterface;
 use App\Service\PfsTournamentImportPlanner;
 use App\Service\PfsTournamentImportSqlRenderer;
 use App\Service\PfsTournamentResultsParser;
@@ -30,7 +30,7 @@ final class PlanPfsTournamentImportCommand extends Command
         private readonly PfsTournamentResultsParser $resultsParser,
         private readonly PfsTournamentImportPlanner $planner,
         private readonly PfsTournamentImportSqlRenderer $sqlRenderer,
-        private readonly PfsTournamentImportComparer $comparer,
+        private readonly PfsTournamentImportComparerInterface $comparer,
         #[Autowire(service: 'doctrine.dbal.mysql_connection')]
         private readonly Connection $connection,
     ) {

@@ -5,22 +5,26 @@ namespace App\State\Provider;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\PlayerRecords\PlayerRecordsTable;
-use App\Service\PlayerRecords\PlayerRecordsService;
+use App\Service\PlayerRecords\PlayerRecordsServiceInterface;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Contracts\Cache\CacheInterface;
 
-class PlayerRecordsProvider implements ProviderInterface
+final readonly class PlayerRecordsProvider implements ProviderInterface
 {
     public function __construct(
-        private PlayerRecordsService $playerRecordsService,
+        private PlayerRecordsServiceInterface $playerRecordsService,
         private RequestStack $requestStack,
         #[Autowire(service: 'app.dataset_cache')]
         private CacheInterface $cache,
     ) {
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): PlayerRecordsTable
     {
         $rawPlayerId = $uriVariables['id'] ?? $uriVariables['playerId'] ?? null;
