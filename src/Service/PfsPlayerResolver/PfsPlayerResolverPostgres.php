@@ -4,6 +4,7 @@ namespace App\Service\PfsPlayerResolver;
 
 use App\PfsTournamentImport\PfsPlayerImportRow;
 use App\PfsTournamentImport\ResolvedPlayer;
+use App\Service\PfsNameNormalizer;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 

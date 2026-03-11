@@ -5,6 +5,10 @@ namespace App\Service\PfsTournamentImportCheck;
 use App\PfsTournamentImport\ImportedTournamentRecord;
 use App\PfsTournamentImport\PendingTournamentImport;
 use App\PfsTournamentImport\TournamentImportCheckResult;
+use App\Service\PfsTournamentCalendarParser;
+use App\Service\PfsTournamentImportMatcher;
+use App\Service\PfsTournamentResultsParser;
+use App\Service\PfsTournamentWebsiteClient;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
