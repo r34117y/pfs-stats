@@ -5,7 +5,7 @@ namespace App\State\Provider;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\AnnotatedGameDetails\AnnotatedGameDetails;
-use App\Service\AnnotatedGameDetailsService;
+use App\Service\AnnotatedGameDetails\AnnotatedGameDetailsService;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Contracts\Cache\CacheInterface;

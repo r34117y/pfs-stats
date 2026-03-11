@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\AnnotatedGameDetails;
 
 use App\ApiResource\AnnotatedGameDetails\AnnotatedGameDetails;
 use App\GcgParser\Exception\InvalidGcgEventException;
