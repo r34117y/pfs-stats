@@ -12,6 +12,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 final readonly class AnnotatedGameDetailsServicePostgres implements AnnotatedGameDetailsServiceInterface
 {
+    private const string ORGANIZATION_CODE = 'PFS';
+
     public function __construct(
         #[Autowire(service: 'doctrine.dbal.default_connection')]
         private Connection $connection,
@@ -26,12 +28,32 @@ final readonly class AnnotatedGameDetailsServicePostgres implements AnnotatedGam
     public function getByKey(int $tournamentId, int $round, int $player1Id): AnnotatedGameDetails
     {
         $row = $this->connection->fetchAssociative(
-            'SELECT data, to_char(updated_at, \'YYYY-MM-DD HH24:MI:SS\') AS updated
-             FROM game_record
-             WHERE tournament_id = :tour AND round_no = :round AND player1_id = :player1
-             ORDER BY id DESC
+            'SELECT
+                g.data,
+                to_char(g.updated_at, \'YYYY-MM-DD HH24:MI:SS\') AS updated,
+                p1.name_show AS player1_name,
+                h.player2_id AS player2_id,
+                p2.name_show AS player2_name
+             FROM game_record g
+             INNER JOIN organization o
+                ON o.id = g.organization_id
+             INNER JOIN tournament_game h
+                ON h.organization_id = g.organization_id
+               AND h.tournament_id = g.tournament_id
+               AND h.round_no = g.round_no
+               AND h.player1_id = g.player1_id
+             INNER JOIN player p1
+                ON p1.id = g.player1_id
+             INNER JOIN player p2
+                ON p2.id = h.player2_id
+             WHERE o.code = :organizationCode
+               AND g.tournament_id = :tour
+               AND g.round_no = :round
+               AND g.player1_id = :player1
+             ORDER BY g.id DESC
              LIMIT 1',
             [
+                'organizationCode' => self::ORGANIZATION_CODE,
                 'tour' => $tournamentId,
                 'round' => $round,
                 'player1' => $player1Id,
@@ -53,9 +75,9 @@ final readonly class AnnotatedGameDetailsServicePostgres implements AnnotatedGam
             tournamentId: $tournamentId,
             round: $round,
             player1Id: $player1Id,
-            player1Name: 'TODO',
-            player2Id: 'TODO',
-            player2Name: 'TODO',
+            player1Name: (string) $row['player1_name'],
+            player2Id: (int) $row['player2_id'],
+            player2Name: (string) $row['player2_name'],
             data: (string) $row['data'],
             updated: (string) $row['updated'],
             parsedGcg: $parsedGcg
