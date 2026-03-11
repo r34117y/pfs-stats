@@ -1,5 +1,11 @@
 # Endpoints done
 
+## Tournament round dummy callback
+
+Endpoint: POST `/api/tournament/round`
+Type: ApiResource + StateProcessor
+Description: Dummy endpoint that accepts JSON payload with `token`. Returns `200 OK` when the token matches one of the comma-separated values configured in `TOURNAMENT_ROUND_TOKENS` in `.env`, and `401 Unauthorized` otherwise.
+
 ## Main ranking (landing page)
 
 Endpoint: GET `/`
