@@ -5,6 +5,7 @@ namespace App\Service\AnnotatedGames;
 use App\ApiResource\AnnotatedGames\AnnotatedGames;
 use App\ApiResource\AnnotatedGames\AnnotatedGamesRow;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\ParameterType;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
@@ -19,6 +20,9 @@ final readonly class AnnotatedGamesServicePostgres implements AnnotatedGamesServ
     ) {
     }
 
+    /**
+     * @throws Exception
+     */
     public function getAnnotatedGames(int $page, ?string $playerName = null, ?string $tournamentName = null): AnnotatedGames
     {
         $page = max(1, $page);
@@ -74,12 +78,12 @@ final readonly class AnnotatedGamesServicePostgres implements AnnotatedGamesServ
              FROM game_record g
              INNER JOIN tournament_game h
                 ON h.organization_id = g.organization_id
-               AND h.legacy_tournament_id = g.legacy_tournament_id
-               AND h.legacy_player1_id = g.legacy_player1_id
+               AND h.tournament_id = g.tournament_id
+               AND h.player1_id = g.player1_id
                AND h.round_no = g.round_no
              INNER JOIN tournament t
                 ON t.organization_id = g.organization_id
-               AND t.legacy_id = g.legacy_tournament_id
+               AND t.id = g.tournament_id
              {$whereSql}",
             $params,
             $types,
@@ -104,25 +108,25 @@ final readonly class AnnotatedGamesServicePostgres implements AnnotatedGamesServ
                 p2.name_show AS \"player2Name\"
              FROM (
                 SELECT
-                    g.legacy_tournament_id AS \"tournamentId\",
+                    g.tournament_id AS \"tournamentId\",
                     COALESCE(t.fullname, t.name) AS \"tournamentName\",
                     g.round_no AS \"roundNo\",
-                    g.legacy_player1_id AS \"player1Id\",
-                    h.legacy_player2_id AS \"player2Id\",
+                    g.player1_id AS \"player1Id\",
+                    h.player2_id AS \"player2Id\",
                     g.player1_id AS \"player1Pk\",
                     h.player2_id AS \"player2Pk\",
                     t.dt AS \"tournamentDate\"
                 FROM game_record g
                 INNER JOIN tournament_game h
                     ON h.organization_id = g.organization_id
-                   AND h.legacy_tournament_id = g.legacy_tournament_id
-                   AND h.legacy_player1_id = g.legacy_player1_id
+                   AND h.tournament_id = g.tournament_id
+                   AND h.player1_id = g.player1_id
                    AND h.round_no = g.round_no
                 INNER JOIN tournament t
                     ON t.organization_id = g.organization_id
-                   AND t.legacy_id = g.legacy_tournament_id
+                   AND t.id = g.tournament_id
                 {$whereSql}
-                ORDER BY t.dt DESC, g.legacy_tournament_id DESC, g.round_no ASC, g.legacy_player1_id ASC, h.legacy_player2_id ASC
+                ORDER BY t.dt DESC, g.tournament_id DESC, g.round_no ASC, g.player1_id ASC, h.player2_id ASC
                 LIMIT :limit OFFSET :offset
              ) page
              INNER JOIN player p1 ON p1.id = page.\"player1Pk\"

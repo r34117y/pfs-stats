@@ -28,7 +28,7 @@ final readonly class AnnotatedGameDetailsServicePostgres implements AnnotatedGam
         $row = $this->connection->fetchAssociative(
             'SELECT data, to_char(updated_at, \'YYYY-MM-DD HH24:MI:SS\') AS updated
              FROM game_record
-             WHERE legacy_tournament_id = :tour AND round_no = :round AND legacy_player1_id = :player1
+             WHERE tournament_id = :tour AND round_no = :round AND player1_id = :player1
              ORDER BY id DESC
              LIMIT 1',
             [
