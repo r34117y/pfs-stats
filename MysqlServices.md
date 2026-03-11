@@ -2,39 +2,58 @@
 
 - `App\Service\AnnotatedGameDetailsService` (`src/Service/AnnotatedGameDetailsService.php`)
   - [x] Interface `App\Service\AnnotatedGameDetailsServiceInterface` created and implemented
+  - [x] Postgres service `App\Service\AnnotatedGameDetailsServicePostgres` created and implemented
 - `App\Service\AnnotatedGamesService` (`src/Service/AnnotatedGamesService.php`)
   - [x] Interface `App\Service\AnnotatedGamesServiceInterface` created and implemented
+  - [x] Postgres service `App\Service\AnnotatedGamesServicePostgres` created and implemented
 - `App\Service\ClubsService` (`src/Service/ClubsService.php`)
   - [x] Interface `App\Service\ClubsServiceInterface` created and implemented
+  - [x] Postgres service `App\Service\ClubsServicePostgres` created and implemented
 - `App\Service\OldMethodCurrentRankingService` (`src/Service/OldMethodCurrentRankingService.php`)
   - [x] Interface `App\Service\OldMethodCurrentRankingServiceInterface` created and implemented
+  - [x] Postgres service `App\Service\OldMethodCurrentRankingServicePostgres` created and implemented
 - `App\Service\PfsPlayerResolver` (`src/Service/PfsPlayerResolver.php`)
   - [x] Interface `App\Service\PfsPlayerResolverInterface` created and implemented
+  - [x] Postgres service `App\Service\PfsPlayerResolverPostgres` created and implemented
 - `App\Service\PfsTournamentImportCheckService` (`src/Service/PfsTournamentImportCheckService.php`)
   - [x] Interface `App\Service\PfsTournamentImportCheckServiceInterface` created and implemented
+  - [x] Postgres service `App\Service\PfsTournamentImportCheckServicePostgres` created and implemented
 - `App\Service\PfsTournamentImportComparer` (`src/Service/PfsTournamentImportComparer.php`)
   - [x] Interface `App\Service\PfsTournamentImportComparerInterface` created and implemented
+  - [x] Postgres service `App\Service\PfsTournamentImportComparerPostgres` created and implemented
 - `App\Service\PlayerGameBalanceService` (`src/Service/PlayerGameBalanceService.php`)
   - [x] Interface `App\Service\PlayerGameBalanceServiceInterface` created and implemented
+  - [x] Postgres service `App\Service\PlayerGameBalanceServicePostgres` created and implemented
 - `App\Service\PlayerProfileService` (`src/Service/PlayerProfileService.php`)
   - [x] Interface `App\Service\PlayerProfileServiceInterface` created and implemented
+  - [x] Postgres service `App\Service\PlayerProfileServicePostgres` created and implemented
 - `App\Service\PlayerRankHistoryService` (`src/Service/PlayerRankHistoryService.php`)
   - [x] Interface `App\Service\PlayerRankHistoryServiceInterface` created and implemented
+  - [x] Postgres service `App\Service\PlayerRankHistoryServicePostgres` created and implemented
 - `App\Service\PlayerRecordsService` (`src/Service/PlayerRecordsService.php`)
   - [x] Interface `App\Service\PlayerRecordsServiceInterface` created and implemented
+  - [x] Postgres service `App\Service\PlayerRecordsServicePostgres` created and implemented
 - `App\Service\PlayerTournamentSummaryService` (`src/Service/PlayerTournamentSummaryService.php`)
   - [x] Interface `App\Service\PlayerTournamentSummaryServiceInterface` created and implemented
+  - [x] Postgres service `App\Service\PlayerTournamentSummaryServicePostgres` created and implemented
 - `App\Service\PlayerTournamentsService` (`src/Service/PlayerTournamentsService.php`)
   - [x] Interface `App\Service\PlayerTournamentsServiceInterface` created and implemented
+  - [x] Postgres service `App\Service\PlayerTournamentsServicePostgres` created and implemented
 - `App\Service\RankingSnapshotService` (`src/Service/RankingSnapshotService.php`)
   - [x] Interface `App\Service\RankingSnapshotServiceInterface` created and implemented
+  - [x] Postgres service `App\Service\RankingSnapshotServicePostgres` created and implemented
 - `App\Service\StatsService` (`src/Service/StatsService.php`)
   - [x] Interface `App\Service\StatsServiceInterface` created and implemented
+  - [x] Postgres service `App\Service\StatsServicePostgres` created and implemented (ALMOST the same; minor 0.01 rank float differences in edge cases)
 - `App\Service\TournamentDetailsService` (`src/Service/TournamentDetailsService.php`)
   - [x] Interface `App\Service\TournamentDetailsServiceInterface` created and implemented
+  - [x] Postgres service `App\Service\TournamentDetailsServicePostgres` created and implemented
 - `App\Service\PlayerListService` (`src/Service/PlayerListService.php`)
   - [x] Interface `App\Service\PlayerListServiceInterface` created and implemented
+  - [x] Postgres service `App\Service\PlayerListServicePostgres` created and implemented
 - `App\Service\RankingService` (`src/Service/RankingService.php`)
   - [x] Interface `App\Service\RankingServiceInterface` created and implemented
+  - [x] Postgres service `App\Service\RankingServicePostgres` created and implemented
 - `App\Service\TournamentListService` (`src/Service/TournamentListService.php`)
   - [x] Interface `App\Service\TournamentListServiceInterface` created and implemented
+  - [x] Postgres service `App\Service\TournamentListServicePostgres` created and implemented
