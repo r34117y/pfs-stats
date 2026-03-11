@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: SeriesRepository::class)]
 #[ORM\Table(name: 'series')]
 #[ORM\UniqueConstraint(name: 'uniq_series_org_legacy_id', columns: ['organization_id', 'legacy_id'])]
-final class Series
+class Series
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

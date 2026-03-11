@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Table(name: 'play_summary')]
 #[ORM\UniqueConstraint(name: 'uniq_play_summary_org_player_stype', columns: ['organization_id', 'player_id', 'stype'])]
 #[ORM\Index(name: 'idx_play_summary_org_legacy_player_stype', columns: ['organization_id', 'legacy_player_id', 'stype'])]
-final class PlaySummary
+class PlaySummary
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: OrganizationRepository::class)]
 #[ORM\Table(name: 'organization')]
 #[ORM\UniqueConstraint(name: 'uniq_organization_code', columns: ['code'])]
-final class Organization
+class Organization
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

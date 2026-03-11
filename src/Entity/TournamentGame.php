@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\UniqueConstraint(name: 'uniq_tournament_game_org_tournament_round_players', columns: ['organization_id', 'tournament_id', 'round_no', 'player1_id', 'player2_id'])]
 #[ORM\Index(name: 'idx_tournament_game_org_player1_player2', columns: ['organization_id', 'player1_id', 'player2_id'])]
 #[ORM\Index(name: 'idx_tournament_game_org_legacy_tournament_round_players', columns: ['organization_id', 'legacy_tournament_id', 'round_no', 'legacy_player1_id', 'legacy_player2_id'])]
-final class TournamentGame
+class TournamentGame
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

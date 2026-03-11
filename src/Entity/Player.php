@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: PlayerRepository::class)]
 #[ORM\Table(name: 'player')]
 #[ORM\Index(name: 'idx_player_name_alph', columns: ['name_alph'])]
-final class Player
+class Player
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

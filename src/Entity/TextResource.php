@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: TextResourceRepository::class)]
 #[ORM\Table(name: 'text_resource')]
 #[ORM\UniqueConstraint(name: 'uniq_text_resource_org_type_legacy_id', columns: ['organization_id', 'resource_type', 'legacy_id'])]
-final class TextResource
+class TextResource
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

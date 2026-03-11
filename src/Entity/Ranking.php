@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\UniqueConstraint(name: 'uniq_ranking_org_rtype_player_tournament', columns: ['organization_id', 'rtype', 'player_id', 'tournament_id'])]
 #[ORM\Index(name: 'idx_ranking_org_rtype_tournament_pos', columns: ['organization_id', 'rtype', 'tournament_id', 'position'])]
 #[ORM\Index(name: 'idx_ranking_org_rtype_legacy_player_tournament', columns: ['organization_id', 'rtype', 'legacy_player_id', 'legacy_tournament_id'])]
-final class Ranking
+class Ranking
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
