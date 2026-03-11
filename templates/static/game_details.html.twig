@@ -67,28 +67,49 @@
             overflow-y: auto;
             border: 1px solid rgba(0, 0, 0, 0.08);
             border-radius: 8px;
-            padding: 0.5rem;
             background: rgba(255, 255, 255, 0.7);
         }
 
-        .move-item {
+        .moves-table {
             width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        .moves-table th,
+        .moves-table td {
+            padding: 0.55rem 0.7rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
             text-align: left;
-            border: 1px solid transparent;
-            background: transparent;
-            border-radius: 6px;
-            padding: 0.45rem 0.6rem;
+            vertical-align: middle;
+        }
+
+        .moves-table thead th {
+            position: sticky;
+            top: 0;
+            background: #f7f3e7;
+            z-index: 1;
+            font-weight: 700;
+        }
+
+        .moves-table tbody tr {
             cursor: pointer;
+            transition: background-color 0.12s ease, box-shadow 0.12s ease;
         }
 
-        .move-item:hover {
+        .moves-table tbody tr:hover {
             background: #f7f9fc;
-            border-color: rgba(0, 0, 0, 0.08);
         }
 
-        .move-item.is-active {
+        .moves-table tbody tr.is-active {
             background: #e8f1ff;
-            border-color: #8bb8ff;
+            box-shadow: inset 3px 0 0 #8bb8ff;
+        }
+
+        .moves-table .is-centered,
+        .moves-table .is-numeric {
+            text-align: center;
+            white-space: nowrap;
         }
 
         @media screen and (max-width: 960px) {
@@ -149,17 +170,36 @@
                                     <p class="has-text-grey">Brak ruchów do wyświetlenia.</p>
                                 </template>
 
-                                <template x-for="(event, index) in events" :key="event['@id'] ?? `e-${index}`">
-                                    <button
-                                        type="button"
-                                        class="move-item"
-                                        :class="{'is-active': selectedMoveIndex === index}"
-                                        @click="selectedMoveIndex = index"
-                                    >
-                                        <strong x-text="`${index + 1}. ${event.playerNick}`"></strong>
-                                        <span x-text="` • ${eventLabel(event)}`"></span>
-                                        <span x-text="` • ${formatScore(event.score)} (${event.totalScore})`"></span>
-                                    </button>
+                                <template x-if="events.length > 0">
+                                    <table class="moves-table">
+                                        <thead>
+                                            <tr>
+                                                <th class="is-numeric">#</th>
+                                                <th>Zawodnik</th>
+                                                <th>Stojak</th>
+                                                <th>Ruch</th>
+                                                <th class="is-centered">Pole</th>
+                                                <th class="is-numeric">Punkty</th>
+                                                <th class="is-numeric">Razem</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <template x-for="(ev, index) in events" :key="ev['@id'] ?? `e-${index}`">
+                                                <tr
+                                                    :class="{'is-active': selectedMoveIndex === index}"
+                                                    @click="selectedMoveIndex = index"
+                                                >
+                                                    <td class="is-numeric" x-text="`${index + 1}.`"></td>
+                                                    <td x-text="playerInitialsForEvent(ev)"></td>
+                                                    <td x-text="ev.rack ?? '-'"></td>
+                                                    <td x-text="eventLabel(ev)"></td>
+                                                    <td class="is-centered" x-text="eventField(ev)"></td>
+                                                    <td class="is-numeric" x-text="formatScore(ev.score)"></td>
+                                                    <td class="is-numeric" x-text="ev.totalScore ?? 0"></td>
+                                                </tr>
+                                            </template>
+                                        </tbody>
+                                    </table>
                                 </template>
                             </div>
                         </div>
@@ -214,6 +254,10 @@
 
                 get events() {
                     return this.details?.parsedGcg?.events ?? [];
+                },
+
+                get parsedPlayers() {
+                    return this.details?.parsedGcg?.players ?? [];
                 },
 
                 tileClass(row, col) {
@@ -313,14 +357,63 @@
                     }
                 },
 
+                buildInitials(name) {
+                    const parts = String(name ?? '')
+                        .trim()
+                        .split(/\s+/)
+                        .filter(Boolean);
+
+                    if (parts.length === 0) {
+                        return '?';
+                    }
+
+                    if (parts.length === 1) {
+                        return parts[0].slice(0, 2).toUpperCase();
+                    }
+
+                    return `${parts[0][0] ?? ''}${parts[1][0] ?? ''}`.toUpperCase();
+                },
+
+                playerInitialsForEvent(event) {
+                    const player1Nick = this.parsedPlayers[0]?.nick ?? null;
+                    const player2Nick = this.parsedPlayers[1]?.nick ?? null;
+
+                    if (event?.playerNick === player1Nick) {
+                        return this.buildInitials(this.details?.player1Name);
+                    }
+
+                    if (event?.playerNick === player2Nick) {
+                        return this.buildInitials(this.details?.player2Name);
+                    }
+
+                    return '?';
+                },
+
+                formatExchangeLabel(exchanged) {
+                    const value = String(exchanged ?? '').trim();
+
+                    if (value === '') {
+                        return 'Wym.';
+                    }
+
+                    return `Wym. (${value})`;
+
+                },
+
                 eventLabel(event) {
                     if (event.type === 'p') {
                         const words = event.words ?? [];
-                        return `${event.startField} ${(words[0] ?? '')}`.trim();
+                        const move = (words[0] ?? '').trim();
+
+                        if (move === '') {
+                            return 'Ruch';
+                        }
+
+                        return move;
                     }
 
                     if (event.type === 'x') {
-                        return `Wymiana ${event.exchanged ?? ''}`.trim();
+                        return this.formatExchangeLabel(event.exchanged);
                     }
 
                     if (event.type === 'pass') {
@@ -342,12 +435,17 @@
                     return event.type ?? 'Ruch';
                 },
 
+                eventField(event) {
+                    const field = String(event?.startField ?? '').trim();
+                    return field !== '' ? field : '-';
+                },
+
                 formatScore(score) {
                     if (typeof score !== 'number') {
-                        return '0';
+                        return '+0';
                     }
 
-                    return score > 0 ? `+${score}` : `${score}`;
+                    return score >= 0 ? `+${score}` : `${score}`;
                 },
 
                 goStart() {
