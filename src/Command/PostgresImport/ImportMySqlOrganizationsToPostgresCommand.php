@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Command;
+namespace App\Command\PostgresImport;
 
 use Doctrine\DBAL\Connection;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -19,7 +19,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 )]
 final class ImportMySqlOrganizationsToPostgresCommand extends Command {
     /** @var list<string> */
-    private const BASE_SUFFIXES = [
+    private const array BASE_SUFFIXES = [
         'PLAYER',
         'PLAYSUMM',
         'RANKING',
@@ -93,6 +93,7 @@ final class ImportMySqlOrganizationsToPostgresCommand extends Command {
 
         $organizationIdByCode = [];
         $playerIdByOrgLegacy = [];
+        $playerIdByIdentity = [];
         $seriesIdByOrgLegacy = [];
         $tournamentIdByOrgLegacy = [];
         $counters = [];
@@ -113,7 +114,12 @@ final class ImportMySqlOrganizationsToPostgresCommand extends Command {
                 $organizationId = $organizationIdByCode[$organizationCode];
                 $io->writeln(sprintf('Importing %s...', $organizationCode));
 
-                $playerIdByOrgLegacy[$organizationCode] = $this->importPlayers($organizationCode, $organizationId, $counters);
+                $playerIdByOrgLegacy[$organizationCode] = $this->importPlayers(
+                    $organizationCode,
+                    $organizationId,
+                    $playerIdByIdentity,
+                    $counters,
+                );
                 $seriesIdByOrgLegacy[$organizationCode] = $this->importSeries($organizationCode, $organizationId, $counters);
                 $tournamentIdByOrgLegacy[$organizationCode] = $this->importTournaments(
                     $organizationCode,
@@ -317,35 +323,70 @@ final class ImportMySqlOrganizationsToPostgresCommand extends Command {
     }
 
     /**
+     * @param array<string, int> $playerIdByIdentity
      * @param array<string, int> $counters
      * @return array<int, int>
      */
-    private function importPlayers(string $organizationCode, int $organizationId, array &$counters): array
-    {
+    private function importPlayers(
+        string $organizationCode,
+        int $organizationId,
+        array &$playerIdByIdentity,
+        array &$counters,
+    ): array {
         $map = [];
         $table = $this->sourceTable($organizationCode, 'PLAYER');
 
         foreach ($this->mysqlConnection->iterateAssociative("SELECT id, name_show, name_alph, utype, cached FROM {$table} ORDER BY id") as $row) {
-            $playerId = (int) $this->postgresConnection->fetchOne(
-                'INSERT INTO player (name_show, name_alph, utype, cached) VALUES (:nameShow, :nameAlph, :utype, :cached) RETURNING id',
+            $nameShow = $this->normalizeNullableString($row['name_show']);
+            $nameAlph = $this->normalizeNullableString($row['name_alph']);
+            $utype = $this->normalizeNullableString($row['utype']);
+            $cached = $this->normalizeNullableString($row['cached']);
+            $playerKey = $this->playerIdentityKey($nameShow, $nameAlph);
+
+            if (!isset($playerIdByIdentity[$playerKey])) {
+                $playerIdByIdentity[$playerKey] = (int) $this->postgresConnection->fetchOne(
+                    'INSERT INTO player (name_show, name_alph, utype, cached) VALUES (:nameShow, :nameAlph, :utype, :cached) RETURNING id',
+                    [
+                        'nameShow' => $nameShow,
+                        'nameAlph' => $nameAlph,
+                        'utype' => $utype,
+                        'cached' => $cached,
+                    ],
+                );
+
+                $this->increment($counters, 'player');
+            } else {
+                $this->postgresConnection->executeStatement(
+                    'UPDATE player
+                     SET utype = COALESCE(utype, :utype),
+                         cached = COALESCE(cached, :cached)
+                     WHERE id = :playerId',
+                    [
+                        'utype' => $utype,
+                        'cached' => $cached,
+                        'playerId' => $playerIdByIdentity[$playerKey],
+                    ],
+                );
+            }
+
+            $playerId = $playerIdByIdentity[$playerKey];
+
+            $insertedAssociationCount = $this->postgresConnection->executeStatement(
+                'INSERT INTO player_organization (player_id, organization_id)
+                 VALUES (:playerId, :organizationId)
+                 ON CONFLICT DO NOTHING',
                 [
-                    'nameShow' => $this->normalizeNullableString($row['name_show']),
-                    'nameAlph' => $this->normalizeNullableString($row['name_alph']),
-                    'utype' => $this->normalizeNullableString($row['utype']),
-                    'cached' => $this->normalizeNullableString($row['cached']),
+                    'playerId' => $playerId,
+                    'organizationId' => $organizationId,
                 ],
             );
-
-            $this->postgresConnection->insert('player_organization', [
-                'player_id' => $playerId,
-                'organization_id' => $organizationId,
-            ]);
 
             $legacyPlayerId = (int) $row['id'];
             $map[$legacyPlayerId] = $playerId;
 
-            $this->increment($counters, 'player');
-            $this->increment($counters, 'player_organization');
+            if ($insertedAssociationCount > 0) {
+                $this->increment($counters, 'player_organization');
+            }
         }
 
         return $map;
@@ -722,6 +763,11 @@ final class ImportMySqlOrganizationsToPostgresCommand extends Command {
         }
 
         return $stringValue;
+    }
+
+    private function playerIdentityKey(?string $nameShow, ?string $nameAlph): string
+    {
+        return json_encode([$nameShow, $nameAlph], JSON_THROW_ON_ERROR);
     }
 
     private function toNullableInt(mixed $value): ?int
