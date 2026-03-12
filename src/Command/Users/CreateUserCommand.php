@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Command;
+namespace App\Command\Users;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
@@ -70,6 +70,7 @@ class CreateUserCommand extends Command
         $user->setYearOfBirth($this->toNullableInt($input->getOption('year-of-birth')));
         $user->setPhoto($this->toNullableString($input->getOption('photo')));
         $user->setPlayerId($this->toNullableInt($input->getOption('player-id')));
+        $user->setRequiresPasswordChange(true);
 
         $hashedPassword = $this->passwordHasher->hashPassword($user, $plainPassword);
         $user->setPassword($hashedPassword);

@@ -2,6 +2,7 @@
 
 namespace App\Security;
 
+use App\Entity\User;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -53,6 +54,11 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
+        $user = $token->getUser();
+        if ($user instanceof User && $user->requiresPasswordChange()) {
+            return new RedirectResponse($this->urlGenerator->generate('app_user_change_password'));
+        }
+
         if (!$this->isStatelessRequest($request) && $request->hasSession()) {
             if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
                 return new RedirectResponse($targetPath);

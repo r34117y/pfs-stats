@@ -31,6 +31,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
+    #[ORM\Column(options: ['default' => true])]
+    private bool $requiresPasswordChange = true;
+
     #[ORM\Column(nullable: true)]
     private ?int $yearOfBirth = null;
 
@@ -97,6 +100,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function eraseCredentials(): void
     {
+    }
+
+    public function requiresPasswordChange(): bool
+    {
+        return $this->requiresPasswordChange;
+    }
+
+    public function setRequiresPasswordChange(bool $requiresPasswordChange): static
+    {
+        $this->requiresPasswordChange = $requiresPasswordChange;
+
+        return $this;
     }
 
     public function getYearOfBirth(): ?int
