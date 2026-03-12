@@ -6,6 +6,12 @@ Endpoint: POST `/api/tournament/round`
 Type: ApiResource + StateProcessor
 Description: Dummy endpoint that accepts JSON payload with `token`. Returns `200 OK` when the token matches one of the comma-separated values configured in `TOURNAMENT_ROUND_TOKENS` in `.env`, and `401 Unauthorized` otherwise.
 
+## Tournament game photo upload
+
+Endpoint: POST `/api/tournament-games/{gameId}/photos`
+Type: ApiResource + StateProcessor
+Description: Authenticated multipart upload endpoint for a single game photo. Requires form fields `photo` and `category`, where category is one of `board`, `results`, `other`. Only a user linked to one of the two players from the given `tournament_game` may upload. Multiple photos per game are supported by repeated requests and are persisted in `game_photo`.
+
 ## Main ranking (landing page)
 
 Endpoint: GET `/`

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\TournamentGameRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TournamentGameRepository::class)]
@@ -61,4 +63,57 @@ class TournamentGame
 
     #[ORM\Column(nullable: true)]
     private ?int $host = null;
+
+    /**
+     * @var Collection<int, GamePhoto>
+     */
+    #[ORM\OneToMany(targetEntity: GamePhoto::class, mappedBy: 'tournamentGame', orphanRemoval: true)]
+    private Collection $photos;
+
+    public function __construct()
+    {
+        $this->photos = new ArrayCollection();
+    }
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getPlayer1(): ?Player
+    {
+        return $this->player1;
+    }
+
+    public function getPlayer2(): ?Player
+    {
+        return $this->player2;
+    }
+
+    /**
+     * @return Collection<int, GamePhoto>
+     */
+    public function getPhotos(): Collection
+    {
+        return $this->photos;
+    }
+
+    public function addPhoto(GamePhoto $photo): self
+    {
+        if (!$this->photos->contains($photo)) {
+            $this->photos->add($photo);
+            $photo->setTournamentGame($this);
+        }
+
+        return $this;
+    }
+
+    public function removePhoto(GamePhoto $photo): self
+    {
+        if ($this->photos->removeElement($photo) && $photo->getTournamentGame() === $this) {
+            $photo->setTournamentGame(null);
+        }
+
+        return $this;
+    }
 }
