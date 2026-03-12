@@ -29,32 +29,27 @@ final readonly class AnnotatedGameDetailsServicePostgres implements AnnotatedGam
     {
         $row = $this->connection->fetchAssociative(
             'SELECT
-                g.data,
-                to_char(g.updated_at, \'YYYY-MM-DD HH24:MI:SS\') AS updated,
+                h.gcg AS data,
+                to_char(h.gcg_updated_at, \'YYYY-MM-DD HH24:MI:SS\') AS updated,
                 t.name AS tournament_name,
                 p1.name_show AS player1_name,
                 h.player2_id AS player2_id,
                 p2.name_show AS player2_name
-             FROM game_record g
+             FROM tournament_game h
              INNER JOIN organization o
-                ON o.id = g.organization_id
+                ON o.id = h.organization_id
              INNER JOIN tournament t
-                ON t.organization_id = g.organization_id
-               AND t.id = g.tournament_id
-             INNER JOIN tournament_game h
-                ON h.organization_id = g.organization_id
-               AND h.tournament_id = g.tournament_id
-               AND h.round_no = g.round_no
-               AND h.player1_id = g.player1_id
+                ON t.organization_id = h.organization_id
+               AND t.id = h.tournament_id
              INNER JOIN player p1
-                ON p1.id = g.player1_id
+                ON p1.id = h.player1_id
              INNER JOIN player p2
                 ON p2.id = h.player2_id
              WHERE o.code = :organizationCode
-               AND g.tournament_id = :tour
-               AND g.round_no = :round
-               AND g.player1_id = :player1
-             ORDER BY g.id DESC
+               AND h.gcg IS NOT NULL
+               AND h.tournament_id = :tour
+               AND h.round_no = :round
+               AND h.player1_id = :player1
              LIMIT 1',
             [
                 'organizationCode' => self::ORGANIZATION_CODE,

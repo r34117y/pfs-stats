@@ -48,12 +48,12 @@ final readonly class AnnotatedGamesServicePostgres implements AnnotatedGamesServ
             );
         }
 
-        $whereParts = ['g.organization_id = :organizationId'];
+        $whereParts = ['h.organization_id = :organizationId', 'h.gcg IS NOT NULL'];
         $params = ['organizationId' => (int) $organizationId];
         $types = ['organizationId' => ParameterType::INTEGER];
 
         if ($playerFilter !== '') {
-            $whereParts[] = '(g.player1_id IN (
+            $whereParts[] = '(h.player1_id IN (
                     SELECT po.player_id
                     FROM player_organization po
                     INNER JOIN player p ON p.id = po.player_id
@@ -79,15 +79,10 @@ final readonly class AnnotatedGamesServicePostgres implements AnnotatedGamesServ
 
         $totalItems = (int) $this->connection->fetchOne(
             "SELECT COUNT(*)
-             FROM game_record g
-             INNER JOIN tournament_game h
-                ON h.organization_id = g.organization_id
-               AND h.tournament_id = g.tournament_id
-               AND h.player1_id = g.player1_id
-               AND h.round_no = g.round_no
+             FROM tournament_game h
              INNER JOIN tournament t
-                ON t.organization_id = g.organization_id
-               AND t.id = g.tournament_id
+                ON t.organization_id = h.organization_id
+               AND t.id = h.tournament_id
              {$whereSql}",
             $params,
             $types,
@@ -112,25 +107,20 @@ final readonly class AnnotatedGamesServicePostgres implements AnnotatedGamesServ
                 p2.name_show AS \"player2Name\"
              FROM (
                 SELECT
-                    g.tournament_id AS \"tournamentId\",
+                    h.tournament_id AS \"tournamentId\",
                     COALESCE(t.fullname, t.name) AS \"tournamentName\",
-                    g.round_no AS \"roundNo\",
-                    g.player1_id AS \"player1Id\",
+                    h.round_no AS \"roundNo\",
+                    h.player1_id AS \"player1Id\",
                     h.player2_id AS \"player2Id\",
-                    g.player1_id AS \"player1Pk\",
+                    h.player1_id AS \"player1Pk\",
                     h.player2_id AS \"player2Pk\",
                     t.dt AS \"tournamentDate\"
-                FROM game_record g
-                INNER JOIN tournament_game h
-                    ON h.organization_id = g.organization_id
-                   AND h.tournament_id = g.tournament_id
-                   AND h.player1_id = g.player1_id
-                   AND h.round_no = g.round_no
+                FROM tournament_game h
                 INNER JOIN tournament t
-                    ON t.organization_id = g.organization_id
-                   AND t.id = g.tournament_id
+                    ON t.organization_id = h.organization_id
+                   AND t.id = h.tournament_id
                 {$whereSql}
-                ORDER BY t.dt DESC, g.tournament_id DESC, g.round_no ASC, g.player1_id ASC, h.player2_id ASC
+                ORDER BY t.dt DESC, h.tournament_id DESC, h.round_no ASC, h.player1_id ASC, h.player2_id ASC
                 LIMIT :limit OFFSET :offset
              ) page
              INNER JOIN player p1 ON p1.id = page.\"player1Pk\"

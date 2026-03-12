@@ -11,7 +11,6 @@ Migracja danych z tabel prefiksowanych organizacją (`{ORG}{SUFFIX}`) do wspóln
 - `tournament_result`
 - `tournament_game`
 - `text_resource`
-- `game_record`
 
 `SUFFIX`:
 `PLAYER`, `PLAYSUMM`, `RANKING`, `SERTOUR`, `TOURHH`, `TOURS`, `TOURWYN`, `TRESOURCE`, `GCG`.
@@ -64,10 +63,9 @@ Dlatego schema zawiera tymczasowe kolumny (`legacy_id`, `legacy_player_id`, `leg
 9. `text_resource`
 - Załaduj `{ORG}TRESOURCE` (`resource_type = old.type`, `legacy_id = old.id`).
 
-10. `game_record`
-- Załaduj `PFSGCG` do `game_record` przypisując `organization_id = PFS`.
-- Uzupełnij `tournament_id`, `player1_id` przez mapy.
-- Docelowo analogiczna obsługa `GCG` dla innych organizacji.
+10. `tournament_game.gcg`
+- Załaduj `{ORG}GCG` do kolumn `tournament_game.gcg` i `tournament_game.gcg_updated_at`.
+- Dopasowanie wykonuj po `organization_id`, `legacy_tournament_id`, `round_no`, `legacy_player1_id`.
 
 ## Walidacja po migracji
 1. Porównanie liczności danych per organizacja i per typ tabeli.

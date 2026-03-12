@@ -156,15 +156,13 @@ final class ImportMySqlOrganizationsToPostgresCommand extends Command {
                     $tournamentIdByOrgLegacy[$organizationCode],
                     $counters,
                 );
-                $this->importTextResources($organizationCode, $organizationId, $counters);
-                $this->importGameRecords(
+                $this->importGcgRecords(
                     $organizationCode,
                     $organizationId,
-                    $playerIdByOrgLegacy[$organizationCode],
-                    $tournamentIdByOrgLegacy[$organizationCode],
                     $organizationTables[$organizationCode],
                     $counters,
                 );
+                $this->importTextResources($organizationCode, $organizationId, $counters);
             }
 
             if ($dryRun) {
@@ -306,7 +304,7 @@ final class ImportMySqlOrganizationsToPostgresCommand extends Command {
     {
         $this->postgresConnection->executeStatement(
             'TRUNCATE TABLE '
-            . 'game_record, tournament_game, tournament_result, ranking, play_summary, tournament, series, player_organization, player, text_resource, organization '
+            . 'tournament_game, tournament_result, ranking, play_summary, tournament, series, player_organization, player, text_resource, organization '
             . 'RESTART IDENTITY CASCADE'
         );
     }
@@ -677,6 +675,8 @@ final class ImportMySqlOrganizationsToPostgresCommand extends Command {
                 'result2' => (int) $row['result2'],
                 'ranko' => $this->toNullableInt($row['ranko']),
                 'host' => $this->toNullableInt($row['host']),
+                'gcg' => null,
+                'gcg_updated_at' => null,
             ]);
 
             $this->increment($counters, 'tournament_game');
@@ -703,16 +703,12 @@ final class ImportMySqlOrganizationsToPostgresCommand extends Command {
     }
 
     /**
-     * @param array<int, int> $playerIdByLegacy
-     * @param array<int, int> $tournamentIdByLegacy
      * @param array<string, true> $organizationTables
      * @param array<string, int> $counters
      */
-    private function importGameRecords(
+    private function importGcgRecords(
         string $organizationCode,
         int $organizationId,
-        array $playerIdByLegacy,
-        array $tournamentIdByLegacy,
         array $organizationTables,
         array &$counters,
     ): void {
@@ -727,18 +723,36 @@ final class ImportMySqlOrganizationsToPostgresCommand extends Command {
             $legacyPlayer1Id = (int) $row['player1'];
             $updatedAt = new \DateTimeImmutable((string) $row['updated']);
 
-            $this->postgresConnection->insert('game_record', [
-                'organization_id' => $organizationId,
-                'tournament_id' => $tournamentIdByLegacy[$legacyTournamentId] ?? null,
-                'player1_id' => $playerIdByLegacy[$legacyPlayer1Id] ?? null,
-                'legacy_tournament_id' => $legacyTournamentId,
-                'round_no' => (int) $row['round'],
-                'legacy_player1_id' => $legacyPlayer1Id,
-                'data' => (string) $row['data'],
-                'updated_at' => $updatedAt->format('Y-m-d H:i:s'),
-            ]);
+            $updatedRows = $this->postgresConnection->executeStatement(
+                'UPDATE tournament_game
+                 SET gcg = :gcg,
+                     gcg_updated_at = :updatedAt
+                 WHERE organization_id = :organizationId
+                   AND legacy_tournament_id = :legacyTournamentId
+                   AND round_no = :roundNo
+                   AND legacy_player1_id = :legacyPlayer1Id',
+                [
+                    'gcg' => (string) $row['data'],
+                    'updatedAt' => $updatedAt->format('Y-m-d H:i:s'),
+                    'organizationId' => $organizationId,
+                    'legacyTournamentId' => $legacyTournamentId,
+                    'roundNo' => (int) $row['round'],
+                    'legacyPlayer1Id' => $legacyPlayer1Id,
+                ],
+            );
 
-            $this->increment($counters, 'game_record');
+            if ($updatedRows !== 1) {
+                throw new \RuntimeException(sprintf(
+                    'Failed to match exactly one tournament_game row for %s GCG (%d, round %d, player1 %d); updated rows: %d.',
+                    $organizationCode,
+                    $legacyTournamentId,
+                    (int) $row['round'],
+                    $legacyPlayer1Id,
+                    $updatedRows,
+                ));
+            }
+
+            $this->increment($counters, 'tournament_game_gcg');
         }
     }
 

@@ -220,8 +220,6 @@ final readonly class PfsPlayerResolverPostgres implements PfsPlayerResolverInter
                 SELECT legacy_player1_id AS legacy_player_id FROM tournament_game WHERE organization_id = :organizationId AND legacy_player1_id IS NOT NULL
                 UNION ALL
                 SELECT legacy_player2_id AS legacy_player_id FROM tournament_game WHERE organization_id = :organizationId AND legacy_player2_id IS NOT NULL
-                UNION ALL
-                SELECT legacy_player1_id AS legacy_player_id FROM game_record WHERE organization_id = :organizationId AND legacy_player1_id IS NOT NULL
             )
             SELECT COALESCE(MAX(legacy_player_id), 0) + 1 AS next_id
             FROM legacy_ids',

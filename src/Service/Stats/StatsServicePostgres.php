@@ -4558,12 +4558,6 @@ final class StatsServicePostgres implements StatsServiceInterface
                 WHERE organization_id = {$organizationId}
                   AND legacy_player2_id IS NOT NULL
                   AND player2_id IS NOT NULL
-                UNION
-                SELECT legacy_player1_id AS legacy_player_id, player1_id AS player_id
-                FROM game_record
-                WHERE organization_id = {$organizationId}
-                  AND legacy_player1_id IS NOT NULL
-                  AND player1_id IS NOT NULL
              ),
              mapped_by_player AS (
                 SELECT player_id, MIN(legacy_player_id) AS legacy_player_id

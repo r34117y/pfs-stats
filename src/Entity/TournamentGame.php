@@ -64,6 +64,12 @@ class TournamentGame
     #[ORM\Column(nullable: true)]
     private ?int $host = null;
 
+    #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $gcg = null;
+
+    #[ORM\Column(name: 'gcg_updated_at', nullable: true)]
+    private ?\DateTimeImmutable $gcgUpdatedAt = null;
+
     /**
      * @var Collection<int, GamePhoto>
      */
@@ -96,6 +102,16 @@ class TournamentGame
     public function getPhotos(): Collection
     {
         return $this->photos;
+    }
+
+    public function getGcg(): ?string
+    {
+        return $this->gcg;
+    }
+
+    public function getGcgUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->gcgUpdatedAt;
     }
 
     public function addPhoto(GamePhoto $photo): self
