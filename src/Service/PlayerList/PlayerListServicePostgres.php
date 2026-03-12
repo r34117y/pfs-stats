@@ -119,7 +119,7 @@ final readonly class PlayerListServicePostgres implements PlayerListServiceInter
         foreach ($rows as $player) {
             $playerId = (int) $player['id'];
             if ($player['mapped_legacy_player_id'] === null) {
-                $key = (string) $player['name_show'] . '|' . (string) $player['name_alph'];
+                $key = $player['name_show'] . '|' . $player['name_alph'];
                 $playerId = self::UNMAPPED_PLAYER_ID_OVERRIDES[$key] ?? $playerId;
             }
             $players[] = new PlayersListPlayer(
@@ -168,6 +168,9 @@ final readonly class PlayerListServicePostgres implements PlayerListServiceInter
         return $photosByPlayerId;
     }
 
+    /**
+     * @throws Exception
+     */
     private function fetchOrganizationId(): ?int
     {
         $value = $this->connection->fetchOne(

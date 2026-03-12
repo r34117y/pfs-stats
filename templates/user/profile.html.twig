@@ -4,91 +4,99 @@
 
 {% block body %}
     <section class="section" x-data="userProfile()" x-init="load()">
-        <h1 class="title is-3">Twoj profil</h1>
+        <div class="columns" style="margin-top: 32px;">
+            <aside class="column is-3">
+                {% include 'user/_side_menu.html.twig' with {
+                    activeMenuItem: 'profile'
+                } %}
+            </aside>
 
-        <article class="message is-danger" x-show="error" x-cloak>
-            <div class="message-body" x-text="error"></div>
-        </article>
+            <div class="column is-9">
+                <article class="message is-danger" x-show="error" x-cloak>
+                    <div class="message-body" x-text="error"></div>
+                </article>
 
-        <div class="box" x-show="loading" x-cloak>
-            Ladowanie...
-        </div>
-
-        <div class="box" x-show="!loading && !error && profile" x-cloak>
-            <div class="is-flex is-flex-direction-column is-align-items-center mb-5">
-                <template x-if="profile.photo">
-                    <figure class="image is-128x128">
-                        <img
-                            x-bind:src="profile.photo"
-                            alt="Zdjecie uzytkownika"
-                            style="border-radius: 9999px; object-fit: cover; border: 1px solid #dbdbdb;"
-                        >
-                    </figure>
-                </template>
-
-                <template x-if="!profile.photo">
-                    <div
-                        class="is-flex is-justify-content-center is-align-items-center"
-                        style="width: 128px; height: 128px; border-radius: 9999px; border: 1px solid #dbdbdb; background: #f5f5f5;"
-                        aria-label="Brak zdjecia"
-                    >
-                        <svg viewBox="0 0 24 24" width="64" height="64" fill="#7a7a7a" aria-hidden="true">
-                            <path d="M12 12c2.76 0 5-2.47 5-5.5S14.76 1 12 1 7 3.47 7 6.5 9.24 12 12 12Zm0 2c-4.42 0-8 2.91-8 6.5V23h16v-2.5c0-3.59-3.58-6.5-8-6.5Z"></path>
-                        </svg>
-                    </div>
-                </template>
-            </div>
-
-            <div class="field">
-                <label class="label">Zdjecie profilowe</label>
-                <div class="control">
-                    <input type="file" class="input" accept="image/*" x-ref="photoInput" x-on:change="uploadPhoto">
+                <div class="box" x-show="loading" x-cloak>
+                    Ladowanie...
                 </div>
-                <p class="help">Zdjecie zostanie automatycznie skompresowane i zapisane.</p>
-            </div>
 
-            <div class="is-flex is-justify-content-space-between is-align-items-center mb-3">
-                <h2 class="title is-5 mb-0">Dane profilu</h2>
-                <button
-                    type="button"
-                    class="button is-small is-link is-light"
-                    x-on:click="toggleEdit"
-                    x-text="editing ? 'Anuluj' : 'Edytuj'"
-                ></button>
-            </div>
+                <div class="box" x-show="!loading && !error && profile" x-cloak>
+                    <div class="is-flex is-flex-direction-column is-align-items-center mb-5">
+                        <template x-if="profile.photo">
+                            <figure class="image is-128x128">
+                                <img
+                                    x-bind:src="profile.photo"
+                                    alt="Zdjecie uzytkownika"
+                                    style="border-radius: 9999px; object-fit: cover; border: 1px solid #dbdbdb;"
+                                >
+                            </figure>
+                        </template>
 
-            <template x-if="!editing">
-                <div>
-                    <p><strong>Email:</strong> <span x-text="profile.email"></span></p>
-                    <p><strong>Data urodzenia:</strong> <span x-text="displayDateOfBirth"></span></p>
+                        <template x-if="!profile.photo">
+                            <div
+                                class="is-flex is-justify-content-center is-align-items-center"
+                                style="width: 128px; height: 128px; border-radius: 9999px; border: 1px solid #dbdbdb; background: #f5f5f5;"
+                                aria-label="Brak zdjecia"
+                            >
+                                <svg viewBox="0 0 24 24" width="64" height="64" fill="#7a7a7a" aria-hidden="true">
+                                    <path d="M12 12c2.76 0 5-2.47 5-5.5S14.76 1 12 1 7 3.47 7 6.5 9.24 12 12 12Zm0 2c-4.42 0-8 2.91-8 6.5V23h16v-2.5c0-3.59-3.58-6.5-8-6.5Z"></path>
+                                </svg>
+                            </div>
+                        </template>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">Zdjecie profilowe</label>
+                        <div class="control">
+                            <input type="file" class="input" accept="image/*" x-ref="photoInput" x-on:change="uploadPhoto">
+                        </div>
+                        <p class="help">Zdjecie zostanie automatycznie skompresowane i zapisane.</p>
+                    </div>
+
+                    <div class="is-flex is-justify-content-space-between is-align-items-center mb-3">
+                        <h2 class="title is-5 mb-0">Dane profilu</h2>
+                        <button
+                            type="button"
+                            class="button is-small is-link is-light"
+                            x-on:click="toggleEdit"
+                            x-text="editing ? 'Anuluj' : 'Edytuj'"
+                        ></button>
+                    </div>
+
+                    <template x-if="!editing">
+                        <div>
+                            <p><strong>Email:</strong> <span x-text="profile.email"></span></p>
+                            <p><strong>Data urodzenia:</strong> <span x-text="displayDateOfBirth"></span></p>
+                        </div>
+                    </template>
+
+                    <template x-if="editing">
+                        <div>
+                            <div class="field">
+                                <label class="label">Email</label>
+                                <div class="control">
+                                    <input type="email" class="input" x-model.trim="form.email">
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label class="label">Data urodzenia</label>
+                                <div class="control">
+                                    <input type="date" class="input" x-model="form.dateOfBirth">
+                                </div>
+                            </div>
+                            <div class="field">
+                                <div class="control">
+                                    <button type="button" class="button is-primary" x-on:click="saveProfile" x-bind:disabled="saving">
+                                        <span x-text="saving ? 'Zapisywanie...' : 'Zapisz'"></span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+
+                    <p class="help is-success mt-2" x-show="success" x-cloak x-text="success"></p>
                 </div>
-            </template>
-
-            <template x-if="editing">
-                <div>
-                    <div class="field">
-                        <label class="label">Email</label>
-                        <div class="control">
-                            <input type="email" class="input" x-model.trim="form.email">
-                        </div>
-                    </div>
-                    <div class="field">
-                        <label class="label">Data urodzenia</label>
-                        <div class="control">
-                            <input type="date" class="input" x-model="form.dateOfBirth">
-                        </div>
-                    </div>
-                    <div class="field">
-                        <div class="control">
-                            <button type="button" class="button is-primary" x-on:click="saveProfile" x-bind:disabled="saving">
-                                <span x-text="saving ? 'Zapisywanie...' : 'Zapisz'"></span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </template>
-
-            <p class="help is-success mt-2" x-show="success" x-cloak x-text="success"></p>
+            </div>
         </div>
     </section>
 
@@ -129,6 +137,7 @@
                     }
 
                     const normalized = {
+                        publicPlayerId: rawProfile.publicPlayerId ?? null,
                         email: rawProfile.email ?? '',
                         yearOfBirth: rawProfile.yearOfBirth ?? null,
                         photo: rawProfile.photo ?? null

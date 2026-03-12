@@ -20,6 +20,7 @@ class UserProfile
 {
     public function __construct(
         public int $id,
+        public ?int $publicPlayerId,
         public string $email,
         public ?int $yearOfBirth,
         public ?string $photo,
