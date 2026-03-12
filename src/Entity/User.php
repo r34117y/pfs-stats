@@ -40,8 +40,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $photo = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $playerId = null;
+    #[ORM\OneToOne(targetEntity: Player::class, inversedBy: 'user')]
+    #[ORM\JoinColumn(name: 'player_id', referencedColumnName: 'id', unique: true, nullable: true, onDelete: 'SET NULL')]
+    private ?Player $player = null;
 
     public function getId(): ?int
     {
@@ -140,12 +141,43 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getPlayerId(): ?int
     {
-        return $this->playerId;
+        return $this->player?->getId();
     }
 
     public function setPlayerId(?int $playerId): static
     {
-        $this->playerId = $playerId;
+        if (null === $playerId) {
+            return $this->setPlayer(null);
+        }
+
+        if ($this->player?->getId() === $playerId) {
+            return $this;
+        }
+
+        throw new \LogicException('Cannot assign player by ID without a loaded Player entity. Use User::setPlayer() instead.');
+    }
+
+    public function getPlayer(): ?Player
+    {
+        return $this->player;
+    }
+
+    public function setPlayer(?Player $player): static
+    {
+        if ($this->player === $player) {
+            return $this;
+        }
+
+        $previousPlayer = $this->player;
+        $this->player = $player;
+
+        if (null !== $previousPlayer && $previousPlayer->getUser() === $this) {
+            $previousPlayer->setUser(null);
+        }
+
+        if (null !== $player && $player->getUser() !== $this) {
+            $player->setUser($this);
+        }
 
         return $this;
     }

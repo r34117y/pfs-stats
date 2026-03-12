@@ -40,6 +40,9 @@ class Player
     #[ORM\InverseJoinColumn(name: 'organization_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
     private Collection $organizations;
 
+    #[ORM\OneToOne(targetEntity: User::class, mappedBy: 'player')]
+    private ?User $user = null;
+
     public function __construct()
     {
         $this->organizations = new ArrayCollection();
@@ -118,6 +121,31 @@ class Player
     public function removeOrganization(Organization $organization): self
     {
         $this->organizations->removeElement($organization);
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        if ($this->user === $user) {
+            return $this;
+        }
+
+        $previousUser = $this->user;
+        $this->user = $user;
+
+        if (null !== $previousUser && $previousUser->getPlayer() === $this) {
+            $previousUser->setPlayer(null);
+        }
+
+        if (null !== $user && $user->getPlayer() !== $this) {
+            $user->setPlayer($this);
+        }
 
         return $this;
     }

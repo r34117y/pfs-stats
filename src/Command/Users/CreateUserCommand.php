@@ -2,7 +2,9 @@
 
 namespace App\Command\Users;
 
+use App\Entity\Player;
 use App\Entity\User;
+use App\Repository\PlayerRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -24,6 +26,7 @@ class CreateUserCommand extends Command
         private readonly EntityManagerInterface $entityManager,
         private readonly UserPasswordHasherInterface $passwordHasher,
         private readonly UserRepository $userRepository,
+        private readonly PlayerRepository $playerRepository,
     ) {
         parent::__construct();
     }
@@ -69,7 +72,15 @@ class CreateUserCommand extends Command
         $user->setRoles($this->normalizeRoles($input->getOption('role')));
         $user->setYearOfBirth($this->toNullableInt($input->getOption('year-of-birth')));
         $user->setPhoto($this->toNullableString($input->getOption('photo')));
-        $user->setPlayerId($this->toNullableInt($input->getOption('player-id')));
+        $playerId = $this->toNullableInt($input->getOption('player-id'));
+        $player = $this->resolvePlayer($playerId);
+        if (null !== $playerId && null === $player) {
+            $io->error(sprintf('Player with id %d was not found.', $playerId));
+
+            return Command::INVALID;
+        }
+
+        $user->setPlayer($player);
         $user->setRequiresPasswordChange(true);
 
         $hashedPassword = $this->passwordHasher->hashPassword($user, $plainPassword);
@@ -131,5 +142,14 @@ class CreateUserCommand extends Command
         }
 
         return array_values(array_unique($normalized));
+    }
+
+    private function resolvePlayer(?int $playerId): ?Player
+    {
+        if (null === $playerId) {
+            return null;
+        }
+
+        return $this->playerRepository->find($playerId);
     }
 }
