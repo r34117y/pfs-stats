@@ -11,6 +11,7 @@ use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 
 final readonly class TournamentRoundImportService
 {
+    public const int AUDIT_RESOURCE_TYPE = 9001;
     public function __construct(
         #[Autowire(service: 'doctrine.dbal.default_connection')]
         private Connection $connection,
@@ -69,6 +70,7 @@ final readonly class TournamentRoundImportService
 
             $resolvedPlayersByStartingPosition = [];
             $resolvedPlayersByName = [];
+            $createdPlayerIds = [];
 
             foreach ($players as $index => $playerRow) {
                 $context = sprintf('players[%d]', $index);
@@ -92,6 +94,7 @@ final readonly class TournamentRoundImportService
                         $nextLegacyPlayerId,
                     );
                     $catalog[] = $resolved;
+                    $createdPlayerIds[] = $resolved["playerId"];
                     $nextLegacyPlayerId++;
                 }
 
@@ -300,6 +303,7 @@ final readonly class TournamentRoundImportService
                             $nextLegacyPlayerId,
                         );
                         $catalog[] = $resolvedCatalogPlayer;
+                        $createdPlayerIds[] = $resolvedCatalogPlayer["playerId"];
                         $nextLegacyPlayerId++;
                     }
 
@@ -331,6 +335,17 @@ final readonly class TournamentRoundImportService
                     'games' => $games,
                 ]);
             }
+
+            $connection->insert("text_resource", [
+                "organization_id" => (int) $organization["id"],
+                "resource_type" => self::AUDIT_RESOURCE_TYPE,
+                "legacy_id" => $legacyTournamentId,
+                "data" => json_encode([
+                    "tournamentDbId" => $tournamentId,
+                    "createdPlayerIds" => array_values(array_unique($createdPlayerIds)),
+                    "importedAt" => (new \DateTimeImmutable())->format(\DateTimeInterface::ATOM),
+                ], JSON_THROW_ON_ERROR),
+            ]);
 
             return $legacyTournamentId;
         });
