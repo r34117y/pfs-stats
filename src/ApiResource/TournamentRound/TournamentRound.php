@@ -11,7 +11,7 @@ use App\State\Processor\TournamentRoundProcessor;
         new Post(
             uriTemplate: '/tournament/round',
             inputFormats: ['json' => ['application/json'], 'jsonld' => ['application/ld+json']],
-            description: 'Dummy tournament round callback endpoint protected by token authorization.',
+            description: 'Tournament round callback endpoint protected by token authorization.',
             output: TournamentRoundResponse::class,
             read: false,
             processor: TournamentRoundProcessor::class
@@ -20,8 +20,20 @@ use App\State\Processor\TournamentRoundProcessor;
 )]
 final class TournamentRound
 {
+    /**
+     * @param array<string, mixed> $tournament
+     * @param list<array<string, mixed>> $players
+     * @param list<array<string, mixed>> $results
+     * @param list<array<string, mixed>> $rankDay
+     * @param list<array<string, mixed>> $ranking
+     */
     public function __construct(
         public string $token = '',
+        public array $tournament = [],
+        public array $players = [],
+        public array $results = [],
+        public array $rankDay = [],
+        public array $ranking = [],
     ) {
     }
 }
