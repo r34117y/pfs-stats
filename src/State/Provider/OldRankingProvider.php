@@ -44,7 +44,7 @@ final readonly class OldRankingProvider implements ProviderInterface
             }
 
             $photosByPlayerId = [];
-            $users = $this->userRepository->findBy(['playerId' => array_values(array_unique($playerIds))]);
+            /*$users = $this->userRepository->findBy(['playerId' => array_values(array_unique($playerIds))]);
             foreach ($users as $user) {
                 $playerId = $user->getPlayerId();
                 $photo = $user->getPhoto();
@@ -56,7 +56,7 @@ final readonly class OldRankingProvider implements ProviderInterface
                 if (!isset($photosByPlayerId[$playerId])) {
                     $photosByPlayerId[$playerId] = $photo;
                 }
-            }
+            }*/
 
             $rankingRows = [];
             foreach ($rows as $row) {

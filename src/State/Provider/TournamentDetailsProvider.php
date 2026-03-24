@@ -5,7 +5,7 @@ namespace App\State\Provider;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\TournamentDetails\TournamentDetails;
-use App\Service\TournamentDetails\TournamentDetailsService;
+use App\Service\TournamentDetails\TournamentDetailsServiceInterface;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -14,7 +14,7 @@ use Symfony\Contracts\Cache\CacheInterface;
 final readonly class TournamentDetailsProvider implements ProviderInterface
 {
     public function __construct(
-        private TournamentDetailsService $tournamentDetailsService,
+        private TournamentDetailsServiceInterface $tournamentDetailsService,
         #[Autowire(service: 'app.dataset_cache')]
         private CacheInterface $cache,
     ) {
