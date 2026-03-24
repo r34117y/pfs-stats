@@ -63,3 +63,63 @@ php bin/console pfs:rank:calibrate-min-games \
 ```
 
 Reports are written to `var/reports/pfs-min-games/<timestamp>/`.
+
+## Local Xdebug
+
+The local `php` container includes Xdebug. Production does not: `Dockerfile.prod` does not install it, while `Dockerfile` does.
+
+The container is configured for PhpStorm with:
+
+- port `9003`
+- IDE key `PHPSTORM`
+- `PHP_IDE_CONFIG=serverName=scrabble-stats-api`
+- `xdebug.start_with_request=trigger`
+
+### Rebuild Local PHP Container
+
+```bash
+docker compose build php
+docker compose up -d php nginx
+```
+
+### Verify Installation
+
+```bash
+docker compose exec -T php php --ri xdebug
+docker compose exec -T php php -m | grep xdebug
+```
+
+### PhpStorm Setup
+
+1. In PhpStorm, enable `Start Listening for PHP Debug Connections`.
+2. Add a server named `scrabble-stats-api`.
+3. Set host to `localhost` and port to `8081`.
+4. Use path mapping: project root -> `/var/www/html`.
+
+### Debug HTTP Requests
+
+Use any of these triggers:
+
+```text
+XDEBUG_TRIGGER=1 cookie
+XDEBUG_TRIGGER=1 query parameter
+XDEBUG_SESSION=PHPSTORM query parameter
+```
+
+Examples:
+
+```text
+http://localhost:8081/?XDEBUG_TRIGGER=1
+http://localhost:8081/api/ranking?XDEBUG_TRIGGER=1
+```
+
+If you prefer, a browser extension such as Xdebug Helper can set the trigger cookie automatically.
+
+### Debug Console Commands
+
+Prefix the command with `XDEBUG_TRIGGER=1`:
+
+```bash
+docker compose exec -T -e XDEBUG_TRIGGER=1 php php bin/console list
+docker compose exec -T -e XDEBUG_TRIGGER=1 php php bin/console pfs:rank:calibrate-rd
+```

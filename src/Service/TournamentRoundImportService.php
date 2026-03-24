@@ -7,6 +7,7 @@ use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
+use LogicException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
@@ -211,8 +212,7 @@ final readonly class TournamentRoundImportService
 
                 $host = $resolvedPlayersByStartingPosition[$hostPosition] ?? null;
                 $guest = $resolvedPlayersByStartingPosition[$guestPosition] ?? null;
-                if ($host === null || $guest === null) {
-                    dd($resolvedPlayersByStartingPosition);
+                if (($host === null || $guest === null) && !$this->isByeGame($score1, $score2)) {
                     throw new BadRequestHttpException(sprintf('Could not resolve game participants for %s.', $context));
                 }
 
@@ -220,15 +220,15 @@ final readonly class TournamentRoundImportService
                     'organization_id' => (int) $organization['id'],
                     'tournament_id' => $tournamentId,
                     'player1_id' => $host['playerId'],
-                    'player2_id' => $guest['playerId'],
+                    'player2_id' => $guest['playerId'] ?? null,
                     'legacy_tournament_id' => $legacyTournamentId,
                     'round_no' => $round,
                     'table_no' => $table,
                     'legacy_player1_id' => $host['legacyPlayerId'],
-                    'legacy_player2_id' => $guest['legacyPlayerId'],
+                    'legacy_player2_id' => $guest['legacyPlayerId'] ?? null,
                     'result1' => $score1,
                     'result2' => $score2,
-                    'ranko' => (int) round($guest['tournamentRank']),
+                    'ranko' => (int) round($guest['tournamentRank'] ?? 100), // todo
                     'host' => 1,
                     'gcg' => null,
                     'gcg_updated_at' => null,
@@ -237,12 +237,12 @@ final readonly class TournamentRoundImportService
                 $connection->insert('tournament_game', [
                     'organization_id' => (int) $organization['id'],
                     'tournament_id' => $tournamentId,
-                    'player1_id' => $guest['playerId'],
+                    'player1_id' => $guest['playerId'] ?? null,
                     'player2_id' => $host['playerId'],
                     'legacy_tournament_id' => $legacyTournamentId,
                     'round_no' => $round,
                     'table_no' => $table,
-                    'legacy_player1_id' => $guest['legacyPlayerId'],
+                    'legacy_player1_id' => $guest['legacyPlayerId'] ?? null,
                     'legacy_player2_id' => $host['legacyPlayerId'],
                     'result1' => $score2,
                     'result2' => $score1,
@@ -290,6 +290,9 @@ final readonly class TournamentRoundImportService
 
             $rankingCache = $resolvedPlayersByName;
             foreach ($ranking as $index => $rankingRow) {
+                if (!$rankingRow['main']) {
+                    continue; // todo
+                }
                 $context = sprintf('ranking[%d]', $index);
                 $playerName = $this->requireString($rankingRow, 'player', $context);
                 $rank = $this->requireFloat($rankingRow, 'rank', $context);
@@ -301,15 +304,7 @@ final readonly class TournamentRoundImportService
                 if ($resolved === null) {
                     $resolvedCatalogPlayer = $this->resolvePlayer($catalog, $playerName, max(100.0, $rank));
                     if ($resolvedCatalogPlayer === null) {
-                        $resolvedCatalogPlayer = $this->createPlayer(
-                            $connection,
-                            (int) $organization['id'],
-                            $playerName,
-                            $nextLegacyPlayerId,
-                        );
-                        $catalog[] = $resolvedCatalogPlayer;
-                        $createdPlayerIds[] = $resolvedCatalogPlayer["playerId"];
-                        $nextLegacyPlayerId++;
+                        throw new LogicException('Ranking player does not exist in db: ' . $playerName);
                     }
 
                     if ($resolvedCatalogPlayer['legacyPlayerId'] === null) {
@@ -385,18 +380,23 @@ final readonly class TournamentRoundImportService
 
             $host = $playersByStartingPosition[$hostPosition] ?? null;
             $guest = $playersByStartingPosition[$guestPosition] ?? null;
-            if ($host === null || $guest === null) {
+            if (($host === null || $guest === null) && !$this->isByeGame($score1, $score2)) {
                 throw new BadRequestHttpException(sprintf('Could not resolve game participants for %s.', $context));
             }
 
             $stats[$host['legacyPlayerId']]['games']++;
-            $stats[$guest['legacyPlayerId']]['games']++;
             $stats[$host['legacyPlayerId']]['hostGames']++;
+
+            if ($guest) {
+                $stats[$guest['legacyPlayerId']]['games']++;
+            }
 
             if ($score1 > $score2) {
                 $stats[$host['legacyPlayerId']]['wins']++;
-                $stats[$guest['legacyPlayerId']]['losses']++;
                 $stats[$host['legacyPlayerId']]['hostWins']++;
+                if ($guest) {
+                    $stats[$guest['legacyPlayerId']]['losses']++;
+                }
             } elseif ($score1 < $score2) {
                 $stats[$host['legacyPlayerId']]['losses']++;
                 $stats[$guest['legacyPlayerId']]['wins']++;
@@ -456,12 +456,39 @@ final readonly class TournamentRoundImportService
      */
     private function resolvePlayer(array $catalog, string $playerName, float $rankHint): ?array
     {
+        if ($playerName === 'Kazimierz Merklejn') {
+            $playerName = 'Kazimierz.J Merklejn';
+        }
+
+        if ($playerName === 'Anna Demczyszyn') {
+            $playerName = 'Anna Kowalska-Demczyszyn';
+        }
+
+        if ($playerName === 'Ala Białobrzewska') {
+            $playerName = 'Alina Białobrzewska';
+        }
+
+        if ($playerName === 'Teresa Radziewicz-Choińska') {
+            $playerName = 'Teresa Radziewicz';
+        }
+
+        if ($playerName === 'Bernadeta Kudlińska') {
+            $playerName = 'Bernadetta Kudlińska';
+        }
+
+        if ($playerName === 'Maciej Labe') {
+            $playerName = 'dane ukryte.3';
+        }
+
         $exactMatches = array_values(array_filter(
             $catalog,
             static fn (array $candidate): bool => $candidate['nameShow'] === $playerName,
         ));
         if ($exactMatches !== []) {
-            return $this->pickBestCandidate($exactMatches, $rankHint);
+            if (count($exactMatches) > 1) {
+                throw new LogicException('More than one player matches for ' . $playerName);
+            }
+            return $exactMatches[0];
         }
 
         $normalizedName = $this->nameNormalizer->normalizeForMatch($playerName);
@@ -477,26 +504,7 @@ final readonly class TournamentRoundImportService
             return $normalizedMatches[0];
         }
 
-        $best = $this->pickBestCandidate($normalizedMatches, $rankHint);
-        $distance = abs(($best['latestRank'] ?? 100.0) - max(100.0, $rankHint));
-
-        return $distance <= 1.0 ? $best : null;
-    }
-
-    /**
-     * @param list<array<string, mixed>> $candidates
-     * @return array<string, mixed>
-     */
-    private function pickBestCandidate(array $candidates, float $rankHint): array
-    {
-        usort($candidates, static function (array $left, array $right) use ($rankHint): int {
-            $leftDistance = abs(($left['latestRank'] ?? 100.0) - max(100.0, $rankHint));
-            $rightDistance = abs(($right['latestRank'] ?? 100.0) - max(100.0, $rankHint));
-
-            return [$leftDistance, $left['playerId']] <=> [$rightDistance, $right['playerId']];
-        });
-
-        return $candidates[0];
+        throw new LogicException('More than one player matches for ' . $playerName);
     }
 
     /**
@@ -859,5 +867,10 @@ final readonly class TournamentRoundImportService
         }
 
         return $date;
+    }
+
+    private function isByeGame(int $score1, int $score2): bool
+    {
+        return $score1 === 300 && $score2 === 0;
     }
 }
