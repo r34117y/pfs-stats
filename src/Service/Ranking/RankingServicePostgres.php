@@ -4,7 +4,7 @@ namespace App\Service\Ranking;
 
 use App\ApiResource\Ranking\GetRanking;
 use App\ApiResource\Ranking\RankingRow;
-use App\Repository\UserRepository;
+use Doctrine\DBAL\ArrayParameterType;
 use App\Service\RankingSnapshot\RankingSnapshotServiceInterface;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
@@ -17,7 +17,6 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
     public function __construct(
         #[Autowire(service: 'doctrine.dbal.default_connection')]
         private Connection $connection,
-        private UserRepository $userRepository,
         private RankingSnapshotServiceInterface $rankingSnapshotService,
     ) {
     }
@@ -190,6 +189,7 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
     /**
      * @param list<array{playerId: int, position: int, rank: float, games: int, nameShow: string, nameAlph: string}> $rankingRows
      * @return array<int, string>
+     * @throws Exception
      */
     private function loadPhotosByPlayerId(array $rankingRows): array
     {
@@ -204,17 +204,18 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
         }
 
         $photosByPlayerId = [];
-        $users = $this->userRepository->findBy(['playerId' => $playerIds]);
-        foreach ($users as $user) {
-            $playerId = $user->getPlayerId();
-            $photo = $user->getPhoto();
-            if ($playerId === null || $photo === null || $photo === '') {
-                continue;
-            }
+        $rows = $this->connection->fetchAllAssociative(
+            "SELECT player_id, photo
+             FROM app_user
+             WHERE player_id IN (:playerIds)
+               AND photo IS NOT NULL
+               AND photo <> ''",
+            ['playerIds' => $playerIds],
+            ['playerIds' => ArrayParameterType::INTEGER]
+        );
 
-            if (!isset($photosByPlayerId[$playerId])) {
-                $photosByPlayerId[$playerId] = $photo;
-            }
+        foreach ($rows as $row) {
+            $photosByPlayerId[(int) $row['player_id']] = (string) $row['photo'];
         }
 
         return $photosByPlayerId;
