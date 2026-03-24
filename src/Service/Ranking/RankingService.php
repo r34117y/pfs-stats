@@ -4,7 +4,7 @@ namespace App\Service\Ranking;
 
 use App\ApiResource\Ranking\GetRanking;
 use App\ApiResource\Ranking\RankingRow;
-use App\Repository\UserRepository;
+use App\Service\PlayerPhoto\PlayerPhotoService;
 use App\Service\RankingSnapshot\RankingSnapshotServiceInterface;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
@@ -15,8 +15,8 @@ final readonly class RankingService implements RankingServiceInterface
     public function __construct(
         #[Autowire(service: 'doctrine.dbal.mysql_connection')]
         private Connection $connection,
-        private UserRepository $userRepository,
         private RankingSnapshotServiceInterface $rankingSnapshotService,
+        private PlayerPhotoService $playerPhotoService,
     )
     {
     }
@@ -48,7 +48,11 @@ final readonly class RankingService implements RankingServiceInterface
         }
 
         $rankingRows = [];
-        $photosByPlayerId = $this->loadPhotosByPlayerId($latestRanking);
+        $playerIds = [];
+        foreach ($latestRanking as $row) {
+            $playerIds[] = $row['playerId'];
+        }
+        $photosByPlayerId = $this->playerPhotoService->loadPhotosByPlayerId($playerIds);
 
         foreach ($latestRanking as $row) {
             $playerId = $row['playerId'];
@@ -156,39 +160,6 @@ final readonly class RankingService implements RankingServiceInterface
         }
 
         return (int) $fallback;
-    }
-
-    /**
-     * @param list<array{playerId: int, position: int, rank: float, games: int, nameShow: string, nameAlph: string}> $rankingRows
-     * @return array<int, string>
-     */
-    private function loadPhotosByPlayerId(array $rankingRows): array
-    {
-        $playerIds = [];
-        foreach ($rankingRows as $row) {
-            $playerIds[] = $row['playerId'];
-        }
-
-        $playerIds = array_values(array_unique($playerIds));
-        if ($playerIds === []) {
-            return [];
-        }
-
-        $photosByPlayerId = [];
-        $users = $this->userRepository->findBy(['playerId' => $playerIds]);
-        foreach ($users as $user) {
-            $playerId = $user->getPlayerId();
-            $photo = $user->getPhoto();
-            if ($playerId === null || $photo === null || $photo === '') {
-                continue;
-            }
-
-            if (!isset($photosByPlayerId[$playerId])) {
-                $photosByPlayerId[$playerId] = $photo;
-            }
-        }
-
-        return $photosByPlayerId;
     }
 
     private function formatDecimal(float $value): string

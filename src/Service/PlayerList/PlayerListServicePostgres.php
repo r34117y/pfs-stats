@@ -5,6 +5,7 @@ namespace App\Service\PlayerList;
 use App\ApiResource\PlayersList\PlayersList;
 use App\ApiResource\PlayersList\PlayersListPlayer;
 use App\Repository\UserRepository;
+use App\Service\PlayerPhoto\PlayerPhotoService;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -51,6 +52,7 @@ final readonly class PlayerListServicePostgres implements PlayerListServiceInter
         #[Autowire(service: 'doctrine.dbal.default_connection')]
         private Connection $connection,
         private UserRepository $userRepository,
+        private PlayerPhotoService $playerPhotoService
     ) {
     }
 
@@ -113,7 +115,11 @@ final readonly class PlayerListServicePostgres implements PlayerListServiceInter
                 ORDER BY p.name_alph COLLATE \"pl-PL-x-icu\" ASC";
         $result = $this->connection->executeQuery($sql, ['organizationId' => $organizationId]);
         $rows = $result->fetchAllAssociative();
-        $photosByPlayerId = $this->loadPhotosByPlayerId($rows);
+        $playerIds = [];
+        foreach ($rows as $row) {
+            $playerIds[] = (int) $row['id'];
+        }
+        $photosByPlayerId = $this->playerPhotoService->loadPhotosByPlayerId($playerIds);
         $players = [];
 
         foreach ($rows as $player) {
@@ -131,41 +137,6 @@ final readonly class PlayerListServicePostgres implements PlayerListServiceInter
         }
 
         return new PlayersList($players);
-    }
-
-    /**
-     * @param list<array{id: int|string, name_show: string, name_alph: string}> $playerRows
-     * @return array<int, string>
-     */
-    private function loadPhotosByPlayerId(array $playerRows): array
-    {
-        $playerIds = [];
-        foreach ($playerRows as $row) {
-            $playerIds[] = (int) $row['id'];
-        }
-
-        $playerIds = array_values(array_unique($playerIds));
-        if ($playerIds === []) {
-            return [];
-        }
-
-        $photosByPlayerId = [];
-        $users = $this->userRepository->findBy(['playerId' => $playerIds]);
-
-        foreach ($users as $user) {
-            $playerId = $user->getPlayerId();
-            $photo = $user->getPhoto();
-
-            if ($playerId === null || $photo === null || $photo === '') {
-                continue;
-            }
-
-            if (!isset($photosByPlayerId[$playerId])) {
-                $photosByPlayerId[$playerId] = $photo;
-            }
-        }
-
-        return $photosByPlayerId;
     }
 
     /**

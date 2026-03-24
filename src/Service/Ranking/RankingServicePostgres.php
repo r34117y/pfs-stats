@@ -4,7 +4,7 @@ namespace App\Service\Ranking;
 
 use App\ApiResource\Ranking\GetRanking;
 use App\ApiResource\Ranking\RankingRow;
-use Doctrine\DBAL\ArrayParameterType;
+use App\Service\PlayerPhoto\PlayerPhotoService;
 use App\Service\RankingSnapshot\RankingSnapshotServiceInterface;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
@@ -18,6 +18,7 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
         #[Autowire(service: 'doctrine.dbal.default_connection')]
         private Connection $connection,
         private RankingSnapshotServiceInterface $rankingSnapshotService,
+        private PlayerPhotoService $playerPhotoService,
     ) {
     }
 
@@ -53,7 +54,11 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
         }
 
         $rankingRows = [];
-        $photosByPlayerId = $this->loadPhotosByPlayerId($latestRanking);
+        $playerIds = [];
+        foreach ($latestRanking as $rankingRow) {
+            $playerIds[] = $rankingRow['playerId'];
+        }
+        $photosByPlayerId = $this->playerPhotoService->loadPhotosByPlayerId($playerIds);
 
         foreach ($latestRanking as $row) {
             $playerId = $row['playerId'];
@@ -187,40 +192,8 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
     }
 
     /**
-     * @param list<array{playerId: int, position: int, rank: float, games: int, nameShow: string, nameAlph: string}> $rankingRows
-     * @return array<int, string>
      * @throws Exception
      */
-    private function loadPhotosByPlayerId(array $rankingRows): array
-    {
-        $playerIds = [];
-        foreach ($rankingRows as $row) {
-            $playerIds[] = $row['playerId'];
-        }
-
-        $playerIds = array_values(array_unique($playerIds));
-        if ($playerIds === []) {
-            return [];
-        }
-
-        $photosByPlayerId = [];
-        $rows = $this->connection->fetchAllAssociative(
-            "SELECT player_id, photo
-             FROM app_user
-             WHERE player_id IN (:playerIds)
-               AND photo IS NOT NULL
-               AND photo <> ''",
-            ['playerIds' => $playerIds],
-            ['playerIds' => ArrayParameterType::INTEGER]
-        );
-
-        foreach ($rows as $row) {
-            $photosByPlayerId[(int) $row['player_id']] = (string) $row['photo'];
-        }
-
-        return $photosByPlayerId;
-    }
-
     private function fetchOrganizationId(): ?int
     {
         $value = $this->connection->fetchOne(
