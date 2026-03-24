@@ -1,6 +1,6 @@
 # Tournament Round Logging
 
-The `POST /tournament/round` endpoint writes two dedicated logs.
+The `POST /tournament` endpoint writes two dedicated logs.
 
 ## Payload Log
 

@@ -3,11 +3,14 @@
 namespace App\Service;
 
 use App\ApiResource\TournamentRound\TournamentRound;
+use DateTimeImmutable;
+use DateTimeInterface;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
+use Throwable;
 
 final readonly class TournamentRoundImportService
 {
@@ -21,6 +24,7 @@ final readonly class TournamentRoundImportService
 
     /**
      * @throws Exception
+     * @throws Throwable
      */
     public function import(TournamentRound $payload): int
     {
@@ -208,6 +212,7 @@ final readonly class TournamentRoundImportService
                 $host = $resolvedPlayersByStartingPosition[$hostPosition] ?? null;
                 $guest = $resolvedPlayersByStartingPosition[$guestPosition] ?? null;
                 if ($host === null || $guest === null) {
+                    dd($resolvedPlayersByStartingPosition);
                     throw new BadRequestHttpException(sprintf('Could not resolve game participants for %s.', $context));
                 }
 
@@ -343,7 +348,7 @@ final readonly class TournamentRoundImportService
                 "data" => json_encode([
                     "tournamentDbId" => $tournamentId,
                     "createdPlayerIds" => array_values(array_unique($createdPlayerIds)),
-                    "importedAt" => (new \DateTimeImmutable())->format(\DateTimeInterface::ATOM),
+                    "importedAt" => (new DateTimeImmutable())->format(DateTimeInterface::ATOM),
                 ], JSON_THROW_ON_ERROR),
             ]);
 
@@ -496,6 +501,7 @@ final readonly class TournamentRoundImportService
 
     /**
      * @return array<string, mixed>
+     * @throws Exception
      */
     private function createPlayer(Connection $connection, int $organizationId, string $nameShow, int $legacyPlayerId): array
     {
@@ -535,6 +541,7 @@ final readonly class TournamentRoundImportService
 
     /**
      * @return list<array<string, mixed>>
+     * @throws Exception
      */
     private function loadPlayerCatalog(int $organizationId, int $legacyTournamentId): array
     {
@@ -638,6 +645,9 @@ final readonly class TournamentRoundImportService
         }, $rows);
     }
 
+    /**
+     * @throws Exception
+     */
     private function allocateNextLegacyPlayerId(int $organizationId): int
     {
         return (int) $this->connection->fetchOne(
@@ -658,6 +668,9 @@ final readonly class TournamentRoundImportService
         );
     }
 
+    /**
+     * @throws Exception
+     */
     private function allocateTournamentLegacyId(int $organizationId, int $dateCode): int
     {
         $suffix = (int) $this->connection->fetchOne(
@@ -677,6 +690,7 @@ final readonly class TournamentRoundImportService
 
     /**
      * @return array{id:int,code:string}|null
+     * @throws Exception
      */
     private function fetchOrganization(string $organizationCode): ?array
     {
@@ -700,6 +714,9 @@ final readonly class TournamentRoundImportService
         ];
     }
 
+    /**
+     * @throws Exception
+     */
     private function findExistingTournamentId(int $organizationId, int $dateCode, string $fullname, string $city): ?int
     {
         $value = $this->connection->fetchOne(
@@ -735,7 +752,7 @@ final readonly class TournamentRoundImportService
         return $fullName;
     }
 
-    private function buildShortTournamentName(\DateTimeImmutable $startDate, string $city): string
+    private function buildShortTournamentName(DateTimeImmutable $startDate, string $city): string
     {
         return $this->trimToLength(sprintf('%s %s', $startDate->format('ymd'), $city), 40);
     }
@@ -834,10 +851,10 @@ final readonly class TournamentRoundImportService
         return array_values($value);
     }
 
-    private function parseDate(string $value, string $context): \DateTimeImmutable
+    private function parseDate(string $value, string $context): DateTimeImmutable
     {
-        $date = \DateTimeImmutable::createFromFormat('Y-m-d', $value);
-        if (!$date instanceof \DateTimeImmutable || $date->format('Y-m-d') !== $value) {
+        $date = DateTimeImmutable::createFromFormat('Y-m-d', $value);
+        if (!$date instanceof DateTimeImmutable || $date->format('Y-m-d') !== $value) {
             throw new BadRequestHttpException(sprintf('Field "%s" must use YYYY-MM-DD format.', $context));
         }
 

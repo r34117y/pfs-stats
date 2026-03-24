@@ -8,6 +8,7 @@ use App\ApiResource\TournamentRound\TournamentRound;
 use App\ApiResource\TournamentRound\TournamentRoundResponse;
 use App\Service\TournamentRoundImportService;
 use App\Service\TournamentRoundTokenAuthorizer;
+use Doctrine\DBAL\Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -27,6 +28,10 @@ final readonly class TournamentRoundProcessor implements ProcessorInterface
     ) {
     }
 
+    /**
+     * @throws \Throwable
+     * @throws Exception
+     */
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): TournamentRoundResponse
     {
         $rawPayload = $this->requestStack->getCurrentRequest()?->getContent() ?? '';
@@ -48,7 +53,6 @@ final readonly class TournamentRoundProcessor implements ProcessorInterface
             $this->tournamentRoundErrorLogger->error('Tournament round request failed.', [
                 'exception_class' => $exception::class,
                 'message' => $exception->getMessage(),
-                'raw_payload' => $rawPayload,
                 'trace' => $exception->getTraceAsString(),
             ]);
 
