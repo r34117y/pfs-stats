@@ -6,6 +6,7 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use App\ApiResource\TournamentRound\TournamentRound;
 use App\ApiResource\TournamentRound\TournamentRoundResponse;
+use App\Service\RefreshCacheAfterImportLauncher;
 use App\Service\TournamentRoundImportService;
 use App\Service\TournamentRoundTokenAuthorizer;
 use Doctrine\DBAL\Exception;
@@ -20,6 +21,7 @@ final readonly class TournamentRoundProcessor implements ProcessorInterface
     public function __construct(
         private TournamentRoundTokenAuthorizer $tournamentRoundTokenAuthorizer,
         private TournamentRoundImportService $tournamentRoundImportService,
+        private RefreshCacheAfterImportLauncher $refreshCacheAfterImportLauncher,
         private RequestStack $requestStack,
         #[Autowire(service: 'monolog.logger.tournament_round_error')]
         private LoggerInterface $tournamentRoundErrorLogger,
@@ -47,6 +49,7 @@ final readonly class TournamentRoundProcessor implements ProcessorInterface
             }
 
             $tournamentId = $this->tournamentRoundImportService->import($data);
+            $this->refreshCacheAfterImportLauncher->launchWarmup();
 
             return new TournamentRoundResponse(sprintf('Imported tournament %d.', $tournamentId));
         } catch (\Throwable $exception) {

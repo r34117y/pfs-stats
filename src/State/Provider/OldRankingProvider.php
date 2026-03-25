@@ -6,8 +6,8 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\Ranking\GetRanking;
 use App\ApiResource\Ranking\RankingRow;
-use App\Repository\UserRepository;
 use App\Service\OldMethodCurrentRanking\OldMethodCurrentRankingServiceInterface;
+use App\Service\PlayerPhoto\PlayerPhotoService;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -17,7 +17,7 @@ final readonly class OldRankingProvider implements ProviderInterface
 {
     public function __construct(
         private OldMethodCurrentRankingServiceInterface $oldMethodCurrentRankingService,
-        private UserRepository $userRepository,
+        private PlayerPhotoService $playerPhotoService,
         #[Autowire(service: 'app.dataset_cache')]
         private CacheInterface $cache,
     ) {
@@ -43,20 +43,7 @@ final readonly class OldRankingProvider implements ProviderInterface
                 $playerIds[] = (int) $row['playerId'];
             }
 
-            $photosByPlayerId = [];
-            /*$users = $this->userRepository->findBy(['playerId' => array_values(array_unique($playerIds))]);
-            foreach ($users as $user) {
-                $playerId = $user->getPlayerId();
-                $photo = $user->getPhoto();
-
-                if ($playerId === null || $photo === null || $photo === '') {
-                    continue;
-                }
-
-                if (!isset($photosByPlayerId[$playerId])) {
-                    $photosByPlayerId[$playerId] = $photo;
-                }
-            }*/
+            $photosByPlayerId = $this->playerPhotoService->loadPhotosByPlayerId($playerIds);
 
             $rankingRows = [];
             foreach ($rows as $row) {
