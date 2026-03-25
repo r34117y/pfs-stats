@@ -2,13 +2,14 @@
 
 namespace App\Command;
 
+use App\Service\RefreshCacheAfterImportLauncher;
 use App\Service\TournamentRoundRollbackService;
-use Doctrine\DBAL\Exception;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Throwable;
 
 #[AsCommand(
     name: 'app:tournament-round:revert-latest-import',
@@ -18,6 +19,7 @@ final class RevertLatestTournamentRoundImportCommand extends Command
 {
     public function __construct(
         private readonly TournamentRoundRollbackService $tournamentRoundRollbackService,
+        private readonly RefreshCacheAfterImportLauncher $refreshCacheAfterImportLauncher,
     ) {
         parent::__construct();
     }
@@ -28,7 +30,7 @@ final class RevertLatestTournamentRoundImportCommand extends Command
 
         try {
             $summary = $this->tournamentRoundRollbackService->revertMostRecentImport();
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $io->error(sprintf('Could not revert latest tournament round import: %s', $exception->getMessage()));
 
             return Command::FAILURE;
@@ -62,6 +64,8 @@ final class RevertLatestTournamentRoundImportCommand extends Command
                 implode(', ', $summary['skippedCreatedPlayerIds']),
             ));
         }
+
+        $this->refreshCacheAfterImportLauncher->launchWarmup();
 
         return Command::SUCCESS;
     }

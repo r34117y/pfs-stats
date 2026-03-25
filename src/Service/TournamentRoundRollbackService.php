@@ -4,7 +4,10 @@ namespace App\Service;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
+use JsonException;
+use RuntimeException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Throwable;
 
 final readonly class TournamentRoundRollbackService
 {
@@ -19,7 +22,7 @@ final readonly class TournamentRoundRollbackService
      *   organizationId:int,
      *   tournamentId:int,
      *   tournamentDbId:int,
-     *   tournamentName:?string,
+     *   tournamentName:string|null,
      *   rankingDeleted:int,
      *   tournamentResultsDeleted:int,
      *   tournamentGamesDeleted:int,
@@ -30,18 +33,20 @@ final readonly class TournamentRoundRollbackService
      *   skippedCreatedPlayerIds:list<int>
      * }
      * @throws Exception
+     * @throws JsonException
+     * @throws Throwable
      */
     public function revertMostRecentImport(): array
     {
         $latestAudit = $this->fetchLatestImportAudit();
         if ($latestAudit === null) {
-            throw new \RuntimeException('No tournament round import audit record was found.');
+            throw new RuntimeException('No tournament round import audit record was found.');
         }
 
         return $this->connection->transactional(function (Connection $connection) use ($latestAudit): array {
             $currentLatestAudit = $this->fetchLatestImportAudit($connection);
             if ($currentLatestAudit === null || $currentLatestAudit['textResourceId'] !== $latestAudit['textResourceId']) {
-                throw new \RuntimeException('Only the most recent tournament round import can be reverted.');
+                throw new RuntimeException('Only the most recent tournament round import can be reverted.');
             }
 
             $deletedRanking = $connection->executeStatement(
@@ -77,7 +82,7 @@ final readonly class TournamentRoundRollbackService
             );
 
             if ($deletedTournament !== 1) {
-                throw new \RuntimeException(sprintf(
+                throw new RuntimeException(sprintf(
                     'Expected to delete exactly one tournament row for import %d, deleted %d.',
                     $latestAudit['tournamentId'],
                     $deletedTournament,
@@ -141,9 +146,11 @@ final readonly class TournamentRoundRollbackService
      *   organizationId:int,
      *   tournamentId:int,
      *   tournamentDbId:int,
-     *   tournamentName:?string,
+     *   tournamentName:string|null,
      *   createdPlayerIds:list<int>
      * }|null
+     * @throws JsonException
+     * @throws Exception
      */
     private function fetchLatestImportAudit(?Connection $connection = null): ?array
     {
@@ -173,12 +180,12 @@ final readonly class TournamentRoundRollbackService
 
         $data = json_decode((string) $row['data'], true, 512, JSON_THROW_ON_ERROR);
         if (!is_array($data)) {
-            throw new \RuntimeException('Latest tournament import audit payload is invalid.');
+            throw new RuntimeException('Latest tournament import audit payload is invalid.');
         }
 
         $createdPlayerIds = $data['createdPlayerIds'] ?? [];
         if (!is_array($createdPlayerIds)) {
-            throw new \RuntimeException('Latest tournament import audit createdPlayerIds payload is invalid.');
+            throw new RuntimeException('Latest tournament import audit createdPlayerIds payload is invalid.');
         }
 
         return [
@@ -191,6 +198,9 @@ final readonly class TournamentRoundRollbackService
         ];
     }
 
+    /**
+     * @throws Exception
+     */
     private function playerHasBlockingReferences(int $playerId): bool
     {
         return (bool) $this->connection->fetchOne(
@@ -205,6 +215,9 @@ final readonly class TournamentRoundRollbackService
         );
     }
 
+    /**
+     * @throws Exception
+     */
     private function playerHasAnyRemainingReferencesOrAssociations(int $playerId): bool
     {
         return (bool) $this->connection->fetchOne(
