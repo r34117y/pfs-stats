@@ -334,37 +334,21 @@ final class ImportMySqlOrganizationsToPostgresCommand extends Command {
         $map = [];
         $table = $this->sourceTable($organizationCode, 'PLAYER');
 
-        foreach ($this->mysqlConnection->iterateAssociative("SELECT id, name_show, name_alph, utype, cached FROM {$table} ORDER BY id") as $row) {
+        foreach ($this->mysqlConnection->iterateAssociative("SELECT id, name_show, name_alph FROM {$table} ORDER BY id") as $row) {
             $nameShow = $this->normalizeNullableString($row['name_show']);
             $nameAlph = $this->normalizeNullableString($row['name_alph']);
-            $utype = $this->normalizeNullableString($row['utype']);
-            $cached = $this->normalizeNullableString($row['cached']);
             $playerKey = $this->playerIdentityKey($nameShow, $nameAlph);
 
             if (!isset($playerIdByIdentity[$playerKey])) {
                 $playerIdByIdentity[$playerKey] = (int) $this->postgresConnection->fetchOne(
-                    'INSERT INTO player (name_show, name_alph, utype, cached) VALUES (:nameShow, :nameAlph, :utype, :cached) RETURNING id',
+                    'INSERT INTO player (name_show, name_alph) VALUES (:nameShow, :nameAlph) RETURNING id',
                     [
                         'nameShow' => $nameShow,
                         'nameAlph' => $nameAlph,
-                        'utype' => $utype,
-                        'cached' => $cached,
                     ],
                 );
 
                 $this->increment($counters, 'player');
-            } else {
-                $this->postgresConnection->executeStatement(
-                    'UPDATE player
-                     SET utype = COALESCE(utype, :utype),
-                         cached = COALESCE(cached, :cached)
-                     WHERE id = :playerId',
-                    [
-                        'utype' => $utype,
-                        'cached' => $cached,
-                        'playerId' => $playerIdByIdentity[$playerKey],
-                    ],
-                );
             }
 
             $playerId = $playerIdByIdentity[$playerKey];

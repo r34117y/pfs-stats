@@ -516,14 +516,12 @@ final readonly class TournamentRoundImportService
         $nameShow = $this->trimToLength($nameShow, 40);
         $nameAlph = $this->trimToLength($this->nameNormalizer->toAlphabeticalName($nameShow), 40);
         $playerId = (int) $connection->fetchOne(
-            'INSERT INTO player (name_show, name_alph, utype, cached)
-             VALUES (:nameShow, :nameAlph, :utype, :cached)
+            'INSERT INTO player (name_show, name_alph)
+             VALUES (:nameShow, :nameAlph)
              RETURNING id',
             [
                 'nameShow' => $nameShow,
                 'nameAlph' => $nameAlph,
-                'utype' => null,
-                'cached' => null,
             ],
         );
 

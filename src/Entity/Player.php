@@ -25,11 +25,17 @@ class Player
     #[ORM\Column(name: 'name_alph', length: 40, nullable: true)]
     private ?string $nameAlph = null;
 
-    #[ORM\Column(length: 1, nullable: true)]
-    private ?string $utype = null;
+    #[ORM\Column(name: 'first_name', length: 100, nullable: true)]
+    private ?string $firstName = null;
 
-    #[ORM\Column(length: 1, nullable: true)]
-    private ?string $cached = null;
+    #[ORM\Column(name: 'last_name', length: 100, nullable: true)]
+    private ?string $lastName = null;
+
+    #[ORM\Column(length: 256, nullable: true)]
+    private ?string $city = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $slug = null;
 
     /**
      * @var Collection<int, Organization>
@@ -77,26 +83,50 @@ class Player
         return $this;
     }
 
-    public function getUtype(): ?string
+    public function getFirstName(): ?string
     {
-        return $this->utype;
+        return $this->firstName;
     }
 
-    public function setUtype(?string $utype): self
+    public function setFirstName(?string $firstName): self
     {
-        $this->utype = $utype;
+        $this->firstName = $firstName;
 
         return $this;
     }
 
-    public function getCached(): ?string
+    public function getLastName(): ?string
     {
-        return $this->cached;
+        return $this->lastName;
     }
 
-    public function setCached(?string $cached): self
+    public function setLastName(?string $lastName): self
     {
-        $this->cached = $cached;
+        $this->lastName = $lastName;
+
+        return $this;
+    }
+
+    public function getCity(): ?string
+    {
+        return $this->city;
+    }
+
+    public function setCity(?string $city): self
+    {
+        $this->city = $city;
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(?string $slug): self
+    {
+        $this->slug = $slug;
 
         return $this;
     }
