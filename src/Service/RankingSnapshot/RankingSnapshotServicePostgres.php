@@ -3,9 +3,10 @@
 namespace App\Service\RankingSnapshot;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-class RankingSnapshotServicePostgres implements RankingSnapshotServiceInterface
+final readonly class RankingSnapshotServicePostgres implements RankingSnapshotServiceInterface
 {
     private const string ORGANIZATION_CODE = 'PFS';
 
@@ -17,6 +18,7 @@ class RankingSnapshotServicePostgres implements RankingSnapshotServiceInterface
 
     /**
      * @return list<array{playerId: int, position: int, rank: float, games: int, nameShow: string, nameAlph: string}>
+     * @throws Exception
      */
     public function getRankingAfterTournament(int $tournamentId): array
     {
@@ -27,14 +29,16 @@ class RankingSnapshotServicePostgres implements RankingSnapshotServiceInterface
 
         $rows = $this->connection->fetchAllAssociative(
             "SELECT
-                r.legacy_player_id AS player_id,
+                r.player_id,
                 r.position,
                 r.rank,
                 r.games,
                 p.name_show,
-                p.name_alph
+                p.name_alph,
+                u.photo
              FROM ranking r
              INNER JOIN player p ON r.player_id = p.id
+             LEFT JOIN app_user u ON u.player_id = p.id
              WHERE r.organization_id = :organizationId
                AND r.legacy_tournament_id = :tournamentId
                AND r.rtype = 'f'
@@ -55,12 +59,16 @@ class RankingSnapshotServicePostgres implements RankingSnapshotServiceInterface
                 'games' => (int) $row['games'],
                 'nameShow' => (string) $row['name_show'],
                 'nameAlph' => (string) $row['name_alph'],
+                'photo' => $row['photo'],
             ];
         }
 
         return $ranking;
     }
 
+    /**
+     * @throws Exception
+     */
     private function fetchOrganizationId(): ?int
     {
         $value = $this->connection->fetchOne(

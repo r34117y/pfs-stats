@@ -4,7 +4,6 @@ namespace App\Service\Ranking;
 
 use App\ApiResource\Ranking\GetRanking;
 use App\ApiResource\Ranking\RankingRow;
-use App\Service\PlayerPhoto\PlayerPhotoService;
 use App\Service\RankingSnapshot\RankingSnapshotServiceInterface;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
@@ -18,7 +17,6 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
         #[Autowire(service: 'doctrine.dbal.default_connection')]
         private Connection $connection,
         private RankingSnapshotServiceInterface $rankingSnapshotService,
-        private PlayerPhotoService $playerPhotoService,
     ) {
     }
 
@@ -54,11 +52,6 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
         }
 
         $rankingRows = [];
-        $playerIds = [];
-        foreach ($latestRanking as $rankingRow) {
-            $playerIds[] = $rankingRow['playerId'];
-        }
-        $photosByPlayerId = $this->playerPhotoService->loadPhotosByPlayerId($playerIds);
 
         foreach ($latestRanking as $row) {
             $playerId = $row['playerId'];
@@ -80,7 +73,7 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
                 $row['nameShow'],
                 $row['nameAlph'],
                 $playerId,
-                $photosByPlayerId[$playerId] ?? null,
+                $row['photo'],
                 $this->formatDecimal($row['rank']),
                 $row['games'],
                 $rankDelta,

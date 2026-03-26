@@ -15,25 +15,48 @@
         </template>
 
         <div x-show="!loading && !error" x-cloak>
-            <h1 class="title is-3" x-text="profile.nameShow"></h1>
-
             <div class="columns is-multiline">
-                <div class="column is-4">
-                    <div class="box">
-                        <h2 class="title is-5">Dane osobowe</h2>
-                        <p><strong>Wiek:</strong> <span x-text="profile.age ?? 'brak danych'"></span></p>
-                        <p><strong>Zdjęcie:</strong> <span x-text="profile.photoUrl ? 'dostępne' : 'brak danych'"></span></p>
-                        <template x-if="profile.photoUrl">
-                            <figure class="image mt-4">
-                                <img :src="profile.photoUrl" alt="Zdjęcie zawodnika">
-                            </figure>
-                        </template>
+                <div class="column is-12-mobile is-6-tablet is-3-desktop">
+                    <div class="box has-text-centered">
+                        <div class="is-flex is-justify-content-center mt-4">
+                            <template x-if="profile.photoUrl">
+                                <figure class="image is-128x128">
+                                    <img
+                                        :src="profile.photoUrl"
+                                        alt="Zdjęcie zawodnika"
+                                        style="border-radius: 9999px; object-fit: cover; border: 1px solid #dbdbdb; width: 128px; height: 128px;"
+                                    >
+                                </figure>
+                            </template>
+                            <template x-if="!profile.photoUrl">
+                                <div
+                                    class="is-flex is-justify-content-center is-align-items-center"
+                                    style="width: 128px; height: 128px; border-radius: 9999px; border: 1px solid #dbdbdb; background: #f5f5f5;"
+                                    aria-label="Brak zdjęcia zawodnika"
+                                >
+                                    <svg viewBox="0 0 24 24" width="64" height="64" fill="#7a7a7a" aria-hidden="true">
+                                        <path d="M12 12c2.76 0 5-2.47 5-5.5S14.76 1 12 1 7 3.47 7 6.5 9.24 12 12 12Zm0 2c-4.42 0-8 2.91-8 6.5V23h16v-2.5c0-3.59-3.58-6.5-8-6.5Z"></path>
+                                    </svg>
+                                </div>
+                            </template>
+                        </div>
                     </div>
                 </div>
 
-                <div class="column is-8">
+                <div class="column is-12-mobile is-12-tablet is-4-desktop">
+                    <div class="box">
+                        <h2 class="title is-5" x-text="profile.nameShow"></h2>
+                        <p><strong>Ranking:</strong> <span x-text="profile.currentRank ?? '-'"></span></p>
+                        <p><strong>Pozycja:</strong> <span x-text="profile.currentPosition ?? '-'"></span></p>
+                        <p><strong>Miasto:</strong> <span x-text="profile.city ?? 'b/d'"></span></p>
+                        <p><strong>Wiek:</strong> <span x-text="profile.age ?? 'b/d'"></span></p>
+                    </div>
+                </div>
+
+                <div class="column is-12-mobile is-6-tablet is-5-desktop">
                     <div class="box">
                         <h2 class="title is-5">Turnieje</h2>
+                        <p><strong>Łącznie:</strong> <span x-text="profile.totalTournamentsPlayed"></span></p>
                         <p>
                             <strong>Pierwszy:</strong>
                             <span x-text="formatTournament(profile.firstTournament)"></span>
@@ -50,20 +73,8 @@
                 <h2 class="title is-5">Główne statystyki</h2>
                 <div class="columns is-multiline">
                     <div class="column is-3">
-                        <p><strong>Aktualny ranking:</strong></p>
-                        <p x-text="profile.currentRank ?? 'brak danych'"></p>
-                    </div>
-                    <div class="column is-3">
-                        <p><strong>Aktualna pozycja:</strong></p>
-                        <p x-text="profile.currentPosition ?? 'brak danych'"></p>
-                    </div>
-                    <div class="column is-3">
                         <p><strong>Łącznie gier:</strong></p>
                         <p x-text="profile.totalGamesPlayed"></p>
-                    </div>
-                    <div class="column is-3">
-                        <p><strong>Łącznie turniejów:</strong></p>
-                        <p x-text="profile.totalTournamentsPlayed"></p>
                     </div>
                     <div class="column is-3">
                         <p><strong>Wygrane gry (łącznie):</strong></p>
@@ -115,10 +126,10 @@
                 },
                 formatTournament(tournament) {
                     if (!tournament) {
-                        return 'brak danych';
+                        return 'b/d';
                     }
 
-                    return `${tournament.name} (${this.formatDate(tournament.date)})`;
+                    return `${tournament.name}`;
                 },
                 formatDate(dateInt) {
                     const dateValue = dateInt.toString();

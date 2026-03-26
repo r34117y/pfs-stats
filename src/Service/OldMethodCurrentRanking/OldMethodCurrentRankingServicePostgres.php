@@ -41,48 +41,9 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
     public function calculateCurrentRanking(): array
     {
         $organizationId = $this->loadOrganizationId();
-        if ($organizationId === null) {
-            return [
-                'referenceTournamentId' => 0,
-                'referenceTournamentName' => '',
-                'referenceDate' => '',
-                'windowStartDate' => '',
-                'rows' => [],
-            ];
-        }
-
         $referenceTournamentId = $this->loadLatestRankingTournamentId($organizationId);
-        if ($referenceTournamentId === null) {
-            return [
-                'referenceTournamentId' => 0,
-                'referenceTournamentName' => '',
-                'referenceDate' => '',
-                'windowStartDate' => '',
-                'rows' => [],
-            ];
-        }
-
         $referenceTournament = $this->loadTournamentById($organizationId, $referenceTournamentId);
-        if ($referenceTournament === null) {
-            return [
-                'referenceTournamentId' => 0,
-                'referenceTournamentName' => '',
-                'referenceDate' => '',
-                'windowStartDate' => '',
-                'rows' => [],
-            ];
-        }
-
         $referenceDate = DateTimeImmutable::createFromFormat('Ymd', (string) $referenceTournament['dt']);
-        if ($referenceDate === false) {
-            return [
-                'referenceTournamentId' => (int) $referenceTournament['id'],
-                'referenceTournamentName' => (string) $referenceTournament['name'],
-                'referenceDate' => (string) $referenceTournament['dt'],
-                'windowStartDate' => (string) $referenceTournament['dt'],
-                'rows' => [],
-            ];
-        }
 
         $playerNames = $this->loadPlayerNames($organizationId);
 
@@ -163,6 +124,7 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
                 'rankRounded' => (int) round($snapshot['rank'], 0, PHP_ROUND_HALF_UP),
                 'games' => $snapshot['games'],
                 'tournaments' => $snapshot['tournaments'],
+                'photo' => $playerNames[$playerId]['photo'],
             ];
         }
 
@@ -220,7 +182,8 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
             "SELECT DISTINCT
                 x.legacy_player_id AS legacy_player_id,
                 p.name_show,
-                p.name_alph
+                p.name_alph,
+                u.photo
              FROM (
                 SELECT legacy_player_id, player_id
                 FROM ranking
@@ -234,7 +197,8 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
                   AND legacy_player_id IS NOT NULL
                   AND player_id IS NOT NULL
              ) x
-             INNER JOIN player p ON p.id = x.player_id",
+             INNER JOIN player p ON p.id = x.player_id
+             LEFT JOIN app_user u ON p.id = u.player_id",
             ['organizationId' => $organizationId]
         );
         $result = [];
@@ -243,6 +207,7 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
             $result[(int) $row['legacy_player_id']] = [
                 'name' => (string) $row['name_show'],
                 'nameSort' => (string) $row['name_alph'],
+                'photo' => $row['photo']
             ];
         }
 

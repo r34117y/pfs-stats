@@ -7,7 +7,6 @@ use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\Ranking\GetRanking;
 use App\ApiResource\Ranking\RankingRow;
 use App\Service\OldMethodCurrentRanking\OldMethodCurrentRankingServiceInterface;
-use App\Service\PlayerPhoto\PlayerPhotoService;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -17,7 +16,6 @@ final readonly class OldRankingProvider implements ProviderInterface
 {
     public function __construct(
         private OldMethodCurrentRankingServiceInterface $oldMethodCurrentRankingService,
-        private PlayerPhotoService $playerPhotoService,
         #[Autowire(service: 'app.dataset_cache')]
         private CacheInterface $cache,
     ) {
@@ -29,21 +27,12 @@ final readonly class OldRankingProvider implements ProviderInterface
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): GetRanking
     {
         return $this->cache->get('api.ranking.old', function (ItemInterface $item): GetRanking {
-            $item->expiresAfter(600);
-
             $result = $this->oldMethodCurrentRankingService->calculateCurrentRanking();
             $rows = $result['rows'];
 
             if ($rows === []) {
                 return new GetRanking([], $result['referenceTournamentName'], $result['referenceTournamentId']);
             }
-
-            $playerIds = [];
-            foreach ($rows as $row) {
-                $playerIds[] = (int) $row['playerId'];
-            }
-
-            $photosByPlayerId = $this->playerPhotoService->loadPhotosByPlayerId($playerIds);
 
             $rankingRows = [];
             foreach ($rows as $row) {
@@ -54,7 +43,7 @@ final readonly class OldRankingProvider implements ProviderInterface
                     nameShow: (string) $row['playerName'],
                     nameAlph: (string) $row['playerNameAlph'],
                     playerId: $playerId,
-                    photo: $photosByPlayerId[$playerId] ?? null,
+                    photo: $row['photo'],
                     rank: number_format((float) $row['rankExact'], 2, '.', ''),
                     numberOfGames: (int) $row['games'],
                     rankDelta: null,

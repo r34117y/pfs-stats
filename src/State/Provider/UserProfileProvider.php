@@ -7,11 +7,12 @@ use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\UserProfile\UserProfile;
 use App\Entity\User;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
-class UserProfileProvider implements ProviderInterface
+final readonly class UserProfileProvider implements ProviderInterface
 {
     private const string ORGANIZATION_CODE = 'PFS';
 
@@ -38,6 +39,9 @@ class UserProfileProvider implements ProviderInterface
         );
     }
 
+    /**
+     * @throws Exception
+     */
     private function fetchPublicPlayerId(User $user): ?int
     {
         $playerId = $user->getPlayerId();

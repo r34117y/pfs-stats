@@ -11,12 +11,12 @@ use App\State\Provider\UserProfileProvider;
         new Get(
             uriTemplate: '/user/profile/data',
             description: 'Get current authenticated user profile data.',
-            provider: UserProfileProvider::class,
-            security: "is_granted('ROLE_USER')"
+            security: "is_granted('ROLE_USER')",
+            provider: UserProfileProvider::class
         ),
     ],
 )]
-class UserProfile
+final readonly class UserProfile
 {
     public function __construct(
         public int $id,
