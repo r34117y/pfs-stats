@@ -3,7 +3,7 @@
 {% set activeMenuItem = 'head_to_head' %}
 
 {% block player_profile_content %}
-    <div x-data="playerGameBalanceData({{ playerId }})" x-init="fetchRows()">
+    <div x-data="playerGameBalanceData('{{ playerSlug|e('js') }}')" x-init="fetchRows()">
         <h1 class="title is-3">Bilans pojedynków</h1>
 
         <template x-if="loading">
@@ -42,7 +42,7 @@
                     <template x-for="row in pagedRows" :key="row.opponentId">
                         <tr>
                             <td class="text-center" x-text="row.position"></td>
-                            <td><a :href="`/players/${row.opponentId}`" x-text="row.opponent"></a></td>
+                            <td><a :href="$store.playerLinks.profile(row.opponentId)" x-text="row.opponent"></a></td>
                             <td class="text-center" x-text="formatPercent(row.winPercent)"></td>
                             <td class="text-center" x-text="row.gameBalance"></td>
                             <td class="text-center" x-text="row.smallPointsBalance"></td>
@@ -64,7 +64,7 @@
 
 {% block player_profile_scripts %}
     <script>
-        function playerGameBalanceData(playerId) {
+        function playerGameBalanceData(playerSlug) {
             return {
                 loading: true,
                 error: '',
@@ -74,7 +74,7 @@
                 rows: [],
                 async fetchRows() {
                     try {
-                        let response = await fetch(`/api/players/${playerId}/game-balance`);
+                        let response = await fetch(`/api/players/${playerSlug}/game-balance`);
                         if (!response.ok) {
                             throw new Error('Nie udało się pobrać bilansu gier');
                         }

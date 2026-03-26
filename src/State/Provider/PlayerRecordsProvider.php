@@ -6,6 +6,7 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\PlayerRecords\PlayerRecordsTable;
 use App\Service\PlayerRecords\PlayerRecordsServiceInterface;
+use App\Service\PlayerSlugResolver;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -16,6 +17,7 @@ final readonly class PlayerRecordsProvider implements ProviderInterface
 {
     public function __construct(
         private PlayerRecordsServiceInterface $playerRecordsService,
+        private PlayerSlugResolver $playerSlugResolver,
         private RequestStack $requestStack,
         #[Autowire(service: 'app.dataset_cache')]
         private CacheInterface $cache,
@@ -27,10 +29,10 @@ final readonly class PlayerRecordsProvider implements ProviderInterface
      */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): PlayerRecordsTable
     {
-        $rawPlayerId = $uriVariables['id'] ?? $uriVariables['playerId'] ?? null;
-        $playerId = is_numeric($rawPlayerId) ? (int) $rawPlayerId : 0;
+        $playerSlug = trim((string) ($uriVariables['slug'] ?? $uriVariables['playerSlug'] ?? ''));
+        $playerId = $this->playerSlugResolver->resolveLegacyPlayerId($playerSlug);
 
-        if ($playerId <= 0) {
+        if ($playerSlug === '' || $playerId === null) {
             throw new NotFoundHttpException('Player not found.');
         }
 
@@ -40,8 +42,8 @@ final readonly class PlayerRecordsProvider implements ProviderInterface
         $min = $request?->query->has('min') ? (int) $request->query->get('min') : null;
 
         $cacheKey = sprintf(
-            'api.player_records.%d.%s.%d.%s',
-            $playerId,
+            'api.player_records.%s.%s.%d.%s',
+            $playerSlug,
             $recordType,
             $limit,
             $min !== null ? (string) $min : 'null',

@@ -3,7 +3,7 @@
 {% set activeMenuItem = 'profile' %}
 
 {% block player_profile_content %}
-    <div x-data="playerProfileData({{ playerId }})" x-init="fetchProfile()">
+    <div x-data="playerProfileData('{{ playerSlug|e('js') }}')" x-init="fetchProfile()">
         <template x-if="loading">
             <p>Ładowanie...</p>
         </template>
@@ -104,15 +104,15 @@
 
 {% block player_profile_scripts %}
     <script>
-        function playerProfileData(playerId) {
+        function playerProfileData(playerSlug) {
             return {
-                playerId,
+                playerSlug,
                 loading: true,
                 error: '',
                 profile: null,
                 async fetchProfile() {
                     try {
-                        let response = await fetch(`/api/players/${this.playerId}`);
+                        let response = await fetch(`/api/players/${this.playerSlug}`);
                         if (!response.ok) {
                             throw new Error('Nie udało się pobrać profilu zawodnika');
                         }

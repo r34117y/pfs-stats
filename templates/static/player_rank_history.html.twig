@@ -5,7 +5,7 @@
 {% block player_profile_content %}
     <h1 class="title is-3">Historia rankingu</h1>
 
-    <div x-data="rankMilestonesData({{ playerId }})" x-init="fetchMilestones()" class="box">
+    <div x-data="rankMilestonesData('{{ playerSlug|e('js') }}')" x-init="fetchMilestones()" class="box">
         <h2 class="title is-5">Kamienie milowe</h2>
 
         <template x-if="loading">
@@ -47,7 +47,7 @@
         </div>
     </div>
 
-    <div x-data="rankHistoryData({{ playerId }})" x-init="fetchHistory()" class="box">
+    <div x-data="rankHistoryData('{{ playerSlug|e('js') }}')" x-init="fetchHistory()" class="box">
         <h2 class="title is-5">Wykres rankingu</h2>
 
         <template x-if="loading">
@@ -89,15 +89,15 @@
 
 {% block player_profile_scripts %}
     <script>
-        function rankMilestonesData(playerId) {
+        function rankMilestonesData(playerSlug) {
             return {
-                playerId,
+                playerSlug,
                 loading: true,
                 error: '',
                 milestones: [],
                 async fetchMilestones() {
                     try {
-                        let response = await fetch(`/api/players/${this.playerId}/rank-history/milestones`);
+                        let response = await fetch(`/api/players/${this.playerSlug}/rank-history/milestones`);
                         if (!response.ok) {
                             throw new Error('Nie udało się pobrać kamieni milowych');
                         }
@@ -116,9 +116,9 @@
             };
         }
 
-        function rankHistoryData(playerId) {
+        function rankHistoryData(playerSlug) {
             return {
-                playerId,
+                playerSlug,
                 loading: true,
                 error: '',
                 history: [],
@@ -127,7 +127,7 @@
                 padding: 30,
                 async fetchHistory() {
                     try {
-                        let response = await fetch(`/api/players/${this.playerId}/rank-history`);
+                        let response = await fetch(`/api/players/${this.playerSlug}/rank-history`);
                         if (!response.ok) {
                             throw new Error('Nie udało się pobrać historii rankingu');
                         }

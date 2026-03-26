@@ -27,43 +27,43 @@ class PagesController extends AbstractController
         return $this->render('static/players.html.twig');
     }
 
-    #[Route('/players/{playerId<\d+>}', name: 'app_player_profile_page', methods: ['GET'])]
-    public function playerProfile(int $playerId): Response
+    #[Route('/players/{playerSlug}', name: 'app_player_profile_page', methods: ['GET'])]
+    public function playerProfile(string $playerSlug): Response
     {
         return $this->render('static/player_profile.html.twig', [
-            'playerId' => $playerId,
+            'playerSlug' => $playerSlug,
         ]);
     }
 
-    #[Route('/players/{playerId<\d+>}/tournaments', name: 'app_player_tournaments_page', methods: ['GET'])]
-    public function playerTournaments(int $playerId): Response
+    #[Route('/players/{playerSlug}/tournaments', name: 'app_player_tournaments_page', methods: ['GET'])]
+    public function playerTournaments(string $playerSlug): Response
     {
         return $this->render('static/player_tournaments.html.twig', [
-            'playerId' => $playerId,
+            'playerSlug' => $playerSlug,
         ]);
     }
 
-    #[Route('/players/{playerId<\d+>}/rank-history', name: 'app_player_rank_history_page', methods: ['GET'])]
-    public function playerRankHistory(int $playerId): Response
+    #[Route('/players/{playerSlug}/rank-history', name: 'app_player_rank_history_page', methods: ['GET'])]
+    public function playerRankHistory(string $playerSlug): Response
     {
         return $this->render('static/player_rank_history.html.twig', [
-            'playerId' => $playerId,
+            'playerSlug' => $playerSlug,
         ]);
     }
 
-    #[Route('/players/{playerId<\d+>}/records', name: 'app_player_records_page', methods: ['GET'])]
-    public function playerRecords(int $playerId): Response
+    #[Route('/players/{playerSlug}/records', name: 'app_player_records_page', methods: ['GET'])]
+    public function playerRecords(string $playerSlug): Response
     {
         return $this->render('static/player_records.html.twig', [
-            'playerId' => $playerId,
+            'playerSlug' => $playerSlug,
         ]);
     }
 
-    #[Route('/players/{playerId<\d+>}/game-balance', name: 'app_player_game_balance_page', methods: ['GET'])]
-    public function playerGameBalance(int $playerId): Response
+    #[Route('/players/{playerSlug}/game-balance', name: 'app_player_game_balance_page', methods: ['GET'])]
+    public function playerGameBalance(string $playerSlug): Response
     {
         return $this->render('static/player_game_balance.html.twig', [
-            'playerId' => $playerId,
+            'playerSlug' => $playerSlug,
         ]);
     }
 
@@ -359,12 +359,12 @@ class PagesController extends AbstractController
         ]);
     }
 
-    #[Route('/tournaments/{tournamentId<\d+>}/players/{playerId<\d+>}', name: 'app_player_tournament_summary_page', methods: ['GET'])]
-    public function playerTournamentSummary(int $tournamentId, int $playerId): Response
+    #[Route('/tournaments/{tournamentId<\d+>}/players/{playerSlug}', name: 'app_player_tournament_summary_page', methods: ['GET'])]
+    public function playerTournamentSummary(int $tournamentId, string $playerSlug): Response
     {
         return $this->render('static/player_tournament_summary.html.twig', [
             'tournamentId' => $tournamentId,
-            'playerId' => $playerId,
+            'playerSlug' => $playerSlug,
         ]);
     }
 }

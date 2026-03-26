@@ -6,6 +6,7 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\PlayerRankHistory\PlayerRankMilestones;
 use App\Service\PlayerRankHistory\PlayerRankHistoryServiceInterface;
+use App\Service\PlayerSlugResolver;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -15,6 +16,7 @@ final readonly class PlayerRankMilestonesProvider implements ProviderInterface
 {
     public function __construct(
         private PlayerRankHistoryServiceInterface $playerRankHistoryService,
+        private PlayerSlugResolver $playerSlugResolver,
         #[Autowire(service: 'app.dataset_cache')]
         private CacheInterface $cache,
     ) {
@@ -25,15 +27,15 @@ final readonly class PlayerRankMilestonesProvider implements ProviderInterface
      */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): PlayerRankMilestones
     {
-        $rawPlayerId = $uriVariables['id'] ?? $uriVariables['playerId'] ?? null;
-        $playerId = is_numeric($rawPlayerId) ? (int) $rawPlayerId : 0;
+        $playerSlug = trim((string) ($uriVariables['slug'] ?? $uriVariables['playerSlug'] ?? ''));
+        $playerId = $this->playerSlugResolver->resolveLegacyPlayerId($playerSlug);
 
-        if ($playerId <= 0) {
+        if ($playerSlug === '' || $playerId === null) {
             throw new NotFoundHttpException('Player not found.');
         }
 
         return $this->cache->get(
-            sprintf('api.player_rank_milestones.%d', $playerId),
+            sprintf('api.player_rank_milestones.%s', $playerSlug),
             fn (): PlayerRankMilestones => $this->playerRankHistoryService->getRankMilestones($playerId),
         );
     }

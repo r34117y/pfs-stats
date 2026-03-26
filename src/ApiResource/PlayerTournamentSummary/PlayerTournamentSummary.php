@@ -10,7 +10,7 @@ use App\State\Provider\PlayerTournamentSummaryProvider;
 #[ApiResource(
     operations: [
         new Get(
-            uriTemplate: '/tournaments/{tournamentId}/players/{playerId}/summary',
+            uriTemplate: '/tournaments/{tournamentId}/players/{playerSlug}/summary',
             description: 'Get player summary for selected tournament.',
             provider: PlayerTournamentSummaryProvider::class
         ),

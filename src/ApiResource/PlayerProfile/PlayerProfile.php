@@ -9,7 +9,7 @@ use App\State\Provider\PlayerProfileProvider;
 #[ApiResource(
     operations: [
         new Get(
-            uriTemplate: '/players/{id}',
+            uriTemplate: '/players/{slug}',
             description: 'Get player profile.',
             provider: PlayerProfileProvider::class
         ),

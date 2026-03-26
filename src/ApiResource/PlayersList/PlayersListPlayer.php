@@ -8,6 +8,7 @@ class PlayersListPlayer
         public int $id,
         public string $nameShow,
         public string $nameAlph,
+        public ?string $slug,
         public ?string $photo,
     ) {
     }

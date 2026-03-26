@@ -70,6 +70,7 @@ final readonly class PlayerListServicePostgres implements PlayerListServiceInter
                     mbp.legacy_player_id AS mapped_legacy_player_id,
                     p.name_show,
                     p.name_alph,
+                    p.slug,
                     u.photo
                 FROM player_organization po
                 INNER JOIN player p ON p.id = po.player_id
@@ -92,6 +93,7 @@ final readonly class PlayerListServicePostgres implements PlayerListServiceInter
                 $playerId,
                 (string) $player['name_show'],
                 (string) $player['name_alph'],
+                $player['slug'],
                 $player['photo'],
             );
         }

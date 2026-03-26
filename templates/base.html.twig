@@ -13,6 +13,66 @@
     {% endblock %}
 
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.store('playerLinks', {
+                slugsByLegacyId: {},
+                loading: null,
+                ensureLoaded() {
+                    if (this.loading) {
+                        return this.loading;
+                    }
+
+                    this.loading = fetch('/api/players')
+                        .then((response) => {
+                            if (!response.ok) {
+                                throw new Error('Failed to load player slugs');
+                            }
+
+                            return response.json();
+                        })
+                        .then((data) => {
+                            const nextMap = {};
+                            for (const player of data.players ?? []) {
+                                if (!player || player.id === undefined || !player.slug) {
+                                    continue;
+                                }
+
+                                nextMap[String(player.id)] = player.slug;
+                            }
+
+                            this.slugsByLegacyId = nextMap;
+                        })
+                        .catch((error) => {
+                            console.error('Player slug map error:', error);
+                            this.slugsByLegacyId = {};
+                        })
+                        .finally(() => {
+                            this.loading = null;
+                        });
+
+                    return this.loading;
+                },
+                slugByLegacyId(legacyId) {
+                    if (legacyId === null || legacyId === undefined) {
+                        return null;
+                    }
+
+                    return this.slugsByLegacyId[String(legacyId)] ?? null;
+                },
+                profile(legacyId) {
+                    const slug = this.slugByLegacyId(legacyId);
+                    return slug ? `/players/${slug}` : '#';
+                },
+                tournamentProfile(tournamentId, legacyId) {
+                    const slug = this.slugByLegacyId(legacyId);
+                    return slug ? `/tournaments/${tournamentId}/players/${slug}` : '#';
+                }
+            });
+
+            Alpine.store('playerLinks').ensureLoaded();
+        });
+    </script>
 
     <link rel="stylesheet" href="{{ asset('css/base.css') }}">
 
@@ -103,21 +163,15 @@
 </div>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // Get all "navbar-burger" elements
         const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
 
-        // Add a click event on each of them
         $navbarBurgers.forEach( el => {
             el.addEventListener('click', () => {
-
-                // Get the target from the "data-target" attribute
                 const target = el.dataset.target;
                 const $target = document.getElementById(target);
 
-                // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
                 el.classList.toggle('is-active');
                 $target.classList.toggle('is-active');
-
             });
         });
 

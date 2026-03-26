@@ -9,7 +9,7 @@ use App\State\Provider\PlayerRankHistoryProvider;
 #[ApiResource(
     operations: [
         new Get(
-            uriTemplate: '/players/{id}/rank-history',
+            uriTemplate: '/players/{slug}/rank-history',
             description: 'Get player rank history for played tournaments.',
             provider: PlayerRankHistoryProvider::class
         ),

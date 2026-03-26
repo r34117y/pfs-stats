@@ -9,7 +9,7 @@ use App\State\Provider\PlayerGameBalanceProvider;
 #[ApiResource(
     operations: [
         new Get(
-            uriTemplate: '/players/{id}/game-balance',
+            uriTemplate: '/players/{slug}/game-balance',
             description: 'Get aggregated game balance by opponent.',
             provider: PlayerGameBalanceProvider::class
         ),

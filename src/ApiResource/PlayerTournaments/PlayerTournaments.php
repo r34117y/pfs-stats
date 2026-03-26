@@ -9,7 +9,7 @@ use App\State\Provider\PlayerTournamentsProvider;
 #[ApiResource(
     operations: [
         new Get(
-            uriTemplate: '/players/{id}/tournaments',
+            uriTemplate: '/players/{slug}/tournaments',
             description: 'Get tournaments list for given player ordered by most recent.',
             provider: PlayerTournamentsProvider::class
         ),

@@ -3,7 +3,7 @@
 {% set activeMenuItem = 'tournaments' %}
 
 {% block player_profile_content %}
-    <div x-data="playerTournamentsData({{ playerId }})" x-init="fetchTournaments()">
+    <div x-data="playerTournamentsData('{{ playerSlug|e('js') }}')" x-init="fetchTournaments()">
         <h1 class="title is-3">Turnieje zawodnika</h1>
 
         <template x-if="loading">
@@ -68,9 +68,9 @@
 
 {% block player_profile_scripts %}
     <script>
-        function playerTournamentsData(playerId) {
+        function playerTournamentsData(playerSlug) {
             return {
-                playerId,
+                playerSlug,
                 loading: true,
                 error: '',
                 search: '',
@@ -81,7 +81,7 @@
                 tournaments: [],
                 async fetchTournaments() {
                     try {
-                        let response = await fetch(`/api/players/${this.playerId}/tournaments`);
+                        let response = await fetch(`/api/players/${this.playerSlug}/tournaments`);
                         if (!response.ok) {
                             throw new Error('Nie udało się pobrać turniejów zawodnika');
                         }

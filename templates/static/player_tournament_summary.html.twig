@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div x-data="playerTournamentSummaryData({{ tournamentId }}, {{ playerId }})" x-init="fetchSummary()" style="margin-top: 32px;">
+    <div x-data="playerTournamentSummaryData({{ tournamentId }}, '{{ playerSlug|e('js') }}')" x-init="fetchSummary()" style="margin-top: 32px;">
         <template x-if="loading">
             <p>Ładowanie...</p>
         </template>
@@ -16,7 +16,7 @@
             <div class="box">
                 <h1 class="title is-4">
                     <span x-text="summary.playerName"></span>
-                    <a class="is-size-6" :href="`/players/${summary.playerId}`">(profil)</a>
+                    <a class="is-size-6" :href="`/players/${playerSlug}`">(profil)</a>
                 </h1>
                 <h2 class="subtitle is-6">
                     <a :href="`/tournaments/${summary.tournamentId}`" x-text="summary.tournamentName"></a>
@@ -63,7 +63,7 @@
                                 <td class="text-center" x-text="game.tableNumber ?? '-'"></td>
                                 <td class="text-center" x-text="game.wasFirstToPlay ? 'Tak' : 'Nie'"></td>
                                 <td class="text-center" x-text="translateResult(game.result)"></td>
-                                <td><a :href="`/tournaments/${summary.tournamentId}/players/${game.opponentId}`" x-text="game.opponentName"></a></td>
+                                <td><a :href="$store.playerLinks.tournamentProfile(summary.tournamentId, game.opponentId)" x-text="game.opponentName"></a></td>
                                 <td class="text-center" x-text="formatFloat(game.achievedRank)"></td>
                                 <td class="text-center" x-text="game.points"></td>
                                 <td class="text-center" x-text="game.pointsLost"></td>
@@ -86,8 +86,10 @@
 
 {% block javascripts %}
     <script>
-        function playerTournamentSummaryData(tournamentId, playerId) {
+        function playerTournamentSummaryData(tournamentId, playerSlug) {
             return {
+                tournamentId,
+                playerSlug,
                 loading: true,
                 error: '',
                 summary: null,
@@ -100,7 +102,7 @@
                 },
                 async fetchSummary() {
                     try {
-                        let response = await fetch(`/api/tournaments/${tournamentId}/players/${playerId}/summary`);
+                        let response = await fetch(`/api/tournaments/${tournamentId}/players/${playerSlug}/summary`);
                         if (!response.ok) {
                             throw new Error('Nie udało się pobrać podsumowania zawodnika');
                         }

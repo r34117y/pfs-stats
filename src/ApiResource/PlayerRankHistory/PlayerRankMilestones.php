@@ -9,7 +9,7 @@ use App\State\Provider\PlayerRankMilestonesProvider;
 #[ApiResource(
     operations: [
         new Get(
-            uriTemplate: '/players/{id}/rank-history/milestones',
+            uriTemplate: '/players/{slug}/rank-history/milestones',
             description: 'Get player rank milestones.',
             provider: PlayerRankMilestonesProvider::class
         ),
