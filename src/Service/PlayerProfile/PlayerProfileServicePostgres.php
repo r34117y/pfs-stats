@@ -45,9 +45,10 @@ class PlayerProfileServicePostgres implements PlayerProfileServiceInterface
                   AND legacy_player_id IS NOT NULL
                   AND player_id IS NOT NULL
             )
-            SELECT pm.legacy_player_id AS id, p.name_show
+            SELECT pm.legacy_player_id AS id, p.name_show, u.photo
             FROM player_map pm
             INNER JOIN player p ON p.id = pm.player_id
+            INNER JOIN app_user u ON p.id = u.player_id
             WHERE pm.legacy_player_id = :playerId
             LIMIT 1',
             [
@@ -106,7 +107,7 @@ class PlayerProfileServicePostgres implements PlayerProfileServiceInterface
             (int) $player['id'],
             (string) $player['name_show'],
             null,
-            null,
+            $player['photo'],
             $firstTournament,
             $lastTournament,
             $currentRanking !== false ? (float) $currentRanking['rank'] : null,

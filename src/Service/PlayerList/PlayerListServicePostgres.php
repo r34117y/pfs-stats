@@ -4,7 +4,6 @@ namespace App\Service\PlayerList;
 
 use App\ApiResource\PlayersList\PlayersList;
 use App\ApiResource\PlayersList\PlayersListPlayer;
-use App\Service\PlayerPhoto\PlayerPhotoService;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -16,7 +15,6 @@ final readonly class PlayerListServicePostgres implements PlayerListServiceInter
     public function __construct(
         #[Autowire(service: 'doctrine.dbal.default_connection')]
         private Connection $connection,
-        private PlayerPhotoService $playerPhotoService
     ) {
     }
 

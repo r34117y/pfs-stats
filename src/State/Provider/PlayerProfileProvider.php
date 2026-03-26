@@ -7,6 +7,7 @@ use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\PlayerProfile\PlayerProfile;
 use App\Service\PlayerProfile\PlayerProfileServiceInterface;
 use DateTimeImmutable;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -20,6 +21,9 @@ final readonly class PlayerProfileProvider implements ProviderInterface
     ) {
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): PlayerProfile
     {
         $rawPlayerId = $uriVariables['id'] ?? null;
