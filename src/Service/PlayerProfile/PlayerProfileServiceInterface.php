@@ -6,5 +6,5 @@ use App\ApiResource\PlayerProfile\PlayerProfile;
 
 interface PlayerProfileServiceInterface
 {
-    public function getPlayerProfile(int $playerId): PlayerProfile;
+    public function getPlayerProfile(string $playerSlug): PlayerProfile;
 }

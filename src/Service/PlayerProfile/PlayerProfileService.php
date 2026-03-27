@@ -20,16 +20,18 @@ final readonly class PlayerProfileService implements PlayerProfileServiceInterfa
     /**
      * @throws Exception
      */
-    public function getPlayerProfile(int $playerId): PlayerProfile
+    public function getPlayerProfile(string $playerSlug): PlayerProfile
     {
         $player = $this->connection->fetchAssociative(
-            'SELECT id, name_show FROM PFSPLAYER WHERE id = :playerId',
-            ['playerId' => $playerId]
+            'SELECT id, name_show, slug FROM PFSPLAYER WHERE slug = :slug',
+            ['slug' => $playerSlug]
         );
 
         if ($player === false) {
-            throw new NotFoundHttpException(sprintf('Player with id %d was not found.', $playerId));
+            throw new NotFoundHttpException(sprintf('Player with slug %s was not found.', $playerSlug));
         }
+
+        $playerId = (int) $player['id'];
 
         $currentRanking = $this->connection->fetchAssociative(
             "SELECT r.rank, r.pos
@@ -66,6 +68,7 @@ final readonly class PlayerProfileService implements PlayerProfileServiceInterfa
 
         return new PlayerProfile(
             (int) $player['id'],
+            (string) $player['slug'],
             (string) $player['name_show'],
             null,
             null,

@@ -2,6 +2,7 @@
 
 namespace App\ApiResource\PlayerProfile;
 
+use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use App\State\Provider\PlayerProfileProvider;
@@ -10,6 +11,7 @@ use App\State\Provider\PlayerProfileProvider;
     operations: [
         new Get(
             uriTemplate: '/players/{slug}',
+            uriVariables: ['slug'],
             description: 'Get player profile.',
             provider: PlayerProfileProvider::class
         ),
@@ -18,7 +20,10 @@ use App\State\Provider\PlayerProfileProvider;
 class PlayerProfile
 {
     public function __construct(
+        #[ApiProperty(identifier: false)]
         public int $id,
+        #[ApiProperty(identifier: true)]
+        public string $slug,
         public string $nameShow,
         public ?int $age,
         public ?string $photoUrl,

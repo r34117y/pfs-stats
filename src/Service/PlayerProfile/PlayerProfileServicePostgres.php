@@ -23,55 +23,39 @@ final readonly class PlayerProfileServicePostgres implements PlayerProfileServic
     /**
      * @throws Exception
      */
-    public function getPlayerProfile(int $playerId): PlayerProfile
+    public function getPlayerProfile(string $playerSlug): PlayerProfile
     {
         $organizationId = $this->fetchOrganizationId();
         if ($organizationId === null) {
-            throw new NotFoundHttpException(sprintf('Player with id %d was not found.', $playerId));
+            throw new NotFoundHttpException(sprintf('Player with slug %s was not found.', $playerSlug));
         }
 
         $player = $this->connection->fetchAssociative(
-            'WITH player_map AS (
-                SELECT DISTINCT legacy_player_id, player_id
-                FROM ranking
-                WHERE organization_id = :organizationId
-                  AND legacy_player_id IS NOT NULL
-                  AND player_id IS NOT NULL
-                UNION
-                SELECT DISTINCT legacy_player_id, player_id
-                FROM tournament_result
-                WHERE organization_id = :organizationId
-                  AND legacy_player_id IS NOT NULL
-                  AND player_id IS NOT NULL
-                UNION
-                SELECT DISTINCT legacy_player_id, player_id
-                FROM play_summary
-                WHERE organization_id = :organizationId
-                  AND legacy_player_id IS NOT NULL
-                  AND player_id IS NOT NULL
-            )
-            SELECT pm.legacy_player_id AS id, p.name_show, u.photo
-            FROM player_map pm
-            INNER JOIN player p ON p.id = pm.player_id
-            INNER JOIN app_user u ON p.id = u.player_id
-            WHERE pm.legacy_player_id = :playerId
+            'SELECT p.id, p.name_show, p.slug, u.photo
+            FROM player_organization po
+            INNER JOIN player p ON p.id = po.player_id
+            LEFT JOIN app_user u ON p.id = u.player_id
+            WHERE po.organization_id = :organizationId
+              AND p.slug = :slug
             LIMIT 1',
             [
                 'organizationId' => $organizationId,
-                'playerId' => $playerId,
+                'slug' => $playerSlug,
             ]
         );
 
         if ($player === false) {
-            throw new NotFoundHttpException(sprintf('Player with id %d was not found.', $playerId));
+            throw new NotFoundHttpException(sprintf('Player with slug %s was not found.', $playerSlug));
         }
+
+        $playerId = (int) $player['id'];
 
         $currentRanking = $this->connection->fetchAssociative(
             "SELECT r.rank, r.position AS pos
             FROM ranking r
             WHERE r.organization_id = :organizationId
               AND r.rtype = 'f'
-              AND r.legacy_player_id = :playerId
+              AND r.player_id = :playerId
               AND r.legacy_tournament_id = (
                 SELECT MAX(legacy_tournament_id)
                 FROM ranking
@@ -91,7 +75,7 @@ final readonly class PlayerProfileServicePostgres implements PlayerProfileServic
                 COALESCE(SUM(gwin), 0) AS total_games_won
             FROM tournament_result
             WHERE organization_id = :organizationId
-              AND legacy_player_id = :playerId",
+              AND player_id = :playerId",
             [
                 'organizationId' => $organizationId,
                 'playerId' => $playerId,
@@ -110,6 +94,7 @@ final readonly class PlayerProfileServicePostgres implements PlayerProfileServic
 
         return new PlayerProfile(
             (int) $player['id'],
+            (string) $player['slug'],
             (string) $player['name_show'],
             null,
             $player['photo'],
@@ -140,7 +125,7 @@ final readonly class PlayerProfileServicePostgres implements PlayerProfileServic
                 ON t.organization_id = tw.organization_id
                AND t.legacy_id = tw.legacy_tournament_id
             WHERE tw.organization_id = :organizationId
-              AND tw.legacy_player_id = :playerId
+              AND tw.player_id = :playerId
               AND t.legacy_id IS NOT NULL
             ORDER BY t.dt {$orderDirection}, t.legacy_id {$orderDirection}
             LIMIT 1",
@@ -176,7 +161,7 @@ final readonly class PlayerProfileServicePostgres implements PlayerProfileServic
                 ON t.organization_id = tw.organization_id
                AND t.legacy_id = tw.legacy_tournament_id
             WHERE tw.organization_id = :organizationId
-              AND tw.legacy_player_id = :playerId
+              AND tw.player_id = :playerId
               AND t.dt >= :fromDate
               AND t.dt <= :toDate",
             [
