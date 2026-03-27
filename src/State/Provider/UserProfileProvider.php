@@ -28,36 +28,50 @@ final readonly class UserProfileProvider implements ProviderInterface
             throw new AccessDeniedHttpException('Unauthorized.');
         }
 
+        $playerData = $this->fetchPlayerData($user);
+
         return new UserProfile(
             $user->getId() ?? 0,
-            $this->fetchPublicPlayerSlug($user),
+            $playerData['slug'],
             $user->getEmail() ?? '',
             $user->getYearOfBirth(),
             $user->getPhoto(),
+            $playerData['bio'],
         );
     }
 
     /**
+     * @return array{slug: ?string, bio: ?string}
      * @throws Exception
      */
-    private function fetchPublicPlayerSlug(User $user): ?string
+    private function fetchPlayerData(User $user): array
     {
         $playerId = $user->getPlayerId();
         if ($playerId === null) {
-            return null;
+            return [
+                'slug' => null,
+                'bio' => null,
+            ];
         }
 
-        $value = $this->connection->fetchOne(
-            'SELECT slug FROM player WHERE id = :playerId LIMIT 1',
+        $row = $this->connection->fetchAssociative(
+            'SELECT slug, bio FROM player WHERE id = :playerId LIMIT 1',
             ['playerId' => $playerId],
         );
 
-        if (!is_string($value)) {
-            return null;
+        if ($row === false) {
+            return [
+                'slug' => null,
+                'bio' => null,
+            ];
         }
 
-        $slug = trim($value);
+        $slug = is_string($row['slug'] ?? null) ? trim($row['slug']) : null;
+        $bio = is_string($row['bio'] ?? null) ? $row['bio'] : null;
 
-        return $slug === '' ? null : $slug;
+        return [
+            'slug' => $slug === '' ? null : $slug,
+            'bio' => $bio,
+        ];
     }
 }

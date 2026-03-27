@@ -23,6 +23,7 @@ class UserProfileSave
     public function __construct(
         public string $email = '',
         public ?string $dateOfBirth = null,
+        public ?string $bio = null,
     ) {
     }
 }

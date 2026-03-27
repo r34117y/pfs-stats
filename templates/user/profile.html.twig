@@ -67,6 +67,11 @@
                         <div>
                             <p><strong>Email:</strong> <span x-text="profile.email"></span></p>
                             <p><strong>Data urodzenia:</strong> <span x-text="displayDateOfBirth"></span></p>
+                            <p><strong>Bio:</strong></p>
+                            <p
+                                style="white-space: pre-line;"
+                                x-text="profile.bio && profile.bio.trim() !== '' ? profile.bio : 'Nie dodano jeszcze bio.'"
+                            ></p>
                         </div>
                     </template>
 
@@ -82,6 +87,12 @@
                                 <label class="label">Data urodzenia</label>
                                 <div class="control">
                                     <input type="date" class="input" x-model="form.dateOfBirth">
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label class="label">Bio</label>
+                                <div class="control">
+                                    <textarea class="textarea" x-model="form.bio" rows="6"></textarea>
                                 </div>
                             </div>
                             <div class="field">
@@ -112,7 +123,8 @@
                 profile: null,
                 form: {
                     email: '',
-                    dateOfBirth: ''
+                    dateOfBirth: '',
+                    bio: ''
                 },
                 get displayDateOfBirth() {
                     if (!this.profile || !this.profile.yearOfBirth) {
@@ -130,6 +142,7 @@
                     this.profile = profile;
                     this.form.email = profile.email ?? '';
                     this.form.dateOfBirth = this.yearToDate(profile.yearOfBirth);
+                    this.form.bio = profile.bio ?? '';
                 },
                 normalizeProfile(rawProfile) {
                     if (!rawProfile || typeof rawProfile !== 'object') {
@@ -140,7 +153,8 @@
                         publicPlayerSlug: rawProfile.publicPlayerSlug ?? null,
                         email: rawProfile.email ?? '',
                         yearOfBirth: rawProfile.yearOfBirth ?? null,
-                        photo: rawProfile.photo ?? null
+                        photo: rawProfile.photo ?? null,
+                        bio: rawProfile.bio ?? ''
                     };
 
                     if (!normalized.email) {
@@ -165,6 +179,7 @@
                     if (this.editing && this.profile) {
                         this.form.email = this.profile.email ?? '';
                         this.form.dateOfBirth = this.yearToDate(this.profile.yearOfBirth);
+                        this.form.bio = this.profile.bio ?? '';
                     }
                 },
                 async load() {
@@ -239,7 +254,8 @@
                             credentials: 'include',
                             body: JSON.stringify({
                                 email: this.form.email,
-                                dateOfBirth: this.form.dateOfBirth
+                                dateOfBirth: this.form.dateOfBirth,
+                                bio: this.form.bio
                             })
                         });
 

@@ -24,6 +24,7 @@ final readonly class UserProfile
         public string $email,
         public ?int $yearOfBirth,
         public ?string $photo,
+        public ?string $bio,
     ) {
     }
 }

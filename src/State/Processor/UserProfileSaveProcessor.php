@@ -10,8 +10,8 @@ use App\ApiResource\UserProfile\UserProfileSaveResponse;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class UserProfileSaveProcessor implements ProcessorInterface
 {
@@ -47,8 +47,11 @@ class UserProfileSaveProcessor implements ProcessorInterface
             $yearOfBirth = (int) $date->format('Y');
         }
 
+        $bio = $this->normalizeBio($data->bio);
+
         $user->setEmail($email);
         $user->setYearOfBirth($yearOfBirth);
+        $user->getPlayer()?->setBio($bio);
 
         $this->entityManager->flush();
 
@@ -56,10 +59,23 @@ class UserProfileSaveProcessor implements ProcessorInterface
             'Profile saved.',
             new UserProfile(
                 $user->getId() ?? 0,
+                $user->getPlayer()?->getSlug(),
                 $user->getEmail() ?? '',
                 $user->getYearOfBirth(),
                 $user->getPhoto(),
+                $user->getPlayer()?->getBio(),
             )
         );
+    }
+
+    private function normalizeBio(?string $bio): ?string
+    {
+        if ($bio === null) {
+            return null;
+        }
+
+        $normalizedBio = trim($bio);
+
+        return $normalizedBio === '' ? null : $normalizedBio;
     }
 }
