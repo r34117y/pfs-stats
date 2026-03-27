@@ -35,6 +35,7 @@ final readonly class RankingSnapshotServicePostgres implements RankingSnapshotSe
                 r.games,
                 p.name_show,
                 p.name_alph,
+                p.slug,
                 u.photo
              FROM ranking r
              INNER JOIN player p ON r.player_id = p.id
@@ -60,6 +61,7 @@ final readonly class RankingSnapshotServicePostgres implements RankingSnapshotSe
                 'nameShow' => (string) $row['name_show'],
                 'nameAlph' => (string) $row['name_alph'],
                 'photo' => $row['photo'],
+                'slug' => $row['slug'],
             ];
         }
 

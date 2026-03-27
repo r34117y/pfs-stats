@@ -2,7 +2,7 @@
 
 namespace App\ApiResource\Ranking;
 
-class RankingRow
+final readonly class RankingRow
 {
     public function __construct(
         public int $position,
@@ -14,7 +14,8 @@ class RankingRow
         public int $numberOfGames,
         public ?string $rankDelta,
         /** '+' if player just entered the ranking */
-        public int|string|null $positionDelta
+        public int|string|null $positionDelta,
+        public string $slug,
     )
     {
     }

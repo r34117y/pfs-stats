@@ -77,7 +77,8 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
                 $this->formatDecimal($row['rank']),
                 $row['games'],
                 $rankDelta,
-                $positionDelta
+                $positionDelta,
+                $row['slug']
             );
         }
 

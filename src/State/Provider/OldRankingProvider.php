@@ -48,6 +48,7 @@ final readonly class OldRankingProvider implements ProviderInterface
                     numberOfGames: (int) $row['games'],
                     rankDelta: null,
                     positionDelta: null,
+                    slug: $row['slug']
                 );
             }
 

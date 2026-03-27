@@ -125,6 +125,7 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
                 'games' => $snapshot['games'],
                 'tournaments' => $snapshot['tournaments'],
                 'photo' => $playerNames[$playerId]['photo'],
+                'slug' => $playerNames[$playerId]['slug'],
             ];
         }
 
@@ -183,6 +184,7 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
                 x.legacy_player_id AS legacy_player_id,
                 p.name_show,
                 p.name_alph,
+                p.slug,
                 u.photo
              FROM (
                 SELECT legacy_player_id, player_id
