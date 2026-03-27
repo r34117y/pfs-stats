@@ -86,10 +86,12 @@ final readonly class PlayerTournamentsServicePostgres implements PlayerTournamen
             $tournamentId = (int) $row['id'];
             $rawName = (string) ($row['fullname'] ?: $row['name']);
             $name = self::TOURNAMENT_NAME_OVERRIDES[$tournamentId] ?? $rawName;
+            $shortName = $row['name'];
 
             $tournaments[] = new PlayerTournamentsTournament(
                 $tournamentId,
                 $name,
+                $shortName,
                 $date ? $date->format('Y-m-d') : (string) $row['dt'],
                 (float) $row['tournament_rank'],
                 (int) $row['number_of_players'],
