@@ -39,7 +39,9 @@
                     <tbody>
                     <template x-for="tournament in pagedTournaments" :key="tournament.id">
                         <tr>
-                            <td x-text="`${tournament.shortName}`"></td>
+                            <td>
+                                <a :href="`/tournaments/${tournament.id}`" x-text="tournament.shortName"></a>
+                            </td>
                             <td class="has-text-centered" x-text="formatFloat(tournament.tournamentRank)"></td>
                             <td class="has-text-centered" x-text="tournament.numberOfPlayers"></td>
                             <td class="has-text-centered" x-text="tournament.finalPosition"></td>
@@ -93,10 +95,24 @@
                     if (this.sortCol === col) this.sortAsc = !this.sortAsc;
                     this.sortCol = col;
                     this.tournaments.sort((a, b) => {
-                        if (a[this.sortCol] < b[this.sortCol]) return this.sortAsc ? 1 : -1;
-                        if (a[this.sortCol] > b[this.sortCol]) return this.sortAsc ? -1 : 1;
+                        const left = this.getSortValue(a[this.sortCol], this.sortCol);
+                        const right = this.getSortValue(b[this.sortCol], this.sortCol);
+
+                        if (left < right) return this.sortAsc ? 1 : -1;
+                        if (left > right) return this.sortAsc ? -1 : 1;
                         return 0;
                     });
+                },
+                getSortValue(value, col) {
+                    if (col === 'positionAsPercent') {
+                        if (value === null || value === undefined || value === '') {
+                            return Number.NEGATIVE_INFINITY;
+                        }
+
+                        return Number.parseFloat(String(value).replace('%', ''));
+                    }
+
+                    return value;
                 },
                 nextPage() {
                     if ((this.curPage * this.pageSize) < this.filteredTournaments.length) {
