@@ -72,6 +72,8 @@ final readonly class PlayerProfileService implements PlayerProfileServiceInterfa
             (string) $player['name_show'],
             null,
             null,
+            null,
+            null,
             $firstTournament,
             $lastTournament,
             $currentRanking !== false ? (float) $currentRanking['rank'] : null,

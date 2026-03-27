@@ -25,6 +25,8 @@ class PlayerProfile
         #[ApiProperty(identifier: true)]
         public string $slug,
         public string $nameShow,
+        public ?string $city,
+        public ?string $bio,
         public ?int $age,
         public ?string $photoUrl,
         public ?PlayerProfileTournament $firstTournament,

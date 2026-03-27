@@ -31,7 +31,7 @@ final readonly class PlayerProfileServicePostgres implements PlayerProfileServic
         }
 
         $player = $this->connection->fetchAssociative(
-            'SELECT p.id, p.name_show, p.slug, u.photo
+            'SELECT p.id, p.name_show, p.slug, p.city, p.bio, u.photo
             FROM player_organization po
             INNER JOIN player p ON p.id = po.player_id
             LEFT JOIN app_user u ON p.id = u.player_id
@@ -96,6 +96,8 @@ final readonly class PlayerProfileServicePostgres implements PlayerProfileServic
             (int) $player['id'],
             (string) $player['slug'],
             (string) $player['name_show'],
+            $player['city'],
+            $player['bio'],
             null,
             $player['photo'],
             $firstTournament,
