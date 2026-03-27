@@ -6,5 +6,5 @@ use App\ApiResource\PlayerTournaments\PlayerTournaments;
 
 interface PlayerTournamentsServiceInterface
 {
-    public function getPlayerTournaments(int $playerId): PlayerTournaments;
+    public function getPlayerTournaments(string $playerSlug): PlayerTournaments;
 }

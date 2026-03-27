@@ -6,10 +6,11 @@ use App\ApiResource\PlayerTournaments\PlayerTournaments;
 use App\ApiResource\PlayerTournaments\PlayerTournamentsTournament;
 use DateTime;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class PlayerTournamentsServicePostgres implements PlayerTournamentsServiceInterface
+final readonly class PlayerTournamentsServicePostgres implements PlayerTournamentsServiceInterface
 {
     private const string ORGANIZATION_CODE = 'PFS';
     private const array TOURNAMENT_NAME_OVERRIDES = [
@@ -22,35 +23,25 @@ class PlayerTournamentsServicePostgres implements PlayerTournamentsServiceInterf
     ) {
     }
 
-    public function getPlayerTournaments(int $playerId): PlayerTournaments
+    /**
+     * @throws Exception
+     */
+    public function getPlayerTournaments(string $playerSlug): PlayerTournaments
     {
         $organizationId = $this->fetchOrganizationId();
         if ($organizationId === null) {
-            throw new NotFoundHttpException(sprintf('Player with id %d was not found.', $playerId));
+            throw new NotFoundHttpException(sprintf('Player with id %s was not found.', $playerSlug));
         }
 
-        $playerExists = $this->connection->fetchOne(
-            'SELECT 1
-             FROM (
-                SELECT legacy_player_id AS legacy_id
-                FROM ranking
-                WHERE organization_id = :organizationId
-                  AND legacy_player_id = :playerId
-                UNION ALL
-                SELECT legacy_player_id AS legacy_id
-                FROM tournament_result
-                WHERE organization_id = :organizationId
-                  AND legacy_player_id = :playerId
-             ) x
-             LIMIT 1',
+        $playerId = $this->connection->fetchOne(
+            'SELECT id from player where slug = :slug',
             [
-                'organizationId' => $organizationId,
-                'playerId' => $playerId,
+                'slug' => $playerSlug,
             ]
         );
 
-        if ($playerExists === false) {
-            throw new NotFoundHttpException(sprintf('Player with id %d was not found.', $playerId));
+        if (!$playerId) {
+            throw new NotFoundHttpException(sprintf('Player %s was not found.', $playerSlug));
         }
 
         $rows = $this->connection->fetchAllAssociative(
@@ -77,7 +68,7 @@ class PlayerTournamentsServicePostgres implements PlayerTournamentsServiceInterf
                 ON t.organization_id = tw.organization_id
                AND t.legacy_id = tw.legacy_tournament_id
             WHERE tw.organization_id = :organizationId
-              AND tw.legacy_player_id = :playerId
+              AND tw.player_id = :playerId
               AND t.legacy_id IS NOT NULL
             ORDER BY t.dt DESC, t.legacy_id DESC",
             [

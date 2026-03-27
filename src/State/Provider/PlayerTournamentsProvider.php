@@ -16,7 +16,6 @@ final readonly class PlayerTournamentsProvider implements ProviderInterface
 {
     public function __construct(
         private PlayerTournamentsServiceInterface $playerTournamentsService,
-        private PlayerSlugResolver $playerSlugResolver,
         #[Autowire(service: 'app.dataset_cache')]
         private CacheInterface $cache,
     ) {
@@ -27,16 +26,15 @@ final readonly class PlayerTournamentsProvider implements ProviderInterface
      */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): PlayerTournaments
     {
-        $playerSlug = trim((string) ($uriVariables['slug'] ?? $uriVariables['playerSlug'] ?? ''));
-        $playerId = $this->playerSlugResolver->resolveLegacyPlayerId($playerSlug);
+        $playerSlug = (string) $uriVariables['slug'];
 
-        if ($playerSlug === '' || $playerId === null) {
+        if ($playerSlug === '') {
             throw new NotFoundHttpException('Player not found.');
         }
 
         return $this->cache->get(
             sprintf('api.player_tournaments.%s', $playerSlug),
-            fn (): PlayerTournaments => $this->playerTournamentsService->getPlayerTournaments($playerId),
+            fn (): PlayerTournaments => $this->playerTournamentsService->getPlayerTournaments($playerSlug),
         );
     }
 }
