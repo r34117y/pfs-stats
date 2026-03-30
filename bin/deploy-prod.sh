@@ -72,12 +72,12 @@ else
 fi
 
 echo "Warming Symfony cache ..."
-docker compose -f "$COMPOSE_FILE" exec -T php php bin/console cache:clear --env=prod
-docker compose -f "$COMPOSE_FILE" exec -T php php bin/console cache:warmup --env=prod
+docker compose -f "$COMPOSE_FILE" exec -T -u www-data php php bin/console cache:clear --env=prod
+docker compose -f "$COMPOSE_FILE" exec -T -u www-data php php bin/console cache:warmup --env=prod
 
 if [[ "$RUN_MIGRATIONS" == true ]]; then
   echo "Running Doctrine migrations ..."
-  docker compose -f "$COMPOSE_FILE" exec -T php php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration
+  docker compose -f "$COMPOSE_FILE" exec -T -u www-data php php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration
 fi
 
 echo "Deployment finished."
