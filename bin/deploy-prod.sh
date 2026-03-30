@@ -4,7 +4,7 @@ set -euo pipefail
 
 COMPOSE_FILE="${COMPOSE_FILE:-compose.prod.yaml}"
 RUN_MIGRATIONS=true
-SKIP_BUILD=true
+SKIP_BUILD=false
 
 usage() {
   cat <<'EOF'
@@ -12,7 +12,7 @@ Usage:
   bin/deploy-prod.sh [options]
 
 Options:
-  --migrate     Run doctrine migrations after containers are up
+  --no-migrate  Skip doctrine migrations after containers are up
   --no-build    Skip image rebuild
   -h, --help    Show this help
 
@@ -31,8 +31,8 @@ EOF
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --migrate)
-      RUN_MIGRATIONS=true
+    --no-migrate)
+      RUN_MIGRATIONS=false
       shift
       ;;
     --no-build)
