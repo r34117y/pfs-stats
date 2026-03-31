@@ -568,7 +568,7 @@ final readonly class StatsService implements StatsServiceInterface
     /**
      * @throws Exception
      */
-    public function getAvgOpponentsPointsPerGame(): AvgOpponentsPointsPerGame
+    public function getAvgOpponentsPointsPerGame(int $orgId): AvgOpponentsPointsPerGame
     {
         $today = new DateTimeImmutable('today');
         $last24MonthsDateInt = (int) $today->modify('-24 months')->format('Ymd');
