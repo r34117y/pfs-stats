@@ -893,7 +893,7 @@ ORDER BY
         return new AvgOpponentsPointsPerGame($resultRows);
     }
 
-    public function getAvgPointsSumPerGame(): AvgPointsSumPerGame
+    public function getAvgPointsSumPerGame(int $orgId): AvgPointsSumPerGame
     {
         $today = new DateTimeImmutable('today');
         $last24MonthsDateInt = (int) $today->modify('-24 months')->format('Ymd');

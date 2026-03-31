@@ -100,6 +100,7 @@ final readonly class RefreshCacheAfterImportService
             '/api/stats/tournaments?org=' . $orgId,
             '/api/stats/avg-points-per-game?org=' . $orgId,
             '/api/stats/avg-opponents-points?org=' . $orgId,
+            '/api/stats/avg-points-sum?org=' . $orgId,
         ];
 
         try {
