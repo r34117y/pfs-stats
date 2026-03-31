@@ -302,7 +302,7 @@ final readonly class StatsService implements StatsServiceInterface
     /**
      * @throws Exception
      */
-    public function getGamesCount(): GamesCount
+    public function getGamesCount(int $orgId): GamesCount
     {
         $today = new DateTimeImmutable('today');
         $last24MonthsDateInt = (int) $today->modify('-24 months')->format('Ymd');
