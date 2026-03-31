@@ -89,84 +89,42 @@ use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-final class StatsServicePostgres implements StatsServiceInterface
+final readonly class StatsServicePostgres implements StatsServiceInterface
 {
-    private const string ORGANIZATION_CODE = 'PFS';
-    private const array EMPTY_NAME_TOURNAMENT_IDS = [
-        199703150,
-        199811220,
-        200506191,
-        200606180,
-        200706100,
-        200805250,
-    ];
-    private const int TOURNAMENT_ID_WITH_TRAILING_SPACE = 201204220;
-    private const array UNMAPPED_PLAYER_ID_OVERRIDES = [
-        'Alicja Jesionowska|Jesionowska Alicja' => 2565,
-        'Alicja Walaszewska-Kempa|Walaszewska-Kempa Alicja' => 2752,
-        'Babki z Rodzynkiem|Rodzynkiem Babki z' => 2238,
-        'Blank Szczecin|Szczecin Blank' => 2237,
-        'Blank.II Szczecin|Szczecin Blank.II' => 2574,
-        'Blubry Poznań|Poznań Blubry' => 2571,
-        'Blubry.II Poznań|Poznań Blubry.II' => 2575,
-        'Dąbek Warszawa|Warszawa Dąbek' => 2576,
-        'Elżbieta Świecka|Świecka Elżbieta' => 1991,
-        'F-16 Gdańsk|Gdańsk F-16' => 2722,
-        'Garden Club1|Club1 Garden' => 1086,
-        'Ghost Kraków|Ghost Kraków' => 2373,
-        'Grajmyż Piła|Piła Grajmyż' => 2232,
-        'Grzegorz Wączkowski|Wączkowski Grzegorz' => 1817,
-        'Górnośląski Klub Scrabble|Scrabble Górnośląski Klub' => 1519,
-        'Kantor Wisła|Wisła Kantor' => 365,
-        'Kwartet Czyli Kwintet|Kwintet Kwartet Czyli' => 2185,
-        'MOC Warszawa|Warszawa MOC' => 1101,
-        'Macaki Warszawa|Warszawa Macaki' => 1643,
-        'Matriks Milanówek|Milanówek Matriks' => 2234,
-        'Mikrus MDK|MDK Mikrus' => 1960,
-        'Mikrus Rumia|Rumia Mikrus' => 2573,
-        'Monika Nowakowska|Nowakowska Monika' => 2172,
-        'Niedoczas NML|NML Niedoczas' => 3335,
-        'OSPS Anagram|Anagram OSPS' => 2236,
-        'Okrutniki|Okrutniki' => 1723,
-        'Paranoja Warszawa|Warszawa Paranoja' => 2231,
-        'Siódemka Wrocław|Siódemka Wrocław' => 2075,
-        'Stacja Wadowice|Wadowice Stacja' => 3333,
-        'Start Kołobrzeg|Kołobrzeg Start' => 2577,
-        'Szkrab Racibórz|Racibórz Szkrab' => 3334,
-        'ŁKMS|ŁKMS' => 2235,
-    ];
-
     public function __construct(
         #[Autowire(service: 'doctrine.dbal.default_connection')]
         private Connection $connection,
     ) {
-        $this->bootstrapCompatibilityViews();
     }
 
-    public function getAllTimesResults(): AllTimesResults
+    public function getAllTimesResults(int $orgId): AllTimesResults
     {
+        $sql = "SELECT
+    tr.player_id AS playerId,
+    p.first_name || ' ' || p.last_name AS playerName,
+    p.slug,
+    SUM(CASE WHEN tr.place = 1 THEN 1 ELSE 0 END) AS firstPlace,
+    SUM(CASE WHEN tr.place = 2 THEN 1 ELSE 0 END) AS secondPlace,
+    SUM(CASE WHEN tr.place = 3 THEN 1 ELSE 0 END) AS thirdPlace,
+    SUM(CASE WHEN tr.place = 4 THEN 1 ELSE 0 END) AS fourthPlace,
+    SUM(CASE WHEN tr.place = 5 THEN 1 ELSE 0 END) AS fifthPlace,
+    SUM(CASE WHEN tr.place = 6 THEN 1 ELSE 0 END) AS sixthPlace
+FROM tournament_result tr
+         INNER JOIN player p ON p.id = tr.player_id
+WHERE tr.place BETWEEN 1 AND 6
+AND tr.organization_id=:orgId
+GROUP BY tr.player_id, playerName, p.slug
+ORDER BY
+    firstPlace DESC,
+    secondPlace DESC,
+    thirdPlace DESC,
+    fourthPlace DESC,
+    fifthPlace DESC,
+    sixthPlace DESC,
+    playerName";
         $rows = $this->fetchAllAssociativeCompat(
-            "SELECT
-                tw.player AS playerId,
-                p.name_show AS playerName,
-                SUM(CASE WHEN tw.place = 1 THEN 1 ELSE 0 END) AS firstPlace,
-                SUM(CASE WHEN tw.place = 2 THEN 1 ELSE 0 END) AS secondPlace,
-                SUM(CASE WHEN tw.place = 3 THEN 1 ELSE 0 END) AS thirdPlace,
-                SUM(CASE WHEN tw.place = 4 THEN 1 ELSE 0 END) AS fourthPlace,
-                SUM(CASE WHEN tw.place = 5 THEN 1 ELSE 0 END) AS fifthPlace,
-                SUM(CASE WHEN tw.place = 6 THEN 1 ELSE 0 END) AS sixthPlace
-            FROM PFSTOURWYN tw
-            INNER JOIN PFSPLAYER p ON p.id = tw.player
-            WHERE tw.place BETWEEN 1 AND 6
-            GROUP BY tw.player, p.name_show
-            ORDER BY
-                firstPlace DESC,
-                secondPlace DESC,
-                thirdPlace DESC,
-                fourthPlace DESC,
-                fifthPlace DESC,
-                sixthPlace DESC,
-                p.name_show ASC"
+            $sql,
+            ['orgId' => $orgId]
         );
 
         $resultRows = [];
@@ -190,6 +148,7 @@ final class StatsServicePostgres implements StatsServiceInterface
                 sixth: $sixth,
                 oneToThree: $first + $second + $third,
                 oneToSix: $first + $second + $third + $fourth + $fifth + $sixth,
+                slug: $row['slug']
             );
         }
 
@@ -198,8 +157,8 @@ final class StatsServicePostgres implements StatsServiceInterface
 
     public function getYearlyAllTimesResults(int $year): AllTimesResults
     {
-        $fromDate = ((int) $year * 10000) + 101;
-        $toDate = ((int) $year * 10000) + 1231;
+        $fromDate = ($year * 10000) + 101;
+        $toDate = ($year * 10000) + 1231;
 
         $rows = $this->fetchAllAssociativeCompat(
             "SELECT
@@ -4489,176 +4448,5 @@ final class StatsServicePostgres implements StatsServiceInterface
         }
 
         return $row;
-    }
-
-    private function bootstrapCompatibilityViews(): void
-    {
-        $organizationId = $this->connection->fetchOne(
-            'SELECT id FROM organization WHERE code = :code LIMIT 1',
-            ['code' => self::ORGANIZATION_CODE]
-        );
-
-        if ($organizationId === false || $organizationId === null) {
-            return;
-        }
-
-        $organizationId = (int) $organizationId;
-        $emptyNameIds = implode(', ', self::EMPTY_NAME_TOURNAMENT_IDS);
-        $trailingNameTournamentId = self::TOURNAMENT_ID_WITH_TRAILING_SPACE;
-        $playerOverrides = [];
-        foreach (self::UNMAPPED_PLAYER_ID_OVERRIDES as $key => $legacyPlayerId) {
-            [$nameShow, $nameAlph] = explode('|', $key, 2);
-            $playerOverrides[] = sprintf(
-                "SELECT %d::int AS id, '%s'::text AS name_show, '%s'::text AS name_alph",
-                $legacyPlayerId,
-                str_replace("'", "''", $nameShow),
-                str_replace("'", "''", $nameAlph)
-            );
-        }
-
-        $playerOverridesSql = implode(' UNION ALL ', $playerOverrides);
-
-        $this->connection->executeStatement(
-            "CREATE OR REPLACE TEMP VIEW pfs_player_legacy_override AS
-             WITH override_players AS (
-                {$playerOverridesSql}
-             )
-             SELECT
-                p.id AS player_id,
-                op.id AS legacy_player_id
-             FROM player p
-             INNER JOIN override_players op
-                ON op.name_show = p.name_show
-               AND op.name_alph = p.name_alph"
-        );
-
-        $this->connection->executeStatement(
-            "CREATE OR REPLACE TEMP VIEW pfsplayer AS
-             WITH mapped AS (
-                SELECT legacy_player_id, player_id
-                FROM ranking
-                WHERE organization_id = {$organizationId}
-                  AND legacy_player_id IS NOT NULL
-                  AND player_id IS NOT NULL
-                UNION
-                SELECT legacy_player_id, player_id
-                FROM tournament_result
-                WHERE organization_id = {$organizationId}
-                  AND legacy_player_id IS NOT NULL
-                  AND player_id IS NOT NULL
-                UNION
-                SELECT legacy_player1_id AS legacy_player_id, player1_id AS player_id
-                FROM tournament_game
-                WHERE organization_id = {$organizationId}
-                  AND legacy_player1_id IS NOT NULL
-                  AND player1_id IS NOT NULL
-                UNION
-                SELECT legacy_player2_id AS legacy_player_id, player2_id AS player_id
-                FROM tournament_game
-                WHERE organization_id = {$organizationId}
-                  AND legacy_player2_id IS NOT NULL
-                  AND player2_id IS NOT NULL
-             ),
-             mapped_by_player AS (
-                SELECT player_id, MIN(legacy_player_id) AS legacy_player_id
-                FROM mapped
-                GROUP BY player_id
-             )
-             SELECT
-                COALESCE(mbp.legacy_player_id, plo.legacy_player_id, po.player_id) AS id,
-                p.name_show COLLATE \"pl-PL-x-icu\" AS name_show,
-                p.name_alph COLLATE \"pl-PL-x-icu\" AS name_alph
-             FROM player_organization po
-             INNER JOIN player p ON p.id = po.player_id
-             LEFT JOIN mapped_by_player mbp ON mbp.player_id = po.player_id
-             LEFT JOIN pfs_player_legacy_override plo ON plo.player_id = po.player_id
-             WHERE po.organization_id = {$organizationId}
-               AND p.name_show <> '\"Okrutniki\" -'"
-        );
-
-        $this->connection->executeStatement(
-            "CREATE OR REPLACE TEMP VIEW pfstours AS
-             SELECT
-                t.legacy_id AS id,
-                t.dt,
-                t.name,
-                CASE
-                    WHEN t.legacy_id IN ({$emptyNameIds}) THEN ''
-                    WHEN t.legacy_id = {$trailingNameTournamentId} AND t.fullname IS NOT NULL AND right(t.fullname, 1) <> ' ' THEN t.fullname || ' '
-                    ELSE t.fullname
-                END AS fullname,
-                COALESCE(plo.legacy_player_id, t.legacy_winner_player_id) AS winner,
-                t.trank,
-                t.players_count AS players,
-                t.rounds,
-                t.start_round AS start,
-                t.referee,
-                t.place,
-                t.organizer,
-                t.urlid
-             FROM tournament t
-             LEFT JOIN pfs_player_legacy_override plo ON plo.player_id = t.winner_player_id
-             WHERE t.organization_id = {$organizationId}
-               AND t.legacy_id IS NOT NULL"
-        );
-
-        $this->connection->executeStatement(
-            "CREATE OR REPLACE TEMP VIEW pfstourwyn AS
-             SELECT
-                tw.legacy_tournament_id AS turniej,
-                COALESCE(plo.legacy_player_id, tw.legacy_player_id) AS player,
-                tw.place,
-                tw.gwin,
-                tw.glost,
-                tw.gdraw,
-                tw.games,
-                tw.trank,
-                tw.brank,
-                tw.points,
-                tw.pointo,
-                tw.hostgames,
-                tw.hostwin,
-                tw.masters
-             FROM tournament_result tw
-             LEFT JOIN pfs_player_legacy_override plo ON plo.player_id = tw.player_id
-             WHERE tw.organization_id = {$organizationId}
-               AND tw.legacy_tournament_id IS NOT NULL
-               AND COALESCE(plo.legacy_player_id, tw.legacy_player_id) IS NOT NULL"
-        );
-
-        $this->connection->executeStatement(
-            "CREATE OR REPLACE TEMP VIEW pfstourhh AS
-             SELECT
-                h.legacy_tournament_id AS turniej,
-                h.round_no AS runda,
-                COALESCE(plo1.legacy_player_id, h.legacy_player1_id) AS player1,
-                COALESCE(plo2.legacy_player_id, h.legacy_player2_id) AS player2,
-                h.result1,
-                h.result2,
-                h.host
-             FROM tournament_game h
-             LEFT JOIN pfs_player_legacy_override plo1 ON plo1.player_id = h.player1_id
-             LEFT JOIN pfs_player_legacy_override plo2 ON plo2.player_id = h.player2_id
-             WHERE h.organization_id = {$organizationId}
-               AND h.legacy_tournament_id IS NOT NULL
-               AND COALESCE(plo1.legacy_player_id, h.legacy_player1_id) IS NOT NULL
-               AND COALESCE(plo2.legacy_player_id, h.legacy_player2_id) IS NOT NULL"
-        );
-
-        $this->connection->executeStatement(
-            "CREATE OR REPLACE TEMP VIEW pfsranking AS
-             SELECT
-                r.legacy_tournament_id AS turniej,
-                COALESCE(plo.legacy_player_id, r.legacy_player_id) AS player,
-                r.position AS pos,
-                r.rank,
-                r.games,
-                r.rtype
-             FROM ranking r
-             LEFT JOIN pfs_player_legacy_override plo ON plo.player_id = r.player_id
-             WHERE r.organization_id = {$organizationId}
-               AND r.legacy_tournament_id IS NOT NULL
-               AND COALESCE(plo.legacy_player_id, r.legacy_player_id) IS NOT NULL"
-        );
     }
 }

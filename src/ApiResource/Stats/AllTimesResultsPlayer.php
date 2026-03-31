@@ -16,6 +16,7 @@ class AllTimesResultsPlayer
         public int $sixth,
         public int $oneToThree,
         public int $oneToSix,
+        public string $slug,
     ) {
     }
 }

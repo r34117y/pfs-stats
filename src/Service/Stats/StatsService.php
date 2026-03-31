@@ -101,7 +101,7 @@ final readonly class StatsService implements StatsServiceInterface
     /**
      * @throws Exception
      */
-    public function getAllTimesResults(): AllTimesResults
+    public function getAllTimesResults(int $orgId): AllTimesResults
     {
         $rows = $this->connection->fetchAllAssociative(
             "SELECT

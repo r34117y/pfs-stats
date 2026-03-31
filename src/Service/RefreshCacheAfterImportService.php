@@ -22,8 +22,13 @@ final readonly class RefreshCacheAfterImportService
     ) {
     }
 
-    public function refresh(?string $datasetVersion = null, bool $clearCacheApp = false, bool $warmup = false, ?callable $reporter = null): RefreshCacheAfterImportResult
-    {
+    public function refresh(
+        ?string $datasetVersion = null,
+        bool $clearCacheApp = false,
+        bool $warmup = false,
+        ?callable $reporter = null,
+        ?int $orgId = null
+    ): RefreshCacheAfterImportResult {
         if ($clearCacheApp) {
             $this->report($reporter, 'Clearing cache.app pool...');
             $this->cacheApp->clear();
@@ -43,7 +48,7 @@ final readonly class RefreshCacheAfterImportService
 
         @ini_set('memory_limit', '768M');
 
-        $paths = $this->buildWarmupPaths();
+        $paths = $this->buildWarmupPaths($orgId);
         if ($paths === []) {
             $this->report($reporter, 'No warmup paths resolved.');
             return $result;
@@ -79,7 +84,7 @@ final readonly class RefreshCacheAfterImportService
     /**
      * @return list<string>
      */
-    private function buildWarmupPaths(): array
+    private function buildWarmupPaths(int $orgId): array
     {
         $paths = [
             '/api/ranking',
@@ -87,40 +92,11 @@ final readonly class RefreshCacheAfterImportService
             '/api/players',
             '/api/tournaments',
             '/api/clubs',
-            '/api/stats/all-times-results',
-            '/api/stats/games',
-            '/api/stats/games-won',
-            '/api/stats/tournaments',
-            '/api/stats/avg-points-per-game',
-            '/api/annotated-games?page=1',
+            '/api/stats/all-times-results?org=' . $orgId,
         ];
 
         try {
-            $playerId = $this->fetchAnyPlayerId();
-            if ($playerId !== null) {
-                $paths[] = sprintf('/api/players/%d', $playerId);
-                $paths[] = sprintf('/api/players/%d/tournaments', $playerId);
-                $paths[] = sprintf('/api/players/%d/rank-history', $playerId);
-                $paths[] = sprintf('/api/players/%d/rank-history/milestones', $playerId);
-                $paths[] = sprintf('/api/players/%d/game-balance', $playerId);
-                $paths[] = sprintf('/api/players/%d/records/most-points', $playerId);
-            }
-
-            $tournamentId = $this->fetchLatestTournamentId();
-            if ($tournamentId !== null) {
-                $paths[] = sprintf('/api/tournaments/%d/details', $tournamentId);
-                $paths[] = sprintf('/api/tournaments/%d/results', $tournamentId);
-            }
-
-            $summary = $this->fetchAnyTournamentPlayerPair();
-            if ($summary !== null) {
-                $paths[] = sprintf('/api/tournaments/%d/players/%d/summary', $summary['tournamentId'], $summary['playerId']);
-            }
-
-            $annotated = $this->fetchAnyAnnotatedGameKey();
-            if ($annotated !== null) {
-                $paths[] = sprintf('/api/games/%d-%d-%d', $annotated['tour'], $annotated['round'], $annotated['player1']);
-            }
+            //todo dynamiczne ścieżki, profile zawodników etc.
         } catch (Exception) {
             // Ignore warmup enrichment errors and keep base path list.
         }
