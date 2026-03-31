@@ -93,6 +93,8 @@ final readonly class RefreshCacheAfterImportService
             '/api/tournaments',
             '/api/clubs',
             '/api/stats/all-times-results?org=' . $orgId,
+            '/api/stats/all-time-summary?org=' . $orgId,
+            '/api/stats/games?org=' . $orgId,
         ];
 
         try {
