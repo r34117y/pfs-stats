@@ -185,7 +185,8 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
                 p.name_show,
                 p.name_alph,
                 p.slug,
-                u.photo
+                u.photo,
+                p.slug
              FROM (
                 SELECT legacy_player_id, player_id
                 FROM ranking
@@ -209,7 +210,8 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
             $result[(int) $row['legacy_player_id']] = [
                 'name' => (string) $row['name_show'],
                 'nameSort' => (string) $row['name_alph'],
-                'photo' => $row['photo']
+                'photo' => $row['photo'],
+                'slug' => $row['slug']
             ];
         }
 
