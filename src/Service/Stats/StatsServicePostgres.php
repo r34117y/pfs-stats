@@ -280,16 +280,16 @@ ORDER BY
             $this->buildSummaryRow('Odsetek remisów', $this->formatPercent($allTime['drawPercent']), $this->formatPercent($last12Months['drawPercent'])),
             $this->buildSummaryRow('Średnia ilość graczy na turnieju', $this->formatFloat($allTime['avgPlayersPerTournament']), $this->formatFloat($last12Months['avgPlayersPerTournament'])),
             $this->buildSummaryRow('Gier na zawodnika', $this->formatFloat($allTime['gamesPerPlayer']), $this->formatFloat($last12Months['gamesPerPlayer'])),
-            $this->buildSummaryRow('Gier powyżej 350 punktów (%)', $this->formatPercent($allTime['over350Percent']), $this->formatPercent($last12Months['over350Percent'])),
-            $this->buildSummaryRow('Gier powyżej 400 punktów (%)', $this->formatPercent($allTime['over400Percent']), $this->formatPercent($last12Months['over400Percent'])),
-            $this->buildSummaryRow('Gier powyżej 500 punktów (%)', $this->formatPercent($allTime['over500Percent']), $this->formatPercent($last12Months['over500Percent'])),
-            $this->buildSummaryRow('Gier powyżej 600 punktów (%)', $this->formatPercent($allTime['over600Percent']), $this->formatPercent($last12Months['over600Percent'])),
+            $this->buildSummaryRow('Gier >350 punktów (%)', $this->formatPercent($allTime['over350Percent']), $this->formatPercent($last12Months['over350Percent'])),
+            $this->buildSummaryRow('Gier >400 punktów (%)', $this->formatPercent($allTime['over400Percent']), $this->formatPercent($last12Months['over400Percent'])),
+            $this->buildSummaryRow('Gier >500 punktów (%)', $this->formatPercent($allTime['over500Percent']), $this->formatPercent($last12Months['over500Percent'])),
+            $this->buildSummaryRow('Gier >600 punktów (%)', $this->formatPercent($allTime['over600Percent']), $this->formatPercent($last12Months['over600Percent'])),
             $this->buildSummaryRow('Średnia punktów zwycięzcy', $this->formatFloat($allTime['avgWinnerPoints']), $this->formatFloat($last12Months['avgWinnerPoints'])),
             $this->buildSummaryRow('Średnia punktów pokonanego', $this->formatFloat($allTime['avgLoserPoints']), $this->formatFloat($last12Months['avgLoserPoints'])),
-            $this->buildSummaryRow('Wygrane gracza powyżej 130 z graczem 110-130', $allTime['wins130PlusVs110to130'], $last12Months['wins130PlusVs110to130']),
-            $this->buildSummaryRow('Wygrane gracza powyżej 130 z graczem poniżej 110', $allTime['wins130PlusVsBelow110'], $last12Months['wins130PlusVsBelow110']),
-            $this->buildSummaryRow('Wygrane gracza 110-130 z graczem poniżej 110', $allTime['wins110to130VsBelow110'], $last12Months['wins110to130VsBelow110']),
-            $this->buildSummaryRow('Odsetek gier wygranych przez gospodarza', $this->formatPercent($allTime['hostWinPercent']), $this->formatPercent($last12Months['hostWinPercent'])),
+            $this->buildSummaryRow('Wygrane gracza >130 z graczem 110-130', $this->formatPercent($allTime['wins130PlusVs110to130']), $this->formatPercent($last12Months['wins130PlusVs110to130'])),
+            $this->buildSummaryRow('Wygrane gracza >130 z graczem <110', $this->formatPercent($allTime['wins130PlusVsBelow110']), $this->formatPercent($last12Months['wins130PlusVsBelow110'])),
+            $this->buildSummaryRow('Wygrane gracza 110-130 z graczem <110', $this->formatPercent($allTime['wins110to130VsBelow110']), $this->formatPercent($last12Months['wins110to130VsBelow110'])),
+            $this->buildSummaryRow('% gier wygranych przez rozpoczynającego gracza', $this->formatPercent($allTime['hostWinPercent']), $this->formatPercent($last12Months['hostWinPercent'])),
         ];
 
         return new AllTimeSummary($rows);
@@ -4186,9 +4186,9 @@ ORDER BY
     {
         $filterSql = ' WHERE t.organization_id = :orgId';
         $filterParams = ['orgId' => $orgId];
-        if ($fromDate) {
+        if ($fromDate !== null) {
             $filterSql .= ' AND t.dt >= :fromDate ';
-            $filterParams = $filterParams['fromDate'] = $fromDate;
+            $filterParams['fromDate'] = $fromDate;
         }
 
         $tournamentSummary = $this->fetchAssociativeCompat(
@@ -4226,110 +4226,129 @@ ORDER BY
             );
         }
 
-        $games = $this->fetchAllAssociativeCompat(
+        $gameSummary = $this->fetchAssociativeCompat(
             "WITH unique_games AS (
                 SELECT
-                    h.turniej,
-                    h.runda,
-                    LEAST(h.player1, h.player2) AS pmin,
-                    GREATEST(h.player1, h.player2) AS pmax,
-                    h.player1,
-                    h.player2,
+                    h.legacy_tournament_id AS turniej,
+                    h.round_no AS runda,
+                    h.legacy_player1_id AS player1,
+                    h.legacy_player2_id AS player2,
                     h.result1,
                     h.result2,
                     h.host,
-                    t.dt,
-                    tw1.brank AS rank1,
-                    tw2.brank AS rank2,
+                    COALESCE(tw1.brank, 100.0) AS rank1,
+                    COALESCE(tw2.brank, 100.0) AS rank2,
                     ROW_NUMBER() OVER (
-                        PARTITION BY h.turniej, h.runda, LEAST(h.player1, h.player2), GREATEST(h.player1, h.player2)
-                        ORDER BY h.player1 ASC
+                        PARTITION BY
+                            h.legacy_tournament_id,
+                            h.round_no,
+                            LEAST(h.legacy_player1_id, h.legacy_player2_id),
+                            GREATEST(h.legacy_player1_id, h.legacy_player2_id)
+                        ORDER BY h.legacy_player1_id ASC
                     ) AS rn
-                FROM PFSTOURHH h
-                INNER JOIN PFSTOURS t ON t.id = h.turniej
-                LEFT JOIN PFSTOURWYN tw1 ON tw1.turniej = h.turniej AND tw1.player = h.player1
-                LEFT JOIN PFSTOURWYN tw2 ON tw2.turniej = h.turniej AND tw2.player = h.player2"
-                . ($fromDate !== null ? ' WHERE t.dt >= :fromDate' : '') .
-            ")
+                FROM tournament_game h
+                INNER JOIN tournament t ON t.id = h.tournament_id
+                LEFT JOIN tournament_result tw1
+                    ON tw1.organization_id = h.organization_id
+                   AND tw1.legacy_tournament_id = h.legacy_tournament_id
+                   AND tw1.legacy_player_id = h.legacy_player1_id
+                LEFT JOIN tournament_result tw2
+                    ON tw2.organization_id = h.organization_id
+                   AND tw2.legacy_tournament_id = h.legacy_tournament_id
+                   AND tw2.legacy_player_id = h.legacy_player2_id
+                WHERE h.organization_id = :orgId"
+                . ($fromDate !== null ? ' AND t.dt >= :fromDate' : '') .
+            "),
+            deduped_games AS (
+                SELECT
+                    turniej,
+                    runda,
+                    player1,
+                    player2,
+                    result1,
+                    result2,
+                    host,
+                    rank1,
+                    rank2
+                FROM unique_games
+                WHERE rn = 1
+            )
             SELECT
-                turniej, runda, player1, player2, result1, result2, host, dt, rank1, rank2
-            FROM unique_games
-            WHERE rn = 1",
+                COUNT(*) AS playedGames,
+                SUM(CASE WHEN result1 = result2 THEN 1 ELSE 0 END) AS draws,
+                SUM(CASE WHEN result1 > 350 THEN 1 ELSE 0 END) + SUM(CASE WHEN result2 > 350 THEN 1 ELSE 0 END) AS scoresOver350,
+                SUM(CASE WHEN result1 > 400 THEN 1 ELSE 0 END) + SUM(CASE WHEN result2 > 400 THEN 1 ELSE 0 END) AS scoresOver400,
+                SUM(CASE WHEN result1 > 500 THEN 1 ELSE 0 END) + SUM(CASE WHEN result2 > 500 THEN 1 ELSE 0 END) AS scoresOver500,
+                SUM(CASE WHEN result1 > 600 THEN 1 ELSE 0 END) + SUM(CASE WHEN result2 > 600 THEN 1 ELSE 0 END) AS scoresOver600,
+                SUM(CASE WHEN result1 <> result2 THEN 1 ELSE 0 END) AS decisiveGames,
+                SUM(
+                    CASE
+                        WHEN result1 > result2 THEN result1
+                        WHEN result2 > result1 THEN result2
+                        ELSE 0
+                    END
+                ) AS winnerPointsSum,
+                SUM(
+                    CASE
+                        WHEN result1 > result2 THEN result2
+                        WHEN result2 > result1 THEN result1
+                        ELSE 0
+                    END
+                ) AS loserPointsSum,
+                SUM(
+                    CASE
+                        WHEN result1 <> result2
+                         AND CASE WHEN result1 > result2 THEN rank1 ELSE rank2 END > 130.0
+                         AND CASE WHEN result1 > result2 THEN rank2 ELSE rank1 END BETWEEN 110.0 AND 130.0
+                        THEN 1
+                        ELSE 0
+                    END
+                ) AS wins130PlusVs110to130,
+                SUM(
+                    CASE
+                        WHEN result1 <> result2
+                         AND CASE WHEN result1 > result2 THEN rank1 ELSE rank2 END > 130.0
+                         AND CASE WHEN result1 > result2 THEN rank2 ELSE rank1 END < 110.0
+                        THEN 1
+                        ELSE 0
+                    END
+                ) AS wins130PlusVsBelow110,
+                SUM(
+                    CASE
+                        WHEN result1 <> result2
+                         AND CASE WHEN result1 > result2 THEN rank1 ELSE rank2 END BETWEEN 110.0 AND 130.0
+                         AND CASE WHEN result1 > result2 THEN rank2 ELSE rank1 END < 110.0
+                        THEN 1
+                        ELSE 0
+                    END
+                ) AS wins110to130VsBelow110,
+                SUM(CASE WHEN host IS NOT NULL THEN 1 ELSE 0 END) AS hostGames,
+                SUM(
+                    CASE
+                        WHEN host IS NOT NULL
+                         AND ((host = player1 AND result1 > result2) OR (host = player2 AND result2 > result1))
+                        THEN 1
+                        ELSE 0
+                    END
+                ) AS hostWins
+            FROM deduped_games",
             $filterParams
         );
 
-        $playedGames = count($games);
-        $draws = 0;
-        $scoresOver350 = 0;
-        $scoresOver400 = 0;
-        $scoresOver500 = 0;
-        $scoresOver600 = 0;
-        $winnerPointsSum = 0;
-        $loserPointsSum = 0;
-        $decisiveGames = 0;
-        $wins130PlusVs110to130 = 0;
-        $wins130PlusVsBelow110 = 0;
-        $wins110to130VsBelow110 = 0;
-        $hostGames = 0;
-        $hostWins = 0;
-
-        foreach ($games as $game) {
-            $result1 = (int) $game['result1'];
-            $result2 = (int) $game['result2'];
-            $rank1 = (float) ($game['rank1'] ?? 100.0);
-            $rank2 = (float) ($game['rank2'] ?? 100.0);
-
-            if ($result1 === $result2) {
-                $draws++;
-            } else {
-                $decisiveGames++;
-                if ($result1 > $result2) {
-                    $winnerPointsSum += $result1;
-                    $loserPointsSum += $result2;
-                    $winnerRank = $rank1;
-                    $loserRank = $rank2;
-                } else {
-                    $winnerPointsSum += $result2;
-                    $loserPointsSum += $result1;
-                    $winnerRank = $rank2;
-                    $loserRank = $rank1;
-                }
-
-                if ($winnerRank > 130.0 && $loserRank >= 110.0 && $loserRank <= 130.0) {
-                    $wins130PlusVs110to130++;
-                }
-                if ($winnerRank > 130.0 && $loserRank < 110.0) {
-                    $wins130PlusVsBelow110++;
-                }
-                if ($winnerRank >= 110.0 && $winnerRank <= 130.0 && $loserRank < 110.0) {
-                    $wins110to130VsBelow110++;
-                }
-            }
-
-            $scores = [$result1, $result2];
-            foreach ($scores as $score) {
-                if ($score > 350) {
-                    $scoresOver350++;
-                }
-                if ($score > 400) {
-                    $scoresOver400++;
-                }
-                if ($score > 500) {
-                    $scoresOver500++;
-                }
-                if ($score > 600) {
-                    $scoresOver600++;
-                }
-            }
-
-            if ($game['host'] !== null) {
-                $host = (int) $game['host'];
-                $hostGames++;
-                if (($host === (int) $game['player1'] && $result1 > $result2) || ($host === (int) $game['player2'] && $result2 > $result1)) {
-                    $hostWins++;
-                }
-            }
-        }
+        $playedGames = (int) ($gameSummary['playedGames'] ?? 0);
+        $draws = (int) ($gameSummary['draws'] ?? 0);
+        $scoresOver350 = (int) ($gameSummary['scoresover350'] ?? 0);
+        $scoresOver400 = (int) ($gameSummary['scoresover400'] ?? 0);
+        $scoresOver500 = (int) ($gameSummary['scoresover500'] ?? 0);
+        $scoresOver600 = (int) ($gameSummary['scoresover600'] ?? 0);
+        $winnerPointsSum = (int) ($gameSummary['winnerpointssum'] ?? 0);
+        $loserPointsSum = (int) ($gameSummary['loserpointssum'] ?? 0);
+        $decisiveGames = (int) ($gameSummary['decisivegames'] ?? 0);
+        $wins130PlusVs110to130 = (int) ($gameSummary['wins130PlusVs110to130'] ?? 0);
+        $wins130PlusVsBelow110 = (int) ($gameSummary['wins130PlusVsBelow110'] ?? 0);
+        $wins110to130VsBelow110 = (int) ($gameSummary['wins110to130VsBelow110'] ?? 0);
+        $hostGames = (int) ($gameSummary['hostgames'] ?? 0);
+        $hostWins = (int) ($gameSummary['hostwins'] ?? 0);
 
         $totalScores = $playedGames > 0 ? $playedGames * 2 : 0;
         $tournamentsCount = (int) ($tournamentSummary['tournamentsCount'] ?? 0);
@@ -4350,10 +4369,10 @@ ORDER BY
             'over600Percent' => $totalScores > 0 ? ($scoresOver600 * 100.0 / $totalScores) : 0.0,
             'avgWinnerPoints' => $decisiveGames > 0 ? ($winnerPointsSum / $decisiveGames) : 0.0,
             'avgLoserPoints' => $decisiveGames > 0 ? ($loserPointsSum / $decisiveGames) : 0.0,
-            'wins130PlusVs110to130' => $wins130PlusVs110to130,
-            'wins130PlusVsBelow110' => $wins130PlusVsBelow110,
-            'wins110to130VsBelow110' => $wins110to130VsBelow110,
-            'hostWinPercent' => $hostGames > 0 ? ($hostWins * 100.0 / $hostGames) : 0.0,
+            'wins130PlusVs110to130' => $playedGames > 0 ? ($wins130PlusVs110to130 * 100.0 / $playedGames) : 0.0,
+            'wins130PlusVsBelow110' => $playedGames > 0 ? ($wins130PlusVsBelow110 * 100.0 / $playedGames) : 0.0,
+            'wins110to130VsBelow110' => $playedGames > 0 ? ($wins110to130VsBelow110 * 100.0 / $playedGames) : 0.0,
+            'hostWinPercent' => $playedGames > 0 ? ($hostWins * 100.0 / $playedGames) : 0.0,
         ];
     }
 
