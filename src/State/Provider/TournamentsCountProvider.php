@@ -7,10 +7,11 @@ use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\Stats\TournamentsCount;
 use App\Service\Stats\StatsServiceInterface;
 use DateTimeImmutable;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\Cache\CacheInterface;
 
-class TournamentsCountProvider implements ProviderInterface
+final readonly class TournamentsCountProvider implements ProviderInterface
 {
     public function __construct(
         private StatsServiceInterface $statsService,
@@ -19,13 +20,15 @@ class TournamentsCountProvider implements ProviderInterface
     ) {
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): TournamentsCount
     {
-        $todayKey = (new DateTimeImmutable('today'))->format('Ymd');
-
+        $orgId = $uriVariables['org'] ?? 21;
         return $this->cache->get(
-            sprintf('api.stats.tournaments_count.%s', $todayKey),
-            fn (): TournamentsCount => $this->statsService->getTournamentsCount(),
+            sprintf('api.stats.tournaments_count.%d', $orgId),
+            fn (): TournamentsCount => $this->statsService->getTournamentsCount($orgId),
         );
     }
 }

@@ -574,7 +574,7 @@ ORDER BY
         return new GamesWon($resultRows);
     }
 
-    public function getTournamentsCount(): TournamentsCount
+    public function getTournamentsCount(int $orgId): TournamentsCount
     {
         $today = new DateTimeImmutable('today');
         $last24MonthsDateInt = (int) $today->modify('-24 months')->format('Ymd');
