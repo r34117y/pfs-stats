@@ -582,17 +582,21 @@ ORDER BY
 
         $rows = $this->fetchAllAssociativeCompat(
             "SELECT
-                tw.player AS playerId,
+                tw.legacy_player_id AS playerId,
                 p.name_show AS playerName,
-                COUNT(DISTINCT tw.turniej) AS tournamentsCount,
-                COUNT(DISTINCT CASE WHEN t.dt >= :last24MonthsDate THEN tw.turniej ELSE NULL END) AS last24MonthsTournamentsCount,
-                COUNT(DISTINCT CASE WHEN t.dt >= :last12MonthsDate THEN tw.turniej ELSE NULL END) AS last12MonthsTournamentsCount
-            FROM PFSTOURWYN tw
-            INNER JOIN PFSPLAYER p ON p.id = tw.player
-            INNER JOIN PFSTOURS t ON t.id = tw.turniej
-            GROUP BY tw.player, p.name_show
-            ORDER BY tournamentsCount DESC, playerName ASC",
+                COUNT(DISTINCT tw.legacy_tournament_id) AS tournamentsCount,
+                COUNT(DISTINCT CASE WHEN t.dt >= :last24MonthsDate THEN tw.legacy_tournament_id ELSE NULL END) AS last24MonthsTournamentsCount,
+                COUNT(DISTINCT CASE WHEN t.dt >= :last12MonthsDate THEN tw.legacy_tournament_id ELSE NULL END) AS last12MonthsTournamentsCount
+            FROM tournament_result tw
+            INNER JOIN player p ON p.id = tw.player_id
+            INNER JOIN tournament t ON t.id = tw.tournament_id
+            WHERE tw.organization_id = :orgId
+              AND tw.legacy_player_id IS NOT NULL
+              AND tw.legacy_tournament_id IS NOT NULL
+            GROUP BY tw.legacy_player_id, p.name_show
+            ORDER BY tournamentsCount DESC, playerName ASC, playerId ASC",
             [
+                'orgId' => $orgId,
                 'last24MonthsDate' => $last24MonthsDateInt,
                 'last12MonthsDate' => $last12MonthsDateInt,
             ]
