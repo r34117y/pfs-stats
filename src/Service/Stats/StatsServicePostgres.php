@@ -532,7 +532,10 @@ ORDER BY
             FROM players p
             LEFT JOIN player_games pg ON pg.player_id = p.id
             GROUP BY p.id, p.name_show
-            HAVING COUNT(pg.player_id) > 0
+            HAVING
+                COUNT(pg.player_id) >= 30
+                OR SUM(CASE WHEN pg.dt >= :last24MonthsDate THEN 1 ELSE 0 END) >= 30
+                OR SUM(CASE WHEN pg.dt >= :last12MonthsDate THEN 1 ELSE 0 END) >= 30
             ORDER BY gamesWon DESC, playerName ASC, playerId ASC",
             [
                 'orgId' => $orgId,
@@ -544,11 +547,16 @@ ORDER BY
         $resultRows = [];
         foreach ($rows as $index => $row) {
             $gamesCount = (int) $row['gamesCount'];
-            $gamesWon = (int) $row['gamesWon'];
+            $gamesWon = $gamesCount >= 30 ? (int) $row['gamesWon'] : 0;
+            $gamesCount = $gamesCount >= 30 ? $gamesCount : 0;
+
             $gamesCount24Months = (int) $row['gamesCount24Months'];
-            $gamesWon24Months = (int) $row['gamesWon24Months'];
+            $gamesWon24Months = $gamesCount24Months >= 30 ? (int) $row['gamesWon24Months'] : 0;
+            $gamesCount24Months = $gamesCount24Months >= 30 ? $gamesCount24Months : 0;
+
             $gamesCount12Months = (int) $row['gamesCount12Months'];
-            $gamesWon12Months = (int) $row['gamesWon12Months'];
+            $gamesWon12Months = $gamesCount12Months >= 30 ? (int) $row['gamesWon12Months'] : 0;
+            $gamesCount12Months = $gamesCount12Months >= 30 ? $gamesCount12Months : 0;
 
             $resultRows[] = new GamesWonRow(
                 position: $index + 1,
