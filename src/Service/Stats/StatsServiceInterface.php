@@ -56,7 +56,7 @@ interface StatsServiceInterface
     public function getAvgPointsPerGame(int $orgId): AvgPointsPerGame;
     public function getAvgOpponentsPointsPerGame(int $orgId): AvgOpponentsPointsPerGame;
     public function getAvgPointsSumPerGame(int $orgId): AvgPointsSumPerGame;
-    public function getAvgPointsDifferencePerGame(): AvgPointsDifferencePerGame;
+    public function getAvgPointsDifferencePerGame(int $orgId): AvgPointsDifferencePerGame;
     public function getGamesOver400(): GamesOver400;
     public function getRankAllGames(): RankAllGames;
     public function getHighestRank(): HighestRank;

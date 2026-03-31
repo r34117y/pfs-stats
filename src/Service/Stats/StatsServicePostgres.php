@@ -1032,7 +1032,7 @@ ORDER BY
         return new AvgPointsSumPerGame($resultRows);
     }
 
-    public function getAvgPointsDifferencePerGame(): AvgPointsDifferencePerGame
+    public function getAvgPointsDifferencePerGame(int $orgId): AvgPointsDifferencePerGame
     {
         $today = new DateTimeImmutable('today');
         $last24MonthsDateInt = (int) $today->modify('-24 months')->format('Ymd');

@@ -7,6 +7,7 @@ use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\Stats\AvgPointsDifferencePerGame;
 use App\Service\Stats\StatsServiceInterface;
 use DateTimeImmutable;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\Cache\CacheInterface;
 
@@ -19,13 +20,15 @@ final readonly class AvgPointsDifferencePerGameProvider implements ProviderInter
     ) {
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): AvgPointsDifferencePerGame
     {
-        $todayKey = (new DateTimeImmutable('today'))->format('Ymd');
-
+        $orgId = $uriVariables['org'] ?? 21;
         return $this->cache->get(
-            sprintf('api.stats.avg_points_difference.%s', $todayKey),
-            fn (): AvgPointsDifferencePerGame => $this->statsService->getAvgPointsDifferencePerGame(),
+            sprintf('api.stats.avg_points_difference.%d', $orgId),
+            fn (): AvgPointsDifferencePerGame => $this->statsService->getAvgPointsDifferencePerGame($orgId),
         );
     }
 }
