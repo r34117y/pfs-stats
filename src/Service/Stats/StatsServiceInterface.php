@@ -51,7 +51,7 @@ interface StatsServiceInterface
     public function getYearlyRankingSummary(int $year): YearlyRankingSummary;
     public function getAllTimeSummary(int $orgId): AllTimeSummary;
     public function getGamesCount(int $orgId): GamesCount;
-    public function getGamesWon(): GamesWon;
+    public function getGamesWon(int $orgId): GamesWon;
     public function getTournamentsCount(): TournamentsCount;
     public function getAvgPointsPerGame(): AvgPointsPerGame;
     public function getAvgOpponentsPointsPerGame(): AvgOpponentsPointsPerGame;

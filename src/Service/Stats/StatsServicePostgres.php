@@ -420,7 +420,7 @@ ORDER BY
         return new GamesCount($resultRows);
     }
 
-    public function getGamesWon(): GamesWon
+    public function getGamesWon(int $orgId): GamesWon
     {
         $today = new DateTimeImmutable('today');
         $last24MonthsDateInt = (int) $today->modify('-24 months')->format('Ymd');

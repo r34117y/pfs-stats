@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Contracts\Cache\CacheInterface;
+use Throwable;
 
 final readonly class RefreshCacheAfterImportService
 {
@@ -72,7 +73,7 @@ final readonly class RefreshCacheAfterImportService
 
                 $result->addFailure($path, sprintf('status=%d', $statusCode));
                 $this->report($reporter, sprintf('FAILED %s (%d)', $path, $statusCode));
-            } catch (\Throwable $exception) {
+            } catch (Throwable $exception) {
                 $result->addFailure($path, $exception->getMessage());
                 $this->report($reporter, sprintf('FAILED %s (%s)', $path, $exception->getMessage()));
             }
@@ -82,7 +83,7 @@ final readonly class RefreshCacheAfterImportService
     }
 
     /**
-     * @return list<string>
+     * @return array<string>
      */
     private function buildWarmupPaths(int $orgId): array
     {
@@ -95,6 +96,7 @@ final readonly class RefreshCacheAfterImportService
             '/api/stats/all-times-results?org=' . $orgId,
             '/api/stats/all-time-summary?org=' . $orgId,
             '/api/stats/games?org=' . $orgId,
+            '/api/stats/games-won?org=' . $orgId,
         ];
 
         try {

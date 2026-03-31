@@ -369,7 +369,7 @@ final readonly class StatsService implements StatsServiceInterface
     /**
      * @throws Exception
      */
-    public function getGamesWon(): GamesWon
+    public function getGamesWon(int $orgId): GamesWon
     {
         $today = new DateTimeImmutable('today');
         $last24MonthsDateInt = (int) $today->modify('-24 months')->format('Ymd');

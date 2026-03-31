@@ -6,11 +6,11 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\Stats\GamesWon;
 use App\Service\Stats\StatsServiceInterface;
-use DateTimeImmutable;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\Cache\CacheInterface;
 
-class GamesWonProvider implements ProviderInterface
+final readonly class GamesWonProvider implements ProviderInterface
 {
     public function __construct(
         private StatsServiceInterface $statsService,
@@ -19,13 +19,16 @@ class GamesWonProvider implements ProviderInterface
     ) {
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): GamesWon
     {
-        $todayKey = (new DateTimeImmutable('today'))->format('Ymd');
+        $orgId = $uriVariables['org'] ?? 21;
 
         return $this->cache->get(
-            sprintf('api.stats.games_won.%s', $todayKey),
-            fn (): GamesWon => $this->statsService->getGamesWon(),
+            sprintf('api.stats.games_won.%d', $orgId),
+            fn (): GamesWon => $this->statsService->getGamesWon($orgId),
         );
     }
 }
