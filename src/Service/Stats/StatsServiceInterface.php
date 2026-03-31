@@ -53,7 +53,7 @@ interface StatsServiceInterface
     public function getGamesCount(int $orgId): GamesCount;
     public function getGamesWon(int $orgId): GamesWon;
     public function getTournamentsCount(int $orgId): TournamentsCount;
-    public function getAvgPointsPerGame(): AvgPointsPerGame;
+    public function getAvgPointsPerGame(int $orgId): AvgPointsPerGame;
     public function getAvgOpponentsPointsPerGame(): AvgOpponentsPointsPerGame;
     public function getAvgPointsSumPerGame(): AvgPointsSumPerGame;
     public function getAvgPointsDifferencePerGame(): AvgPointsDifferencePerGame;
