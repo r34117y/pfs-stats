@@ -87,6 +87,7 @@ use App\ApiResource\Stats\TournamentsCountRow;
 use DateTimeImmutable;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 final readonly class StatsServicePostgres implements StatsServiceInterface
@@ -261,13 +262,13 @@ ORDER BY
         return new YearlyRankingSummary($resultRows);
     }
 
-    public function getAllTimeSummary(): AllTimeSummary
+    public function getAllTimeSummary(int $orgId): AllTimeSummary
     {
         $today = new DateTimeImmutable('today');
         $last12MonthsDateInt = (int) $today->modify('-12 months')->format('Ymd');
 
-        $allTime = $this->calculateSummaryMetrics(null);
-        $last12Months = $this->calculateSummaryMetrics($last12MonthsDateInt);
+        $allTime = $this->calculateSummaryMetrics(null, $orgId);
+        $last12Months = $this->calculateSummaryMetrics($last12MonthsDateInt, $orgId);
 
         $rows = [
             $this->buildSummaryRow('Liczba turniejów', $allTime['tournamentsCount'], $last12Months['tournamentsCount']),
@@ -4179,45 +4180,49 @@ ORDER BY
 
     /**
      * @return array<string, int|float>
+     * @throws Exception
      */
-    private function calculateSummaryMetrics(?int $fromDate): array
+    private function calculateSummaryMetrics(?int $fromDate, int $orgId): array
     {
-        $filterSql = $fromDate !== null ? ' WHERE t.dt >= :fromDate ' : '';
-        $filterParams = $fromDate !== null ? ['fromDate' => $fromDate] : [];
+        $filterSql = ' WHERE t.organization_id = :orgId';
+        $filterParams = ['orgId' => $orgId];
+        if ($fromDate) {
+            $filterSql .= ' AND t.dt >= :fromDate ';
+            $filterParams = $filterParams['fromDate'] = $fromDate;
+        }
 
         $tournamentSummary = $this->fetchAssociativeCompat(
             "SELECT
                 COUNT(*) AS tournamentsCount,
-                COALESCE(SUM(t.players), 0) AS sumParticipants,
+                COALESCE(SUM(t.players_count), 0) AS sumParticipants,
                 COALESCE(AVG(t.trank), 0) AS avgTournamentRank
-            FROM PFSTOURS t" . $filterSql,
+            FROM tournament t" . $filterSql,
             $filterParams
         );
 
         $activePlayers = (int) $this->connection->fetchOne(
-            "SELECT COUNT(DISTINCT tw.player)
-            FROM PFSTOURWYN tw
-            INNER JOIN PFSTOURS t ON t.id = tw.turniej"
-            . ($fromDate !== null ? ' WHERE t.dt >= :fromDate' : ''),
+            "SELECT COUNT(DISTINCT tr.player_id)
+            FROM tournament_result tr
+            INNER JOIN tournament t ON t.id = tr.tournament_id"
+            . $filterSql,
             $filterParams
         );
 
         $latestRankingTurniej = $this->connection->fetchOne(
-            "SELECT MAX(r.turniej)
-            FROM PFSRANKING r
-            INNER JOIN PFSTOURS t ON t.id = r.turniej
-            WHERE r.rtype = 'f'"
-            . ($fromDate !== null ? ' AND t.dt >= :fromDate' : ''),
+            "SELECT MAX(r.tournament_id)
+            FROM ranking r
+            INNER JOIN tournament t ON t.id = r.tournament_id"
+            . $filterSql . " AND r.rtype = 'f'",
             $filterParams
         );
 
         $rankingListedPlayers = 0;
         if ($latestRankingTurniej !== false && $latestRankingTurniej !== null) {
+            $qParams = $filterParams + ['tournament' => (int) $latestRankingTurniej];
             $rankingListedPlayers = (int) $this->connection->fetchOne(
                 "SELECT COUNT(*)
-                FROM PFSRANKING
-                WHERE rtype = 'f' AND turniej = :turniej",
-                ['turniej' => (int) $latestRankingTurniej]
+                FROM ranking r WHERE r.rtype = 'f' AND r.tournament_id = :tournament",
+                $qParams
             );
         }
 

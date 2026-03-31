@@ -7,6 +7,7 @@ use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\Stats\AllTimeSummary;
 use App\Service\Stats\StatsServiceInterface;
 use DateTimeImmutable;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\Cache\CacheInterface;
 
@@ -19,13 +20,15 @@ final readonly class AllTimeSummaryProvider implements ProviderInterface
     ) {
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): AllTimeSummary
     {
-        $todayKey = (new DateTimeImmutable('today'))->format('Ymd');
-
+        $orgId = $uriVariables['org'] ?? 21;
         return $this->cache->get(
-            sprintf('api.stats.all_time_summary.%s', $todayKey),
-            fn (): AllTimeSummary => $this->statsService->getAllTimeSummary(),
+            sprintf('api.stats.all_time_summary.%d', $orgId),
+            fn (): AllTimeSummary => $this->statsService->getAllTimeSummary($orgId),
         );
     }
 }

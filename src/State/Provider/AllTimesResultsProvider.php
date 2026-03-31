@@ -24,7 +24,7 @@ final readonly class AllTimesResultsProvider implements ProviderInterface
      */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): AllTimesResults
     {
-        $orgId = $uriVariables['orgId'] ?? 21;
+        $orgId = $uriVariables['org'] ?? 21;
         return $this->cache->get(
             sprintf('api.stats.all_times_results.%d', $orgId),
             fn (): AllTimesResults => $this->statsService->getAllTimesResults($orgId),

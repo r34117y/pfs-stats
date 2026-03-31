@@ -266,7 +266,7 @@ final readonly class StatsService implements StatsServiceInterface
         return new YearlyRankingSummary($resultRows);
     }
 
-    public function getAllTimeSummary(): AllTimeSummary
+    public function getAllTimeSummary(int $orgId): AllTimeSummary
     {
         $today = new DateTimeImmutable('today');
         $last12MonthsDateInt = (int) $today->modify('-12 months')->format('Ymd');

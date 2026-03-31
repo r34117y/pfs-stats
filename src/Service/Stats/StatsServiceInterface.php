@@ -49,7 +49,7 @@ interface StatsServiceInterface
     public function getAllTimesResults(int $orgId): AllTimesResults;
     public function getYearlyAllTimesResults(int $year): AllTimesResults;
     public function getYearlyRankingSummary(int $year): YearlyRankingSummary;
-    public function getAllTimeSummary(): AllTimeSummary;
+    public function getAllTimeSummary(int $orgId): AllTimeSummary;
     public function getGamesCount(): GamesCount;
     public function getGamesWon(): GamesWon;
     public function getTournamentsCount(): TournamentsCount;
