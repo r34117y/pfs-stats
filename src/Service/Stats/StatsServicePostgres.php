@@ -716,11 +716,17 @@ ORDER BY
                 p.name_show AS playerName,
                 AVG(ps.score) AS averagePoints,
                 AVG(CASE WHEN ps.dt >= :last24MonthsDate THEN ps.score ELSE NULL END) AS last24MonthsAveragePoints,
-                AVG(CASE WHEN ps.dt >= :last12MonthsDate THEN ps.score ELSE NULL END) AS last12MonthsAveragePoints
+                AVG(CASE WHEN ps.dt >= :last12MonthsDate THEN ps.score ELSE NULL END) AS last12MonthsAveragePoints,
+                COUNT(ps.player_id) AS gamesCount,
+                SUM(CASE WHEN ps.dt >= :last24MonthsDate THEN 1 ELSE 0 END) AS gamesCount24Months,
+                SUM(CASE WHEN ps.dt >= :last12MonthsDate THEN 1 ELSE 0 END) AS gamesCount12Months
             FROM players p
             LEFT JOIN player_scores ps ON ps.player_id = p.id
             GROUP BY p.id, p.name_show
-            HAVING COUNT(ps.player_id) > 0
+            HAVING
+                COUNT(ps.player_id) >= 30
+                OR SUM(CASE WHEN ps.dt >= :last24MonthsDate THEN 1 ELSE 0 END) >= 30
+                OR SUM(CASE WHEN ps.dt >= :last12MonthsDate THEN 1 ELSE 0 END) >= 30
             ORDER BY ROUND(AVG(ps.score), 4) DESC, p.name_show ASC, playerId ASC",
             [
                 'orgId' => $orgId,
@@ -731,13 +737,17 @@ ORDER BY
 
         $resultRows = [];
         foreach ($rows as $index => $row) {
+            $gamesCount = (int) $row['gamesCount'];
+            $gamesCount24Months = (int) $row['gamesCount24Months'];
+            $gamesCount12Months = (int) $row['gamesCount12Months'];
+
             $resultRows[] = new AvgPointsPerGameRow(
                 position: $index + 1,
                 playerId: (int) $row['playerId'],
                 playerName: (string) $row['playerName'],
-                averagePoints: round((float) ($row['averagePoints'] ?? 0.0), 2),
-                last24MonthsAveragePoints: round((float) ($row['last24MonthsAveragePoints'] ?? 0.0), 2),
-                last12MonthsAveragePoints: round((float) ($row['last12MonthsAveragePoints'] ?? 0.0), 2),
+                averagePoints: $gamesCount >= 30 ? round((float) ($row['averagePoints'] ?? 0.0), 2) : 0.0,
+                last24MonthsAveragePoints: $gamesCount24Months >= 30 ? round((float) ($row['last24MonthsAveragePoints'] ?? 0.0), 2) : 0.0,
+                last12MonthsAveragePoints: $gamesCount12Months >= 30 ? round((float) ($row['last12MonthsAveragePoints'] ?? 0.0), 2) : 0.0,
             );
         }
 
