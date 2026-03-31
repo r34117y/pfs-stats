@@ -1171,7 +1171,7 @@ ORDER BY
         return new AvgPointsDifferencePerGame($resultRows);
     }
 
-    public function getGamesOver400(): GamesOver400
+    public function getGamesOver400(int $orgId): GamesOver400
     {
         $today = new DateTimeImmutable('today');
         $last24MonthsDateInt = (int) $today->modify('-24 months')->format('Ymd');
