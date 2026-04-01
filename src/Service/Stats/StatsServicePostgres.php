@@ -1734,18 +1734,21 @@ ORDER BY
         $rows = $this->fetchAllAssociativeCompat(
             "WITH ranking_rows AS (
                 SELECT
-                    r.turniej AS tournamentId,
+                    r.legacy_tournament_id AS tournamentId,
                     t.dt AS tournamentDate,
-                    r.player AS playerId,
+                    r.legacy_player_id AS playerId,
                     p.name_show AS playerName,
                     ROW_NUMBER() OVER (
-                        PARTITION BY r.turniej
-                        ORDER BY r.pos ASC, r.rank DESC, r.player ASC
+                        PARTITION BY r.legacy_tournament_id
+                        ORDER BY r.position ASC, r.rank DESC, r.legacy_player_id ASC
                     ) AS rn
-                FROM PFSRANKING r
-                INNER JOIN PFSTOURS t ON t.id = r.turniej
-                INNER JOIN PFSPLAYER p ON p.id = r.player
+                FROM ranking r
+                INNER JOIN tournament t ON t.id = r.tournament_id
+                INNER JOIN player p ON p.id = r.player_id
                 WHERE r.rtype = 'f'
+                  AND r.organization_id = :orgId
+                  AND r.legacy_tournament_id IS NOT NULL
+                  AND r.legacy_player_id IS NOT NULL
             ),
             leaders AS (
                 SELECT
@@ -1791,14 +1794,17 @@ ORDER BY
                 s.lastTournamentId,
                 COALESCE(tf.fullname, tf.name) AS firstTournamentName,
                 COALESCE(tl.fullname, tl.name) AS lastTournamentName,
-                DATEDIFF(
-                    STR_TO_DATE(CAST(s.lastTournamentDate AS CHAR), '%Y%m%d'),
-                    STR_TO_DATE(CAST(s.firstTournamentDate AS CHAR), '%Y%m%d')
-                ) + 1 AS daysOnTop
+                (TO_DATE(CAST(s.lastTournamentDate AS TEXT), 'YYYYMMDD') - TO_DATE(CAST(s.firstTournamentDate AS TEXT), 'YYYYMMDD')) + 1 AS daysOnTop
             FROM streaks s
-            INNER JOIN PFSTOURS tf ON tf.id = s.firstTournamentId
-            INNER JOIN PFSTOURS tl ON tl.id = s.lastTournamentId
+            INNER JOIN tournament tf
+                ON tf.organization_id = :orgId
+               AND tf.legacy_id = s.firstTournamentId
+            INNER JOIN tournament tl
+                ON tl.organization_id = :orgId
+               AND tl.legacy_id = s.lastTournamentId
             ORDER BY daysOnTop DESC, s.playerName ASC, s.firstTournamentDate ASC, s.firstTournamentId ASC"
+            ,
+            ['orgId' => $orgId]
         );
 
         $resultRows = [];
