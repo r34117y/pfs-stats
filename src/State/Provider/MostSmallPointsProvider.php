@@ -6,7 +6,7 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\Stats\MostSmallPoints;
 use App\Service\Stats\StatsServiceInterface;
-use DateTimeImmutable;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\Cache\CacheInterface;
 
@@ -19,13 +19,16 @@ final readonly class MostSmallPointsProvider implements ProviderInterface
     ) {
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): MostSmallPoints
     {
-        $todayKey = (new DateTimeImmutable('today'))->format('Ymd');
+        $orgId = $uriVariables['org'] ?? 21;
 
         return $this->cache->get(
-            sprintf('api.stats.most_small_points.%s', $todayKey),
-            fn (): MostSmallPoints => $this->statsService->getMostSmallPoints(),
+            sprintf('api.stats.most_small_points.%s', $orgId),
+            fn (): MostSmallPoints => $this->statsService->getMostSmallPoints($orgId),
         );
     }
 }
