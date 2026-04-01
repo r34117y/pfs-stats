@@ -6,7 +6,7 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\Stats\MostOpponentPointsAndWin;
 use App\Service\Stats\StatsServiceInterface;
-use DateTimeImmutable;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\Cache\CacheInterface;
 
@@ -19,13 +19,16 @@ final readonly class MostOpponentPointsAndWinProvider implements ProviderInterfa
     ) {
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): MostOpponentPointsAndWin
     {
-        $todayKey = (new DateTimeImmutable('today'))->format('Ymd');
+        $orgId = $uriVariables['org'] ?? 21;
 
         return $this->cache->get(
-            sprintf('api.stats.most_opponent_points_and_win.%s', $todayKey),
-            fn (): MostOpponentPointsAndWin => $this->statsService->getMostOpponentPointsAndWin(),
+            sprintf('api.stats.most_opponent_points_and_win.%s', $orgId),
+            fn (): MostOpponentPointsAndWin => $this->statsService->getMostOpponentPointsAndWin($orgId),
         );
     }
 }
