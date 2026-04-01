@@ -1388,7 +1388,10 @@ final readonly class StatsService implements StatsServiceInterface
         return new MostSmallPoints($resultRows);
     }
 
-    public function getLeastSmallPoints(): LeastSmallPoints
+    /**
+     * @throws Exception
+     */
+    public function getLeastSmallPoints(int $orgId): LeastSmallPoints
     {
         $rows = $this->connection->fetchAllAssociative(
             "WITH unique_games AS (

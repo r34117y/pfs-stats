@@ -2089,7 +2089,7 @@ ORDER BY
         return new MostSmallPoints($resultRows);
     }
 
-    public function getLeastSmallPoints(): LeastSmallPoints
+    public function getLeastSmallPoints(int $orgId): LeastSmallPoints
     {
         $rows = $this->fetchAllAssociativeCompat(
             "WITH unique_games AS (

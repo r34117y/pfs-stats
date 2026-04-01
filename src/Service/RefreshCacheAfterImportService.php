@@ -108,7 +108,7 @@ final readonly class RefreshCacheAfterImportService
             '/api/stats/highest-rank-position?org=' . $orgId,
             '/api/stats/ranking-leaders?org=' . $orgId,
             '/api/stats/different-opponents?org=' . $orgId,
-            '/api/stats/most-small-points?org=' . $orgId,
+            '/api/stats/least-small-points?org=' . $orgId,
         ];
 
         try {
