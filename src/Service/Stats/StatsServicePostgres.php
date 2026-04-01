@@ -1670,23 +1670,34 @@ ORDER BY
         $rows = $this->fetchAllAssociativeCompat(
             "WITH ranking_positions AS (
                 SELECT
-                    r.player AS playerId,
+                    r.legacy_player_id AS playerId,
                     p.name_show AS playerName,
-                    r.pos AS rankPosition,
+                    r.position AS rankPosition,
                     t.dt
-                FROM PFSRANKING r
-                INNER JOIN PFSTOURS t ON t.id = r.turniej
-                INNER JOIN PFSPLAYER p ON p.id = r.player
+                FROM ranking r
+                INNER JOIN tournament t ON t.id = r.tournament_id
+                INNER JOIN player p ON p.id = r.player_id
                 WHERE r.rtype = 'f'
+                  AND r.organization_id = :orgId
+                  AND r.legacy_player_id IS NOT NULL
+            ),
+            aggregated AS (
+                SELECT
+                    rp.playerId,
+                    rp.playerName,
+                    MIN(rp.rankPosition) AS highestRankPosition,
+                    MIN(CASE WHEN rp.dt >= :last24MonthsDate THEN rp.rankPosition ELSE NULL END) AS highestRankPosition24Months,
+                    MIN(CASE WHEN rp.dt >= :last12MonthsDate THEN rp.rankPosition ELSE NULL END) AS highestRankPosition12Months
+                FROM ranking_positions rp
+                GROUP BY rp.playerId, rp.playerName
             )
             SELECT
-                rp.playerId,
-                rp.playerName,
-                MIN(rp.rankPosition) AS highestRankPosition,
-                MIN(CASE WHEN rp.dt >= :last24MonthsDate THEN rp.rankPosition ELSE NULL END) AS highestRankPosition24Months,
-                MIN(CASE WHEN rp.dt >= :last12MonthsDate THEN rp.rankPosition ELSE NULL END) AS highestRankPosition12Months
-            FROM ranking_positions rp
-            GROUP BY rp.playerId, rp.playerName
+                a.playerId,
+                a.playerName,
+                a.highestRankPosition,
+                a.highestRankPosition24Months,
+                a.highestRankPosition12Months
+            FROM aggregated a
             ORDER BY
                 CASE WHEN highestRankPosition IS NULL THEN 1 ELSE 0 END,
                 highestRankPosition ASC,
@@ -1694,8 +1705,10 @@ ORDER BY
                 highestRankPosition24Months ASC,
                 CASE WHEN highestRankPosition12Months IS NULL THEN 1 ELSE 0 END,
                 highestRankPosition12Months ASC,
-                rp.playerName ASC",
+                a.playerName ASC,
+                a.playerId ASC",
             [
+                'orgId' => $orgId,
                 'last24MonthsDate' => $last24MonthsDateInt,
                 'last12MonthsDate' => $last12MonthsDateInt,
             ]
