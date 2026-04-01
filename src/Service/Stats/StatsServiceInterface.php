@@ -62,7 +62,7 @@ interface StatsServiceInterface
     public function getHighestRank(int $orgId): HighestRank;
     public function getHighestRankPosition(int $orgId): HighestRankPosition;
     public function getRankingLeaders(int $orgId): RankingLeaders;
-    public function getDifferentOpponents(): DifferentOpponents;
+    public function getDifferentOpponents(int $orgId): DifferentOpponents;
     public function getMostSmallPoints(): MostSmallPoints;
     public function getLeastSmallPoints(): LeastSmallPoints;
     public function getHighestPointsSum(): HighestPointsSum;

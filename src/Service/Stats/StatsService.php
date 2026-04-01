@@ -1232,7 +1232,7 @@ final readonly class StatsService implements StatsServiceInterface
         return new RankingLeaders($resultRows);
     }
 
-    public function getDifferentOpponents(): DifferentOpponents
+    public function getDifferentOpponents(int $orgId): DifferentOpponents
     {
         $today = new DateTimeImmutable('today');
         $last24MonthsDateInt = (int) $today->modify('-24 months')->format('Ymd');

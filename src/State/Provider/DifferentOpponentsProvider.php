@@ -6,7 +6,7 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\Stats\DifferentOpponents;
 use App\Service\Stats\StatsServiceInterface;
-use DateTimeImmutable;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\Cache\CacheInterface;
 
@@ -19,13 +19,16 @@ final readonly class DifferentOpponentsProvider implements ProviderInterface
     ) {
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): DifferentOpponents
     {
-        $todayKey = (new DateTimeImmutable('today'))->format('Ymd');
+        $orgId = $uriVariables['org'] ?? 21;
 
         return $this->cache->get(
-            sprintf('api.stats.different_opponents.%s', $todayKey),
-            fn (): DifferentOpponents => $this->statsService->getDifferentOpponents(),
+            sprintf('api.stats.different_opponents.%s', $orgId),
+            fn (): DifferentOpponents => $this->statsService->getDifferentOpponents($orgId),
         );
     }
 }
