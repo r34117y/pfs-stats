@@ -3769,6 +3769,9 @@ ORDER BY
         return new LongestLossStreaks($resultRows);
     }
 
+    /**
+     * @throws Exception
+     */
     public function getLongestStreakMin350(int $orgId): LongestStreakMin350
     {
         $rows = $this->buildLongestSingleScoreStreakRows($orgId, 350);
@@ -3787,6 +3790,9 @@ ORDER BY
         return new LongestStreakMin350($resultRows);
     }
 
+    /**
+     * @throws Exception
+     */
     public function getLongestStreakMin400(int $orgId): LongestStreakMin400
     {
         $rows = $this->buildLongestSingleScoreStreakRows($orgId, 400);
@@ -4055,6 +4061,9 @@ ORDER BY
         return $resultRows;
     }
 
+    /**
+     * @throws Exception
+     */
     public function getLongestStreakSumMin750(int $orgId): LongestStreakSumMin750
     {
         $rows = $this->buildLongestCombinedScoreStreakRows($orgId, 750);
@@ -4073,6 +4082,9 @@ ORDER BY
         return new LongestStreakSumMin750($resultRows);
     }
 
+    /**
+     * @throws Exception
+     */
     public function getLongestStreakSumMin800(int $orgId): LongestStreakSumMin800
     {
         $rows = $this->buildLongestCombinedScoreStreakRows($orgId, 800);
@@ -4355,7 +4367,10 @@ ORDER BY
         return $resultRows;
     }
 
-    public function getLongestWinStreakVsPlayer(): LongestWinStreakVsPlayer
+    /**
+     * @throws Exception
+     */
+    public function getLongestWinStreakVsPlayer(int $orgId): LongestWinStreakVsPlayer
     {
         $rows = $this->fetchAllAssociativeCompat(
             "WITH eligible_players AS (
@@ -4523,6 +4538,9 @@ ORDER BY
         return new LongestWinStreakVsPlayer($resultRows);
     }
 
+    /**
+     * @throws Exception
+     */
     public function getHighestTournamentRankRecord(): HighestTournamentRankRecord
     {
         $rows = $this->fetchAllAssociativeCompat(

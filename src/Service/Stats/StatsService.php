@@ -3348,7 +3348,7 @@ final readonly class StatsService implements StatsServiceInterface
         return new LongestStreakSumMin800($resultRows);
     }
 
-    public function getLongestWinStreakVsPlayer(): LongestWinStreakVsPlayer
+    public function getLongestWinStreakVsPlayer(int $orgId): LongestWinStreakVsPlayer
     {
         $rows = $this->connection->fetchAllAssociative(
             "WITH eligible_players AS (

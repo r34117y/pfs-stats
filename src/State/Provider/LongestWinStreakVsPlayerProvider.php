@@ -6,7 +6,7 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\Stats\LongestWinStreakVsPlayer;
 use App\Service\Stats\StatsServiceInterface;
-use DateTimeImmutable;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\Cache\CacheInterface;
 
@@ -19,13 +19,16 @@ final readonly class LongestWinStreakVsPlayerProvider implements ProviderInterfa
     ) {
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): LongestWinStreakVsPlayer
     {
-        $todayKey = (new DateTimeImmutable('today'))->format('Ymd');
+        $orgId = $uriVariables['org'] ?? 21;
 
         return $this->cache->get(
-            sprintf('api.stats.longest_win_streak_vs_player.v2.%s', $todayKey),
-            fn (): LongestWinStreakVsPlayer => $this->statsService->getLongestWinStreakVsPlayer(),
+            sprintf('api.stats.longest_win_streak_vs_player.v2.%s', $orgId),
+            fn (): LongestWinStreakVsPlayer => $this->statsService->getLongestWinStreakVsPlayer($orgId),
         );
     }
 }

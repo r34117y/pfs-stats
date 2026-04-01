@@ -123,6 +123,7 @@ final readonly class RefreshCacheAfterImportService
             '/api/stats/longest-streak-min-400?org=' . $orgId,
             '/api/stats/longest-streak-sum-min-750?org=' . $orgId,
             '/api/stats/longest-streak-sum-min-800?org=' . $orgId,
+            '/api/stats/longest-win-streak-vs-player?org=' . $orgId,
         ];
 
         try {
