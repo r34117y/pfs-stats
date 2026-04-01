@@ -6,7 +6,7 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\Stats\LongestStreakMin400;
 use App\Service\Stats\StatsServiceInterface;
-use DateTimeImmutable;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\Cache\CacheInterface;
 
@@ -19,13 +19,16 @@ final readonly class LongestStreakMin400Provider implements ProviderInterface
     ) {
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): LongestStreakMin400
     {
-        $todayKey = (new DateTimeImmutable('today'))->format('Ymd');
+        $orgId = $uriVariables['org'] ?? 21;
 
         return $this->cache->get(
-            sprintf('api.stats.longest_streak_min_400.v1.%s', $todayKey),
-            fn (): LongestStreakMin400 => $this->statsService->getLongestStreakMin400(),
+            sprintf('api.stats.longest_streak_min_400.%s', $orgId),
+            fn (): LongestStreakMin400 => $this->statsService->getLongestStreakMin400($orgId),
         );
     }
 }

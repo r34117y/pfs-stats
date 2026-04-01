@@ -3969,18 +3969,58 @@ ORDER BY
                     h.result2
                 FROM (
                     SELECT
-                        hh.turniej,
-                        hh.runda,
-                        hh.player1,
-                        hh.player2,
+                        hh.legacy_tournament_id AS turniej,
+                        hh.round_no AS runda,
+                        hh.legacy_player1_id AS player1,
+                        hh.legacy_player2_id AS player2,
                         hh.result1,
                         hh.result2
-                    FROM PFSTOURHH hh
-                    WHERE hh.player1 < hh.player2
+                    FROM tournament_game hh
+                    WHERE hh.organization_id = :orgId
+                        AND hh.legacy_player1_id < hh.legacy_player2_id
                         AND NOT (hh.result1 = 0 AND hh.result2 = 0)
-                    ORDER BY hh.turniej DESC, hh.runda DESC
+                    ORDER BY hh.legacy_tournament_id DESC, hh.round_no DESC
                     LIMIT 500
                 ) h
+            ),
+            mapped AS (
+                SELECT legacy_player_id, player_id
+                FROM ranking
+                WHERE organization_id = :orgId
+                  AND legacy_player_id IS NOT NULL
+                  AND player_id IS NOT NULL
+
+                UNION
+
+                SELECT legacy_player_id, player_id
+                FROM tournament_result
+                WHERE organization_id = :orgId
+                  AND legacy_player_id IS NOT NULL
+                  AND player_id IS NOT NULL
+
+                UNION
+
+                SELECT legacy_player_id, player_id
+                FROM play_summary
+                WHERE organization_id = :orgId
+                  AND legacy_player_id IS NOT NULL
+                  AND player_id IS NOT NULL
+
+                UNION
+
+                SELECT legacy_player1_id AS legacy_player_id, player1_id AS player_id
+                FROM tournament_game
+                WHERE organization_id = :orgId
+                  AND legacy_player1_id IS NOT NULL
+                  AND player1_id IS NOT NULL
+
+                UNION
+
+                SELECT legacy_player2_id AS legacy_player_id, player2_id AS player_id
+                FROM tournament_game
+                WHERE organization_id = :orgId
+                  AND legacy_player2_id IS NOT NULL
+                  AND player2_id IS NOT NULL
             ),
             player_games AS (
                 SELECT
@@ -3991,8 +4031,11 @@ ORDER BY
                     bg.runda AS roundNo,
                     CASE WHEN bg.result1 >= 400 THEN 1 ELSE 0 END AS criterionState
                 FROM base_games bg
-                INNER JOIN PFSPLAYER p1 ON p1.id = bg.player1
-                INNER JOIN PFSTOURS t ON t.id = bg.turniej
+                INNER JOIN mapped mp1 ON mp1.legacy_player_id = bg.player1
+                INNER JOIN player p1 ON p1.id = mp1.player_id
+                INNER JOIN tournament t
+                    ON t.organization_id = :orgId
+                   AND t.legacy_id = bg.turniej
 
                 UNION ALL
 
@@ -4004,8 +4047,11 @@ ORDER BY
                     bg.runda AS roundNo,
                     CASE WHEN bg.result2 >= 400 THEN 1 ELSE 0 END AS criterionState
                 FROM base_games bg
-                INNER JOIN PFSPLAYER p2 ON p2.id = bg.player2
-                INNER JOIN PFSTOURS t ON t.id = bg.turniej
+                INNER JOIN mapped mp2 ON mp2.legacy_player_id = bg.player2
+                INNER JOIN player p2 ON p2.id = mp2.player_id
+                INNER JOIN tournament t
+                    ON t.organization_id = :orgId
+                   AND t.legacy_id = bg.turniej
             )
             , ordered AS (
                 SELECT
@@ -4035,7 +4081,8 @@ ORDER BY
             FROM streaks s
             GROUP BY s.playerId, s.playerName
             ORDER BY gamesStreak DESC, s.playerName ASC
-            LIMIT 1000"
+            LIMIT 1000",
+            ['orgId' => $orgId]
         );
 
         if ($topRows === []) {
@@ -4055,16 +4102,17 @@ ORDER BY
                     h.result2
                 FROM (
                     SELECT
-                        hh.turniej,
-                        hh.runda,
-                        hh.player1,
-                        hh.player2,
+                        hh.legacy_tournament_id AS turniej,
+                        hh.round_no AS runda,
+                        hh.legacy_player1_id AS player1,
+                        hh.legacy_player2_id AS player2,
                         hh.result1,
                         hh.result2
-                    FROM PFSTOURHH hh
-                    WHERE hh.player1 < hh.player2
+                    FROM tournament_game hh
+                    WHERE hh.organization_id = :orgId
+                        AND hh.legacy_player1_id < hh.legacy_player2_id
                         AND NOT (hh.result1 = 0 AND hh.result2 = 0)
-                    ORDER BY hh.turniej DESC, hh.runda DESC
+                    ORDER BY hh.legacy_tournament_id DESC, hh.round_no DESC
                     LIMIT 500
                 ) h
             ),
@@ -4080,7 +4128,9 @@ ORDER BY
                         ELSE -1
                     END AS criterionState
                 FROM base_games bg
-                INNER JOIN PFSTOURS t ON t.id = bg.turniej
+                INNER JOIN tournament t
+                    ON t.organization_id = :orgId
+                   AND t.legacy_id = bg.turniej
 
                 UNION ALL
 
@@ -4095,7 +4145,9 @@ ORDER BY
                         ELSE -1
                     END AS criterionState
                 FROM base_games bg
-                INNER JOIN PFSTOURS t ON t.id = bg.turniej
+                INNER JOIN tournament t
+                    ON t.organization_id = :orgId
+                   AND t.legacy_id = bg.turniej
             )
             SELECT
                 pg.playerId,
@@ -4105,7 +4157,7 @@ ORDER BY
             FROM player_games pg
             WHERE pg.playerId IN (:playerIds)
             ORDER BY pg.playerId ASC, pg.tournamentDate ASC, pg.tournamentId ASC, pg.roundNo ASC",
-            ['playerIds' => $playerIds],
+            ['orgId' => $orgId, 'playerIds' => $playerIds],
             ['playerIds' => ArrayParameterType::INTEGER]
         );
 
