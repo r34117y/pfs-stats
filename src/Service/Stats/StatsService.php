@@ -2381,7 +2381,7 @@ final readonly class StatsService implements StatsServiceInterface
         return new LongestLossStreaks($resultRows);
     }
 
-    public function getLongestStreakMin350(): LongestStreakMin350
+    public function getLongestStreakMin350(int $orgId): LongestStreakMin350
     {
         $topRows = $this->connection->fetchAllAssociative(
             "WITH base_games AS (
@@ -2604,7 +2604,7 @@ final readonly class StatsService implements StatsServiceInterface
         return new LongestStreakMin350($resultRows);
     }
 
-    public function getLongestStreakMin400(): LongestStreakMin400
+    public function getLongestStreakMin400(int $orgId): LongestStreakMin400
     {
         $topRows = $this->connection->fetchAllAssociative(
             "WITH base_games AS (
