@@ -1332,7 +1332,7 @@ ORDER BY
         return new GamesOver400($resultRows);
     }
 
-    public function getRankAllGames(): RankAllGames
+    public function getRankAllGames(int $orgId): RankAllGames
     {
         $today = new DateTimeImmutable('today');
         $last24MonthsDateInt = (int) $today->modify('-24 months')->format('Ymd');

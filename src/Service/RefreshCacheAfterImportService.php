@@ -103,6 +103,7 @@ final readonly class RefreshCacheAfterImportService
             '/api/stats/avg-points-sum?org=' . $orgId,
             '/api/stats/avg-points-difference?org=' . $orgId,
             '/api/stats/games-over-400?org=' . $orgId,
+            '/api/stats/rank-all-games?org=' . $orgId,
         ];
 
         try {
