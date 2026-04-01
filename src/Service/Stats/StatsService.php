@@ -1952,7 +1952,7 @@ final readonly class StatsService implements StatsServiceInterface
         return new MostOpponentPointsAndWin($resultRows);
     }
 
-    public function getLeastOpponentPointsAndLoss(): LeastOpponentPointsAndLoss
+    public function getLeastOpponentPointsAndLoss(int $orgId): LeastOpponentPointsAndLoss
     {
         $rows = $this->connection->fetchAllAssociative(
             "WITH unique_games AS (

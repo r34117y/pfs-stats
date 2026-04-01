@@ -6,7 +6,7 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\Stats\LeastOpponentPointsAndLoss;
 use App\Service\Stats\StatsServiceInterface;
-use DateTimeImmutable;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\Cache\CacheInterface;
 
@@ -19,13 +19,16 @@ final readonly class LeastOpponentPointsAndLossProvider implements ProviderInter
     ) {
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): LeastOpponentPointsAndLoss
     {
-        $todayKey = (new DateTimeImmutable('today'))->format('Ymd');
+        $orgId = $uriVariables['org'] ?? 21;
 
         return $this->cache->get(
-            sprintf('api.stats.least_opponent_points_and_loss.%s', $todayKey),
-            fn (): LeastOpponentPointsAndLoss => $this->statsService->getLeastOpponentPointsAndLoss(),
+            sprintf('api.stats.least_opponent_points_and_loss.%s', $orgId),
+            fn (): LeastOpponentPointsAndLoss => $this->statsService->getLeastOpponentPointsAndLoss($orgId),
         );
     }
 }

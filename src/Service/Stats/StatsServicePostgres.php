@@ -3041,7 +3041,7 @@ ORDER BY
         return new MostOpponentPointsAndWin($resultRows);
     }
 
-    public function getLeastOpponentPointsAndLoss(): LeastOpponentPointsAndLoss
+    public function getLeastOpponentPointsAndLoss(int $orgId): LeastOpponentPointsAndLoss
     {
         $rows = $this->fetchAllAssociativeCompat(
             "WITH unique_games AS (
