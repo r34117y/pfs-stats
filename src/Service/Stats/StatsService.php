@@ -1090,7 +1090,7 @@ final readonly class StatsService implements StatsServiceInterface
     }
 
 
-    public function getHighestRankPosition(): HighestRankPosition
+    public function getHighestRankPosition(int $orgId): HighestRankPosition
     {
         $today = new DateTimeImmutable('today');
         $last24MonthsDateInt = (int) $today->modify('-24 months')->format('Ymd');

@@ -60,7 +60,7 @@ interface StatsServiceInterface
     public function getGamesOver400(int $orgId): GamesOver400;
     public function getRankAllGames(int $orgId): RankAllGames;
     public function getHighestRank(int $orgId): HighestRank;
-    public function getHighestRankPosition(): HighestRankPosition;
+    public function getHighestRankPosition(int $orgId): HighestRankPosition;
     public function getRankingLeaders(): RankingLeaders;
     public function getDifferentOpponents(): DifferentOpponents;
     public function getMostSmallPoints(): MostSmallPoints;

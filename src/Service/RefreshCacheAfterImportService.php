@@ -105,6 +105,7 @@ final readonly class RefreshCacheAfterImportService
             '/api/stats/games-over-400?org=' . $orgId,
             '/api/stats/rank-all-games?org=' . $orgId,
             '/api/stats/highest-rank?org=' . $orgId,
+            '/api/stats/highest-rank-position?org=' . $orgId,
         ];
 
         try {
