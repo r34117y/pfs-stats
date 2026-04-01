@@ -1515,28 +1515,88 @@ ORDER BY
         $rows = $this->fetchAllAssociativeCompat(
             "WITH unique_games AS (
                 SELECT
-                    h.turniej,
-                    h.runda,
-                    h.player1,
-                    h.player2,
+                    h.legacy_tournament_id AS turniej,
+                    h.round_no AS runda,
+                    h.legacy_player1_id AS player1,
+                    h.legacy_player2_id AS player2,
                     t.dt,
                     ROW_NUMBER() OVER (
-                        PARTITION BY h.turniej, h.runda, LEAST(h.player1, h.player2), GREATEST(h.player1, h.player2)
-                        ORDER BY h.player1 ASC
+                        PARTITION BY
+                            h.legacy_tournament_id,
+                            h.round_no,
+                            LEAST(h.legacy_player1_id, h.legacy_player2_id),
+                            GREATEST(h.legacy_player1_id, h.legacy_player2_id)
+                        ORDER BY h.legacy_player1_id ASC
                     ) AS rn
-                FROM PFSTOURHH h
-                INNER JOIN PFSTOURS t ON t.id = h.turniej
+                FROM tournament_game h
+                INNER JOIN tournament t ON t.id = h.tournament_id
+                WHERE h.organization_id = :orgId
             ),
             player_games AS (
                 SELECT ug.player1 AS player_id, ug.dt
                 FROM unique_games ug
                 WHERE ug.rn = 1
+                  AND ug.player1 IS NOT NULL
 
                 UNION ALL
 
                 SELECT ug.player2 AS player_id, ug.dt
                 FROM unique_games ug
                 WHERE ug.rn = 1
+                  AND ug.player2 IS NOT NULL
+            ),
+            mapped AS (
+                SELECT legacy_player_id, player_id
+                FROM ranking
+                WHERE organization_id = :orgId
+                  AND legacy_player_id IS NOT NULL
+                  AND player_id IS NOT NULL
+
+                UNION
+
+                SELECT legacy_player_id, player_id
+                FROM tournament_result
+                WHERE organization_id = :orgId
+                  AND legacy_player_id IS NOT NULL
+                  AND player_id IS NOT NULL
+
+                UNION
+
+                SELECT legacy_player_id, player_id
+                FROM play_summary
+                WHERE organization_id = :orgId
+                  AND legacy_player_id IS NOT NULL
+                  AND player_id IS NOT NULL
+
+                UNION
+
+                SELECT legacy_player1_id AS legacy_player_id, player1_id AS player_id
+                FROM tournament_game
+                WHERE organization_id = :orgId
+                  AND legacy_player1_id IS NOT NULL
+                  AND player1_id IS NOT NULL
+
+                UNION
+
+                SELECT legacy_player2_id AS legacy_player_id, player2_id AS player_id
+                FROM tournament_game
+                WHERE organization_id = :orgId
+                  AND legacy_player2_id IS NOT NULL
+                  AND player2_id IS NOT NULL
+            ),
+            mapped_by_player AS (
+                SELECT player_id, MIN(legacy_player_id) AS legacy_player_id
+                FROM mapped
+                GROUP BY player_id
+            ),
+            players AS (
+                SELECT
+                    mbp.legacy_player_id AS id,
+                    p.name_show
+                FROM player_organization po
+                INNER JOIN player p ON p.id = po.player_id
+                INNER JOIN mapped_by_player mbp ON mbp.player_id = po.player_id
+                WHERE po.organization_id = :orgId
             ),
             games_stats AS (
                 SELECT
@@ -1545,21 +1605,23 @@ ORDER BY
                     COUNT(pg.player_id) AS gamesCount,
                     SUM(CASE WHEN pg.dt >= :last24MonthsDate THEN 1 ELSE 0 END) AS gamesCount24Months,
                     SUM(CASE WHEN pg.dt >= :last12MonthsDate THEN 1 ELSE 0 END) AS gamesCount12Months
-                FROM PFSPLAYER p
+                FROM players p
                 LEFT JOIN player_games pg ON pg.player_id = p.id
                 GROUP BY p.id, p.name_show
                 HAVING COUNT(pg.player_id) >= 30
             ),
             ranking_stats AS (
                 SELECT
-                    r.player AS playerId,
+                    r.legacy_player_id AS playerId,
                     MAX(r.rank) AS highestRank,
                     MAX(CASE WHEN t.dt >= :last24MonthsDate THEN r.rank ELSE NULL END) AS highestRank24MonthsRaw,
                     MAX(CASE WHEN t.dt >= :last12MonthsDate THEN r.rank ELSE NULL END) AS highestRank12MonthsRaw
-                FROM PFSRANKING r
-                INNER JOIN PFSTOURS t ON t.id = r.turniej
+                FROM ranking r
+                INNER JOIN tournament t ON t.id = r.tournament_id
                 WHERE r.rtype = 'f'
-                GROUP BY r.player
+                  AND r.organization_id = :orgId
+                  AND r.legacy_player_id IS NOT NULL
+                GROUP BY r.legacy_player_id
             )
             SELECT
                 gs.playerId,
@@ -1575,8 +1637,9 @@ ORDER BY
                 END AS highestRank12Months
             FROM games_stats gs
             INNER JOIN ranking_stats rs ON rs.playerId = gs.playerId
-            ORDER BY highestRank24Months DESC NULLS LAST, gs.playerName ASC",
+            ORDER BY highestRank24Months DESC NULLS LAST, gs.playerName ASC, gs.playerId ASC",
             [
+                'orgId' => $orgId,
                 'last24MonthsDate' => $last24MonthsDateInt,
                 'last12MonthsDate' => $last12MonthsDateInt,
             ]
