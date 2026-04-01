@@ -4373,49 +4373,97 @@ ORDER BY
     public function getLongestWinStreakVsPlayer(int $orgId): LongestWinStreakVsPlayer
     {
         $rows = $this->fetchAllAssociativeCompat(
-            "WITH eligible_players AS (
-                SELECT pg.playerId
-                FROM (
-                    SELECT hh.player1 AS playerId
-                    FROM PFSTOURHH hh
-                    WHERE hh.player1 < hh.player2
-                        AND NOT (hh.result1 = 0 AND hh.result2 = 0)
-                    UNION ALL
-                    SELECT hh.player2 AS playerId
-                    FROM PFSTOURHH hh
-                    WHERE hh.player1 < hh.player2
-                        AND NOT (hh.result1 = 0 AND hh.result2 = 0)
-                ) pg
-                GROUP BY pg.playerId
-                HAVING COUNT(*) >= 30
+            "WITH mapped AS (
+                SELECT legacy_player_id, player_id
+                FROM ranking
+                WHERE organization_id = :orgId
+                  AND legacy_player_id IS NOT NULL
+                  AND player_id IS NOT NULL
+
+                UNION
+
+                SELECT legacy_player_id, player_id
+                FROM tournament_result
+                WHERE organization_id = :orgId
+                  AND legacy_player_id IS NOT NULL
+                  AND player_id IS NOT NULL
+
+                UNION
+
+                SELECT legacy_player_id, player_id
+                FROM play_summary
+                WHERE organization_id = :orgId
+                  AND legacy_player_id IS NOT NULL
+                  AND player_id IS NOT NULL
+
+                UNION
+
+                SELECT legacy_player1_id AS legacy_player_id, player1_id AS player_id
+                FROM tournament_game
+                WHERE organization_id = :orgId
+                  AND legacy_player1_id IS NOT NULL
+                  AND player1_id IS NOT NULL
+
+                UNION
+
+                SELECT legacy_player2_id AS legacy_player_id, player2_id AS player_id
+                FROM tournament_game
+                WHERE organization_id = :orgId
+                  AND legacy_player2_id IS NOT NULL
+                  AND player2_id IS NOT NULL
             ),
             base_games AS (
                 SELECT
                     g.tournamentId,
                     g.roundNo,
-                    g.tournamentDate,
-                    g.tournamentName,
+                    t.dt AS tournamentDate,
+                    t.name AS tournamentName,
                     g.player1,
                     g.player2,
                     g.result1,
                     g.result2
                 FROM (
                     SELECT
-                        hh.turniej AS tournamentId,
-                        hh.runda AS roundNo,
-                        t.dt AS tournamentDate,
-                        t.name AS tournamentName,
-                        hh.player1,
-                        hh.player2,
-                        hh.result1,
-                        hh.result2
-                    FROM PFSTOURHH hh
-                    INNER JOIN PFSTOURS t ON t.id = hh.turniej
-                    WHERE hh.player1 < hh.player2
-                        AND NOT (hh.result1 = 0 AND hh.result2 = 0)
-                    ORDER BY hh.turniej DESC, hh.runda DESC
-                    LIMIT 2000
+                        hh.legacy_tournament_id AS tournamentId,
+                        hh.round_no AS roundNo,
+                        LEAST(hh.legacy_player1_id, hh.legacy_player2_id) AS player1,
+                        GREATEST(hh.legacy_player1_id, hh.legacy_player2_id) AS player2,
+                        CASE
+                            WHEN hh.legacy_player1_id <= hh.legacy_player2_id THEN hh.result1
+                            ELSE hh.result2
+                        END AS result1,
+                        CASE
+                            WHEN hh.legacy_player1_id <= hh.legacy_player2_id THEN hh.result2
+                            ELSE hh.result1
+                        END AS result2,
+                        ROW_NUMBER() OVER (
+                            PARTITION BY hh.legacy_tournament_id, hh.round_no,
+                                LEAST(hh.legacy_player1_id, hh.legacy_player2_id),
+                                GREATEST(hh.legacy_player1_id, hh.legacy_player2_id)
+                            ORDER BY hh.id
+                        ) AS rn
+                    FROM tournament_game hh
+                    WHERE hh.organization_id = :orgId
+                      AND hh.legacy_player1_id IS NOT NULL
+                      AND hh.legacy_player2_id IS NOT NULL
+                      AND NOT (hh.result1 = 0 AND hh.result2 = 0)
                 ) g
+                INNER JOIN tournament t
+                    ON t.organization_id = :orgId
+                   AND t.legacy_id = g.tournamentId
+                WHERE g.rn = 1
+            ),
+            eligible_players AS (
+                SELECT pg.playerId
+                FROM (
+                    SELECT bg.player1 AS playerId
+                    FROM base_games bg
+                    UNION ALL
+                    SELECT bg.player2 AS playerId
+                    FROM base_games bg
+                ) pg
+                GROUP BY pg.playerId
+                HAVING COUNT(*) >= 30
             ),
             pair_games AS (
                 SELECT
@@ -4430,8 +4478,10 @@ ORDER BY
                     CASE WHEN bg.result1 > bg.result2 THEN 1 ELSE 0 END AS isWin
                 FROM base_games bg
                 INNER JOIN eligible_players ep ON ep.playerId = bg.player1
-                INNER JOIN PFSPLAYER p1 ON p1.id = bg.player1
-                INNER JOIN PFSPLAYER p2 ON p2.id = bg.player2
+                INNER JOIN mapped mp1 ON mp1.legacy_player_id = bg.player1
+                INNER JOIN mapped mp2 ON mp2.legacy_player_id = bg.player2
+                INNER JOIN player p1 ON p1.id = mp1.player_id
+                INNER JOIN player p2 ON p2.id = mp2.player_id
 
                 UNION ALL
 
@@ -4447,8 +4497,10 @@ ORDER BY
                     CASE WHEN bg.result2 > bg.result1 THEN 1 ELSE 0 END AS isWin
                 FROM base_games bg
                 INNER JOIN eligible_players ep ON ep.playerId = bg.player2
-                INNER JOIN PFSPLAYER p1 ON p1.id = bg.player1
-                INNER JOIN PFSPLAYER p2 ON p2.id = bg.player2
+                INNER JOIN mapped mp1 ON mp1.legacy_player_id = bg.player1
+                INNER JOIN mapped mp2 ON mp2.legacy_player_id = bg.player2
+                INNER JOIN player p1 ON p1.id = mp1.player_id
+                INNER JOIN player p2 ON p2.id = mp2.player_id
             ),
             non_win_groups AS (
                 SELECT
@@ -4516,7 +4568,8 @@ ORDER BY
             FROM best_segment_per_winner bsw
             WHERE bsw.rn = 1
             ORDER BY bsw.winsStreak DESC, bsw.winnerCandidateName ASC
-            LIMIT 1000"
+            LIMIT 1000",
+            ['orgId' => $orgId]
         );
 
         $resultRows = [];
