@@ -1674,7 +1674,7 @@ final readonly class StatsService implements StatsServiceInterface
         return new HighestVictory($resultRows);
     }
 
-    public function getHighestDraw(): HighestDraw
+    public function getHighestDraw(int $orgId): HighestDraw
     {
         $rows = $this->connection->fetchAllAssociative(
             "WITH unique_games AS (

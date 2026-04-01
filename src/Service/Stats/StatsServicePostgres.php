@@ -2567,7 +2567,7 @@ ORDER BY
         return new HighestVictory($resultRows);
     }
 
-    public function getHighestDraw(): HighestDraw
+    public function getHighestDraw(int $orgId): HighestDraw
     {
         $rows = $this->fetchAllAssociativeCompat(
             "WITH unique_games AS (
