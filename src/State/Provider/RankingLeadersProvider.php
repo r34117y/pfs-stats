@@ -6,7 +6,7 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\Stats\RankingLeaders;
 use App\Service\Stats\StatsServiceInterface;
-use DateTimeImmutable;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\Cache\CacheInterface;
 
@@ -19,13 +19,15 @@ final readonly class RankingLeadersProvider implements ProviderInterface
     ) {
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): RankingLeaders
     {
-        $todayKey = (new DateTimeImmutable('today'))->format('Ymd');
-
+        $orgId = $uriVariables['org'] ?? 21;
         return $this->cache->get(
-            sprintf('api.stats.ranking_leaders.%s', $todayKey),
-            fn (): RankingLeaders => $this->statsService->getRankingLeaders(),
+            sprintf('api.stats.ranking_leaders.%s', $orgId),
+            fn (): RankingLeaders => $this->statsService->getRankingLeaders($orgId),
         );
     }
 }

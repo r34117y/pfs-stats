@@ -1145,7 +1145,7 @@ final readonly class StatsService implements StatsServiceInterface
         return new HighestRankPosition($resultRows);
     }
 
-    public function getRankingLeaders(): RankingLeaders
+    public function getRankingLeaders(int $orgId): RankingLeaders
     {
         $rows = $this->connection->fetchAllAssociative(
             "WITH ranking_rows AS (

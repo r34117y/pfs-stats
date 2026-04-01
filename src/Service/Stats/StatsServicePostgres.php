@@ -1729,7 +1729,7 @@ ORDER BY
         return new HighestRankPosition($resultRows);
     }
 
-    public function getRankingLeaders(): RankingLeaders
+    public function getRankingLeaders(int $orgId): RankingLeaders
     {
         $rows = $this->fetchAllAssociativeCompat(
             "WITH ranking_rows AS (
