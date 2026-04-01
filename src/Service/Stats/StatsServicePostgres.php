@@ -2345,7 +2345,7 @@ ORDER BY
         return new HighestPointsSum($resultRows);
     }
 
-    public function getLowestPointsSum(): LowestPointsSum
+    public function getLowestPointsSum(int $orgId): LowestPointsSum
     {
         $rows = $this->fetchAllAssociativeCompat(
             "WITH unique_games AS (

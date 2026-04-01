@@ -110,6 +110,7 @@ final readonly class RefreshCacheAfterImportService
             '/api/stats/different-opponents?org=' . $orgId,
             '/api/stats/least-small-points?org=' . $orgId,
             '/api/stats/highest-points-sum?org=' . $orgId,
+            '/api/stats/lowest-points-sum?org=' . $orgId,
         ];
 
         try {
