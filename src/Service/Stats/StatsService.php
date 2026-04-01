@@ -1481,7 +1481,10 @@ final readonly class StatsService implements StatsServiceInterface
         return new LeastSmallPoints($resultRows);
     }
 
-    public function getHighestPointsSum(): HighestPointsSum
+    /**
+     * @throws Exception
+     */
+    public function getHighestPointsSum(int $orgId): HighestPointsSum
     {
         $rows = $this->connection->fetchAllAssociative(
             "WITH unique_games AS (

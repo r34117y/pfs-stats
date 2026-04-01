@@ -2230,7 +2230,7 @@ ORDER BY
         return new LeastSmallPoints($resultRows);
     }
 
-    public function getHighestPointsSum(): HighestPointsSum
+    public function getHighestPointsSum(int $orgId): HighestPointsSum
     {
         $rows = $this->fetchAllAssociativeCompat(
             "WITH unique_games AS (
