@@ -6,7 +6,7 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\Stats\LongestLossStreaks;
 use App\Service\Stats\StatsServiceInterface;
-use DateTimeImmutable;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\Cache\CacheInterface;
 
@@ -19,13 +19,16 @@ final readonly class LongestLossStreaksProvider implements ProviderInterface
     ) {
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): LongestLossStreaks
     {
-        $todayKey = (new DateTimeImmutable('today'))->format('Ymd');
+        $orgId = $uriVariables['org'] ?? 21;
 
         return $this->cache->get(
-            sprintf('api.stats.longest_loss_streaks.%s', $todayKey),
-            fn (): LongestLossStreaks => $this->statsService->getLongestLossStreaks(),
+            sprintf('api.stats.longest_loss_streaks.%s', $orgId),
+            fn (): LongestLossStreaks => $this->statsService->getLongestLossStreaks($orgId),
         );
     }
 }

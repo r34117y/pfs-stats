@@ -2204,7 +2204,7 @@ final readonly class StatsService implements StatsServiceInterface
         return new LongestWinStreaks($resultRows);
     }
 
-    public function getLongestLossStreaks(): LongestLossStreaks
+    public function getLongestLossStreaks(int $orgId): LongestLossStreaks
     {
         $rows = $this->connection->fetchAllAssociative(
             "WITH unique_games AS (

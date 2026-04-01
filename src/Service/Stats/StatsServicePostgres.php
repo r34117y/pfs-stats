@@ -3423,23 +3423,67 @@ ORDER BY
         return new LongestWinStreaks($resultRows);
     }
 
-    public function getLongestLossStreaks(): LongestLossStreaks
+    public function getLongestLossStreaks(int $orgId): LongestLossStreaks
     {
         $rows = $this->fetchAllAssociativeCompat(
             "WITH unique_games AS (
                 SELECT
-                    h.turniej,
-                    h.runda,
-                    h.player1,
-                    h.player2,
+                    h.legacy_tournament_id AS turniej,
+                    h.round_no AS runda,
+                    h.legacy_player1_id AS player1,
+                    h.legacy_player2_id AS player2,
                     h.result1,
                     h.result2,
                     ROW_NUMBER() OVER (
-                        PARTITION BY h.turniej, h.runda, LEAST(h.player1, h.player2), GREATEST(h.player1, h.player2)
-                        ORDER BY h.player1 ASC
+                        PARTITION BY
+                            h.legacy_tournament_id,
+                            h.round_no,
+                            LEAST(h.legacy_player1_id, h.legacy_player2_id),
+                            GREATEST(h.legacy_player1_id, h.legacy_player2_id)
+                        ORDER BY h.legacy_player1_id ASC
                     ) AS rn
-                FROM PFSTOURHH h
+                FROM tournament_game h
                 WHERE NOT (h.result1 = 0 AND h.result2 = 0)
+                  AND h.organization_id = :orgId
+            ),
+            mapped AS (
+                SELECT legacy_player_id, player_id
+                FROM ranking
+                WHERE organization_id = :orgId
+                  AND legacy_player_id IS NOT NULL
+                  AND player_id IS NOT NULL
+
+                UNION
+
+                SELECT legacy_player_id, player_id
+                FROM tournament_result
+                WHERE organization_id = :orgId
+                  AND legacy_player_id IS NOT NULL
+                  AND player_id IS NOT NULL
+
+                UNION
+
+                SELECT legacy_player_id, player_id
+                FROM play_summary
+                WHERE organization_id = :orgId
+                  AND legacy_player_id IS NOT NULL
+                  AND player_id IS NOT NULL
+
+                UNION
+
+                SELECT legacy_player1_id AS legacy_player_id, player1_id AS player_id
+                FROM tournament_game
+                WHERE organization_id = :orgId
+                  AND legacy_player1_id IS NOT NULL
+                  AND player1_id IS NOT NULL
+
+                UNION
+
+                SELECT legacy_player2_id AS legacy_player_id, player2_id AS player_id
+                FROM tournament_game
+                WHERE organization_id = :orgId
+                  AND legacy_player2_id IS NOT NULL
+                  AND player2_id IS NOT NULL
             ),
             player_games AS (
                 SELECT
@@ -3455,8 +3499,11 @@ ORDER BY
                         ELSE 0
                     END AS outcome
                 FROM unique_games ug
-                INNER JOIN PFSPLAYER p1 ON p1.id = ug.player1
-                INNER JOIN PFSTOURS t ON t.id = ug.turniej
+                INNER JOIN mapped mp1 ON mp1.legacy_player_id = ug.player1
+                INNER JOIN player p1 ON p1.id = mp1.player_id
+                INNER JOIN tournament t
+                    ON t.organization_id = :orgId
+                   AND t.legacy_id = ug.turniej
                 WHERE ug.rn = 1
 
                 UNION ALL
@@ -3474,8 +3521,11 @@ ORDER BY
                         ELSE 0
                     END AS outcome
                 FROM unique_games ug
-                INNER JOIN PFSPLAYER p2 ON p2.id = ug.player2
-                INNER JOIN PFSTOURS t ON t.id = ug.turniej
+                INNER JOIN mapped mp2 ON mp2.legacy_player_id = ug.player2
+                INNER JOIN player p2 ON p2.id = mp2.player_id
+                INNER JOIN tournament t
+                    ON t.organization_id = :orgId
+                   AND t.legacy_id = ug.turniej
                 WHERE ug.rn = 1
             ),
             ordered_games AS (
@@ -3502,19 +3552,49 @@ ORDER BY
                 FROM ordered_games og
                 WHERE og.outcome = -1
             ),
-            loss_streaks AS (
+            streak_tournaments AS (
+                SELECT DISTINCT
+                    lg.playerId,
+                    lg.playerName,
+                    lg.lossGroupId,
+                    lg.tournamentId,
+                    REPLACE(lg.tournamentName, '|', '/') AS tournamentName,
+                    lg.tournamentDate
+                FROM loss_groups lg
+            ),
+            loss_streak_counts AS (
                 SELECT
                     lg.playerId,
                     lg.playerName,
+                    lg.lossGroupId,
                     COUNT(*) AS lossesStreak,
-                    MIN(lg.seqAsc) AS streakStartSeq,
-                    GROUP_CONCAT(
-                        DISTINCT CONCAT(lg.tournamentId, '::', REPLACE(lg.tournamentName, '|', '/'))
-                        ORDER BY lg.tournamentDate ASC, lg.tournamentId ASC
-                        SEPARATOR '|'
-                    ) AS tournamentsSerialized
+                    MIN(lg.seqAsc) AS streakStartSeq
                 FROM loss_groups lg
                 GROUP BY lg.playerId, lg.playerName, lg.lossGroupId
+            ),
+            loss_streak_tournaments AS (
+                SELECT
+                    st.playerId,
+                    st.playerName,
+                    st.lossGroupId,
+                    STRING_AGG(
+                        st.tournamentId::text || '::' || st.tournamentName,
+                        '|' ORDER BY st.tournamentDate ASC, st.tournamentId ASC
+                    ) AS tournamentsSerialized
+                FROM streak_tournaments st
+                GROUP BY st.playerId, st.playerName, st.lossGroupId
+            ),
+            loss_streaks AS (
+                SELECT
+                    lsc.playerId,
+                    lsc.playerName,
+                    lsc.lossesStreak,
+                    lsc.streakStartSeq,
+                    lst.tournamentsSerialized
+                FROM loss_streak_counts lsc
+                LEFT JOIN loss_streak_tournaments lst
+                    ON lst.playerId = lsc.playerId
+                   AND lst.lossGroupId = lsc.lossGroupId
             ),
             best_loss_streak AS (
                 SELECT
@@ -3566,7 +3646,8 @@ ORDER BY
             LEFT JOIN trailing_outcome to2
                 ON to2.playerId = p.playerId
             ORDER BY lossesStreak DESC, p.playerName ASC
-            LIMIT 1000"
+            LIMIT 1000",
+            ['orgId' => $orgId]
         );
 
         $resultRows = [];
