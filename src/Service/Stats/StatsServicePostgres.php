@@ -2350,17 +2350,61 @@ ORDER BY
         $rows = $this->fetchAllAssociativeCompat(
             "WITH unique_games AS (
                 SELECT
-                    h.turniej,
-                    h.runda,
-                    h.player1,
-                    h.player2,
+                    h.legacy_tournament_id AS turniej,
+                    h.round_no AS runda,
+                    h.legacy_player1_id AS player1,
+                    h.legacy_player2_id AS player2,
                     h.result1,
                     h.result2,
                     ROW_NUMBER() OVER (
-                        PARTITION BY h.turniej, h.runda, LEAST(h.player1, h.player2), GREATEST(h.player1, h.player2)
-                        ORDER BY h.player1 ASC
+                        PARTITION BY
+                            h.legacy_tournament_id,
+                            h.round_no,
+                            LEAST(h.legacy_player1_id, h.legacy_player2_id),
+                            GREATEST(h.legacy_player1_id, h.legacy_player2_id)
+                        ORDER BY h.legacy_player1_id ASC
                     ) AS rn
-                FROM PFSTOURHH h
+                FROM tournament_game h
+                WHERE h.organization_id = :orgId
+            ),
+            mapped AS (
+                SELECT legacy_player_id, player_id
+                FROM ranking
+                WHERE organization_id = :orgId
+                  AND legacy_player_id IS NOT NULL
+                  AND player_id IS NOT NULL
+
+                UNION
+
+                SELECT legacy_player_id, player_id
+                FROM tournament_result
+                WHERE organization_id = :orgId
+                  AND legacy_player_id IS NOT NULL
+                  AND player_id IS NOT NULL
+
+                UNION
+
+                SELECT legacy_player_id, player_id
+                FROM play_summary
+                WHERE organization_id = :orgId
+                  AND legacy_player_id IS NOT NULL
+                  AND player_id IS NOT NULL
+
+                UNION
+
+                SELECT legacy_player1_id AS legacy_player_id, player1_id AS player_id
+                FROM tournament_game
+                WHERE organization_id = :orgId
+                  AND legacy_player1_id IS NOT NULL
+                  AND player1_id IS NOT NULL
+
+                UNION
+
+                SELECT legacy_player2_id AS legacy_player_id, player2_id AS player_id
+                FROM tournament_game
+                WHERE organization_id = :orgId
+                  AND legacy_player2_id IS NOT NULL
+                  AND player2_id IS NOT NULL
             )
             SELECT
                 ug.player1 AS playerId,
@@ -2368,15 +2412,20 @@ ORDER BY
                 ug.player2 AS opponentId,
                 p2.name_show AS opponentName,
                 (ug.result1 + ug.result2) AS points,
-                CONCAT(ug.result1, ':', ug.result2) AS score,
+                ug.result1::text || ':' || ug.result2::text AS score,
                 COALESCE(t.fullname, t.name) AS tournamentName
             FROM unique_games ug
-            INNER JOIN PFSPLAYER p1 ON p1.id = ug.player1
-            INNER JOIN PFSPLAYER p2 ON p2.id = ug.player2
-            INNER JOIN PFSTOURS t ON t.id = ug.turniej
+            INNER JOIN mapped mp1 ON mp1.legacy_player_id = ug.player1
+            INNER JOIN player p1 ON p1.id = mp1.player_id
+            INNER JOIN mapped mp2 ON mp2.legacy_player_id = ug.player2
+            INNER JOIN player p2 ON p2.id = mp2.player_id
+            INNER JOIN tournament t
+                ON t.organization_id = :orgId
+               AND t.legacy_id = ug.turniej
             WHERE ug.rn = 1
             ORDER BY points ASC, t.dt DESC, ug.turniej DESC, ug.runda ASC, ug.player1 ASC
-            LIMIT 1000"
+            LIMIT 1000",
+            ['orgId' => $orgId]
         );
 
         $resultRows = [];
