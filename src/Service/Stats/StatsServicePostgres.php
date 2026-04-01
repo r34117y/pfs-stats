@@ -1506,7 +1506,7 @@ ORDER BY
         return new RankAllGames($resultRows);
     }
 
-    public function getHighestRank(): HighestRank
+    public function getHighestRank(int $orgId): HighestRank
     {
         $today = new DateTimeImmutable('today');
         $last24MonthsDateInt = (int) $today->modify('-24 months')->format('Ymd');
