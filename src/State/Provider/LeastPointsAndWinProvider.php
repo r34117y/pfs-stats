@@ -6,7 +6,7 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\Stats\LeastPointsAndWin;
 use App\Service\Stats\StatsServiceInterface;
-use DateTimeImmutable;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\Cache\CacheInterface;
 
@@ -19,13 +19,16 @@ final readonly class LeastPointsAndWinProvider implements ProviderInterface
     ) {
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): LeastPointsAndWin
     {
-        $todayKey = (new DateTimeImmutable('today'))->format('Ymd');
+        $orgId = $uriVariables['org'] ?? 21;
 
         return $this->cache->get(
-            sprintf('api.stats.least_points_and_win.%s', $todayKey),
-            fn (): LeastPointsAndWin => $this->statsService->getLeastPointsAndWin(),
+            sprintf('api.stats.least_points_and_win.%s', $orgId),
+            fn (): LeastPointsAndWin => $this->statsService->getLeastPointsAndWin($orgId),
         );
     }
 }

@@ -2793,7 +2793,7 @@ ORDER BY
         return new MostPointsAndLoss($resultRows);
     }
 
-    public function getLeastPointsAndWin(): LeastPointsAndWin
+    public function getLeastPointsAndWin(int $orgId): LeastPointsAndWin
     {
         $rows = $this->fetchAllAssociativeCompat(
             "WITH unique_games AS (
