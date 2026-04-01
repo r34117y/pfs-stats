@@ -2445,7 +2445,7 @@ ORDER BY
         return new LowestPointsSum($resultRows);
     }
 
-    public function getHighestVictory(): HighestVictory
+    public function getHighestVictory(int $orgId): HighestVictory
     {
         $rows = $this->fetchAllAssociativeCompat(
             "WITH unique_games AS (
