@@ -1727,7 +1727,7 @@ final readonly class StatsService implements StatsServiceInterface
         return new HighestDraw($resultRows);
     }
 
-    public function getMostPointsAndLoss(): MostPointsAndLoss
+    public function getMostPointsAndLoss(int $orgId): MostPointsAndLoss
     {
         $rows = $this->connection->fetchAllAssociative(
             "WITH unique_games AS (

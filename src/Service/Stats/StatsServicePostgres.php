@@ -2669,7 +2669,7 @@ ORDER BY
         return new HighestDraw($resultRows);
     }
 
-    public function getMostPointsAndLoss(): MostPointsAndLoss
+    public function getMostPointsAndLoss(int $orgId): MostPointsAndLoss
     {
         $rows = $this->fetchAllAssociativeCompat(
             "WITH unique_games AS (

@@ -113,6 +113,7 @@ final readonly class RefreshCacheAfterImportService
             '/api/stats/lowest-points-sum?org=' . $orgId,
             '/api/stats/highest-victory?org=' . $orgId,
             '/api/stats/highest-draw?org=' . $orgId,
+            '/api/stats/most-points-and-loss?org=' . $orgId,
         ];
 
         try {

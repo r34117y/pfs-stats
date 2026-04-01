@@ -6,7 +6,7 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\Stats\MostPointsAndLoss;
 use App\Service\Stats\StatsServiceInterface;
-use DateTimeImmutable;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\Cache\CacheInterface;
 
@@ -19,13 +19,16 @@ final readonly class MostPointsAndLossProvider implements ProviderInterface
     ) {
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): MostPointsAndLoss
     {
-        $todayKey = (new DateTimeImmutable('today'))->format('Ymd');
+        $orgId = $uriVariables['org'] ?? 21;
 
         return $this->cache->get(
-            sprintf('api.stats.most_points_and_loss.%s', $todayKey),
-            fn (): MostPointsAndLoss => $this->statsService->getMostPointsAndLoss(),
+            sprintf('api.stats.most_points_and_loss.%s', $orgId),
+            fn (): MostPointsAndLoss => $this->statsService->getMostPointsAndLoss($orgId),
         );
     }
 }

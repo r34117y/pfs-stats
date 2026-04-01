@@ -69,7 +69,7 @@ interface StatsServiceInterface
     public function getLowestPointsSum(int $orgId): LowestPointsSum;
     public function getHighestVictory(int $orgId): HighestVictory;
     public function getHighestDraw(int $orgId): HighestDraw;
-    public function getMostPointsAndLoss(): MostPointsAndLoss;
+    public function getMostPointsAndLoss(int $orgId): MostPointsAndLoss;
     public function getLeastPointsAndWin(): LeastPointsAndWin;
     public function getMostOpponentPointsAndWin(): MostOpponentPointsAndWin;
     public function getLeastOpponentPointsAndLoss(): LeastOpponentPointsAndLoss;
