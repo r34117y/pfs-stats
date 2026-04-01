@@ -117,6 +117,7 @@ final readonly class RefreshCacheAfterImportService
             '/api/stats/least-points-and-win?org=' . $orgId,
             '/api/stats/most-opponent-points-and-win?org=' . $orgId,
             '/api/stats/least-opponent-points-and-loss?org=' . $orgId,
+            '/api/stats/longest-win-streaks?org=' . $orgId,
         ];
 
         try {

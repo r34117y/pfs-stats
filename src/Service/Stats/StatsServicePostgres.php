@@ -3165,7 +3165,7 @@ ORDER BY
         return new LeastOpponentPointsAndLoss($resultRows);
     }
 
-    public function getLongestWinStreaks(): LongestWinStreaks
+    public function getLongestWinStreaks(int $orgId): LongestWinStreaks
     {
         $rows = $this->fetchAllAssociativeCompat(
             "WITH unique_games AS (
