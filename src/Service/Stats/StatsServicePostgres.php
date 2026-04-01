@@ -85,7 +85,6 @@ use App\ApiResource\Stats\GamesWonRow;
 use App\ApiResource\Stats\TournamentsCount;
 use App\ApiResource\Stats\TournamentsCountRow;
 use DateTimeImmutable;
-use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -98,6 +97,9 @@ final readonly class StatsServicePostgres implements StatsServiceInterface
     ) {
     }
 
+    /**
+     * @throws Exception
+     */
     public function getAllTimesResults(int $orgId): AllTimesResults
     {
         $sql = "SELECT
@@ -156,6 +158,9 @@ ORDER BY
         return new AllTimesResults($resultRows);
     }
 
+    /**
+     * @throws Exception
+     */
     public function getYearlyAllTimesResults(int $year): AllTimesResults
     {
         $fromDate = ($year * 10000) + 101;
@@ -165,6 +170,7 @@ ORDER BY
             "SELECT
                 tw.player AS playerId,
                 p.name_show AS playerName,
+                p.slug,
                 SUM(CASE WHEN tw.place = 1 THEN 1 ELSE 0 END) AS firstPlace,
                 SUM(CASE WHEN tw.place = 2 THEN 1 ELSE 0 END) AS secondPlace,
                 SUM(CASE WHEN tw.place = 3 THEN 1 ELSE 0 END) AS thirdPlace,
@@ -213,16 +219,20 @@ ORDER BY
                 sixth: $sixth,
                 oneToThree: $first + $second + $third,
                 oneToSix: $first + $second + $third + $fourth + $fifth + $sixth,
+                slug: $row['slug']
             );
         }
 
         return new AllTimesResults($resultRows);
     }
 
+    /**
+     * @throws Exception
+     */
     public function getYearlyRankingSummary(int $year): YearlyRankingSummary
     {
-        $fromDate = ((int) $year * 10000) + 101;
-        $toDate = ((int) $year * 10000) + 1231;
+        $fromDate = ($year * 10000) + 101;
+        $toDate = ($year * 10000) + 1231;
 
         $rows = $this->fetchAllAssociativeCompat(
             "SELECT
@@ -262,6 +272,9 @@ ORDER BY
         return new YearlyRankingSummary($resultRows);
     }
 
+    /**
+     * @throws Exception
+     */
     public function getAllTimeSummary(int $orgId): AllTimeSummary
     {
         $today = new DateTimeImmutable('today');
@@ -295,6 +308,9 @@ ORDER BY
         return new AllTimeSummary($rows);
     }
 
+    /**
+     * @throws Exception
+     */
     public function getGamesCount(int $orgId): GamesCount
     {
         $today = new DateTimeImmutable('today');
@@ -420,6 +436,9 @@ ORDER BY
         return new GamesCount($resultRows);
     }
 
+    /**
+     * @throws Exception
+     */
     public function getGamesWon(int $orgId): GamesWon
     {
         $today = new DateTimeImmutable('today');
@@ -574,6 +593,9 @@ ORDER BY
         return new GamesWon($resultRows);
     }
 
+    /**
+     * @throws Exception
+     */
     public function getTournamentsCount(int $orgId): TournamentsCount
     {
         $today = new DateTimeImmutable('today');
@@ -617,6 +639,9 @@ ORDER BY
         return new TournamentsCount($resultRows);
     }
 
+    /**
+     * @throws Exception
+     */
     public function getAvgPointsPerGame(int $orgId): AvgPointsPerGame
     {
         $today = new DateTimeImmutable('today');
@@ -754,6 +779,9 @@ ORDER BY
         return new AvgPointsPerGame($resultRows);
     }
 
+    /**
+     * @throws Exception
+     */
     public function getAvgOpponentsPointsPerGame(int $orgId): AvgOpponentsPointsPerGame
     {
         $today = new DateTimeImmutable('today');
@@ -893,6 +921,9 @@ ORDER BY
         return new AvgOpponentsPointsPerGame($resultRows);
     }
 
+    /**
+     * @throws Exception
+     */
     public function getAvgPointsSumPerGame(int $orgId): AvgPointsSumPerGame
     {
         $today = new DateTimeImmutable('today');
@@ -1032,6 +1063,9 @@ ORDER BY
         return new AvgPointsSumPerGame($resultRows);
     }
 
+    /**
+     * @throws Exception
+     */
     public function getAvgPointsDifferencePerGame(int $orgId): AvgPointsDifferencePerGame
     {
         $today = new DateTimeImmutable('today');
@@ -1171,6 +1205,9 @@ ORDER BY
         return new AvgPointsDifferencePerGame($resultRows);
     }
 
+    /**
+     * @throws Exception
+     */
     public function getGamesOver400(int $orgId): GamesOver400
     {
         $today = new DateTimeImmutable('today');
@@ -1332,6 +1369,9 @@ ORDER BY
         return new GamesOver400($resultRows);
     }
 
+    /**
+     * @throws Exception
+     */
     public function getRankAllGames(int $orgId): RankAllGames
     {
         $today = new DateTimeImmutable('today');
@@ -1506,6 +1546,9 @@ ORDER BY
         return new RankAllGames($resultRows);
     }
 
+    /**
+     * @throws Exception
+     */
     public function getHighestRank(int $orgId): HighestRank
     {
         $today = new DateTimeImmutable('today');
@@ -1661,6 +1704,9 @@ ORDER BY
     }
 
 
+    /**
+     * @throws Exception
+     */
     public function getHighestRankPosition(int $orgId): HighestRankPosition
     {
         $today = new DateTimeImmutable('today');
@@ -1729,6 +1775,9 @@ ORDER BY
         return new HighestRankPosition($resultRows);
     }
 
+    /**
+     * @throws Exception
+     */
     public function getRankingLeaders(int $orgId): RankingLeaders
     {
         $rows = $this->fetchAllAssociativeCompat(
@@ -1822,6 +1871,9 @@ ORDER BY
         return new RankingLeaders($resultRows);
     }
 
+    /**
+     * @throws Exception
+     */
     public function getDifferentOpponents(int $orgId): DifferentOpponents
     {
         $today = new DateTimeImmutable('today');
@@ -1949,6 +2001,9 @@ ORDER BY
         return new DifferentOpponents($resultRows);
     }
 
+    /**
+     * @throws Exception
+     */
     public function getMostSmallPoints(int $orgId): MostSmallPoints
     {
         $rows = $this->fetchAllAssociativeCompat(
@@ -2089,6 +2144,9 @@ ORDER BY
         return new MostSmallPoints($resultRows);
     }
 
+    /**
+     * @throws Exception
+     */
     public function getLeastSmallPoints(int $orgId): LeastSmallPoints
     {
         $rows = $this->fetchAllAssociativeCompat(
@@ -2230,6 +2288,9 @@ ORDER BY
         return new LeastSmallPoints($resultRows);
     }
 
+    /**
+     * @throws Exception
+     */
     public function getHighestPointsSum(int $orgId): HighestPointsSum
     {
         $rows = $this->fetchAllAssociativeCompat(
@@ -2345,6 +2406,9 @@ ORDER BY
         return new HighestPointsSum($resultRows);
     }
 
+    /**
+     * @throws Exception
+     */
     public function getLowestPointsSum(int $orgId): LowestPointsSum
     {
         $rows = $this->fetchAllAssociativeCompat(
@@ -2445,6 +2509,9 @@ ORDER BY
         return new LowestPointsSum($resultRows);
     }
 
+    /**
+     * @throws Exception
+     */
     public function getHighestVictory(int $orgId): HighestVictory
     {
         $rows = $this->fetchAllAssociativeCompat(
@@ -2567,6 +2634,9 @@ ORDER BY
         return new HighestVictory($resultRows);
     }
 
+    /**
+     * @throws Exception
+     */
     public function getHighestDraw(int $orgId): HighestDraw
     {
         $rows = $this->fetchAllAssociativeCompat(
@@ -2669,6 +2739,9 @@ ORDER BY
         return new HighestDraw($resultRows);
     }
 
+    /**
+     * @throws Exception
+     */
     public function getMostPointsAndLoss(int $orgId): MostPointsAndLoss
     {
         $rows = $this->fetchAllAssociativeCompat(
@@ -2793,6 +2866,9 @@ ORDER BY
         return new MostPointsAndLoss($resultRows);
     }
 
+    /**
+     * @throws Exception
+     */
     public function getLeastPointsAndWin(int $orgId): LeastPointsAndWin
     {
         $rows = $this->fetchAllAssociativeCompat(
@@ -2917,6 +2993,9 @@ ORDER BY
         return new LeastPointsAndWin($resultRows);
     }
 
+    /**
+     * @throws Exception
+     */
     public function getMostOpponentPointsAndWin(int $orgId): MostOpponentPointsAndWin
     {
         $rows = $this->fetchAllAssociativeCompat(
@@ -3041,6 +3120,9 @@ ORDER BY
         return new MostOpponentPointsAndWin($resultRows);
     }
 
+    /**
+     * @throws Exception
+     */
     public function getLeastOpponentPointsAndLoss(int $orgId): LeastOpponentPointsAndLoss
     {
         $rows = $this->fetchAllAssociativeCompat(
@@ -3165,6 +3247,9 @@ ORDER BY
         return new LeastOpponentPointsAndLoss($resultRows);
     }
 
+    /**
+     * @throws Exception
+     */
     public function getLongestWinStreaks(int $orgId): LongestWinStreaks
     {
         $rows = $this->fetchAllAssociativeCompat(
@@ -3423,6 +3508,9 @@ ORDER BY
         return new LongestWinStreaks($resultRows);
     }
 
+    /**
+     * @throws Exception
+     */
     public function getLongestLossStreaks(int $orgId): LongestLossStreaks
     {
         $rows = $this->fetchAllAssociativeCompat(
@@ -3726,6 +3814,7 @@ ORDER BY
      *     tournaments:list<array{id:int,name:string}>,
      *     currentStreak:int
      * }>
+     * @throws Exception
      */
     private function buildLongestSingleScoreStreakRows(int $orgId, int $minPoints): array
     {
@@ -4011,6 +4100,7 @@ ORDER BY
      *     tournaments:list<array{id:int,name:string}>,
      *     currentStreak:int
      * }>
+     * @throws Exception
      */
     private function buildLongestCombinedScoreStreakRows(int $orgId, int $minPointsSum): array
     {
@@ -5281,7 +5371,6 @@ ORDER BY
         $wins130PlusVs110to130 = (int) ($gameSummary['wins130PlusVs110to130'] ?? 0);
         $wins130PlusVsBelow110 = (int) ($gameSummary['wins130PlusVsBelow110'] ?? 0);
         $wins110to130VsBelow110 = (int) ($gameSummary['wins110to130VsBelow110'] ?? 0);
-        $hostGames = (int) ($gameSummary['hostgames'] ?? 0);
         $hostWins = (int) ($gameSummary['hostwins'] ?? 0);
 
         $totalScores = $playedGames > 0 ? $playedGames * 2 : 0;
@@ -5314,6 +5403,7 @@ ORDER BY
      * @param array<string, mixed> $params
      * @param array<string, mixed> $types
      * @return list<array<string, mixed>>
+     * @throws Exception
      */
     private function fetchAllAssociativeCompat(string $sql, array $params = [], array $types = []): array
     {
@@ -5326,6 +5416,7 @@ ORDER BY
      * @param array<string, mixed> $params
      * @param array<string, mixed> $types
      * @return array<string, mixed>|false
+     * @throws Exception
      */
     private function fetchAssociativeCompat(string $sql, array $params = [], array $types = []): array|false
     {
@@ -5335,20 +5426,6 @@ ORDER BY
         }
 
         return $this->normalizeRow($row);
-    }
-
-    /**
-     * @param array<string, mixed> $params
-     * @param array<string, mixed> $types
-     * @return list<array<string, mixed>>
-     */
-    private function executeQueryCompat(string $sql, array $params = [], array $types = []): array
-    {
-        $rows = $this->connection
-            ->executeQuery($sql, $params, $types)
-            ->fetchAllAssociative();
-
-        return $this->normalizeRows($rows);
     }
 
     /**
