@@ -3683,556 +3683,290 @@ ORDER BY
 
     public function getLongestStreakMin350(int $orgId): LongestStreakMin350
     {
-        $topRows = $this->fetchAllAssociativeCompat(
-            "WITH base_games AS (
-                SELECT
-                    h.turniej,
-                    h.runda,
-                    h.player1,
-                    h.player2,
-                    h.result1,
-                    h.result2
-                FROM (
-                    SELECT
-                        hh.legacy_tournament_id AS turniej,
-                        hh.round_no AS runda,
-                        hh.legacy_player1_id AS player1,
-                        hh.legacy_player2_id AS player2,
-                        hh.result1,
-                        hh.result2
-                    FROM tournament_game hh
-                    WHERE hh.organization_id = :orgId
-                        AND hh.legacy_player1_id < hh.legacy_player2_id
-                        AND NOT (hh.result1 = 0 AND hh.result2 = 0)
-                    ORDER BY hh.legacy_tournament_id DESC, hh.round_no DESC
-                    LIMIT 500
-                ) h
-            ),
-            mapped AS (
-                SELECT legacy_player_id, player_id
-                FROM ranking
-                WHERE organization_id = :orgId
-                  AND legacy_player_id IS NOT NULL
-                  AND player_id IS NOT NULL
-
-                UNION
-
-                SELECT legacy_player_id, player_id
-                FROM tournament_result
-                WHERE organization_id = :orgId
-                  AND legacy_player_id IS NOT NULL
-                  AND player_id IS NOT NULL
-
-                UNION
-
-                SELECT legacy_player_id, player_id
-                FROM play_summary
-                WHERE organization_id = :orgId
-                  AND legacy_player_id IS NOT NULL
-                  AND player_id IS NOT NULL
-
-                UNION
-
-                SELECT legacy_player1_id AS legacy_player_id, player1_id AS player_id
-                FROM tournament_game
-                WHERE organization_id = :orgId
-                  AND legacy_player1_id IS NOT NULL
-                  AND player1_id IS NOT NULL
-
-                UNION
-
-                SELECT legacy_player2_id AS legacy_player_id, player2_id AS player_id
-                FROM tournament_game
-                WHERE organization_id = :orgId
-                  AND legacy_player2_id IS NOT NULL
-                  AND player2_id IS NOT NULL
-            ),
-            player_games AS (
-                SELECT
-                    bg.player1 AS playerId,
-                    p1.name_show AS playerName,
-                    t.dt AS tournamentDate,
-                    bg.turniej AS tournamentId,
-                    bg.runda AS roundNo,
-                    CASE WHEN bg.result1 >= 350 THEN 1 ELSE 0 END AS criterionState
-                FROM base_games bg
-                INNER JOIN mapped mp1 ON mp1.legacy_player_id = bg.player1
-                INNER JOIN player p1 ON p1.id = mp1.player_id
-                INNER JOIN tournament t
-                    ON t.organization_id = :orgId
-                   AND t.legacy_id = bg.turniej
-
-                UNION ALL
-
-                SELECT
-                    bg.player2 AS playerId,
-                    p2.name_show AS playerName,
-                    t.dt AS tournamentDate,
-                    bg.turniej AS tournamentId,
-                    bg.runda AS roundNo,
-                    CASE WHEN bg.result2 >= 350 THEN 1 ELSE 0 END AS criterionState
-                FROM base_games bg
-                INNER JOIN mapped mp2 ON mp2.legacy_player_id = bg.player2
-                INNER JOIN player p2 ON p2.id = mp2.player_id
-                INNER JOIN tournament t
-                    ON t.organization_id = :orgId
-                   AND t.legacy_id = bg.turniej
-            )
-            , ordered AS (
-                SELECT
-                    pg.playerId,
-                    pg.playerName,
-                    pg.criterionState,
-                    CASE
-                        WHEN pg.criterionState = 1 THEN
-                            ROW_NUMBER() OVER (PARTITION BY pg.playerId ORDER BY pg.tournamentDate ASC, pg.tournamentId ASC, pg.roundNo ASC)
-                            - ROW_NUMBER() OVER (PARTITION BY pg.playerId, pg.criterionState ORDER BY pg.tournamentDate ASC, pg.tournamentId ASC, pg.roundNo ASC)
-                    END AS grp
-                FROM player_games pg
-            ),
-            streaks AS (
-                SELECT
-                    o.playerId,
-                    o.playerName,
-                    COUNT(*) AS streakLen
-                FROM ordered o
-                WHERE o.criterionState = 1
-                GROUP BY o.playerId, o.playerName, o.grp
-            )
-            SELECT
-                s.playerId,
-                s.playerName,
-                MAX(s.streakLen) AS gamesStreak
-            FROM streaks s
-            GROUP BY s.playerId, s.playerName
-            ORDER BY gamesStreak DESC, s.playerName ASC
-            LIMIT 1000",
-            ['orgId' => $orgId]
-        );
-
-        if ($topRows === []) {
-            return new LongestStreakMin350([]);
-        }
-
-        $playerIds = array_map(static fn (array $row): int => (int) $row['playerId'], $topRows);
-
-        $games = $this->executeQueryCompat(
-            "WITH base_games AS (
-                SELECT
-                    h.turniej,
-                    h.runda,
-                    h.player1,
-                    h.player2,
-                    h.result1,
-                    h.result2
-                FROM (
-                    SELECT
-                        hh.legacy_tournament_id AS turniej,
-                        hh.round_no AS runda,
-                        hh.legacy_player1_id AS player1,
-                        hh.legacy_player2_id AS player2,
-                        hh.result1,
-                        hh.result2
-                    FROM tournament_game hh
-                    WHERE hh.organization_id = :orgId
-                        AND hh.legacy_player1_id < hh.legacy_player2_id
-                        AND NOT (hh.result1 = 0 AND hh.result2 = 0)
-                    ORDER BY hh.legacy_tournament_id DESC, hh.round_no DESC
-                    LIMIT 500
-                ) h
-            ),
-            player_games AS (
-                SELECT
-                    bg.player1 AS playerId,
-                    bg.turniej AS tournamentId,
-                    t.name AS tournamentName,
-                    t.dt AS tournamentDate,
-                    bg.runda AS roundNo,
-                    CASE
-                        WHEN bg.result1 >= 350 THEN 1
-                        ELSE -1
-                    END AS criterionState
-                FROM base_games bg
-                INNER JOIN tournament t
-                    ON t.organization_id = :orgId
-                   AND t.legacy_id = bg.turniej
-
-                UNION ALL
-
-                SELECT
-                    bg.player2 AS playerId,
-                    bg.turniej AS tournamentId,
-                    t.name AS tournamentName,
-                    t.dt AS tournamentDate,
-                    bg.runda AS roundNo,
-                    CASE
-                        WHEN bg.result2 >= 350 THEN 1
-                        ELSE -1
-                    END AS criterionState
-                FROM base_games bg
-                INNER JOIN tournament t
-                    ON t.organization_id = :orgId
-                   AND t.legacy_id = bg.turniej
-            )
-            SELECT
-                pg.playerId,
-                pg.tournamentId,
-                pg.tournamentName,
-                pg.criterionState
-            FROM player_games pg
-            WHERE pg.playerId IN (:playerIds)
-            ORDER BY pg.playerId ASC, pg.tournamentDate ASC, pg.tournamentId ASC, pg.roundNo ASC",
-            ['orgId' => $orgId, 'playerIds' => $playerIds],
-            ['playerIds' => ArrayParameterType::INTEGER]
-        );
-
-        /** @var array<int, list<array{tournamentId:int,tournamentName:string,criterionState:int}>> $gamesByPlayer */
-        $gamesByPlayer = [];
-        foreach ($games as $game) {
-            $playerId = (int) $game['playerId'];
-            $gamesByPlayer[$playerId][] = [
-                'tournamentId' => (int) $game['tournamentId'],
-                'tournamentName' => (string) $game['tournamentName'],
-                'criterionState' => (int) $game['criterionState'],
-            ];
-        }
-
+        $rows = $this->buildLongestSingleScoreStreakRows($orgId, 350);
         $resultRows = [];
-        foreach ($topRows as $index => $topRow) {
-            $playerId = (int) $topRow['playerId'];
-            $playerGames = $gamesByPlayer[$playerId] ?? [];
-            $currentStreak = 0;
-            $tournaments = [];
-
-            if ($playerGames !== []) {
-                $lastState = $playerGames[count($playerGames) - 1]['criterionState'];
-                for ($i = count($playerGames) - 1; $i >= 0; $i--) {
-                    if ($playerGames[$i]['criterionState'] !== $lastState) {
-                        break;
-                    }
-
-                    $currentStreak += ($lastState === 1) ? 1 : -1;
-                }
-
-                $targetStreak = (int) $topRow['gamesStreak'];
-                if ($targetStreak > 0) {
-                    $currentLength = 0;
-                    $currentTournaments = [];
-                    $bestTournaments = [];
-                    foreach ($playerGames as $game) {
-                        if ($game['criterionState'] === 1) {
-                            $currentLength++;
-                            $tid = $game['tournamentId'];
-                            if (!isset($currentTournaments[$tid])) {
-                                $currentTournaments[$tid] = [
-                                    'id' => $tid,
-                                    'name' => $game['tournamentName'],
-                                ];
-                            }
-                        } else {
-                            if ($currentLength === $targetStreak && $bestTournaments === []) {
-                                $bestTournaments = array_values($currentTournaments);
-                            }
-                            $currentLength = 0;
-                            $currentTournaments = [];
-                        }
-                    }
-                    if ($bestTournaments === [] && $currentLength === $targetStreak) {
-                        $bestTournaments = array_values($currentTournaments);
-                    }
-                    $tournaments = $bestTournaments;
-                }
-            }
-
+        foreach ($rows as $row) {
             $resultRows[] = new LongestStreakMin350Row(
-                position: $index + 1,
-                playerId: $playerId,
-                playerName: (string) $topRow['playerName'],
-                gamesStreak: (int) $topRow['gamesStreak'],
-                tournaments: $tournaments,
-                currentStreak: $currentStreak,
+                position: $row['position'],
+                playerId: $row['playerId'],
+                playerName: $row['playerName'],
+                gamesStreak: $row['gamesStreak'],
+                tournaments: $row['tournaments'],
+                currentStreak: $row['currentStreak'],
             );
         }
+
         return new LongestStreakMin350($resultRows);
     }
 
     public function getLongestStreakMin400(int $orgId): LongestStreakMin400
     {
-        $topRows = $this->fetchAllAssociativeCompat(
-            "WITH base_games AS (
-                SELECT
-                    h.turniej,
-                    h.runda,
-                    h.player1,
-                    h.player2,
-                    h.result1,
-                    h.result2
-                FROM (
-                    SELECT
-                        hh.legacy_tournament_id AS turniej,
-                        hh.round_no AS runda,
-                        hh.legacy_player1_id AS player1,
-                        hh.legacy_player2_id AS player2,
-                        hh.result1,
-                        hh.result2
-                    FROM tournament_game hh
-                    WHERE hh.organization_id = :orgId
-                        AND hh.legacy_player1_id < hh.legacy_player2_id
-                        AND NOT (hh.result1 = 0 AND hh.result2 = 0)
-                    ORDER BY hh.legacy_tournament_id DESC, hh.round_no DESC
-                    LIMIT 500
-                ) h
-            ),
-            mapped AS (
-                SELECT legacy_player_id, player_id
-                FROM ranking
-                WHERE organization_id = :orgId
-                  AND legacy_player_id IS NOT NULL
-                  AND player_id IS NOT NULL
-
-                UNION
-
-                SELECT legacy_player_id, player_id
-                FROM tournament_result
-                WHERE organization_id = :orgId
-                  AND legacy_player_id IS NOT NULL
-                  AND player_id IS NOT NULL
-
-                UNION
-
-                SELECT legacy_player_id, player_id
-                FROM play_summary
-                WHERE organization_id = :orgId
-                  AND legacy_player_id IS NOT NULL
-                  AND player_id IS NOT NULL
-
-                UNION
-
-                SELECT legacy_player1_id AS legacy_player_id, player1_id AS player_id
-                FROM tournament_game
-                WHERE organization_id = :orgId
-                  AND legacy_player1_id IS NOT NULL
-                  AND player1_id IS NOT NULL
-
-                UNION
-
-                SELECT legacy_player2_id AS legacy_player_id, player2_id AS player_id
-                FROM tournament_game
-                WHERE organization_id = :orgId
-                  AND legacy_player2_id IS NOT NULL
-                  AND player2_id IS NOT NULL
-            ),
-            player_games AS (
-                SELECT
-                    bg.player1 AS playerId,
-                    p1.name_show AS playerName,
-                    t.dt AS tournamentDate,
-                    bg.turniej AS tournamentId,
-                    bg.runda AS roundNo,
-                    CASE WHEN bg.result1 >= 400 THEN 1 ELSE 0 END AS criterionState
-                FROM base_games bg
-                INNER JOIN mapped mp1 ON mp1.legacy_player_id = bg.player1
-                INNER JOIN player p1 ON p1.id = mp1.player_id
-                INNER JOIN tournament t
-                    ON t.organization_id = :orgId
-                   AND t.legacy_id = bg.turniej
-
-                UNION ALL
-
-                SELECT
-                    bg.player2 AS playerId,
-                    p2.name_show AS playerName,
-                    t.dt AS tournamentDate,
-                    bg.turniej AS tournamentId,
-                    bg.runda AS roundNo,
-                    CASE WHEN bg.result2 >= 400 THEN 1 ELSE 0 END AS criterionState
-                FROM base_games bg
-                INNER JOIN mapped mp2 ON mp2.legacy_player_id = bg.player2
-                INNER JOIN player p2 ON p2.id = mp2.player_id
-                INNER JOIN tournament t
-                    ON t.organization_id = :orgId
-                   AND t.legacy_id = bg.turniej
-            )
-            , ordered AS (
-                SELECT
-                    pg.playerId,
-                    pg.playerName,
-                    pg.criterionState,
-                    CASE
-                        WHEN pg.criterionState = 1 THEN
-                            ROW_NUMBER() OVER (PARTITION BY pg.playerId ORDER BY pg.tournamentDate ASC, pg.tournamentId ASC, pg.roundNo ASC)
-                            - ROW_NUMBER() OVER (PARTITION BY pg.playerId, pg.criterionState ORDER BY pg.tournamentDate ASC, pg.tournamentId ASC, pg.roundNo ASC)
-                    END AS grp
-                FROM player_games pg
-            ),
-            streaks AS (
-                SELECT
-                    o.playerId,
-                    o.playerName,
-                    COUNT(*) AS streakLen
-                FROM ordered o
-                WHERE o.criterionState = 1
-                GROUP BY o.playerId, o.playerName, o.grp
-            )
-            SELECT
-                s.playerId,
-                s.playerName,
-                MAX(s.streakLen) AS gamesStreak
-            FROM streaks s
-            GROUP BY s.playerId, s.playerName
-            ORDER BY gamesStreak DESC, s.playerName ASC
-            LIMIT 1000",
-            ['orgId' => $orgId]
-        );
-
-        if ($topRows === []) {
-            return new LongestStreakMin400([]);
-        }
-
-        $playerIds = array_map(static fn (array $row): int => (int) $row['playerId'], $topRows);
-
-        $games = $this->executeQueryCompat(
-            "WITH base_games AS (
-                SELECT
-                    h.turniej,
-                    h.runda,
-                    h.player1,
-                    h.player2,
-                    h.result1,
-                    h.result2
-                FROM (
-                    SELECT
-                        hh.legacy_tournament_id AS turniej,
-                        hh.round_no AS runda,
-                        hh.legacy_player1_id AS player1,
-                        hh.legacy_player2_id AS player2,
-                        hh.result1,
-                        hh.result2
-                    FROM tournament_game hh
-                    WHERE hh.organization_id = :orgId
-                        AND hh.legacy_player1_id < hh.legacy_player2_id
-                        AND NOT (hh.result1 = 0 AND hh.result2 = 0)
-                    ORDER BY hh.legacy_tournament_id DESC, hh.round_no DESC
-                    LIMIT 500
-                ) h
-            ),
-            player_games AS (
-                SELECT
-                    bg.player1 AS playerId,
-                    bg.turniej AS tournamentId,
-                    t.name AS tournamentName,
-                    t.dt AS tournamentDate,
-                    bg.runda AS roundNo,
-                    CASE
-                        WHEN bg.result1 >= 400 THEN 1
-                        ELSE -1
-                    END AS criterionState
-                FROM base_games bg
-                INNER JOIN tournament t
-                    ON t.organization_id = :orgId
-                   AND t.legacy_id = bg.turniej
-
-                UNION ALL
-
-                SELECT
-                    bg.player2 AS playerId,
-                    bg.turniej AS tournamentId,
-                    t.name AS tournamentName,
-                    t.dt AS tournamentDate,
-                    bg.runda AS roundNo,
-                    CASE
-                        WHEN bg.result2 >= 400 THEN 1
-                        ELSE -1
-                    END AS criterionState
-                FROM base_games bg
-                INNER JOIN tournament t
-                    ON t.organization_id = :orgId
-                   AND t.legacy_id = bg.turniej
-            )
-            SELECT
-                pg.playerId,
-                pg.tournamentId,
-                pg.tournamentName,
-                pg.criterionState
-            FROM player_games pg
-            WHERE pg.playerId IN (:playerIds)
-            ORDER BY pg.playerId ASC, pg.tournamentDate ASC, pg.tournamentId ASC, pg.roundNo ASC",
-            ['orgId' => $orgId, 'playerIds' => $playerIds],
-            ['playerIds' => ArrayParameterType::INTEGER]
-        );
-
-        /** @var array<int, list<array{tournamentId:int,tournamentName:string,criterionState:int}>> $gamesByPlayer */
-        $gamesByPlayer = [];
-        foreach ($games as $game) {
-            $playerId = (int) $game['playerId'];
-            $gamesByPlayer[$playerId][] = [
-                'tournamentId' => (int) $game['tournamentId'],
-                'tournamentName' => (string) $game['tournamentName'],
-                'criterionState' => (int) $game['criterionState'],
-            ];
-        }
-
+        $rows = $this->buildLongestSingleScoreStreakRows($orgId, 400);
         $resultRows = [];
-        foreach ($topRows as $index => $topRow) {
-            $playerId = (int) $topRow['playerId'];
-            $playerGames = $gamesByPlayer[$playerId] ?? [];
-            $currentStreak = 0;
-            $tournaments = [];
-
-            if ($playerGames !== []) {
-                $lastState = $playerGames[count($playerGames) - 1]['criterionState'];
-                for ($i = count($playerGames) - 1; $i >= 0; $i--) {
-                    if ($playerGames[$i]['criterionState'] !== $lastState) {
-                        break;
-                    }
-
-                    $currentStreak += ($lastState === 1) ? 1 : -1;
-                }
-
-                $targetStreak = (int) $topRow['gamesStreak'];
-                if ($targetStreak > 0) {
-                    $currentLength = 0;
-                    $currentTournaments = [];
-                    $bestTournaments = [];
-                    foreach ($playerGames as $game) {
-                        if ($game['criterionState'] === 1) {
-                            $currentLength++;
-                            $tid = $game['tournamentId'];
-                            if (!isset($currentTournaments[$tid])) {
-                                $currentTournaments[$tid] = [
-                                    'id' => $tid,
-                                    'name' => $game['tournamentName'],
-                                ];
-                            }
-                        } else {
-                            if ($currentLength === $targetStreak && $bestTournaments === []) {
-                                $bestTournaments = array_values($currentTournaments);
-                            }
-                            $currentLength = 0;
-                            $currentTournaments = [];
-                        }
-                    }
-                    if ($bestTournaments === [] && $currentLength === $targetStreak) {
-                        $bestTournaments = array_values($currentTournaments);
-                    }
-                    $tournaments = $bestTournaments;
-                }
-            }
-
+        foreach ($rows as $row) {
             $resultRows[] = new LongestStreakMin400Row(
-                position: $index + 1,
-                playerId: $playerId,
-                playerName: (string) $topRow['playerName'],
-                gamesStreak: (int) $topRow['gamesStreak'],
-                tournaments: $tournaments,
-                currentStreak: $currentStreak,
+                position: $row['position'],
+                playerId: $row['playerId'],
+                playerName: $row['playerName'],
+                gamesStreak: $row['gamesStreak'],
+                tournaments: $row['tournaments'],
+                currentStreak: $row['currentStreak'],
             );
         }
 
         return new LongestStreakMin400($resultRows);
     }
 
-    public function getLongestStreakSumMin750(): LongestStreakSumMin750
+    /**
+     * @return list<array{
+     *     position:int,
+     *     playerId:int,
+     *     playerName:string,
+     *     gamesStreak:int,
+     *     tournaments:list<array{id:int,name:string}>,
+     *     currentStreak:int
+     * }>
+     */
+    private function buildLongestSingleScoreStreakRows(int $orgId, int $minPoints): array
+    {
+        $topRows = $this->fetchAllAssociativeCompat(
+            sprintf(
+                "WITH base_games AS (
+                    SELECT
+                        g.turniej,
+                        g.runda,
+                        g.player1,
+                        g.player2,
+                        g.result1,
+                        g.result2
+                    FROM (
+                        SELECT
+                            hh.legacy_tournament_id AS turniej,
+                            hh.round_no AS runda,
+                            LEAST(hh.legacy_player1_id, hh.legacy_player2_id) AS player1,
+                            GREATEST(hh.legacy_player1_id, hh.legacy_player2_id) AS player2,
+                            CASE
+                                WHEN hh.legacy_player1_id <= hh.legacy_player2_id THEN hh.result1
+                                ELSE hh.result2
+                            END AS result1,
+                            CASE
+                                WHEN hh.legacy_player1_id <= hh.legacy_player2_id THEN hh.result2
+                                ELSE hh.result1
+                            END AS result2,
+                            ROW_NUMBER() OVER (
+                                PARTITION BY hh.legacy_tournament_id, hh.round_no,
+                                    LEAST(hh.legacy_player1_id, hh.legacy_player2_id),
+                                    GREATEST(hh.legacy_player1_id, hh.legacy_player2_id)
+                                ORDER BY hh.id
+                            ) AS rn
+                        FROM tournament_game hh
+                        WHERE hh.organization_id = :orgId
+                            AND hh.legacy_player1_id IS NOT NULL
+                            AND hh.legacy_player2_id IS NOT NULL
+                            AND NOT (hh.result1 = 0 AND hh.result2 = 0)
+                    ) g
+                    WHERE g.rn = 1
+                ),
+                mapped AS (
+                    SELECT legacy_player_id, player_id
+                    FROM ranking
+                    WHERE organization_id = :orgId
+                      AND legacy_player_id IS NOT NULL
+                      AND player_id IS NOT NULL
+
+                    UNION
+
+                    SELECT legacy_player_id, player_id
+                    FROM tournament_result
+                    WHERE organization_id = :orgId
+                      AND legacy_player_id IS NOT NULL
+                      AND player_id IS NOT NULL
+
+                    UNION
+
+                    SELECT legacy_player_id, player_id
+                    FROM play_summary
+                    WHERE organization_id = :orgId
+                      AND legacy_player_id IS NOT NULL
+                      AND player_id IS NOT NULL
+
+                    UNION
+
+                    SELECT legacy_player1_id AS legacy_player_id, player1_id AS player_id
+                    FROM tournament_game
+                    WHERE organization_id = :orgId
+                      AND legacy_player1_id IS NOT NULL
+                      AND player1_id IS NOT NULL
+
+                    UNION
+
+                    SELECT legacy_player2_id AS legacy_player_id, player2_id AS player_id
+                    FROM tournament_game
+                    WHERE organization_id = :orgId
+                      AND legacy_player2_id IS NOT NULL
+                      AND player2_id IS NOT NULL
+                ),
+                player_games AS (
+                    SELECT
+                        bg.player1 AS player_id,
+                        p1.name_show AS player_name,
+                        t.name AS tournament_name,
+                        t.dt AS tournament_date,
+                        bg.turniej AS tournament_id,
+                        bg.runda AS round_no,
+                        CASE WHEN bg.result1 >= %d THEN 1 ELSE 0 END AS criterion_state
+                    FROM base_games bg
+                    INNER JOIN mapped mp1 ON mp1.legacy_player_id = bg.player1
+                    INNER JOIN player p1 ON p1.id = mp1.player_id
+                    INNER JOIN tournament t
+                        ON t.organization_id = :orgId
+                       AND t.legacy_id = bg.turniej
+
+                    UNION ALL
+
+                    SELECT
+                        bg.player2 AS player_id,
+                        p2.name_show AS player_name,
+                        t.name AS tournament_name,
+                        t.dt AS tournament_date,
+                        bg.turniej AS tournament_id,
+                        bg.runda AS round_no,
+                        CASE WHEN bg.result2 >= %d THEN 1 ELSE 0 END AS criterion_state
+                    FROM base_games bg
+                    INNER JOIN mapped mp2 ON mp2.legacy_player_id = bg.player2
+                    INNER JOIN player p2 ON p2.id = mp2.player_id
+                    INNER JOIN tournament t
+                        ON t.organization_id = :orgId
+                       AND t.legacy_id = bg.turniej
+                ),
+                ordered AS (
+                    SELECT
+                        pg.player_id AS playerId,
+                        pg.player_name AS playerName,
+                        pg.tournament_id AS tournamentId,
+                        pg.tournament_name AS tournamentName,
+                        pg.tournament_date AS tournamentDate,
+                        pg.round_no AS roundNo,
+                        pg.criterion_state AS criterionState,
+                        CASE
+                            WHEN pg.criterion_state = 1 THEN
+                                ROW_NUMBER() OVER (PARTITION BY pg.player_id ORDER BY pg.tournament_date ASC, pg.tournament_id ASC, pg.round_no ASC)
+                                - ROW_NUMBER() OVER (PARTITION BY pg.player_id, pg.criterion_state ORDER BY pg.tournament_date ASC, pg.tournament_id ASC, pg.round_no ASC)
+                        END AS grp,
+                        ROW_NUMBER() OVER (PARTITION BY pg.player_id ORDER BY pg.tournament_date DESC, pg.tournament_id DESC, pg.round_no DESC)
+                        - ROW_NUMBER() OVER (PARTITION BY pg.player_id, pg.criterion_state ORDER BY pg.tournament_date DESC, pg.tournament_id DESC, pg.round_no DESC) AS reverseGrp
+                    FROM player_games pg
+                ),
+                streaks AS (
+                    SELECT
+                        o.playerId,
+                        o.playerName,
+                        o.grp,
+                        MIN(o.tournamentDate) AS fromDate,
+                        COUNT(*) AS streakLen
+                    FROM ordered o
+                    WHERE o.criterionState = 1
+                    GROUP BY o.playerId, o.playerName, o.grp
+                ),
+                best_streak AS (
+                    SELECT
+                        s.playerId,
+                        s.playerName,
+                        s.grp,
+                        s.streakLen,
+                        ROW_NUMBER() OVER (
+                            PARTITION BY s.playerId
+                            ORDER BY s.streakLen DESC, s.fromDate ASC, s.grp ASC
+                        ) AS rn
+                    FROM streaks s
+                ),
+                current_streak AS (
+                    SELECT
+                        o.playerId,
+                        COUNT(*) * CASE WHEN MIN(o.criterionState) = 1 THEN 1 ELSE -1 END AS currentStreak
+                    FROM ordered o
+                    WHERE o.reverseGrp = 0
+                    GROUP BY o.playerId
+                ),
+                best_streak_tournament_rows AS (
+                    SELECT
+                        o.playerId,
+                        o.tournamentId,
+                        o.tournamentName,
+                        MIN(o.tournamentDate) AS tournamentDate
+                    FROM ordered o
+                    INNER JOIN best_streak bs
+                        ON bs.playerId = o.playerId
+                       AND bs.grp = o.grp
+                       AND bs.rn = 1
+                    WHERE o.criterionState = 1
+                    GROUP BY o.playerId, o.tournamentId, o.tournamentName
+                ),
+                best_streak_tournaments AS (
+                    SELECT
+                        bstr.playerId,
+                        STRING_AGG(
+                            bstr.tournamentId::text || '~~' || bstr.tournamentName,
+                            '||'
+                            ORDER BY bstr.tournamentDate ASC, bstr.tournamentId ASC
+                        ) AS tournaments
+                    FROM best_streak_tournament_rows bstr
+                    GROUP BY bstr.playerId
+                )
+                SELECT
+                    bs.playerId,
+                    bs.playerName,
+                    bs.streakLen AS gamesStreak,
+                    COALESCE(bst.tournaments, '') AS tournaments,
+                    COALESCE(cs.currentStreak, 0) AS currentStreak
+                FROM best_streak bs
+                LEFT JOIN best_streak_tournaments bst ON bst.playerId = bs.playerId
+                LEFT JOIN current_streak cs ON cs.playerId = bs.playerId
+                WHERE bs.rn = 1
+                ORDER BY gamesStreak DESC, bs.playerName ASC
+                LIMIT 1000",
+                $minPoints,
+                $minPoints,
+            ),
+            ['orgId' => $orgId]
+        );
+
+        if ($topRows === []) {
+            return [];
+        }
+
+        $resultRows = [];
+        foreach ($topRows as $index => $topRow) {
+            $tournaments = [];
+            $serializedTournaments = trim((string) ($topRow['tournaments'] ?? ''));
+            if ($serializedTournaments !== '') {
+                foreach (explode('||', $serializedTournaments) as $entry) {
+                    [$id, $name] = array_pad(explode('~~', $entry, 2), 2, '');
+                    if ($id === '' || $name === '') {
+                        continue;
+                    }
+
+                    $tournaments[] = [
+                        'id' => (int) $id,
+                        'name' => $name,
+                    ];
+                }
+            }
+
+            $resultRows[] = [
+                'position' => $index + 1,
+                'playerId' => (int) $topRow['playerId'],
+                'playerName' => (string) $topRow['playerName'],
+                'gamesStreak' => (int) $topRow['gamesStreak'],
+                'tournaments' => $tournaments,
+                'currentStreak' => (int) ($topRow['currentStreak'] ?? 0),
+            ];
+        }
+
+        return $resultRows;
+    }
+
+    public function getLongestStreakSumMin750(int $orgId): LongestStreakSumMin750
     {
         $topRows = $this->fetchAllAssociativeCompat(
             "WITH eligible_players AS (
@@ -4492,7 +4226,7 @@ ORDER BY
         return new LongestStreakSumMin750($resultRows);
     }
 
-    public function getLongestStreakSumMin800(): LongestStreakSumMin800
+    public function getLongestStreakSumMin800(int $orgId): LongestStreakSumMin800
     {
         $topRows = $this->fetchAllAssociativeCompat(
             "WITH eligible_players AS (

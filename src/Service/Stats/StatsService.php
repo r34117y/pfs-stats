@@ -2828,7 +2828,7 @@ final readonly class StatsService implements StatsServiceInterface
         return new LongestStreakMin400($resultRows);
     }
 
-    public function getLongestStreakSumMin750(): LongestStreakSumMin750
+    public function getLongestStreakSumMin750(int $orgId): LongestStreakSumMin750
     {
         $topRows = $this->connection->fetchAllAssociative(
             "WITH eligible_players AS (
@@ -3088,7 +3088,7 @@ final readonly class StatsService implements StatsServiceInterface
         return new LongestStreakSumMin750($resultRows);
     }
 
-    public function getLongestStreakSumMin800(): LongestStreakSumMin800
+    public function getLongestStreakSumMin800(int $orgId): LongestStreakSumMin800
     {
         $topRows = $this->connection->fetchAllAssociative(
             "WITH eligible_players AS (

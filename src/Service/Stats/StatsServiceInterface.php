@@ -77,8 +77,8 @@ interface StatsServiceInterface
     public function getLongestLossStreaks(int $orgId): LongestLossStreaks;
     public function getLongestStreakMin350(int $orgId): LongestStreakMin350;
     public function getLongestStreakMin400(int $orgId): LongestStreakMin400;
-    public function getLongestStreakSumMin750(): LongestStreakSumMin750;
-    public function getLongestStreakSumMin800(): LongestStreakSumMin800;
+    public function getLongestStreakSumMin750(int $orgId): LongestStreakSumMin750;
+    public function getLongestStreakSumMin800(int $orgId): LongestStreakSumMin800;
     public function getLongestWinStreakVsPlayer(): LongestWinStreakVsPlayer;
     public function getHighestTournamentRankRecord(): HighestTournamentRankRecord;
     public function getLowestTournamentRankRecord(): LowestTournamentRankRecord;
