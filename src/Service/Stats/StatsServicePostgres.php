@@ -3806,7 +3806,7 @@ ORDER BY
             FROM streaks s
             GROUP BY s.playerId, s.playerName
             ORDER BY gamesStreak DESC, s.playerName ASC
-            LIMIT 30",
+            LIMIT 1000",
             ['orgId' => $orgId]
         );
 
