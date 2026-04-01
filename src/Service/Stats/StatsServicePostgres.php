@@ -3170,18 +3170,62 @@ ORDER BY
         $rows = $this->fetchAllAssociativeCompat(
             "WITH unique_games AS (
                 SELECT
-                    h.turniej,
-                    h.runda,
-                    h.player1,
-                    h.player2,
+                    h.legacy_tournament_id AS turniej,
+                    h.round_no AS runda,
+                    h.legacy_player1_id AS player1,
+                    h.legacy_player2_id AS player2,
                     h.result1,
                     h.result2,
                     ROW_NUMBER() OVER (
-                        PARTITION BY h.turniej, h.runda, LEAST(h.player1, h.player2), GREATEST(h.player1, h.player2)
-                        ORDER BY h.player1 ASC
+                        PARTITION BY
+                            h.legacy_tournament_id,
+                            h.round_no,
+                            LEAST(h.legacy_player1_id, h.legacy_player2_id),
+                            GREATEST(h.legacy_player1_id, h.legacy_player2_id)
+                        ORDER BY h.legacy_player1_id ASC
                     ) AS rn
-                FROM PFSTOURHH h
+                FROM tournament_game h
                 WHERE NOT (h.result1 = 0 AND h.result2 = 0)
+                  AND h.organization_id = :orgId
+            ),
+            mapped AS (
+                SELECT legacy_player_id, player_id
+                FROM ranking
+                WHERE organization_id = :orgId
+                  AND legacy_player_id IS NOT NULL
+                  AND player_id IS NOT NULL
+
+                UNION
+
+                SELECT legacy_player_id, player_id
+                FROM tournament_result
+                WHERE organization_id = :orgId
+                  AND legacy_player_id IS NOT NULL
+                  AND player_id IS NOT NULL
+
+                UNION
+
+                SELECT legacy_player_id, player_id
+                FROM play_summary
+                WHERE organization_id = :orgId
+                  AND legacy_player_id IS NOT NULL
+                  AND player_id IS NOT NULL
+
+                UNION
+
+                SELECT legacy_player1_id AS legacy_player_id, player1_id AS player_id
+                FROM tournament_game
+                WHERE organization_id = :orgId
+                  AND legacy_player1_id IS NOT NULL
+                  AND player1_id IS NOT NULL
+
+                UNION
+
+                SELECT legacy_player2_id AS legacy_player_id, player2_id AS player_id
+                FROM tournament_game
+                WHERE organization_id = :orgId
+                  AND legacy_player2_id IS NOT NULL
+                  AND player2_id IS NOT NULL
             ),
             player_games AS (
                 SELECT
@@ -3197,8 +3241,11 @@ ORDER BY
                         ELSE 0
                     END AS outcome
                 FROM unique_games ug
-                INNER JOIN PFSPLAYER p1 ON p1.id = ug.player1
-                INNER JOIN PFSTOURS t ON t.id = ug.turniej
+                INNER JOIN mapped mp1 ON mp1.legacy_player_id = ug.player1
+                INNER JOIN player p1 ON p1.id = mp1.player_id
+                INNER JOIN tournament t
+                    ON t.organization_id = :orgId
+                   AND t.legacy_id = ug.turniej
                 WHERE ug.rn = 1
 
                 UNION ALL
@@ -3216,8 +3263,11 @@ ORDER BY
                         ELSE 0
                     END AS outcome
                 FROM unique_games ug
-                INNER JOIN PFSPLAYER p2 ON p2.id = ug.player2
-                INNER JOIN PFSTOURS t ON t.id = ug.turniej
+                INNER JOIN mapped mp2 ON mp2.legacy_player_id = ug.player2
+                INNER JOIN player p2 ON p2.id = mp2.player_id
+                INNER JOIN tournament t
+                    ON t.organization_id = :orgId
+                   AND t.legacy_id = ug.turniej
                 WHERE ug.rn = 1
             ),
             ordered_games AS (
@@ -3244,19 +3294,49 @@ ORDER BY
                 FROM ordered_games og
                 WHERE og.outcome = 1
             ),
-            win_streaks AS (
+            streak_tournaments AS (
+                SELECT DISTINCT
+                    wg.playerId,
+                    wg.playerName,
+                    wg.winGroupId,
+                    wg.tournamentId,
+                    REPLACE(wg.tournamentName, '|', '/') AS tournamentName,
+                    wg.tournamentDate
+                FROM win_groups wg
+            ),
+            win_streak_counts AS (
                 SELECT
                     wg.playerId,
                     wg.playerName,
+                    wg.winGroupId,
                     COUNT(*) AS winsStreak,
-                    MIN(wg.seqAsc) AS streakStartSeq,
-                    GROUP_CONCAT(
-                        DISTINCT CONCAT(wg.tournamentId, '::', REPLACE(wg.tournamentName, '|', '/'))
-                        ORDER BY wg.tournamentDate ASC, wg.tournamentId ASC
-                        SEPARATOR '|'
-                    ) AS tournamentsSerialized
+                    MIN(wg.seqAsc) AS streakStartSeq
                 FROM win_groups wg
                 GROUP BY wg.playerId, wg.playerName, wg.winGroupId
+            ),
+            win_streak_tournaments AS (
+                SELECT
+                    st.playerId,
+                    st.playerName,
+                    st.winGroupId,
+                    STRING_AGG(
+                        st.tournamentId::text || '::' || st.tournamentName,
+                        '|' ORDER BY st.tournamentDate ASC, st.tournamentId ASC
+                    ) AS tournamentsSerialized
+                FROM streak_tournaments st
+                GROUP BY st.playerId, st.playerName, st.winGroupId
+            ),
+            win_streaks AS (
+                SELECT
+                    wsc.playerId,
+                    wsc.playerName,
+                    wsc.winsStreak,
+                    wsc.streakStartSeq,
+                    wst.tournamentsSerialized
+                FROM win_streak_counts wsc
+                LEFT JOIN win_streak_tournaments wst
+                    ON wst.playerId = wsc.playerId
+                   AND wst.winGroupId = wsc.winGroupId
             ),
             best_win_streak AS (
                 SELECT
@@ -3308,7 +3388,8 @@ ORDER BY
             LEFT JOIN trailing_outcome to2
                 ON to2.playerId = p.playerId
             ORDER BY winsStreak DESC, p.playerName ASC
-            LIMIT 1000"
+            LIMIT 1000",
+            ['orgId' => $orgId]
         );
 
         $resultRows = [];
