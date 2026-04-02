@@ -3848,7 +3848,7 @@ final readonly class StatsService implements StatsServiceInterface
         return new LowestAvgSmallPoints($resultRows);
     }
 
-    public function getHighestAvgPointsSum(): HighestAvgPointsSum
+    public function getHighestAvgPointsSum(int $orgId): HighestAvgPointsSum
     {
         $rows = $this->connection->fetchAllAssociative(
             "WITH eligible_players AS (
@@ -3931,7 +3931,7 @@ final readonly class StatsService implements StatsServiceInterface
         return new HighestAvgPointsSum($resultRows);
     }
 
-    public function getLowestAvgPointsSum(): LowestAvgPointsSum
+    public function getLowestAvgPointsSum(int $orgId): LowestAvgPointsSum
     {
         $rows = $this->connection->fetchAllAssociative(
             "WITH eligible_players AS (

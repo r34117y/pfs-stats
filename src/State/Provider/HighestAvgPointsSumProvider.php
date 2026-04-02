@@ -6,7 +6,7 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\Stats\HighestAvgPointsSum;
 use App\Service\Stats\StatsServiceInterface;
-use DateTimeImmutable;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\Cache\CacheInterface;
 
@@ -19,13 +19,16 @@ final readonly class HighestAvgPointsSumProvider implements ProviderInterface
     ) {
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): HighestAvgPointsSum
     {
-        $todayKey = (new DateTimeImmutable('today'))->format('Ymd');
+        $orgId = $uriVariables['org'] ?? 21;
 
         return $this->cache->get(
-            sprintf('api.stats.highest_avg_points_sum.v1.%s', $todayKey),
-            fn (): HighestAvgPointsSum => $this->statsService->getHighestAvgPointsSum(),
+            sprintf('api.stats.highest_avg_points_sum.%s', $orgId),
+            fn (): HighestAvgPointsSum => $this->statsService->getHighestAvgPointsSum($orgId),
         );
     }
 }

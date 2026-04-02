@@ -6,7 +6,7 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\Stats\LowestAvgPointsSum;
 use App\Service\Stats\StatsServiceInterface;
-use DateTimeImmutable;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\Cache\CacheInterface;
 
@@ -19,13 +19,16 @@ final readonly class LowestAvgPointsSumProvider implements ProviderInterface
     ) {
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): LowestAvgPointsSum
     {
-        $todayKey = (new DateTimeImmutable('today'))->format('Ymd');
+        $orgId = $uriVariables['org'] ?? 21;
 
         return $this->cache->get(
-            sprintf('api.stats.lowest_avg_points_sum.v1.%s', $todayKey),
-            fn (): LowestAvgPointsSum => $this->statsService->getLowestAvgPointsSum(),
+            sprintf('api.stats.lowest_avg_points_sum.%s', $orgId),
+            fn (): LowestAvgPointsSum => $this->statsService->getLowestAvgPointsSum($orgId),
         );
     }
 }

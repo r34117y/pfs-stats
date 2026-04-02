@@ -128,6 +128,8 @@ final readonly class RefreshCacheAfterImportService
             '/api/stats/lowest-tournament-rank-record?org=' . $orgId,
             '/api/stats/highest-avg-small-points?org=' . $orgId,
             '/api/stats/lowest-avg-small-points?org=' . $orgId,
+            '/api/stats/highest-avg-points-sum?org=' . $orgId,
+            '/api/stats/lowest-avg-points-sum?org=' . $orgId,
         ];
 
         try {
