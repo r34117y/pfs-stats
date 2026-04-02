@@ -7,36 +7,28 @@ namespace App\State\Provider;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\OrganizationsList\OrganizationsList;
-use App\ApiResource\OrganizationsList\OrganizationsListOrganization;
-use App\Entity\Organization;
-use App\Repository\OrganizationRepository;
-use LogicException;
+use App\Service\OrganizationsList\OrganizationsListServiceInterface;
+use Psr\Cache\InvalidArgumentException;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Contracts\Cache\CacheInterface;
 
 final readonly class OrganizationsListProvider implements ProviderInterface
 {
     public function __construct(
-        private OrganizationRepository $organizationRepository,
+        private OrganizationsListServiceInterface $organizationsListService,
+        #[Autowire(service: 'app.dataset_cache')]
+        private CacheInterface $cache,
     ) {
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): OrganizationsList
     {
-        $organizations = array_map(
-            static function (Organization $organization): OrganizationsListOrganization {
-                $id = $organization->getId();
-                if ($id === null) {
-                    throw new LogicException('Organization ID cannot be null.');
-                }
-
-                return new OrganizationsListOrganization(
-                    id: $id,
-                    code: $organization->getCode(),
-                    name: $organization->getName(),
-                );
-            },
-            $this->organizationRepository->findAllOrderedByName(),
+        return $this->cache->get(
+            'api.organizations.list',
+            fn (): OrganizationsList => $this->organizationsListService->getOrganizationsList(),
         );
-
-        return new OrganizationsList($organizations);
     }
 }
