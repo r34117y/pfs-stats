@@ -5149,39 +5149,90 @@ ORDER BY
     public function getHighestAvgPointsSum(int $orgId): HighestAvgPointsSum
     {
         $rows = $this->fetchAllAssociativeCompat(
-            "WITH eligible_players AS (
-                SELECT tw.player AS playerId
-                FROM PFSTOURWYN tw
-                GROUP BY tw.player
+            "WITH mapped AS (
+                SELECT legacy_player_id, player_id
+                FROM ranking
+                WHERE organization_id = :orgId
+                  AND legacy_player_id IS NOT NULL
+                  AND player_id IS NOT NULL
+
+                UNION
+
+                SELECT legacy_player_id, player_id
+                FROM tournament_result
+                WHERE organization_id = :orgId
+                  AND legacy_player_id IS NOT NULL
+                  AND player_id IS NOT NULL
+
+                UNION
+
+                SELECT legacy_player_id, player_id
+                FROM play_summary
+                WHERE organization_id = :orgId
+                  AND legacy_player_id IS NOT NULL
+                  AND player_id IS NOT NULL
+
+                UNION
+
+                SELECT legacy_player1_id AS legacy_player_id, player1_id AS player_id
+                FROM tournament_game
+                WHERE organization_id = :orgId
+                  AND legacy_player1_id IS NOT NULL
+                  AND player1_id IS NOT NULL
+
+                UNION
+
+                SELECT legacy_player2_id AS legacy_player_id, player2_id AS player_id
+                FROM tournament_game
+                WHERE organization_id = :orgId
+                  AND legacy_player2_id IS NOT NULL
+                  AND player2_id IS NOT NULL
+            ),
+            eligible_players AS (
+                SELECT tw.legacy_player_id AS playerId
+                FROM tournament_result tw
+                WHERE tw.organization_id = :orgId
+                  AND tw.legacy_player_id IS NOT NULL
+                GROUP BY tw.legacy_player_id
                 HAVING SUM(tw.games) >= 30
             ),
             tournament_rounds AS (
                 SELECT
-                    hh.turniej AS tournamentId,
-                    MAX(hh.runda) AS roundsCount
-                FROM PFSTOURHH hh
-                WHERE hh.player1 < hh.player2
-                    AND NOT (hh.result1 = 0 AND hh.result2 = 0)
-                GROUP BY hh.turniej
-                HAVING MAX(hh.runda) >= 6
+                    hh.legacy_tournament_id AS tournamentId,
+                    MAX(hh.round_no) AS roundsCount
+                FROM tournament_game hh
+                WHERE hh.organization_id = :orgId
+                  AND hh.legacy_tournament_id IS NOT NULL
+                  AND hh.legacy_player1_id IS NOT NULL
+                  AND hh.legacy_player2_id IS NOT NULL
+                  AND hh.legacy_player1_id < hh.legacy_player2_id
+                  AND NOT (hh.result1 = 0 AND hh.result2 = 0)
+                GROUP BY hh.legacy_tournament_id
+                HAVING MAX(hh.round_no) >= 6
             ),
             candidate_rows AS (
                 SELECT
-                    tw.player AS playerId,
+                    tw.legacy_player_id AS playerId,
                     p.name_show AS playerName,
                     (tw.points + tw.pointo) AS pointsSum,
                     tw.gwin AS wins,
                     tw.gdraw AS draws,
                     tw.glost AS losses,
-                    tw.turniej AS tournamentId,
+                    tw.legacy_tournament_id AS tournamentId,
                     t.name AS tournamentName,
                     t.dt AS tournamentDate
-                FROM PFSTOURWYN tw
-                INNER JOIN eligible_players ep ON ep.playerId = tw.player
-                INNER JOIN tournament_rounds tr ON tr.tournamentId = tw.turniej
-                INNER JOIN PFSTOURS t ON t.id = tw.turniej
-                INNER JOIN PFSPLAYER p ON p.id = tw.player
-                WHERE tw.games >= FLOOR(0.8 * tr.roundsCount)
+                FROM tournament_result tw
+                INNER JOIN eligible_players ep ON ep.playerId = tw.legacy_player_id
+                INNER JOIN tournament_rounds tr ON tr.tournamentId = tw.legacy_tournament_id
+                INNER JOIN tournament t
+                    ON t.organization_id = :orgId
+                   AND t.legacy_id = tw.legacy_tournament_id
+                INNER JOIN mapped mp ON mp.legacy_player_id = tw.legacy_player_id
+                INNER JOIN player p ON p.id = mp.player_id
+                WHERE tw.organization_id = :orgId
+                  AND tw.legacy_player_id IS NOT NULL
+                  AND tw.legacy_tournament_id IS NOT NULL
+                  AND tw.games >= FLOOR(0.8 * tr.roundsCount)
             ),
             ranked_rows AS (
                 SELECT
@@ -5204,7 +5255,8 @@ ORDER BY
             FROM ranked_rows rr
             WHERE rr.rn = 1
             ORDER BY rr.pointsSum DESC, rr.playerName ASC
-            LIMIT 1000"
+            LIMIT 1000",
+            ['orgId' => $orgId]
         );
 
         $resultRows = [];
@@ -5235,39 +5287,90 @@ ORDER BY
     public function getLowestAvgPointsSum(int $orgId): LowestAvgPointsSum
     {
         $rows = $this->fetchAllAssociativeCompat(
-            "WITH eligible_players AS (
-                SELECT tw.player AS playerId
-                FROM PFSTOURWYN tw
-                GROUP BY tw.player
+            "WITH mapped AS (
+                SELECT legacy_player_id, player_id
+                FROM ranking
+                WHERE organization_id = :orgId
+                  AND legacy_player_id IS NOT NULL
+                  AND player_id IS NOT NULL
+
+                UNION
+
+                SELECT legacy_player_id, player_id
+                FROM tournament_result
+                WHERE organization_id = :orgId
+                  AND legacy_player_id IS NOT NULL
+                  AND player_id IS NOT NULL
+
+                UNION
+
+                SELECT legacy_player_id, player_id
+                FROM play_summary
+                WHERE organization_id = :orgId
+                  AND legacy_player_id IS NOT NULL
+                  AND player_id IS NOT NULL
+
+                UNION
+
+                SELECT legacy_player1_id AS legacy_player_id, player1_id AS player_id
+                FROM tournament_game
+                WHERE organization_id = :orgId
+                  AND legacy_player1_id IS NOT NULL
+                  AND player1_id IS NOT NULL
+
+                UNION
+
+                SELECT legacy_player2_id AS legacy_player_id, player2_id AS player_id
+                FROM tournament_game
+                WHERE organization_id = :orgId
+                  AND legacy_player2_id IS NOT NULL
+                  AND player2_id IS NOT NULL
+            ),
+            eligible_players AS (
+                SELECT tw.legacy_player_id AS playerId
+                FROM tournament_result tw
+                WHERE tw.organization_id = :orgId
+                  AND tw.legacy_player_id IS NOT NULL
+                GROUP BY tw.legacy_player_id
                 HAVING SUM(tw.games) >= 30
             ),
             tournament_rounds AS (
                 SELECT
-                    hh.turniej AS tournamentId,
-                    MAX(hh.runda) AS roundsCount
-                FROM PFSTOURHH hh
-                WHERE hh.player1 < hh.player2
-                    AND NOT (hh.result1 = 0 AND hh.result2 = 0)
-                GROUP BY hh.turniej
-                HAVING MAX(hh.runda) >= 6
+                    hh.legacy_tournament_id AS tournamentId,
+                    MAX(hh.round_no) AS roundsCount
+                FROM tournament_game hh
+                WHERE hh.organization_id = :orgId
+                  AND hh.legacy_tournament_id IS NOT NULL
+                  AND hh.legacy_player1_id IS NOT NULL
+                  AND hh.legacy_player2_id IS NOT NULL
+                  AND hh.legacy_player1_id < hh.legacy_player2_id
+                  AND NOT (hh.result1 = 0 AND hh.result2 = 0)
+                GROUP BY hh.legacy_tournament_id
+                HAVING MAX(hh.round_no) >= 6
             ),
             candidate_rows AS (
                 SELECT
-                    tw.player AS playerId,
+                    tw.legacy_player_id AS playerId,
                     p.name_show AS playerName,
                     (tw.points + tw.pointo) AS pointsSum,
                     tw.gwin AS wins,
                     tw.gdraw AS draws,
                     tw.glost AS losses,
-                    tw.turniej AS tournamentId,
+                    tw.legacy_tournament_id AS tournamentId,
                     t.name AS tournamentName,
                     t.dt AS tournamentDate
-                FROM PFSTOURWYN tw
-                INNER JOIN eligible_players ep ON ep.playerId = tw.player
-                INNER JOIN tournament_rounds tr ON tr.tournamentId = tw.turniej
-                INNER JOIN PFSTOURS t ON t.id = tw.turniej
-                INNER JOIN PFSPLAYER p ON p.id = tw.player
-                WHERE tw.games >= FLOOR(0.8 * tr.roundsCount)
+                FROM tournament_result tw
+                INNER JOIN eligible_players ep ON ep.playerId = tw.legacy_player_id
+                INNER JOIN tournament_rounds tr ON tr.tournamentId = tw.legacy_tournament_id
+                INNER JOIN tournament t
+                    ON t.organization_id = :orgId
+                   AND t.legacy_id = tw.legacy_tournament_id
+                INNER JOIN mapped mp ON mp.legacy_player_id = tw.legacy_player_id
+                INNER JOIN player p ON p.id = mp.player_id
+                WHERE tw.organization_id = :orgId
+                  AND tw.legacy_player_id IS NOT NULL
+                  AND tw.legacy_tournament_id IS NOT NULL
+                  AND tw.games >= FLOOR(0.8 * tr.roundsCount)
             ),
             ranked_rows AS (
                 SELECT
@@ -5290,7 +5393,8 @@ ORDER BY
             FROM ranked_rows rr
             WHERE rr.rn = 1
             ORDER BY rr.pointsSum ASC, rr.playerName ASC
-            LIMIT 1000"
+            LIMIT 1000",
+            ['orgId' => $orgId]
         );
 
         $resultRows = [];
