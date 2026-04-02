@@ -231,7 +231,7 @@ ORDER BY
     /**
      * @throws Exception
      */
-    public function getYearlyRankingSummary(int $year): YearlyRankingSummary
+    public function getYearlyRankingSummary(int $year, int $orgId): YearlyRankingSummary
     {
         $fromDate = ($year * 10000) + 101;
         $toDate = ($year * 10000) + 1231;

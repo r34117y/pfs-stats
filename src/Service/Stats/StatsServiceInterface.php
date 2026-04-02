@@ -48,7 +48,7 @@ interface StatsServiceInterface
 {
     public function getAllTimesResults(int $orgId): AllTimesResults;
     public function getYearlyAllTimesResults(int $year, int $orgId): AllTimesResults;
-    public function getYearlyRankingSummary(int $year): YearlyRankingSummary;
+    public function getYearlyRankingSummary(int $year, int $orgId): YearlyRankingSummary;
     public function getAllTimeSummary(int $orgId): AllTimeSummary;
     public function getGamesCount(int $orgId): GamesCount;
     public function getGamesWon(int $orgId): GamesWon;

@@ -132,7 +132,8 @@ final readonly class RefreshCacheAfterImportService
             '/api/stats/lowest-avg-points-sum?org=' . $orgId,
             '/api/stats/highest-avg-points-diff?org=' . $orgId,
             '/api/stats/lowest-avg-points-diff?org=' . $orgId,
-            '/api/stats/yearly-all-times-results?org=' . $orgId,
+            '/api/stats/yearly-all-times-results?org=' . $orgId, // todo tutaj też po latach cache
+            '/api/stats/yearly-ranking-summary?org=' . $orgId, // todo tutaj też po latach cache
         ];
 
         try {
