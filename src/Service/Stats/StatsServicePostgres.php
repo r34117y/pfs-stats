@@ -245,16 +245,18 @@ ORDER BY
                     WHEN SUM(tw.games) > 0 THEN SUM(tw.trank * tw.games) / SUM(tw.games)
                     ELSE 0
                 END AS rankValue
-            FROM PFSTOURWYN tw
-            INNER JOIN PFSTOURS t ON t.id = tw.turniej
-            INNER JOIN PFSPLAYER p ON p.id = tw.player
+            FROM tournament_result tw
+            INNER JOIN tournament t ON t.id = tw.tournament_id
+            INNER JOIN player p ON p.id = tw.player_id
             WHERE t.dt >= :fromDate
               AND t.dt <= :toDate
+              AND tw.organization_id = :orgId
               AND tw.games > 0
             GROUP BY p.id, p.name_show
             HAVING SUM(tw.games) >= 30
             ORDER BY rankValue DESC, gamesCount DESC, p.name_show ASC",
             [
+                'orgId' => $orgId,
                 'fromDate' => $fromDate,
                 'toDate' => $toDate,
             ]
