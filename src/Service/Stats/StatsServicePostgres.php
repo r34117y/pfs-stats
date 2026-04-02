@@ -4867,7 +4867,10 @@ ORDER BY
         return new LowestTournamentRankRecord($resultRows);
     }
 
-    public function getHighestAvgSmallPoints(): HighestAvgSmallPoints
+    /**
+     * @throws Exception
+     */
+    public function getHighestAvgSmallPoints(int $orgId): HighestAvgSmallPoints
     {
         $rows = $this->fetchAllAssociativeCompat(
             "WITH eligible_players AS (
@@ -4950,7 +4953,10 @@ ORDER BY
         return new HighestAvgSmallPoints($resultRows);
     }
 
-    public function getLowestAvgSmallPoints(): LowestAvgSmallPoints
+    /**
+     * @throws Exception
+     */
+    public function getLowestAvgSmallPoints(int $orgId): LowestAvgSmallPoints
     {
         $rows = $this->fetchAllAssociativeCompat(
             "WITH eligible_players AS (

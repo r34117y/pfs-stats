@@ -82,8 +82,8 @@ interface StatsServiceInterface
     public function getLongestWinStreakVsPlayer(int $orgId): LongestWinStreakVsPlayer;
     public function getHighestTournamentRankRecord(int $orgId): HighestTournamentRankRecord;
     public function getLowestTournamentRankRecord(int $orgId): LowestTournamentRankRecord;
-    public function getHighestAvgSmallPoints(): HighestAvgSmallPoints;
-    public function getLowestAvgSmallPoints(): LowestAvgSmallPoints;
+    public function getHighestAvgSmallPoints(int $orgId): HighestAvgSmallPoints;
+    public function getLowestAvgSmallPoints(int $orgId): LowestAvgSmallPoints;
     public function getHighestAvgPointsSum(): HighestAvgPointsSum;
     public function getLowestAvgPointsSum(): LowestAvgPointsSum;
     public function getHighestAvgPointsDiff(): HighestAvgPointsDiff;

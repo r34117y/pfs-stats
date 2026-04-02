@@ -3682,7 +3682,7 @@ final readonly class StatsService implements StatsServiceInterface
         return new LowestTournamentRankRecord($resultRows);
     }
 
-    public function getHighestAvgSmallPoints(): HighestAvgSmallPoints
+    public function getHighestAvgSmallPoints(int $orgId): HighestAvgSmallPoints
     {
         $rows = $this->connection->fetchAllAssociative(
             "WITH eligible_players AS (
@@ -3765,7 +3765,7 @@ final readonly class StatsService implements StatsServiceInterface
         return new HighestAvgSmallPoints($resultRows);
     }
 
-    public function getLowestAvgSmallPoints(): LowestAvgSmallPoints
+    public function getLowestAvgSmallPoints(int $orgId): LowestAvgSmallPoints
     {
         $rows = $this->connection->fetchAllAssociative(
             "WITH eligible_players AS (
