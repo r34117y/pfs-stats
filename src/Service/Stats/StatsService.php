@@ -4014,7 +4014,7 @@ final readonly class StatsService implements StatsServiceInterface
         return new LowestAvgPointsSum($resultRows);
     }
 
-    public function getHighestAvgPointsDiff(): HighestAvgPointsDiff
+    public function getHighestAvgPointsDiff(int $orgId): HighestAvgPointsDiff
     {
         $rows = $this->connection->fetchAllAssociative(
             "WITH eligible_players AS (
@@ -4097,7 +4097,7 @@ final readonly class StatsService implements StatsServiceInterface
         return new HighestAvgPointsDiff($resultRows);
     }
 
-    public function getLowestAvgPointsDiff(): LowestAvgPointsDiff
+    public function getLowestAvgPointsDiff(int $orgId): LowestAvgPointsDiff
     {
         $rows = $this->connection->fetchAllAssociative(
             "WITH eligible_players AS (

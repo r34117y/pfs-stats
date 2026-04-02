@@ -86,6 +86,6 @@ interface StatsServiceInterface
     public function getLowestAvgSmallPoints(int $orgId): LowestAvgSmallPoints;
     public function getHighestAvgPointsSum(int $orgId): HighestAvgPointsSum;
     public function getLowestAvgPointsSum(int $orgId): LowestAvgPointsSum;
-    public function getHighestAvgPointsDiff(): HighestAvgPointsDiff;
-    public function getLowestAvgPointsDiff(): LowestAvgPointsDiff;
+    public function getHighestAvgPointsDiff(int $orgId): HighestAvgPointsDiff;
+    public function getLowestAvgPointsDiff(int $orgId): LowestAvgPointsDiff;
 }

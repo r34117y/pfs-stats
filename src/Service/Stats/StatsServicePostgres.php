@@ -5419,7 +5419,10 @@ ORDER BY
         return new LowestAvgPointsSum($resultRows);
     }
 
-    public function getHighestAvgPointsDiff(): HighestAvgPointsDiff
+    /**
+     * @throws Exception
+     */
+    public function getHighestAvgPointsDiff(int $orgId): HighestAvgPointsDiff
     {
         $rows = $this->fetchAllAssociativeCompat(
             "WITH eligible_players AS (
@@ -5502,7 +5505,10 @@ ORDER BY
         return new HighestAvgPointsDiff($resultRows);
     }
 
-    public function getLowestAvgPointsDiff(): LowestAvgPointsDiff
+    /**
+     * @throws Exception
+     */
+    public function getLowestAvgPointsDiff(int $orgId): LowestAvgPointsDiff
     {
         $rows = $this->fetchAllAssociativeCompat(
             "WITH eligible_players AS (
