@@ -88,6 +88,7 @@ final readonly class RefreshCacheAfterImportService
     private function buildWarmupPaths(int $orgId): array
     {
         $paths = [
+            '/api/organizations',
             '/api/ranking',
             '/api/old-rank',
             '/api/players',

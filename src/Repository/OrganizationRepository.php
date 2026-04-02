@@ -17,4 +17,15 @@ final class OrganizationRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Organization::class);
     }
+
+    /**
+     * @return Organization[]
+     */
+    public function findAllOrderedByName(): array
+    {
+        return $this->createQueryBuilder('organization')
+            ->orderBy('organization.name', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }
