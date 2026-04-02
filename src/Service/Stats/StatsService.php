@@ -3516,7 +3516,7 @@ final readonly class StatsService implements StatsServiceInterface
         return new LongestWinStreakVsPlayer($resultRows);
     }
 
-    public function getHighestTournamentRankRecord(): HighestTournamentRankRecord
+    public function getHighestTournamentRankRecord(int $orgId): HighestTournamentRankRecord
     {
         $rows = $this->connection->fetchAllAssociative(
             "WITH eligible_players AS (
@@ -3599,7 +3599,7 @@ final readonly class StatsService implements StatsServiceInterface
         return new HighestTournamentRankRecord($resultRows);
     }
 
-    public function getLowestTournamentRankRecord(): LowestTournamentRankRecord
+    public function getLowestTournamentRankRecord(int $orgId): LowestTournamentRankRecord
     {
         $rows = $this->connection->fetchAllAssociative(
             "WITH eligible_players AS (

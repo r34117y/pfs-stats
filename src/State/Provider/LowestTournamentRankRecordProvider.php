@@ -6,7 +6,7 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\Stats\LowestTournamentRankRecord;
 use App\Service\Stats\StatsServiceInterface;
-use DateTimeImmutable;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\Cache\CacheInterface;
 
@@ -19,13 +19,16 @@ final readonly class LowestTournamentRankRecordProvider implements ProviderInter
     ) {
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): LowestTournamentRankRecord
     {
-        $todayKey = (new DateTimeImmutable('today'))->format('Ymd');
+        $orgId = $uriVariables['org'] ?? 21;
 
         return $this->cache->get(
-            sprintf('api.stats.lowest_tournament_rank_record.v1.%s', $todayKey),
-            fn (): LowestTournamentRankRecord => $this->statsService->getLowestTournamentRankRecord(),
+            sprintf('api.stats.lowest_tournament_rank_record.%s', $orgId),
+            fn (): LowestTournamentRankRecord => $this->statsService->getLowestTournamentRankRecord($orgId),
         );
     }
 }

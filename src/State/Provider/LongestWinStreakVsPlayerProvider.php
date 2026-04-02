@@ -27,7 +27,7 @@ final readonly class LongestWinStreakVsPlayerProvider implements ProviderInterfa
         $orgId = $uriVariables['org'] ?? 21;
 
         return $this->cache->get(
-            sprintf('api.stats.longest_win_streak_vs_player.v2.%s', $orgId),
+            sprintf('api.stats.longest_win_streak_vs_player.%s', $orgId),
             fn (): LongestWinStreakVsPlayer => $this->statsService->getLongestWinStreakVsPlayer($orgId),
         );
     }
