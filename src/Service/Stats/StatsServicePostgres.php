@@ -161,7 +161,7 @@ ORDER BY
     /**
      * @throws Exception
      */
-    public function getYearlyAllTimesResults(int $year): AllTimesResults
+    public function getYearlyAllTimesResults(int $year, int $orgId): AllTimesResults
     {
         $fromDate = ($year * 10000) + 101;
         $toDate = ($year * 10000) + 1231;
