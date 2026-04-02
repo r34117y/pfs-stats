@@ -168,7 +168,7 @@ ORDER BY
 
         $rows = $this->fetchAllAssociativeCompat(
             "SELECT
-                tw.player AS playerId,
+                tw.player_id AS playerId,
                 p.name_show AS playerName,
                 p.slug,
                 SUM(CASE WHEN tw.place = 1 THEN 1 ELSE 0 END) AS firstPlace,
@@ -177,13 +177,14 @@ ORDER BY
                 SUM(CASE WHEN tw.place = 4 THEN 1 ELSE 0 END) AS fourthPlace,
                 SUM(CASE WHEN tw.place = 5 THEN 1 ELSE 0 END) AS fifthPlace,
                 SUM(CASE WHEN tw.place = 6 THEN 1 ELSE 0 END) AS sixthPlace
-            FROM PFSTOURWYN tw
-            INNER JOIN PFSPLAYER p ON p.id = tw.player
-            INNER JOIN PFSTOURS t ON t.id = tw.turniej
+            FROM tournament_result tw
+            INNER JOIN player p ON p.id = tw.player_id
+            INNER JOIN tournament t ON t.id = tw.tournament_id
             WHERE tw.place BETWEEN 1 AND 6
+              AND tw.organization_id = :orgId
               AND t.dt >= :fromDate
               AND t.dt <= :toDate
-            GROUP BY tw.player, p.name_show
+            GROUP BY tw.player_id, p.name_show, p.slug
             ORDER BY
                 firstPlace DESC,
                 secondPlace DESC,
@@ -193,6 +194,7 @@ ORDER BY
                 sixthPlace DESC,
                 p.name_show ASC",
             [
+                'orgId' => $orgId,
                 'fromDate' => $fromDate,
                 'toDate' => $toDate,
             ]
