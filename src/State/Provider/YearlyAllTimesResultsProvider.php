@@ -14,6 +14,7 @@ use Symfony\Contracts\Cache\CacheInterface;
 
 final readonly class YearlyAllTimesResultsProvider implements ProviderInterface
 {
+    use ResolvesOrganizationIdFromRequestTrait;
     public function __construct(
         private StatsServiceInterface $statsService,
         private RequestStack $requestStack,
@@ -34,7 +35,7 @@ final readonly class YearlyAllTimesResultsProvider implements ProviderInterface
             $year = $defaultYear;
         }
 
-        $orgId = $uriVariables['org'] ?? 21;
+        $orgId = $this->resolveOrganizationId($uriVariables, $this->requestStack);
         $cacheKey = sprintf('api.stats.yearly_all_times_results.%d.%d', $year, $orgId);
 
         return $this->cache->get(

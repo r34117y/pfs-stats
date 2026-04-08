@@ -14,6 +14,7 @@ use Symfony\Contracts\Cache\CacheInterface;
 
 final readonly class YearlyRankingSummaryProvider implements ProviderInterface
 {
+    use ResolvesOrganizationIdFromRequestTrait;
     public function __construct(
         private StatsServiceInterface $statsService,
         private RequestStack $requestStack,
@@ -33,8 +34,8 @@ final readonly class YearlyRankingSummaryProvider implements ProviderInterface
         if ($year < 1990 || $year > 2100) {
             $year = $defaultYear;
         }
-        $orgId = $uriVariables['org'] ?? 21;
-        $cacheKey = sprintf('api.stats.yearly_ranking_summary.v2.%d', $year);
+        $orgId = $this->resolveOrganizationId($uriVariables, $this->requestStack);
+        $cacheKey = sprintf('api.stats.yearly_ranking_summary.v2.%d.%d', $year, $orgId);
 
         return $this->cache->get(
             $cacheKey,

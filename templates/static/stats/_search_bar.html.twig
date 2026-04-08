@@ -1,5 +1,118 @@
-<div class="control mb-5">
-    {% block stats_search_fields %}
-        <input class="input" type="search" placeholder="{{ search_placeholder|default('Filtruj') }}" @input="setSearch($event.target.value)">
-    {% endblock %}
+<div class="field is-grouped is-grouped-multiline mb-5">
+    <div class="control">
+        <div class="select">
+            <select id="stats-organization-select">
+                <option value="">Ładowanie organizacji...</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="control is-expanded">
+        {% block stats_search_fields %}
+            <input class="input" type="search" placeholder="{{ search_placeholder|default('Filtruj') }}" @input="setSearch($event.target.value)">
+        {% endblock %}
+    </div>
 </div>
+
+<script>
+    (() => {
+        if (!window.__statsOrganizationFetchPatched) {
+            const originalFetch = window.fetch.bind(window);
+
+            window.fetch = (input, init) => {
+                const currentPageUrl = new URL(window.location.href);
+                const selectedOrg = currentPageUrl.searchParams.get('org');
+                const requestUrl = input instanceof Request ? input.url : input;
+
+                if (!selectedOrg || typeof requestUrl !== 'string') {
+                    return originalFetch(input, init);
+                }
+
+                const normalizedUrl = new URL(requestUrl, window.location.origin);
+                if (!normalizedUrl.pathname.startsWith('/api/stats/')) {
+                    return originalFetch(input, init);
+                }
+
+                if (!normalizedUrl.searchParams.has('org')) {
+                    normalizedUrl.searchParams.set('org', selectedOrg);
+                }
+
+                if (input instanceof Request) {
+                    return originalFetch(new Request(normalizedUrl.toString(), input), init);
+                }
+
+                return originalFetch(normalizedUrl.toString(), init);
+            };
+
+            window.__statsOrganizationFetchPatched = true;
+        }
+
+        const selectElement = document.getElementById('stats-organization-select');
+        if (!selectElement) {
+            return;
+        }
+
+        const prioritizePfs = (organizations) => {
+            const pfsOrganization = organizations.find((organization) => organization.code === 'PFS');
+            const otherOrganizations = organizations.filter((organization) => organization.code !== 'PFS');
+
+            return pfsOrganization ? [pfsOrganization, ...otherOrganizations] : otherOrganizations;
+        };
+
+        const getInitialOrganizationId = (organizations) => {
+            const currentPageUrl = new URL(window.location.href);
+            const orgFromQuery = currentPageUrl.searchParams.get('org');
+            if (orgFromQuery) {
+                return orgFromQuery;
+            }
+
+            const pfsOrganization = organizations.find((organization) => organization.code === 'PFS');
+            return pfsOrganization ? String(pfsOrganization.id) : '';
+        };
+
+        const renderOptions = (organizations, selectedOrganizationId) => {
+            selectElement.innerHTML = '';
+
+            organizations.forEach((organization) => {
+                const optionElement = document.createElement('option');
+                optionElement.value = String(organization.id);
+                optionElement.textContent = organization.name;
+                optionElement.selected = optionElement.value === selectedOrganizationId;
+                selectElement.appendChild(optionElement);
+            });
+        };
+
+        fetch('/api/organizations')
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Nie udało się pobrać organizacji');
+                }
+
+                return response.json();
+            })
+            .then((data) => {
+                const organizations = prioritizePfs(data.organizations ?? []);
+                const selectedOrganizationId = getInitialOrganizationId(organizations);
+
+                renderOptions(organizations, selectedOrganizationId);
+
+                selectElement.addEventListener('change', () => {
+                    const currentPageUrl = new URL(window.location.href);
+                    const pfsOrganization = organizations.find((organization) => organization.code === 'PFS');
+                    const pfsOrganizationId = pfsOrganization ? String(pfsOrganization.id) : null;
+
+                    if (selectElement.value === '' || selectElement.value === pfsOrganizationId) {
+                        currentPageUrl.searchParams.delete('org');
+                    } else {
+                        currentPageUrl.searchParams.set('org', selectElement.value);
+                    }
+
+                    window.location.assign(currentPageUrl.toString());
+                });
+            })
+            .catch((error) => {
+                console.error('Błąd organizacji:', error);
+                selectElement.innerHTML = '<option value="">Nie udało się pobrać organizacji</option>';
+            });
+    })();
+</script>
