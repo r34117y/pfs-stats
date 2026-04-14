@@ -9,11 +9,63 @@
         background-color: #dce9ff;
         color: #1a355d;
     }
+
+    .stats-side-menu-toggle {
+        display: none;
+    }
+
+    @media screen and (max-width: 768px) {
+        .stats-side-menu .menu-label {
+            display: none;
+        }
+
+        .stats-side-menu-toggle {
+            align-items: center;
+            background: transparent;
+            border: 0;
+            color: inherit;
+            cursor: pointer;
+            display: flex;
+            font: inherit;
+            font-weight: 600;
+            justify-content: space-between;
+            padding: 0;
+            text-align: left;
+            width: 100%;
+        }
+
+        .stats-side-menu-toggle::after {
+            border: solid currentColor;
+            border-width: 0 2px 2px 0;
+            content: "";
+            height: 0.55rem;
+            margin-left: 1rem;
+            transform: rotate(45deg);
+            transition: transform 120ms ease-in-out;
+            width: 0.55rem;
+        }
+
+        .stats-side-menu.is-open .stats-side-menu-toggle::after {
+            transform: rotate(-135deg);
+        }
+
+        .stats-side-menu .menu-list {
+            display: none;
+            margin-top: 0.75rem;
+        }
+
+        .stats-side-menu.is-open .menu-list {
+            display: block;
+        }
+    }
 </style>
 
 <div class="menu box stats-side-menu">
+    <button class="stats-side-menu-toggle" type="button" aria-expanded="false" aria-controls="stats-side-menu-list">
+        Statystyki
+    </button>
     <p class="menu-label">Statystyki</p>
-    <ul class="menu-list">
+    <ul class="menu-list" id="stats-side-menu-list">
         <li><a href="/stats/all-times-results" class="{{ activeStatsItem == 'all_times_results' ? 'is-active' : '' }}">Miejsca w turniejach</a></li>
         <li><a href="/stats/all-time-summary" class="{{ activeStatsItem == 'summary' ? 'is-active' : '' }}">Podsumowanie</a></li>
         <li><a href="/stats/games" class="{{ activeStatsItem == 'games_count' ? 'is-active' : '' }}">Liczba gier</a></li>
@@ -58,3 +110,19 @@
         <li><a href="/stats/yearly-ranking-summary" class="{{ activeStatsItem == 'yearly_ranking_summary' ? 'is-active' : '' }}">Podsumowania lat - ranking</a></li>
     </ul>
 </div>
+
+<script>
+    (() => {
+        document.querySelectorAll('.stats-side-menu').forEach((menuElement) => {
+            const toggleElement = menuElement.querySelector('.stats-side-menu-toggle');
+            if (!toggleElement) {
+                return;
+            }
+
+            toggleElement.addEventListener('click', () => {
+                const isOpen = menuElement.classList.toggle('is-open');
+                toggleElement.setAttribute('aria-expanded', String(isOpen));
+            });
+        });
+    })();
+</script>
