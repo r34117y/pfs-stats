@@ -1658,6 +1658,7 @@ final readonly class StatsService implements StatsServiceInterface
                 p2.name_show AS opponentName,
                 wg.points,
                 wg.score,
+                wg.turniej AS tournamentId,
                 t.name AS tournamentName
             FROM winner_games wg
             INNER JOIN PFSPLAYER p1 ON p1.id = wg.playerId
@@ -1677,6 +1678,7 @@ final readonly class StatsService implements StatsServiceInterface
                 opponentId: (int) $row['opponentId'],
                 opponentName: (string) $row['opponentName'],
                 score: (string) $row['score'],
+                tournamentId: (int) $row['tournamentId'],
                 tournamentName: (string) $row['tournamentName'],
             );
         }

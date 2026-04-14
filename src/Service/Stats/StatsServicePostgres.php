@@ -2617,6 +2617,7 @@ ORDER BY
                 p2.name_show AS opponentName,
                 wg.points,
                 wg.score,
+                wg.turniej AS tournamentId,
                 t.name AS tournamentName
             FROM winner_games wg
             INNER JOIN mapped mp1 ON mp1.legacy_player_id = wg.playerId
@@ -2641,6 +2642,7 @@ ORDER BY
                 opponentId: (int) $row['opponentId'],
                 opponentName: (string) $row['opponentName'],
                 score: (string) $row['score'],
+                tournamentId: (int) $row['tournamentId'],
                 tournamentName: (string) $row['tournamentName'],
             );
         }

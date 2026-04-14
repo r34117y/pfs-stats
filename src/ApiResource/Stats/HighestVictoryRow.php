@@ -12,6 +12,7 @@ class HighestVictoryRow
         public int $opponentId,
         public string $opponentName,
         public string $score,
+        public int $tournamentId,
         public string $tournamentName,
     ) {
     }
