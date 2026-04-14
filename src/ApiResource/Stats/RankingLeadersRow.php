@@ -9,7 +9,9 @@ class RankingLeadersRow
         public int $playerId,
         public string $playerName,
         public int $daysOnTop,
+        public int $firstTournamentId,
         public string $firstTournamentName,
+        public int $lastTournamentId,
         public string $lastTournamentName,
     ) {
     }

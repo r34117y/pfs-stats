@@ -41,12 +41,34 @@
                                     <a :href="$store.playerLinks.profile(row.playerId)" x-text="row.playerName"></a>
                                     <div class="ranking-leaders-mobile-meta">
                                         <span x-text="row.daysOnTop"></span>
-                                        <span x-text="formatTournamentSpan(row)"></span>
+                                        <span>
+                                            <template x-if="isSameTournament(row)">
+                                                <a :href="`/tournaments/${row.firstTournamentId}`" x-text="row.firstTournamentName"></a>
+                                            </template>
+                                            <template x-if="!isSameTournament(row)">
+                                                <span>
+                                                    <a :href="`/tournaments/${row.firstTournamentId}`" x-text="row.firstTournamentName"></a>
+                                                    <span> - </span>
+                                                    <a :href="`/tournaments/${row.lastTournamentId}`" x-text="row.lastTournamentName"></a>
+                                                </span>
+                                            </template>
+                                        </span>
                                     </div>
                                 </div>
                             </td>
                             <td class="has-text-centered" x-text="row.daysOnTop"></td>
-                            <td class="has-text-centered" x-text="formatTournamentSpan(row)"></td>
+                            <td class="has-text-centered">
+                                <template x-if="isSameTournament(row)">
+                                    <a :href="`/tournaments/${row.firstTournamentId}`" x-text="row.firstTournamentName"></a>
+                                </template>
+                                <template x-if="!isSameTournament(row)">
+                                    <span>
+                                        <a :href="`/tournaments/${row.firstTournamentId}`" x-text="row.firstTournamentName"></a>
+                                        <span> - </span>
+                                        <a :href="`/tournaments/${row.lastTournamentId}`" x-text="row.lastTournamentName"></a>
+                                    </span>
+                                </template>
+                            </td>
                         </tr>
                     </template>
                     </tbody>
@@ -137,11 +159,14 @@
                 formatTournamentSpan(row) {
                     const first = row.firstTournamentName ?? '-';
                     const last = row.lastTournamentName ?? '-';
-                    if (first === last) {
+                    if (this.isSameTournament(row)) {
                         return first;
                     }
 
                     return `${first} - ${last}`;
+                },
+                isSameTournament(row) {
+                    return row.firstTournamentId === row.lastTournamentId;
                 }
             };
         }

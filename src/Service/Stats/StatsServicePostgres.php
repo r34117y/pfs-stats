@@ -1845,8 +1845,8 @@ ORDER BY
                 s.playerName,
                 s.firstTournamentId,
                 s.lastTournamentId,
-                COALESCE(tf.fullname, tf.name) AS firstTournamentName,
-                COALESCE(tl.fullname, tl.name) AS lastTournamentName,
+                tf.name AS firstTournamentName,
+                tl.name AS lastTournamentName,
                 (TO_DATE(CAST(s.lastTournamentDate AS TEXT), 'YYYYMMDD') - TO_DATE(CAST(s.firstTournamentDate AS TEXT), 'YYYYMMDD')) + 1 AS daysOnTop
             FROM streaks s
             INNER JOIN tournament tf
@@ -1867,7 +1867,9 @@ ORDER BY
                 playerId: (int) $row['playerId'],
                 playerName: (string) $row['playerName'],
                 daysOnTop: (int) $row['daysOnTop'],
+                firstTournamentId: (int) $row['firstTournamentId'],
                 firstTournamentName: (string) $row['firstTournamentName'],
+                lastTournamentId: (int) $row['lastTournamentId'],
                 lastTournamentName: (string) $row['lastTournamentName'],
             );
         }
