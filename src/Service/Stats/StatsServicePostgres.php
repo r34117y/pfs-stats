@@ -2265,7 +2265,8 @@ ORDER BY
                 op.name_show AS opponentName,
                 rg.points,
                 rg.points::text || ':' || rg.opponentPoints::text AS score,
-                COALESCE(t.fullname, t.name) AS tournamentName
+                rg.turniej AS tournamentId,
+                t.name AS tournamentName
             FROM ranked_games rg
             INNER JOIN mapped mp ON mp.legacy_player_id = rg.playerId
             INNER JOIN player p ON p.id = mp.player_id
@@ -2289,6 +2290,7 @@ ORDER BY
                 opponentId: (int) $row['opponentId'],
                 opponentName: (string) $row['opponentName'],
                 score: (string) $row['score'],
+                tournamentId: (int) $row['tournamentId'],
                 tournamentName: (string) $row['tournamentName'],
             );
         }
