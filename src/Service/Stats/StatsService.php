@@ -1515,7 +1515,7 @@ final readonly class StatsService implements StatsServiceInterface
                     p2.name_show AS opponentName,
                     (ug.result1 + ug.result2) AS points,
                     CONCAT(ug.result1, ':', ug.result2) AS score,
-                    COALESCE(t.fullname, t.name) AS tournamentName,
+                    t.name AS tournamentName,
                     t.dt AS tournamentDate,
                     ug.turniej AS tournamentId,
                     ug.runda AS roundNo
@@ -1534,6 +1534,7 @@ final readonly class StatsService implements StatsServiceInterface
                 tg.opponentName,
                 tg.points,
                 tg.score,
+                tg.tournamentId,
                 tg.tournamentName
             FROM top_games tg
             ORDER BY tg.points DESC, tg.tournamentDate DESC, tg.tournamentId DESC, tg.roundNo ASC, tg.playerName ASC"
@@ -1549,6 +1550,7 @@ final readonly class StatsService implements StatsServiceInterface
                 opponentId: (int) $row['opponentId'],
                 opponentName: (string) $row['opponentName'],
                 score: (string) $row['score'],
+                tournamentId: (int) $row['tournamentId'],
                 tournamentName: (string) $row['tournamentName'],
             );
         }

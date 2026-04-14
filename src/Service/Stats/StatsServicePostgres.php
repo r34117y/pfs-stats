@@ -2370,7 +2370,7 @@ ORDER BY
                     p2.name_show AS opponentName,
                     (ug.result1 + ug.result2) AS points,
                     ug.result1::text || ':' || ug.result2::text AS score,
-                    COALESCE(t.fullname, t.name) AS tournamentName,
+                    t.name AS tournamentName,
                     t.dt AS tournamentDate,
                     ug.turniej AS tournamentId,
                     ug.runda AS roundNo
@@ -2393,6 +2393,7 @@ ORDER BY
                 tg.opponentName,
                 tg.points,
                 tg.score,
+                tg.tournamentId,
                 tg.tournamentName
             FROM top_games tg
             ORDER BY tg.points DESC, tg.tournamentDate DESC, tg.tournamentId DESC, tg.roundNo ASC, tg.playerName ASC",
@@ -2409,6 +2410,7 @@ ORDER BY
                 opponentId: (int) $row['opponentId'],
                 opponentName: (string) $row['opponentName'],
                 score: (string) $row['score'],
+                tournamentId: (int) $row['tournamentId'],
                 tournamentName: (string) $row['tournamentName'],
             );
         }
