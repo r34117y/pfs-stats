@@ -1364,7 +1364,8 @@ final readonly class StatsService implements StatsServiceInterface
                 op.name_show AS opponentName,
                 rg.points,
                 CONCAT(rg.points, ':', rg.opponentPoints) AS score,
-                COALESCE(t.fullname, t.name) AS tournamentName
+                rg.turniej AS tournamentId,
+                t.name AS tournamentName
             FROM ranked_games rg
             INNER JOIN PFSPLAYER p ON p.id = rg.playerId
             INNER JOIN PFSPLAYER op ON op.id = rg.opponentId
@@ -1383,6 +1384,7 @@ final readonly class StatsService implements StatsServiceInterface
                 opponentId: (int) $row['opponentId'],
                 opponentName: (string) $row['opponentName'],
                 score: (string) $row['score'],
+                tournamentId: (int) $row['tournamentId'],
                 tournamentName: (string) $row['tournamentName'],
             );
         }
