@@ -1,0 +1,102 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dodaj wyniki turnieju{% endblock %}
+
+{% block body %}
+    <section class="section" x-data="addTournamentResultsPage()" x-init="load()">
+        <div class="columns" style="margin-top: 32px;">
+            <aside class="column is-3">
+                {% include 'user/_side_menu.html.twig' with {
+                    activeMenuItem: 'add_tournament_results'
+                } %}
+            </aside>
+
+            <div class="column is-9">
+                <article class="message is-danger" x-show="error" x-cloak>
+                    <div class="message-body" x-text="error"></div>
+                </article>
+
+                <div class="box" x-show="loading" x-cloak>
+                    Ladowanie...
+                </div>
+
+                <div class="box" x-show="!loading && !error && data" x-cloak>
+                    <h1 class="title is-4" x-text="data.title"></h1>
+                    <p class="mb-5" x-text="data.description"></p>
+
+                    <div class="field">
+                        <label class="label">Organizacja</label>
+                        <div class="control">
+                            <div class="select is-fullwidth">
+                                <select x-model="selectedOrganizationId">
+                                    <template x-for="organization in data.organizations" :key="organization.id">
+                                        <option x-bind:value="organization.id" x-text="organization.name"></option>
+                                    </template>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="label">Pliki z wynikami</label>
+                        <div class="control">
+                            <input type="file" class="input" disabled>
+                        </div>
+                        <p class="help">Import wyników zostanie dodany w kolejnym kroku.</p>
+                    </div>
+
+                    <div class="notification is-light mt-5">
+                        <p class="has-text-weight-semibold mb-2">Ostatnie importy</p>
+                        <template x-if="data.recentImports.length === 0">
+                            <p>Brak importów do wyświetlenia.</p>
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        function addTournamentResultsPage() {
+            return {
+                loading: true,
+                error: '',
+                data: null,
+                profile: null,
+                selectedOrganizationId: '',
+                async load() {
+                    this.loading = true;
+                    this.error = '';
+
+                    try {
+                        const response = await fetch('/api/user/tournament-results/add/data', {
+                            method: 'GET',
+                            credentials: 'include'
+                        });
+
+                        if (!response.ok) {
+                            this.error = response.status === 403
+                                ? 'Nie masz uprawnień do tej strony.'
+                                : 'Nie udalo sie pobrac danych.';
+                            return;
+                        }
+
+                        const payload = await response.json();
+                        this.profile = payload.profile ?? null;
+                        this.data = {
+                            title: payload.title ?? 'Dodaj wyniki turnieju',
+                            description: payload.description ?? '',
+                            organizations: payload.organizations ?? [],
+                            recentImports: payload.recentImports ?? []
+                        };
+                        this.selectedOrganizationId = this.data.organizations[0]?.id ?? '';
+                    } catch (e) {
+                        this.error = 'Blad podczas laczenia z serwerem.';
+                    } finally {
+                        this.loading = false;
+                    }
+                }
+            };
+        }
+    </script>
+{% endblock %}

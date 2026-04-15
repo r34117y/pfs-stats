@@ -13,4 +13,16 @@ class UserController extends AbstractController
     {
         return $this->render('user/profile.html.twig');
     }
+
+    #[Route('/user/tournament-results/add', name: 'app_user_add_tournament_results_page', methods: ['GET'])]
+    public function addTournamentResults(): Response
+    {
+        return $this->render('user/add_tournament_results.html.twig');
+    }
+
+    #[Route('/user/players/manage', name: 'app_user_manage_players_page', methods: ['GET'])]
+    public function managePlayers(): Response
+    {
+        return $this->render('user/manage_players.html.twig');
+    }
 }
