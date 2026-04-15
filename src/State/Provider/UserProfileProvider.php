@@ -37,11 +37,12 @@ final readonly class UserProfileProvider implements ProviderInterface
             $user->getYearOfBirth(),
             $user->getPhoto(),
             $playerData['bio'],
+            $playerData['isOrganizationAdmin'],
         );
     }
 
     /**
-     * @return array{slug: ?string, bio: ?string}
+     * @return array{slug: ?string, bio: ?string, isOrganizationAdmin: bool}
      * @throws Exception
      */
     private function fetchPlayerData(User $user): array
@@ -51,11 +52,20 @@ final readonly class UserProfileProvider implements ProviderInterface
             return [
                 'slug' => null,
                 'bio' => null,
+                'isOrganizationAdmin' => false,
             ];
         }
 
         $row = $this->connection->fetchAssociative(
-            'SELECT slug, bio FROM player WHERE id = :playerId LIMIT 1',
+            'SELECT p.slug, p.bio, CASE WHEN EXISTS(
+                SELECT 1
+                FROM player_organization po
+                WHERE po.player_id = p.id
+                    AND po.is_admin = true
+            ) THEN 1 ELSE 0 END AS is_organization_admin
+            FROM player p
+            WHERE p.id = :playerId
+            LIMIT 1',
             ['playerId' => $playerId],
         );
 
@@ -63,6 +73,7 @@ final readonly class UserProfileProvider implements ProviderInterface
             return [
                 'slug' => null,
                 'bio' => null,
+                'isOrganizationAdmin' => false,
             ];
         }
 
@@ -72,6 +83,7 @@ final readonly class UserProfileProvider implements ProviderInterface
         return [
             'slug' => $slug === '' ? null : $slug,
             'bio' => $bio,
+            'isOrganizationAdmin' => (int) ($row['is_organization_admin'] ?? 0) === 1,
         ];
     }
 }

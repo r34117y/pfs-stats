@@ -8,8 +8,10 @@ use App\ApiResource\UserProfile\UserProfile;
 use App\ApiResource\UserProfile\UserProfileSave;
 use App\ApiResource\UserProfile\UserProfileSaveResponse;
 use App\Entity\User;
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
@@ -18,6 +20,8 @@ class UserProfileSaveProcessor implements ProcessorInterface
     public function __construct(
         private Security $security,
         private EntityManagerInterface $entityManager,
+        #[Autowire(service: 'doctrine.dbal.default_connection')]
+        private Connection $connection,
     ) {
     }
 
@@ -64,6 +68,7 @@ class UserProfileSaveProcessor implements ProcessorInterface
                 $user->getYearOfBirth(),
                 $user->getPhoto(),
                 $user->getPlayer()?->getBio(),
+                $this->isOrganizationAdmin($user),
             )
         );
     }
@@ -77,5 +82,25 @@ class UserProfileSaveProcessor implements ProcessorInterface
         $normalizedBio = trim($bio);
 
         return $normalizedBio === '' ? null : $normalizedBio;
+    }
+
+    private function isOrganizationAdmin(User $user): bool
+    {
+        $playerId = $user->getPlayerId();
+        if ($playerId === null) {
+            return false;
+        }
+
+        $isAdmin = $this->connection->fetchOne(
+            'SELECT CASE WHEN EXISTS(
+                SELECT 1
+                FROM player_organization
+                WHERE player_id = :playerId
+                    AND is_admin = true
+            ) THEN 1 ELSE 0 END',
+            ['playerId' => $playerId],
+        );
+
+        return (int) $isAdmin === 1;
     }
 }

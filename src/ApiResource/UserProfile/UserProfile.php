@@ -25,6 +25,7 @@ final readonly class UserProfile
         public ?int $yearOfBirth,
         public ?string $photo,
         public ?string $bio,
+        public bool $isOrganizationAdmin,
     ) {
     }
 }
