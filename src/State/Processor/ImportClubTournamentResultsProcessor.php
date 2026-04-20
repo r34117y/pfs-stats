@@ -7,25 +7,27 @@ namespace App\State\Processor;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use App\Entity\User;
-use App\Service\ClubTournamentExistingTournamentFinder;
-use App\Service\ClubTournamentResultsPreprocessor;
+use App\Service\ClubTournamentResultsFileDecoder;
+use App\Service\ClubTournamentResultsImportService;
+use App\Service\ClubTournamentResultsParser;
 use App\Service\UserOrganizationAdminChecker;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Twig\Environment;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
-final readonly class PreprocessClubTournamentResultsProcessor implements ProcessorInterface
+final readonly class ImportClubTournamentResultsProcessor implements ProcessorInterface
 {
     public function __construct(
         private Security $security,
         private RequestStack $requestStack,
-        private ClubTournamentResultsPreprocessor $preprocessor,
-        private ClubTournamentExistingTournamentFinder $existingTournamentFinder,
         private UserOrganizationAdminChecker $organizationAdminChecker,
-        private Environment $twig,
+        private ClubTournamentResultsFileDecoder $fileDecoder,
+        private ClubTournamentResultsParser $parser,
+        private ClubTournamentResultsImportService $importService,
     ) {
     }
 
@@ -54,32 +56,25 @@ final readonly class PreprocessClubTournamentResultsProcessor implements Process
         }
 
         try {
-            $preview = $this->preprocessor->preprocess($raw);
+            $parsed = $this->parser->parse($this->fileDecoder->decode($raw));
+            $result = $this->importService->import($parsed, $organizationId);
+        } catch (HttpExceptionInterface $exception) {
+            return new Response($exception->getMessage(), $exception->getStatusCode());
         } catch (\Throwable $exception) {
             return new Response(
-                'Nie udalo sie przetworzyc pliku: ' . $exception->getMessage(),
+                'Nie udalo sie zaimportowac turnieju: ' . $exception->getMessage(),
                 Response::HTTP_BAD_REQUEST,
             );
         }
 
-        $existingTournamentId = $this->existingTournamentFinder->findExistingTournamentId(
-            $organizationId,
-            $preview->results->getDateCode(),
-            $preview->results->name,
-        );
-        if ($existingTournamentId !== null) {
-            return new Response(
-                sprintf('Tournament already exists with id %d.', $existingTournamentId),
-                Response::HTTP_CONFLICT,
-            );
-        }
-
-        return new Response(
-            $this->twig->render('user/_club_tournament_results_preview.html.twig', [
-                'preview' => $preview,
-            ]),
-            Response::HTTP_OK,
-            ['Content-Type' => 'text/html; charset=UTF-8'],
-        );
+        return new JsonResponse([
+            'message' => sprintf('Zaimportowano turniej %s.', $parsed->name),
+            'tournamentId' => $result->tournamentId,
+            'legacyTournamentId' => $result->legacyTournamentId,
+            'playersCount' => $result->playersCount,
+            'gamesCount' => $result->gamesCount,
+            'createdPlayerIds' => $result->createdPlayerIds,
+            'linkedPlayerIds' => $result->linkedPlayerIds,
+        ]);
     }
 }

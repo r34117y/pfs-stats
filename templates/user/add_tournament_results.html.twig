@@ -16,11 +16,15 @@
                     <div class="message-body" x-text="error"></div>
                 </article>
 
+                <article class="message is-success" x-show="success" x-cloak>
+                    <div class="message-body" x-text="success"></div>
+                </article>
+
                 <div class="box" x-show="loading" x-cloak>
                     Ladowanie...
                 </div>
 
-                <div class="box" x-show="!loading && !error && data" x-cloak>
+                <div class="box" x-show="!loading && data" x-cloak>
                     <h1 class="title is-4" x-text="data.title"></h1>
                     <p class="mb-5" x-text="data.description"></p>
 
@@ -80,15 +84,20 @@
             return {
                 loading: true,
                 error: '',
+                success: '',
                 data: null,
                 profile: null,
                 selectedOrganizationId: '',
                 preprocessing: false,
+                importing: false,
                 previewHtml: '',
                 previewModalOpen: false,
+                pendingResultsFile: null,
+                pendingOrganizationId: '',
                 async load() {
                     this.loading = true;
                     this.error = '';
+                    this.success = '';
 
                     try {
                         const response = await fetch('/api/user/tournament-results/add/data', {
@@ -120,6 +129,9 @@
                 },
                 async preprocessResultsFile(event) {
                     this.error = '';
+                    this.success = '';
+                    this.pendingResultsFile = null;
+                    this.pendingOrganizationId = '';
                     const file = event.target.files?.[0];
                     if (!file) {
                         return;
@@ -149,6 +161,8 @@
                             return;
                         }
 
+                        this.pendingResultsFile = file;
+                        this.pendingOrganizationId = this.selectedOrganizationId;
                         this.previewHtml = text;
                         this.previewModalOpen = true;
                     } catch (e) {
@@ -163,11 +177,65 @@
                     const action = actionTarget?.dataset.previewAction;
                     if (action === 'cancel') {
                         this.closePreviewModal();
+                    } else if (action === 'confirm') {
+                        this.importResultsFile();
+                    }
+                },
+                async importResultsFile() {
+                    if (this.importing) {
+                        return;
+                    }
+
+                    if (!this.pendingResultsFile || !this.pendingOrganizationId) {
+                        this.error = 'Brak pliku do importu.';
+                        this.closePreviewModal();
+                        return;
+                    }
+
+                    this.error = '';
+                    this.success = '';
+                    this.importing = true;
+
+                    const formData = new FormData();
+                    formData.append('results', this.pendingResultsFile);
+                    formData.append('organizationId', this.pendingOrganizationId);
+
+                    try {
+                        const response = await fetch('/api/user/tournament-results/import-club-results', {
+                            method: 'POST',
+                            body: formData,
+                            credentials: 'include'
+                        });
+
+                        const text = await response.text();
+                        if (!response.ok) {
+                            this.closePreviewModal();
+                            this.error = text || 'Nie udalo sie zaimportowac turnieju.';
+                            return;
+                        }
+
+                        let payload = {};
+                        try {
+                            payload = text ? JSON.parse(text) : {};
+                        } catch (e) {
+                            payload = {};
+                        }
+
+                        this.closePreviewModal();
+                        await this.load();
+                        this.success = payload.message ?? 'Turniej zostal zaimportowany.';
+                    } catch (e) {
+                        this.closePreviewModal();
+                        this.error = 'Blad podczas importu turnieju.';
+                    } finally {
+                        this.importing = false;
                     }
                 },
                 closePreviewModal() {
                     this.previewModalOpen = false;
                     this.previewHtml = '';
+                    this.pendingResultsFile = null;
+                    this.pendingOrganizationId = '';
                 }
             };
         }
