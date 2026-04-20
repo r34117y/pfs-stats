@@ -12,6 +12,7 @@ final readonly class ClubTournamentResultsPreview
     public function __construct(
         public ParsedClubTournamentResults $results,
         public array $standings,
+        public string $hhText,
     ) {
     }
 }

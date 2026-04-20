@@ -18,11 +18,13 @@ final readonly class ClubTournamentResultsPreprocessor
 
     public function preprocess(string $raw): ClubTournamentResultsPreview
     {
-        $results = $this->parser->parse($this->fileDecoder->decode($raw));
+        $decoded = $this->fileDecoder->decode($raw);
+        $results = $this->parser->parse($decoded);
 
         return new ClubTournamentResultsPreview(
             results: $results,
             standings: $this->standingsBuilder->buildStandings($this->playersByPosition($results->players)),
+            hhText: $this->removeHeaderLine($decoded),
         );
     }
 
@@ -44,5 +46,23 @@ final readonly class ClubTournamentResultsPreprocessor
         }
 
         return $playersByPosition;
+    }
+
+    private function removeHeaderLine(string $text): string
+    {
+        $text = str_replace("\u{FEFF}", '', $text);
+        $text = preg_replace("/\r\n?/", "\n", $text) ?? $text;
+        $lines = preg_split('/\n/u', $text) ?: [];
+
+        foreach ($lines as $index => $line) {
+            if (trim($line) === '') {
+                continue;
+            }
+
+            unset($lines[$index]);
+            break;
+        }
+
+        return trim(implode("\n", $lines));
     }
 }
