@@ -22,6 +22,12 @@ RUN set -eux; \
 COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
 COPY docker/php/entrypoint.sh /usr/local/bin/app-entrypoint
 COPY docker/php/conf.d/xdebug.ini /usr/local/etc/php/conf.d/zz-xdebug.ini
+COPY docker/php/php-cli /usr/local/bin/php-cli
+
+RUN set -eux; \
+    mv /usr/local/bin/php /usr/local/bin/php-real; \
+    mv /usr/local/bin/php-cli /usr/local/bin/php; \
+    chmod +x /usr/local/bin/php
 
 WORKDIR /var/www/html
 

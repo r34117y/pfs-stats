@@ -117,9 +117,16 @@ If you prefer, a browser extension such as Xdebug Helper can set the trigger coo
 
 ### Debug Console Commands
 
-Prefix the command with `XDEBUG_TRIGGER=1`:
+The local image enables the Xdebug trigger automatically for Symfony console commands, so this works from an interactive shell in the container:
+
+```bash
+docker exec -ti scrabble-stats-api-php-1 bash
+php bin/console list
+php bin/console pfs:rank:calibrate-rd
+```
+
+You can still override the trigger explicitly when needed:
 
 ```bash
 docker compose exec -T -e XDEBUG_TRIGGER=1 php php bin/console list
-docker compose exec -T -e XDEBUG_TRIGGER=1 php php bin/console pfs:rank:calibrate-rd
 ```
