@@ -43,8 +43,8 @@ final class ImportClubTournamentResultsCommand extends Command
         $path = trim((string) $input->getArgument('path'));
         $organizationId = (int) $input->getArgument('organization-id');
 
-        if ($path === '') {
-            $io->error('Path cannot be empty.');
+        if ($path === '' || !is_file($path) || !is_readable($path)) {
+            $io->error(sprintf('File not found or not readable: %s', $path));
 
             return Command::INVALID;
         }
@@ -53,18 +53,6 @@ final class ImportClubTournamentResultsCommand extends Command
             $io->error('Organization id must be a positive integer.');
 
             return Command::INVALID;
-        }
-
-        if (!is_file($path)) {
-            $io->error(sprintf('File not found: %s', $path));
-
-            return Command::FAILURE;
-        }
-
-        if (!is_readable($path)) {
-            $io->error(sprintf('File is not readable: %s', $path));
-
-            return Command::FAILURE;
         }
 
         $raw = file_get_contents($path);
