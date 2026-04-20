@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Command;
 
 use App\Service\ClubTournamentResultsImportService;
+use App\Service\ClubTournamentResultsFileDecoder;
 use App\Service\ClubTournamentResultsParser;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -20,6 +21,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 final class ImportClubTournamentResultsCommand extends Command
 {
     public function __construct(
+        private readonly ClubTournamentResultsFileDecoder   $fileDecoder,
         private readonly ClubTournamentResultsParser        $parser,
         private readonly ClubTournamentResultsImportService $importService,
     ) {
@@ -63,7 +65,7 @@ final class ImportClubTournamentResultsCommand extends Command
         }
 
         try {
-            $parsed = $this->parser->parse($this->decodeText($raw));
+            $parsed = $this->parser->parse($this->fileDecoder->decode($raw));
             $result = $this->importService->import($parsed, $organizationId);
         } catch (\Throwable $exception) {
             $io->error(sprintf('Could not import tournament: %s', $exception->getMessage()));
@@ -88,21 +90,5 @@ final class ImportClubTournamentResultsCommand extends Command
         );
 
         return Command::SUCCESS;
-    }
-
-    private function decodeText(string $raw): string
-    {
-        if (@preg_match('//u', $raw) === 1) {
-            return $raw;
-        }
-
-        foreach (['Windows-1250', 'ISO-8859-2'] as $encoding) {
-            $decoded = @iconv($encoding, 'UTF-8//IGNORE', $raw);
-            if ($decoded !== false && @preg_match('//u', $decoded) === 1) {
-                return $decoded;
-            }
-        }
-
-        throw new \RuntimeException('Could not decode file as UTF-8, Windows-1250, or ISO-8859-2.');
     }
 }

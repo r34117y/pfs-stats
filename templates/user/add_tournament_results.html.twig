@@ -40,9 +40,17 @@
                     <div class="field">
                         <label class="label">Pliki z wynikami</label>
                         <div class="control">
-                            <input type="file" class="input" disabled>
+                            <input
+                                type="file"
+                                class="input"
+                                accept=".txt,text/plain"
+                                x-ref="resultsInput"
+                                x-bind:disabled="!selectedOrganizationId || preprocessing"
+                                x-on:change="preprocessResultsFile"
+                            >
                         </div>
-                        <p class="help">Import wyników zostanie dodany w kolejnym kroku.</p>
+                        <p class="help" x-show="!preprocessing">Wybierz plik HH z wynikami turnieju.</p>
+                        <p class="help" x-show="preprocessing" x-cloak>Przetwarzanie pliku...</p>
                     </div>
 
                     <div class="notification is-light mt-5">
@@ -54,6 +62,17 @@
                 </div>
             </div>
         </div>
+
+        <div
+            class="modal"
+            x-bind:class="{ 'is-active': previewModalOpen }"
+            x-show="previewModalOpen"
+            x-cloak
+            x-on:click="handlePreviewModalClick"
+        >
+            <div class="modal-background" data-preview-action="cancel"></div>
+            <div x-html="previewHtml"></div>
+        </div>
     </section>
 
     <script>
@@ -64,6 +83,9 @@
                 data: null,
                 profile: null,
                 selectedOrganizationId: '',
+                preprocessing: false,
+                previewHtml: '',
+                previewModalOpen: false,
                 async load() {
                     this.loading = true;
                     this.error = '';
@@ -95,6 +117,57 @@
                     } finally {
                         this.loading = false;
                     }
+                },
+                async preprocessResultsFile(event) {
+                    this.error = '';
+                    const file = event.target.files?.[0];
+                    if (!file) {
+                        return;
+                    }
+
+                    if (!this.selectedOrganizationId) {
+                        this.error = 'Wybierz organizacje.';
+                        event.target.value = '';
+                        return;
+                    }
+
+                    const formData = new FormData();
+                    formData.append('results', file);
+                    formData.append('organizationId', this.selectedOrganizationId);
+                    this.preprocessing = true;
+
+                    try {
+                        const response = await fetch('/api/user/tournament-results/preprocess-club-results', {
+                            method: 'POST',
+                            body: formData,
+                            credentials: 'include'
+                        });
+
+                        const text = await response.text();
+                        if (!response.ok) {
+                            this.error = text || 'Nie udalo sie przetworzyc pliku.';
+                            return;
+                        }
+
+                        this.previewHtml = text;
+                        this.previewModalOpen = true;
+                    } catch (e) {
+                        this.error = 'Blad podczas przesylania pliku.';
+                    } finally {
+                        this.preprocessing = false;
+                        event.target.value = '';
+                    }
+                },
+                handlePreviewModalClick(event) {
+                    const actionTarget = event.target.closest('[data-preview-action]');
+                    const action = actionTarget?.dataset.previewAction;
+                    if (action === 'cancel') {
+                        this.closePreviewModal();
+                    }
+                },
+                closePreviewModal() {
+                    this.previewModalOpen = false;
+                    this.previewHtml = '';
                 }
             };
         }

@@ -1,0 +1,82 @@
+<div class="modal-card">
+    <header class="modal-card-head">
+        <p class="modal-card-title">Podgląd importu wyników</p>
+        <button class="delete" type="button" aria-label="close" data-preview-action="cancel"></button>
+    </header>
+
+    <section class="modal-card-body">
+        <div class="content">
+            <h2 class="title is-5">{{ preview.results.name }}</h2>
+            <p>
+                <span class="has-text-weight-semibold">Data:</span>
+                {{ preview.results.date|date('Y-m-d') }}
+                <span class="mx-2">|</span>
+                <span class="has-text-weight-semibold">Liczba graczy:</span>
+                {{ preview.results.players|length }}
+            </p>
+        </div>
+
+        <h3 class="title is-6 mt-5">Klasyfikacja</h3>
+        <div class="table-container">
+            <table class="table is-fullwidth is-striped is-hoverable">
+                <thead>
+                <tr>
+                    <th>Miejsce</th>
+                    <th>Zawodnik</th>
+                    <th class="has-text-right">W</th>
+                    <th class="has-text-right">P</th>
+                    <th class="has-text-right">R</th>
+                    <th class="has-text-right">Duże pkt</th>
+                    <th class="has-text-right">Małe pkt</th>
+                    <th class="has-text-right">Ranking</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for standing in preview.standings %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ standing.nameShow }}</td>
+                        <td class="has-text-right">{{ standing.wins }}</td>
+                        <td class="has-text-right">{{ standing.losses }}</td>
+                        <td class="has-text-right">{{ standing.draws }}</td>
+                        <td class="has-text-right">{{ standing.bigPoints|number_format(1, '.', '') }}</td>
+                        <td class="has-text-right">{{ standing.pointsFor }}</td>
+                        <td class="has-text-right">{{ standing.achievedRank|number_format(2, '.', '') }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <h3 class="title is-6 mt-5">Rozpoznani zawodnicy</h3>
+        <div class="table-container">
+            <table class="table is-fullwidth is-narrow">
+                <thead>
+                <tr>
+                    <th>Nr</th>
+                    <th>Zawodnik</th>
+                    <th>Miasto</th>
+                    <th class="has-text-right">Ranking pocz.</th>
+                    <th class="has-text-right">Rundy</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for player in preview.results.players %}
+                    <tr>
+                        <td>{{ player.position }}</td>
+                        <td>{{ player.name }}</td>
+                        <td>{{ player.city }}</td>
+                        <td class="has-text-right">{{ player.initialRank }}</td>
+                        <td class="has-text-right">{{ player.games|length }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <footer class="modal-card-foot is-justify-content-flex-end">
+        <button class="button is-primary" type="button" data-preview-action="confirm">Potwierdź</button>
+        <button class="button" type="button" data-preview-action="cancel">Anuluj</button>
+    </footer>
+</div>
