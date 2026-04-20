@@ -26,6 +26,7 @@ final readonly class ClubTournamentResultsImportService
         private Connection $connection,
         private PfsNameNormalizer $nameNormalizer,
         private ClubTournamentStandingsBuilder $standingsBuilder,
+        private ClubTournamentExistingTournamentFinder $existingTournamentFinder,
     ) {
     }
 
@@ -49,7 +50,7 @@ final readonly class ClubTournamentResultsImportService
 
         $dateCode = $results->getDateCode();
         $fullname = $this->trimToLength($results->name, 80);
-        $existingTournamentId = $this->findExistingTournamentId($organizationId, $dateCode, $fullname);
+        $existingTournamentId = $this->existingTournamentFinder->findExistingTournamentId($organizationId, $dateCode, $results->name);
         if ($existingTournamentId !== null) {
             throw new ConflictHttpException(sprintf('Tournament already exists with id %d.', $existingTournamentId));
         }
@@ -322,28 +323,6 @@ final readonly class ClubTournamentResultsImportService
         );
 
         return $row === false ? null : ['id' => (int) $row['id']];
-    }
-
-    /**
-     * @throws Exception
-     */
-    private function findExistingTournamentId(int $organizationId, int $dateCode, string $fullname): ?int
-    {
-        $value = $this->connection->fetchOne(
-            "SELECT id
-             FROM tournament
-             WHERE organization_id = :organizationId
-               AND dt = :dateCode
-               AND LOWER(COALESCE(fullname, name, '')) = LOWER(:fullname)
-             LIMIT 1",
-            [
-                'organizationId' => $organizationId,
-                'dateCode' => $dateCode,
-                'fullname' => $fullname,
-            ],
-        );
-
-        return $value === false || $value === null ? null : (int) $value;
     }
 
     /**

@@ -7,6 +7,7 @@ namespace App\State\Processor;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use App\Entity\User;
+use App\Service\ClubTournamentExistingTournamentFinder;
 use App\Service\ClubTournamentResultsPreprocessor;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
@@ -24,6 +25,7 @@ final readonly class PreprocessClubTournamentResultsProcessor implements Process
         private Security $security,
         private RequestStack $requestStack,
         private ClubTournamentResultsPreprocessor $preprocessor,
+        private ClubTournamentExistingTournamentFinder $existingTournamentFinder,
         private Environment $twig,
         #[Autowire(service: 'doctrine.dbal.default_connection')]
         private Connection $connection,
@@ -60,6 +62,18 @@ final readonly class PreprocessClubTournamentResultsProcessor implements Process
             return new Response(
                 'Nie udalo sie przetworzyc pliku: ' . $exception->getMessage(),
                 Response::HTTP_BAD_REQUEST,
+            );
+        }
+
+        $existingTournamentId = $this->existingTournamentFinder->findExistingTournamentId(
+            $organizationId,
+            $preview->results->getDateCode(),
+            $preview->results->name,
+        );
+        if ($existingTournamentId !== null) {
+            return new Response(
+                sprintf('Tournament already exists with id %d.', $existingTournamentId),
+                Response::HTTP_CONFLICT,
             );
         }
 
