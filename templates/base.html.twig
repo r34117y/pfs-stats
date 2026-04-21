@@ -23,7 +23,14 @@
                         return this.loading;
                     }
 
-                    this.loading = fetch('/api/players')
+                    const currentPageUrl = new URL(window.location.href);
+                    const selectedOrg = currentPageUrl.searchParams.get('org');
+                    const playersUrl = new URL('/api/players', window.location.origin);
+                    if (selectedOrg) {
+                        playersUrl.searchParams.set('org', selectedOrg);
+                    }
+
+                    this.loading = fetch(playersUrl.toString())
                         .then((response) => {
                             if (!response.ok) {
                                 throw new Error('Failed to load player slugs');

@@ -6,5 +6,5 @@ use App\ApiResource\TournamentsList\TournamentsList;
 
 interface TournamentListServiceInterface
 {
-    public function getTournaments(): TournamentsList;
+    public function getTournaments(int $organizationId): TournamentsList;
 }

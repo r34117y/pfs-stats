@@ -11,7 +11,6 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 final readonly class TournamentListServicePostgres implements TournamentListServiceInterface
 {
-    private const string ORGANIZATION_CODE = 'PFS';
     private const int TOURNAMENT_ID_WITH_TRAILING_SPACE = 201204220;
 
     public function __construct(
@@ -23,13 +22,8 @@ final readonly class TournamentListServicePostgres implements TournamentListServ
     /**
      * @throws Exception
      */
-    public function getTournaments(): TournamentsList
+    public function getTournaments(int $organizationId): TournamentsList
     {
-        $organizationId = $this->fetchOrganizationId();
-        if ($organizationId === null) {
-            return new TournamentsList([]);
-        }
-
         $sql = "SELECT
                     t.legacy_id AS id,
                     t.fullname,
@@ -67,19 +61,5 @@ final readonly class TournamentListServicePostgres implements TournamentListServ
         }
 
         return new TournamentsList($tournaments);
-    }
-
-    private function fetchOrganizationId(): ?int
-    {
-        $value = $this->connection->fetchOne(
-            'SELECT id FROM organization WHERE code = :code LIMIT 1',
-            ['code' => self::ORGANIZATION_CODE]
-        );
-
-        if ($value === false || $value === null) {
-            return null;
-        }
-
-        return (int) $value;
     }
 }

@@ -92,7 +92,7 @@ final readonly class RefreshCacheAfterImportService
             '/api/ranking',
             '/api/old-rank',
             '/api/players?org=' . $orgId,
-            '/api/tournaments',
+            '/api/tournaments?org=' . $orgId,
             '/api/clubs',
             '/api/stats/all-times-results?org=' . $orgId,
             '/api/stats/all-time-summary?org=' . $orgId,
