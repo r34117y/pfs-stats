@@ -91,6 +91,109 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 final readonly class StatsServicePostgres implements StatsServiceInterface
 {
+    private const EXPECTED_ROW_KEYS = [
+        'activePlayers',
+        'averageOpponentPoints',
+        'averagePoints',
+        'averagePointsDifference',
+        'averagePointsSum',
+        'avgLoserPoints',
+        'avgPlayersPerTournament',
+        'avgTournamentRank',
+        'avgWinnerPoints',
+        'criterionState',
+        'currentStreak',
+        'daysOnTop',
+        'drawPercent',
+        'draws',
+        'fifthPlace',
+        'firstPlace',
+        'firstTournamentId',
+        'firstTournamentName',
+        'fourthPlace',
+        'gamesCount',
+        'gamesCount12Months',
+        'gamesCount24Months',
+        'gamesOver400',
+        'gamesOver40012Months',
+        'gamesOver40012MonthsPercent',
+        'gamesOver40024Months',
+        'gamesOver40024MonthsPercent',
+        'gamesOver400Percent',
+        'gamesPerPlayer',
+        'gamesStreak',
+        'gamesWon',
+        'gamesWon12Months',
+        'gamesWon24Months',
+        'highestRank',
+        'highestRank12Months',
+        'highestRank24Months',
+        'highestRankPosition',
+        'highestRankPosition12Months',
+        'highestRankPosition24Months',
+        'host',
+        'hostWinPercent',
+        'last12MonthsAverageOpponentPoints',
+        'last12MonthsAveragePoints',
+        'last12MonthsAveragePointsDifference',
+        'last12MonthsAveragePointsSum',
+        'last12MonthsGamesCount',
+        'last12MonthsOpponentsCount',
+        'last12MonthsTournamentsCount',
+        'last24MonthsAverageOpponentPoints',
+        'last24MonthsAveragePoints',
+        'last24MonthsAveragePointsDifference',
+        'last24MonthsAveragePointsSum',
+        'last24MonthsGamesCount',
+        'last24MonthsOpponentsCount',
+        'last24MonthsTournamentsCount',
+        'lastTournamentId',
+        'lastTournamentName',
+        'losses',
+        'lossesStreak',
+        'opponentId',
+        'opponentName',
+        'opponentsCount',
+        'over350Percent',
+        'over400Percent',
+        'over500Percent',
+        'over600Percent',
+        'playedGames',
+        'player1',
+        'player2',
+        'playerId',
+        'playerName',
+        'points',
+        'pointsDiff',
+        'pointsSum',
+        'rank1',
+        'rank12Months',
+        'rank2',
+        'rank24Months',
+        'rankAllGames',
+        'rankValue',
+        'ranking',
+        'rankingListedPlayers',
+        'result1',
+        'result2',
+        'score',
+        'secondPlace',
+        'sixthPlace',
+        'sumParticipants',
+        'thirdPlace',
+        'tournamentId',
+        'tournamentName',
+        'tournamentsCount',
+        'tournamentsSerialized',
+        'winnerId',
+        'winnerName',
+        'wins',
+        'wins110to130VsBelow110',
+        'wins130PlusVs110to130',
+        'wins130PlusVsBelow110',
+        'winsStreak',
+    ];
+
     public function __construct(
         #[Autowire(service: 'doctrine.dbal.default_connection')]
         private Connection $connection,
@@ -5975,13 +6078,8 @@ ORDER BY
         static $expectedByLower = null;
         if ($expectedByLower === null) {
             $expectedByLower = [];
-            $source = file_get_contents(__DIR__ . '/StatsService.php');
-            if (is_string($source)) {
-                if (preg_match_all("/\\[['\\\"]([A-Za-z_][A-Za-z0-9_]*)['\\\"]\\]/", $source, $matches)) {
-                    foreach ($matches[1] as $key) {
-                        $expectedByLower[strtolower($key)] = $key;
-                    }
-                }
+            foreach (self::EXPECTED_ROW_KEYS as $key) {
+                $expectedByLower[strtolower($key)] = $key;
             }
         }
 
