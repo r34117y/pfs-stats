@@ -22,7 +22,7 @@ final readonly class PlayerListService implements PlayerListServiceInterface
     /**
      * @throws Exception
      */
-    public function getPlayers(): PlayersList
+    public function getPlayers(int $organizationId): PlayersList
     {
         $sql = "SELECT id, name_show, name_alph FROM PFSPLAYER WHERE name_show <> '\"Okrutniki\" -' ORDER BY name_alph ASC";
         $result = $this->connection->executeQuery($sql);
@@ -40,6 +40,7 @@ final readonly class PlayerListService implements PlayerListServiceInterface
                 $playerId,
                 $player['name_show'],
                 $player['name_alph'],
+                null,
                 $photosByPlayerId[$playerId] ?? null,
             );
         }

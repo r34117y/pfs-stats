@@ -10,8 +10,6 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 final readonly class PlayerListServicePostgres implements PlayerListServiceInterface
 {
-    private const string ORGANIZATION_CODE = 'PFS';
-
     public function __construct(
         #[Autowire(service: 'doctrine.dbal.default_connection')]
         private Connection $connection,
@@ -22,13 +20,8 @@ final readonly class PlayerListServicePostgres implements PlayerListServiceInter
      * @throws Exception
      * @throws \Exception
      */
-    public function getPlayers(): PlayersList
+    public function getPlayers(int $organizationId): PlayersList
     {
-        $organizationId = $this->fetchOrganizationId();
-        if ($organizationId === null) {
-            return new PlayersList([]);
-        }
-
         $sql = "WITH mapped AS (
                     SELECT legacy_player_id, player_id
                     FROM ranking
@@ -99,22 +92,5 @@ final readonly class PlayerListServicePostgres implements PlayerListServiceInter
         }
 
         return new PlayersList($players);
-    }
-
-    /**
-     * @throws Exception
-     */
-    private function fetchOrganizationId(): ?int
-    {
-        $value = $this->connection->fetchOne(
-            'SELECT id FROM organization WHERE code = :code LIMIT 1',
-            ['code' => self::ORGANIZATION_CODE]
-        );
-
-        if ($value === false || $value === null) {
-            return null;
-        }
-
-        return (int) $value;
     }
 }

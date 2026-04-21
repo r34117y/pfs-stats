@@ -42,7 +42,12 @@
                 }
 
                 const normalizedUrl = new URL(requestUrl, window.location.origin);
-                if (!normalizedUrl.pathname.startsWith('/api/stats/')) {
+                const organizationFetchPathPrefixes = {{ organization_fetch_path_prefixes|default(['/api/stats/'])|json_encode|raw }};
+                const shouldApplyOrganizationFilter = organizationFetchPathPrefixes.some((pathPrefix) => {
+                    return normalizedUrl.pathname.startsWith(pathPrefix);
+                });
+
+                if (!shouldApplyOrganizationFilter) {
                     return originalFetch(input, init);
                 }
 

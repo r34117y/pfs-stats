@@ -6,5 +6,5 @@ use App\ApiResource\PlayersList\PlayersList;
 
 interface PlayerListServiceInterface
 {
-    public function getPlayers(): PlayersList;
+    public function getPlayers(int $organizationId): PlayersList;
 }
