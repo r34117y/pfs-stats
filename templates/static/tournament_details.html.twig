@@ -84,6 +84,16 @@
 
 {% block javascripts %}
     <script>
+        function buildTournamentApiUrl(path) {
+            const url = new URL(path, window.location.origin);
+            const organizationCode = new URLSearchParams(window.location.search).get('org');
+            if (organizationCode) {
+                url.searchParams.set('org', organizationCode);
+            }
+
+            return url.toString();
+        }
+
         function tournamentDetailsData(tournamentId) {
             return {
                 loading: true,
@@ -91,7 +101,7 @@
                 details: null,
                 async fetchDetails() {
                     try {
-                        let response = await fetch(`/api/tournaments/${tournamentId}/details`);
+                        let response = await fetch(buildTournamentApiUrl(`/api/tournaments/${tournamentId}/details`));
                         if (!response.ok) {
                             throw new Error('Nie udało się pobrać szczegółów turnieju');
                         }
@@ -114,7 +124,7 @@
                 rows: [],
                 async fetchResults() {
                     try {
-                        let response = await fetch(`/api/tournaments/${tournamentId}/results`);
+                        let response = await fetch(buildTournamentApiUrl(`/api/tournaments/${tournamentId}/results`));
                         if (!response.ok) {
                             throw new Error('Nie udało się pobrać wyników turnieju');
                         }

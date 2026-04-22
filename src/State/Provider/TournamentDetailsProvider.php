@@ -8,15 +8,18 @@ use App\ApiResource\TournamentDetails\TournamentDetails;
 use App\Service\TournamentDetails\TournamentDetailsServiceInterface;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Contracts\Cache\CacheInterface;
 
 final readonly class TournamentDetailsProvider implements ProviderInterface
 {
+    use ResolvesOrganizationIdFromRequestTrait;
     public function __construct(
         private TournamentDetailsServiceInterface $tournamentDetailsService,
         #[Autowire(service: 'app.dataset_cache')]
         private CacheInterface $cache,
+        private RequestStack $requestStack,
     ) {
     }
 
@@ -32,9 +35,11 @@ final readonly class TournamentDetailsProvider implements ProviderInterface
             throw new NotFoundHttpException('Tournament not found.');
         }
 
+        $orgId = $this->resolveOrganizationId($uriVariables, $this->requestStack);
+
         return $this->cache->get(
-            sprintf('api.tournament_details.%d', $tournamentId),
-            fn (): TournamentDetails => $this->tournamentDetailsService->getTournamentDetails($tournamentId),
+            sprintf('api.tournament_details.%d.%d', $tournamentId, $orgId),
+            fn (): TournamentDetails => $this->tournamentDetailsService->getTournamentDetails($tournamentId, $orgId),
         );
     }
 }

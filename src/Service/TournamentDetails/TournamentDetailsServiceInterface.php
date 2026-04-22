@@ -7,6 +7,6 @@ use App\ApiResource\TournamentDetails\TournamentResults;
 
 interface TournamentDetailsServiceInterface
 {
-    public function getTournamentDetails(int $tournamentId): TournamentDetails;
-    public function getTournamentResults(int $tournamentId): TournamentResults;
+    public function getTournamentDetails(int $tournamentId, int $orgId): TournamentDetails;
+    public function getTournamentResults(int $tournamentId, int $orgId): TournamentResults;
 }
