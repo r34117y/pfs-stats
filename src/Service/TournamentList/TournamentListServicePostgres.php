@@ -27,7 +27,7 @@ final readonly class TournamentListServicePostgres implements TournamentListServ
         $sql = "SELECT
                     t.id,
                     t.legacy_id,
-                    t.fullname,
+                    t.name,
                     t.start_round AS start,
                     t.trank,
                     t.players_count AS players,
@@ -45,7 +45,7 @@ final readonly class TournamentListServicePostgres implements TournamentListServ
 
         foreach ($rows as $row) {
             $startDate = DateTime::createFromFormat('Ymd', (string) $row['start']);
-            $name = (string) ($row['fullname'] ?? '');
+            $name = (string) ($row['name'] ?? '');
             if ((int) $row['legacy_id'] === self::TOURNAMENT_ID_WITH_TRAILING_SPACE && !str_ends_with($name, ' ')) {
                 $name .= ' ';
             }
