@@ -8,8 +8,6 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 final readonly class RankingSnapshotServicePostgres implements RankingSnapshotServiceInterface
 {
-    private const string ORGANIZATION_CODE = 'PFS';
-
     public function __construct(
         #[Autowire(service: 'doctrine.dbal.default_connection')]
         private Connection $connection,
@@ -20,13 +18,8 @@ final readonly class RankingSnapshotServicePostgres implements RankingSnapshotSe
      * @return list<array{playerId: int, position: int, rank: float, games: int, nameShow: string, nameAlph: string}>
      * @throws Exception
      */
-    public function getRankingAfterTournament(int $tournamentId): array
+    public function getRankingAfterTournament(int $organizationId, int $tournamentId): array
     {
-        $organizationId = $this->fetchOrganizationId();
-        if ($organizationId === null) {
-            return [];
-        }
-
         $rows = $this->connection->fetchAllAssociative(
             "SELECT
                 r.player_id,
@@ -66,22 +59,5 @@ final readonly class RankingSnapshotServicePostgres implements RankingSnapshotSe
         }
 
         return $ranking;
-    }
-
-    /**
-     * @throws Exception
-     */
-    private function fetchOrganizationId(): ?int
-    {
-        $value = $this->connection->fetchOne(
-            'SELECT id FROM organization WHERE code = :code LIMIT 1',
-            ['code' => self::ORGANIZATION_CODE]
-        );
-
-        if ($value === false || $value === null) {
-            return null;
-        }
-
-        return (int) $value;
     }
 }

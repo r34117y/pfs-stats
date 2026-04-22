@@ -6,5 +6,5 @@ use App\ApiResource\Ranking\GetRanking;
 
 interface RankingServiceInterface
 {
-    public function getRanking(): GetRanking;
+    public function getRanking(int $organizationId): GetRanking;
 }

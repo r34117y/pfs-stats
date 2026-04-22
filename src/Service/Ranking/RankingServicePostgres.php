@@ -11,8 +11,6 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 final readonly class RankingServicePostgres implements RankingServiceInterface
 {
-    private const string ORGANIZATION_CODE = 'PFS';
-
     public function __construct(
         #[Autowire(service: 'doctrine.dbal.default_connection')]
         private Connection $connection,
@@ -23,13 +21,8 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
     /**
      * @throws Exception
      */
-    public function getRanking(): GetRanking
+    public function getRanking(int $organizationId): GetRanking
     {
-        $organizationId = $this->fetchOrganizationId();
-        if ($organizationId === null) {
-            return new GetRanking([]);
-        }
-
         $latestTournamentId = $this->getLatestRankingTournamentId($organizationId);
         if ($latestTournamentId === null) {
             return new GetRanking([]);
@@ -38,9 +31,9 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
         $lastTournamentName = $this->loadTournamentName($organizationId, $latestTournamentId);
         $previousTournamentId = $this->getPreviousRankingTournamentId($organizationId, $latestTournamentId);
 
-        $latestRanking = $this->rankingSnapshotService->getRankingAfterTournament($latestTournamentId);
+        $latestRanking = $this->rankingSnapshotService->getRankingAfterTournament($organizationId, $latestTournamentId);
         $previousRanking = $previousTournamentId !== null
-            ? $this->rankingSnapshotService->getRankingAfterTournament($previousTournamentId)
+            ? $this->rankingSnapshotService->getRankingAfterTournament($organizationId, $previousTournamentId)
             : [];
 
         $previousRankingByPlayer = [];
@@ -184,24 +177,6 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
 
         return (int) $fallback;
     }
-
-    /**
-     * @throws Exception
-     */
-    private function fetchOrganizationId(): ?int
-    {
-        $value = $this->connection->fetchOne(
-            'SELECT id FROM organization WHERE code = :code LIMIT 1',
-            ['code' => self::ORGANIZATION_CODE]
-        );
-
-        if ($value === false || $value === null) {
-            return null;
-        }
-
-        return (int) $value;
-    }
-
     private function formatDecimal(float $value): string
     {
         return number_format($value, 2, '.', '');
