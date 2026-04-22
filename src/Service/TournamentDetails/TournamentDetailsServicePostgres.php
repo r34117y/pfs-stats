@@ -22,22 +22,9 @@ final readonly class TournamentDetailsServicePostgres implements TournamentDetai
     /**
      * @throws Exception
      */
-    public function getTournamentDetails(int $tournamentId, int $orgId): TournamentDetails
+    public function getTournamentDetails(int $tournamentId): TournamentDetails
     {
-        $row = $this->connection->fetchAssociative(
-            "SELECT legacy_id AS id, COALESCE(fullname, name) AS tournament_name, dt, referee, place
-            FROM tournament
-            WHERE organization_id = :organizationId
-              AND legacy_id = :tournamentId",
-            [
-                'organizationId' => $orgId,
-                'tournamentId' => $tournamentId,
-            ]
-        );
-
-        if ($row === false) {
-            throw new NotFoundHttpException(sprintf('Tournament with id %d was not found.', $tournamentId));
-        }
+        $row = $this->fetchTournamentRow($tournamentId);
 
         $date = DateTime::createFromFormat('Ymd', (string) $row['dt']);
         $name = (string) $row['tournament_name'];
@@ -54,21 +41,13 @@ final readonly class TournamentDetailsServicePostgres implements TournamentDetai
     /**
      * @throws Exception
      */
-    public function getTournamentResults(int $tournamentId, int $orgId): TournamentResults
+    public function getTournamentResults(int $tournamentId): TournamentResults
     {
-        $tournamentExists = $this->connection->fetchOne(
-            'SELECT 1
-             FROM tournament
-             WHERE organization_id = :organizationId
-               AND legacy_id = :tournamentId',
-            [
-                'organizationId' => $orgId,
-                'tournamentId' => $tournamentId,
-            ]
-        );
-
-        if ($tournamentExists === false) {
-            throw new NotFoundHttpException(sprintf('Tournament with id %d was not found.', $tournamentId));
+        $tournament = $this->fetchTournamentRow($tournamentId);
+        $organizationId = (int) $tournament['organization_id'];
+        $legacyTournamentId = $tournament['legacy_id'] !== null ? (int) $tournament['legacy_id'] : null;
+        if ($legacyTournamentId === null) {
+            return new TournamentResults([]);
         }
 
         $rows = $this->connection->fetchAllAssociative(
@@ -90,8 +69,8 @@ final readonly class TournamentDetailsServicePostgres implements TournamentDetai
               AND tw.legacy_player_id IS NOT NULL
             ORDER BY CASE WHEN tw.place = 0 THEN 1 ELSE 0 END, tw.place ASC, p.name_show ASC",
             [
-                'organizationId' => $orgId,
-                'tournamentId' => $tournamentId,
+                'organizationId' => $organizationId,
+                'tournamentId' => $legacyTournamentId,
             ]
         );
 
@@ -123,5 +102,25 @@ final readonly class TournamentDetailsServicePostgres implements TournamentDetai
         }
 
         return new TournamentResults($resultRows);
+    }
+
+    /**
+     * @return array{id:int|string, organization_id:int|string, legacy_id:int|string|null, tournament_name:string, dt:int|string, referee:mixed, place:mixed}
+     * @throws Exception
+     */
+    private function fetchTournamentRow(int $tournamentId): array
+    {
+        $row = $this->connection->fetchAssociative(
+            "SELECT id, organization_id, legacy_id, COALESCE(fullname, name) AS tournament_name, dt, referee, place
+             FROM tournament
+             WHERE id = :tournamentId",
+            ['tournamentId' => $tournamentId]
+        );
+
+        if ($row === false) {
+            throw new NotFoundHttpException(sprintf('Tournament with id %d was not found.', $tournamentId));
+        }
+
+        return $row;
     }
 }

@@ -37,7 +37,7 @@ final readonly class UserAdminRecentTournamentImportsService
                 SELECT
                     t.organization_id,
                     o.name AS organization_name,
-                    t.legacy_id AS tournament_id,
+                    t.id AS tournament_id,
                     COALESCE(t.fullname, t.name, \'\') AS tournament_name,
                     t.dt,
                     t.urlid,

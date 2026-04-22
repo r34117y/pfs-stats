@@ -28,7 +28,7 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
             return new GetRanking([]);
         }
 
-        $lastTournamentName = $this->loadTournamentName($organizationId, $latestTournamentId);
+        $lastTournament = $this->loadTournamentMeta($organizationId, $latestTournamentId);
         $previousTournamentId = $this->getPreviousRankingTournamentId($organizationId, $latestTournamentId);
 
         $latestRanking = $this->rankingSnapshotService->getRankingAfterTournament($organizationId, $latestTournamentId);
@@ -75,27 +75,35 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
             );
         }
 
-        return new GetRanking($rankingRows, $lastTournamentName, $latestTournamentId);
+        return new GetRanking($rankingRows, $lastTournament['name'], $lastTournament['id']);
     }
 
     /**
+     * @return array{id:int|null, name:string|null}
      * @throws Exception
      */
-    private function loadTournamentName(int $organizationId, int $tournamentId): ?string
+    private function loadTournamentMeta(int $organizationId, int $tournamentId): array
     {
-        $name = $this->connection->fetchOne(
-            'SELECT COALESCE(fullname, name) FROM tournament WHERE organization_id = :organizationId AND legacy_id = :tournamentId LIMIT 1',
+        $row = $this->connection->fetchAssociative(
+            'SELECT id, COALESCE(fullname, name) AS name
+             FROM tournament
+             WHERE organization_id = :organizationId
+               AND legacy_id = :tournamentId
+             LIMIT 1',
             [
                 'organizationId' => $organizationId,
                 'tournamentId' => $tournamentId,
             ]
         );
 
-        if ($name === false || $name === null || $name === '') {
-            return null;
+        if ($row === false) {
+            return ['id' => null, 'name' => null];
         }
 
-        return (string) $name;
+        return [
+            'id' => $row['id'] !== null ? (int) $row['id'] : null,
+            'name' => is_string($row['name'] ?? null) && $row['name'] !== '' ? (string) $row['name'] : null,
+        ];
     }
 
     /**

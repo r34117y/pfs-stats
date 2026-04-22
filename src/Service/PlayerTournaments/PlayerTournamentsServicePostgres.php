@@ -46,7 +46,8 @@ final readonly class PlayerTournamentsServicePostgres implements PlayerTournamen
 
         $rows = $this->connection->fetchAllAssociative(
             "SELECT
-                t.legacy_id AS id,
+                t.id,
+                t.legacy_id,
                 t.name,
                 t.fullname,
                 t.dt,
@@ -84,8 +85,9 @@ final readonly class PlayerTournamentsServicePostgres implements PlayerTournamen
             $averagePoints = (float) $row['average_points'];
             $averagePointsLost = (float) $row['average_points_lost'];
             $tournamentId = (int) $row['id'];
+            $legacyTournamentId = (int) $row['legacy_id'];
             $rawName = (string) ($row['fullname'] ?: $row['name']);
-            $name = self::TOURNAMENT_NAME_OVERRIDES[$tournamentId] ?? $rawName;
+            $name = self::TOURNAMENT_NAME_OVERRIDES[$legacyTournamentId] ?? $rawName;
             $shortName = $row['name'];
 
             $tournaments[] = new PlayerTournamentsTournament(

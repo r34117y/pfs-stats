@@ -121,7 +121,7 @@ final readonly class PlayerProfileServicePostgres implements PlayerProfileServic
     {
         $orderDirection = $ascending ? 'ASC' : 'DESC';
         $row = $this->connection->fetchAssociative(
-            "SELECT t.legacy_id AS id, t.name, t.dt
+            "SELECT t.id, t.name, t.dt
             FROM tournament_result tw
             INNER JOIN tournament t
                 ON t.organization_id = tw.organization_id

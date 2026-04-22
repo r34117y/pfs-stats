@@ -1890,7 +1890,8 @@ ORDER BY
         $rows = $this->fetchAllAssociativeCompat(
             "WITH ranking_rows AS (
                 SELECT
-                    r.legacy_tournament_id AS tournamentId,
+                    r.legacy_tournament_id AS legacyTournamentId,
+                    t.id AS tournamentId,
                     t.dt AS tournamentDate,
                     r.legacy_player_id AS playerId,
                     p.name_show AS playerName,
@@ -1908,6 +1909,7 @@ ORDER BY
             ),
             leaders AS (
                 SELECT
+                    rr.legacyTournamentId,
                     rr.tournamentId,
                     rr.tournamentDate,
                     rr.playerId,
@@ -1918,7 +1920,7 @@ ORDER BY
             ordered_leaders AS (
                 SELECT
                     l.*,
-                    LAG(l.playerId) OVER (ORDER BY l.tournamentDate ASC, l.tournamentId ASC) AS previousPlayerId
+                    LAG(l.playerId) OVER (ORDER BY l.tournamentDate ASC, l.legacyTournamentId ASC) AS previousPlayerId
                 FROM leaders l
             ),
             streaks_marked AS (
@@ -1929,7 +1931,7 @@ ORDER BY
                             WHEN ol.previousPlayerId IS NULL OR ol.previousPlayerId <> ol.playerId THEN 1
                             ELSE 0
                         END
-                    ) OVER (ORDER BY ol.tournamentDate ASC, ol.tournamentId ASC) AS streakId
+                    ) OVER (ORDER BY ol.tournamentDate ASC, ol.legacyTournamentId ASC) AS streakId
                 FROM ordered_leaders ol
             ),
             streaks AS (
@@ -1937,28 +1939,28 @@ ORDER BY
                     sm.playerId,
                     sm.playerName,
                     MIN(sm.tournamentDate) AS firstTournamentDate,
-                    MIN(sm.tournamentId) AS firstTournamentId,
+                    MIN(sm.legacyTournamentId) AS firstLegacyTournamentId,
                     MAX(sm.tournamentDate) AS lastTournamentDate,
-                    MAX(sm.tournamentId) AS lastTournamentId
+                    MAX(sm.legacyTournamentId) AS lastLegacyTournamentId
                 FROM streaks_marked sm
                 GROUP BY sm.playerId, sm.playerName, sm.streakId
             )
             SELECT
                 s.playerId,
                 s.playerName,
-                s.firstTournamentId,
-                s.lastTournamentId,
+                tf.id AS firstTournamentId,
+                tl.id AS lastTournamentId,
                 tf.name AS firstTournamentName,
                 tl.name AS lastTournamentName,
                 (TO_DATE(CAST(s.lastTournamentDate AS TEXT), 'YYYYMMDD') - TO_DATE(CAST(s.firstTournamentDate AS TEXT), 'YYYYMMDD')) + 1 AS daysOnTop
             FROM streaks s
             INNER JOIN tournament tf
                 ON tf.organization_id = :orgId
-               AND tf.legacy_id = s.firstTournamentId
+               AND tf.legacy_id = s.firstLegacyTournamentId
             INNER JOIN tournament tl
                 ON tl.organization_id = :orgId
-               AND tl.legacy_id = s.lastTournamentId
-            ORDER BY daysOnTop DESC, s.playerName ASC, s.firstTournamentDate ASC, s.firstTournamentId ASC"
+               AND tl.legacy_id = s.lastLegacyTournamentId
+            ORDER BY daysOnTop DESC, s.playerName ASC, s.firstTournamentDate ASC, s.firstLegacyTournamentId ASC"
             ,
             ['orgId' => $orgId]
         );
@@ -2222,7 +2224,7 @@ ORDER BY
                 op.name_show AS opponentName,
                 rg.points,
                 rg.points::text || ':' || rg.opponentPoints::text AS score,
-                rg.turniej AS tournamentId,
+                t.id AS tournamentId,
                 t.name AS tournamentName
             FROM ranked_games rg
             INNER JOIN mapped mp ON mp.legacy_player_id = rg.playerId
@@ -2368,7 +2370,7 @@ ORDER BY
                 op.name_show AS opponentName,
                 rg.points,
                 rg.points::text || ':' || rg.opponentPoints::text AS score,
-                rg.turniej AS tournamentId,
+                t.id AS tournamentId,
                 t.name AS tournamentName
             FROM ranked_games rg
             INNER JOIN mapped mp ON mp.legacy_player_id = rg.playerId
@@ -2475,7 +2477,7 @@ ORDER BY
                     ug.result1::text || ':' || ug.result2::text AS score,
                     t.name AS tournamentName,
                     t.dt AS tournamentDate,
-                    ug.turniej AS tournamentId,
+                    t.id AS tournamentId,
                     ug.runda AS roundNo
                 FROM unique_games ug
                 INNER JOIN mapped mp1 ON mp1.legacy_player_id = ug.player1
@@ -2592,7 +2594,7 @@ ORDER BY
                 p2.name_show AS opponentName,
                 (ug.result1 + ug.result2) AS points,
                 ug.result1::text || ':' || ug.result2::text AS score,
-                ug.turniej AS tournamentId,
+                t.id AS tournamentId,
                 t.name AS tournamentName
             FROM unique_games ug
             INNER JOIN mapped mp1 ON mp1.legacy_player_id = ug.player1
@@ -2720,7 +2722,7 @@ ORDER BY
                 p2.name_show AS opponentName,
                 wg.points,
                 wg.score,
-                wg.turniej AS tournamentId,
+                t.id AS tournamentId,
                 t.name AS tournamentName
             FROM winner_games wg
             INNER JOIN mapped mp1 ON mp1.legacy_player_id = wg.playerId
@@ -2824,7 +2826,7 @@ ORDER BY
                 p2.name_show AS opponentName,
                 ug.result1 AS points,
                 ug.result1::text || ':' || ug.result2::text AS score,
-                t.legacy_id AS tournamentId,
+                t.id AS tournamentId,
                 t.name AS tournamentName
             FROM unique_games ug
             INNER JOIN mapped mp1 ON mp1.legacy_player_id = ug.player1
@@ -2952,7 +2954,7 @@ ORDER BY
                 p2.name_show AS opponentName,
                 lg.points,
                 lg.score,
-                t.legacy_id AS tournamentId,
+                t.id AS tournamentId,
                 t.name AS tournamentName
             FROM losing_games lg
             INNER JOIN mapped mp1 ON mp1.legacy_player_id = lg.playerId
@@ -3079,7 +3081,7 @@ ORDER BY
                 p2.name_show AS opponentName,
                 wg.points,
                 wg.score,
-                t.legacy_id AS tournamentId,
+                t.id AS tournamentId,
                 t.name AS tournamentName
             FROM winning_games wg
             INNER JOIN mapped mp1 ON mp1.legacy_player_id = wg.playerId
@@ -3206,7 +3208,7 @@ ORDER BY
                 p2.name_show AS opponentName,
                 wg.points,
                 wg.score,
-                t.legacy_id AS tournamentId,
+                t.id AS tournamentId,
                 t.name AS tournamentName
             FROM winning_games wg
             INNER JOIN mapped mp1 ON mp1.legacy_player_id = wg.playerId
@@ -3333,7 +3335,7 @@ ORDER BY
                 p2.name_show AS opponentName,
                 lg.points,
                 lg.score,
-                t.legacy_id AS tournamentId,
+                t.id AS tournamentId,
                 t.name AS tournamentName
             FROM losing_games lg
             INNER JOIN mapped mp1 ON mp1.legacy_player_id = lg.playerId
@@ -3435,7 +3437,7 @@ ORDER BY
                 SELECT
                     ug.player1 AS playerId,
                     p1.name_show AS playerName,
-                    ug.turniej AS tournamentId,
+                    t.id AS tournamentId,
                     t.name AS tournamentName,
                     t.dt AS tournamentDate,
                     ug.runda AS roundNo,
@@ -3457,7 +3459,7 @@ ORDER BY
                 SELECT
                     ug.player2 AS playerId,
                     p2.name_show AS playerName,
-                    ug.turniej AS tournamentId,
+                    t.id AS tournamentId,
                     t.name AS tournamentName,
                     t.dt AS tournamentDate,
                     ug.runda AS roundNo,
@@ -3696,7 +3698,7 @@ ORDER BY
                 SELECT
                     ug.player1 AS playerId,
                     p1.name_show AS playerName,
-                    ug.turniej AS tournamentId,
+                    t.id AS tournamentId,
                     t.name AS tournamentName,
                     t.dt AS tournamentDate,
                     ug.runda AS roundNo,
@@ -3718,7 +3720,7 @@ ORDER BY
                 SELECT
                     ug.player2 AS playerId,
                     p2.name_show AS playerName,
-                    ug.turniej AS tournamentId,
+                    t.id AS tournamentId,
                     t.name AS tournamentName,
                     t.dt AS tournamentDate,
                     ug.runda AS roundNo,
@@ -4026,7 +4028,7 @@ ORDER BY
                         p1.name_show AS player_name,
                         t.name AS tournament_name,
                         t.dt AS tournament_date,
-                        bg.turniej AS tournament_id,
+                        t.id AS tournament_id,
                         bg.runda AS round_no,
                         CASE WHEN bg.result1 >= %d THEN 1 ELSE 0 END AS criterion_state
                     FROM base_games bg
@@ -4043,7 +4045,7 @@ ORDER BY
                         p2.name_show AS player_name,
                         t.name AS tournament_name,
                         t.dt AS tournament_date,
-                        bg.turniej AS tournament_id,
+                        t.id AS tournament_id,
                         bg.runda AS round_no,
                         CASE WHEN bg.result2 >= %d THEN 1 ELSE 0 END AS criterion_state
                     FROM base_games bg
@@ -4330,7 +4332,7 @@ ORDER BY
                         p1.name_show AS player_name,
                         t.name AS tournament_name,
                         t.dt AS tournament_date,
-                        bg.turniej AS tournament_id,
+                        t.id AS tournament_id,
                         bg.runda AS round_no,
                         CASE WHEN (bg.result1 + bg.result2) >= %d THEN 1 ELSE 0 END AS criterion_state
                     FROM base_games bg
@@ -4348,7 +4350,7 @@ ORDER BY
                         p2.name_show AS player_name,
                         t.name AS tournament_name,
                         t.dt AS tournament_date,
-                        bg.turniej AS tournament_id,
+                        t.id AS tournament_id,
                         bg.runda AS round_no,
                         CASE WHEN (bg.result1 + bg.result2) >= %d THEN 1 ELSE 0 END AS criterion_state
                     FROM base_games bg
@@ -4533,7 +4535,7 @@ ORDER BY
             ),
             base_games AS (
                 SELECT
-                    g.tournamentId,
+                    t.id AS tournamentId,
                     g.roundNo,
                     t.dt AS tournamentDate,
                     t.name AS tournamentName,
@@ -4785,7 +4787,7 @@ ORDER BY
                     tw.gwin AS wins,
                     tw.gdraw AS draws,
                     tw.glost AS losses,
-                    tw.legacy_tournament_id AS tournamentId,
+                    t.id AS tournamentId,
                     t.name AS tournamentName,
                     t.dt AS tournamentDate
                 FROM tournament_result tw
@@ -4923,7 +4925,7 @@ ORDER BY
                     tw.gwin AS wins,
                     tw.gdraw AS draws,
                     tw.glost AS losses,
-                    tw.legacy_tournament_id AS tournamentId,
+                    t.id AS tournamentId,
                     t.name AS tournamentName,
                     t.dt AS tournamentDate
                 FROM tournament_result tw
@@ -5061,7 +5063,7 @@ ORDER BY
                     tw.gwin AS wins,
                     tw.gdraw AS draws,
                     tw.glost AS losses,
-                    tw.legacy_tournament_id AS tournamentId,
+                    t.id AS tournamentId,
                     t.name AS tournamentName,
                     t.dt AS tournamentDate
                 FROM tournament_result tw
@@ -5199,7 +5201,7 @@ ORDER BY
                     tw.gwin AS wins,
                     tw.gdraw AS draws,
                     tw.glost AS losses,
-                    tw.legacy_tournament_id AS tournamentId,
+                    t.id AS tournamentId,
                     t.name AS tournamentName,
                     t.dt AS tournamentDate
                 FROM tournament_result tw
@@ -5337,7 +5339,7 @@ ORDER BY
                     tw.gwin AS wins,
                     tw.gdraw AS draws,
                     tw.glost AS losses,
-                    tw.legacy_tournament_id AS tournamentId,
+                    t.id AS tournamentId,
                     t.name AS tournamentName,
                     t.dt AS tournamentDate
                 FROM tournament_result tw
@@ -5475,7 +5477,7 @@ ORDER BY
                     tw.gwin AS wins,
                     tw.gdraw AS draws,
                     tw.glost AS losses,
-                    tw.legacy_tournament_id AS tournamentId,
+                    t.id AS tournamentId,
                     t.name AS tournamentName,
                     t.dt AS tournamentDate
                 FROM tournament_result tw
@@ -5613,7 +5615,7 @@ ORDER BY
                     tw.gwin AS wins,
                     tw.gdraw AS draws,
                     tw.glost AS losses,
-                    tw.legacy_tournament_id AS tournamentId,
+                    t.id AS tournamentId,
                     t.name AS tournamentName,
                     t.dt AS tournamentDate
                 FROM tournament_result tw
@@ -5751,7 +5753,7 @@ ORDER BY
                     tw.gwin AS wins,
                     tw.gdraw AS draws,
                     tw.glost AS losses,
-                    tw.legacy_tournament_id AS tournamentId,
+                    t.id AS tournamentId,
                     t.name AS tournamentName,
                     t.dt AS tournamentDate
                 FROM tournament_result tw

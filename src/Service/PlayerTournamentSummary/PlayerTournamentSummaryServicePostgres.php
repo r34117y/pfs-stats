@@ -11,8 +11,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class PlayerTournamentSummaryServicePostgres implements PlayerTournamentSummaryServiceInterface
 {
-    private const string ORGANIZATION_CODE = 'PFS';
-
     public function __construct(
         #[Autowire(service: 'doctrine.dbal.default_connection')]
         private Connection $connection,
@@ -21,10 +19,9 @@ class PlayerTournamentSummaryServicePostgres implements PlayerTournamentSummaryS
 
     public function getSummary(int $tournamentId, int $playerId): PlayerTournamentSummary
     {
-        $organizationId = $this->fetchOrganizationId();
-        if ($organizationId === null) {
-            throw new NotFoundHttpException(sprintf('No summary for player %d in tournament %d.', $playerId, $tournamentId));
-        }
+        $tournament = $this->fetchTournamentContext($tournamentId);
+        $organizationId = $tournament['organizationId'];
+        $legacyTournamentId = $tournament['legacyTournamentId'];
 
         $playerTournamentRow = $this->connection->fetchAssociative(
             "SELECT
@@ -43,7 +40,7 @@ class PlayerTournamentSummaryServicePostgres implements PlayerTournamentSummaryS
               AND tw.legacy_player_id = :playerId",
             [
                 'organizationId' => $organizationId,
-                'tournamentId' => $tournamentId,
+                'tournamentId' => $legacyTournamentId,
                 'playerId' => $playerId,
             ]
         );
@@ -94,7 +91,7 @@ class PlayerTournamentSummaryServicePostgres implements PlayerTournamentSummaryS
             ORDER BY rg.runda ASC, rg.stol ASC, rg.player1 ASC, rg.player2 ASC",
             [
                 'organizationId' => $organizationId,
-                'tournamentId' => $tournamentId,
+                'tournamentId' => $legacyTournamentId,
                 'playerId' => $playerId,
             ]
         );
@@ -196,17 +193,26 @@ class PlayerTournamentSummaryServicePostgres implements PlayerTournamentSummaryS
         );
     }
 
-    private function fetchOrganizationId(): ?int
+    /**
+     * @return array{organizationId:int, legacyTournamentId:int}
+     */
+    private function fetchTournamentContext(int $tournamentId): array
     {
-        $value = $this->connection->fetchOne(
-            'SELECT id FROM organization WHERE code = :code LIMIT 1',
-            ['code' => self::ORGANIZATION_CODE]
+        $row = $this->connection->fetchAssociative(
+            'SELECT organization_id, legacy_id
+             FROM tournament
+             WHERE id = :tournamentId
+             LIMIT 1',
+            ['tournamentId' => $tournamentId]
         );
 
-        if ($value === false || $value === null) {
-            return null;
+        if ($row === false || $row['legacy_id'] === null) {
+            throw new NotFoundHttpException(sprintf('Tournament %d was not found.', $tournamentId));
         }
 
-        return (int) $value;
+        return [
+            'organizationId' => (int) $row['organization_id'],
+            'legacyTournamentId' => (int) $row['legacy_id'],
+        ];
     }
 }

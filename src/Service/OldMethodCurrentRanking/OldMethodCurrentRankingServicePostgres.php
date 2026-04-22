@@ -152,7 +152,7 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
         $windowStartDate = $referenceDate->modify(sprintf('-%d years', self::WINDOW_YEARS));
 
         return [
-            'referenceTournamentId' => (int) $referenceTournament['id'],
+            'referenceTournamentId' => (int) $referenceTournament['public_id'],
             'referenceTournamentName' => (string) $referenceTournament['name'],
             'referenceDate' => $referenceDate->format('Y-m-d'),
             'windowStartDate' => $windowStartDate->format('Y-m-d'),
@@ -236,12 +236,12 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
     }
 
     /**
-     * @return array{id: int|string, dt: int|string, name: string}|null
+     * @return array{public_id: int|string, dt: int|string, name: string}|null
      */
     private function loadTournamentById(int $organizationId, int $tournamentId): ?array
     {
         $row = $this->connection->fetchAssociative(
-            "SELECT legacy_id AS id, dt, COALESCE(fullname, name) AS name
+            "SELECT id AS public_id, dt, COALESCE(fullname, name) AS name
              FROM tournament
              WHERE organization_id = :organizationId
                AND legacy_id = :tournamentId",
