@@ -59,8 +59,29 @@
 
                     <div class="notification is-light mt-5">
                         <p class="has-text-weight-semibold mb-2">Ostatnie importy</p>
-                        <template x-if="data.recentImports.length === 0">
+                        <template x-if="recentImportsForSelectedOrganization().length === 0">
                             <p>Brak importów do wyświetlenia.</p>
+                        </template>
+                        <template x-if="recentImportsForSelectedOrganization().length > 0">
+                            <div>
+                                <template
+                                    x-for="recentImport in recentImportsForSelectedOrganization()"
+                                    :key="`${recentImport.organizationId}-${recentImport.tournamentId}`"
+                                >
+                                    <div class="py-2" style="border-top: 1px solid #dbdbdb;">
+                                        <p class="has-text-weight-semibold" x-text="recentImport.tournamentName"></p>
+                                        <p class="is-size-7 has-text-grey">
+                                            <span x-text="recentImport.date"></span>
+                                            <span>&nbsp;|&nbsp;ID </span><span x-text="recentImport.tournamentId"></span>
+                                            <template x-if="recentImport.urlId">
+                                                <span>
+                                                    <span>&nbsp;|&nbsp;URL ID </span><span x-text="recentImport.urlId"></span>
+                                                </span>
+                                            </template>
+                                        </p>
+                                    </div>
+                                </template>
+                            </div>
                         </template>
                     </div>
                 </div>
@@ -126,6 +147,15 @@
                     } finally {
                         this.loading = false;
                     }
+                },
+                recentImportsForSelectedOrganization() {
+                    if (!this.data || !this.selectedOrganizationId) {
+                        return [];
+                    }
+
+                    return this.data.recentImports.filter(
+                        (recentImport) => Number(recentImport.organizationId) === Number(this.selectedOrganizationId)
+                    );
                 },
                 async preprocessResultsFile(event) {
                     this.error = '';

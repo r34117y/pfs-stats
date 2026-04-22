@@ -8,6 +8,7 @@ use App\ApiResource\UserAdmin\UserAdminOrganization;
 use App\ApiResource\UserAdmin\UserAdminProfile;
 use App\Entity\User;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
@@ -25,6 +26,7 @@ trait UserAdminContextTrait
 
     /**
      * @return array{profile: UserAdminProfile, organizations: list<UserAdminOrganization>}
+     * @throws Exception
      */
     private function getAdminContext(User $user, Connection $connection): array
     {

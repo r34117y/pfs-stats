@@ -22,11 +22,11 @@ final readonly class AddTournamentResultsData
 {
     /**
      * @param UserAdminOrganization[] $organizations
+     * @param UserAdminRecentTournamentImport[] $recentImports
      */
     public function __construct(
         public UserAdminProfile $profile,
         public string $title,
-        public string $description,
         public array $organizations,
         public array $recentImports,
     ) {

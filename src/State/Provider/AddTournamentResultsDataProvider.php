@@ -7,6 +7,8 @@ namespace App\State\Provider;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\UserAdmin\AddTournamentResultsData;
+use App\ApiResource\UserAdmin\UserAdminOrganization;
+use App\Service\UserAdminRecentTournamentImportsService;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -20,6 +22,7 @@ final readonly class AddTournamentResultsDataProvider implements ProviderInterfa
         private Security $security,
         #[Autowire(service: 'doctrine.dbal.default_connection')]
         private Connection $connection,
+        private UserAdminRecentTournamentImportsService $recentTournamentImportsService,
     ) {
     }
 
@@ -36,9 +39,13 @@ final readonly class AddTournamentResultsDataProvider implements ProviderInterfa
         return new AddTournamentResultsData(
             $adminContext['profile'],
             'Dodaj wyniki turnieju',
-            'Przygotuj pliki z wynikami turnieju i wybierz organizację, do której mają trafić.',
             $adminContext['organizations'],
-            [],
+            $this->recentTournamentImportsService->getRecentImportsForOrganizations(
+                array_map(
+                    static fn (UserAdminOrganization $organization): int => $organization->id,
+                    $adminContext['organizations'],
+                ),
+            ),
         );
     }
 }
