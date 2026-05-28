@@ -3,6 +3,7 @@
 set -euo pipefail
 
 COMPOSE_FILE="${COMPOSE_FILE:-compose.prod.yaml}"
+ENV_FILE="${ENV_FILE:-.env.local}"
 RUN_MIGRATIONS=true
 SKIP_BUILD=false
 
@@ -16,16 +17,16 @@ Options:
   --no-build    Skip image rebuild
   -h, --help    Show this help
 
-Required environment variables (expected by compose.prod.yaml):
+Required values in ENV_FILE (expected by compose.prod.yaml):
   APP_SECRET
   MYSQL_ROOT_PASSWORD
-  MYSQL_PASSWORD
   POSTGRES_PASSWORD
 
 Optional environment variables:
   MYSQL_USER
   MYSQL_DATABASE
   COMPOSE_FILE (default: compose.prod.yaml)
+  ENV_FILE (default: .env.local)
 EOF
 }
 
@@ -51,33 +52,33 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-for required_var in APP_SECRET MYSQL_ROOT_PASSWORD MYSQL_PASSWORD POSTGRES_PASSWORD; do
-  if [[ -z "${!required_var:-}" ]]; then
-    echo "Missing required environment variable: $required_var" >&2
-    exit 1
-  fi
-done
-
 if ! command -v docker >/dev/null 2>&1; then
   echo "Docker is required but not installed." >&2
   exit 1
 fi
 
-echo "Starting deployment with ${COMPOSE_FILE} ..."
+if [[ ! -f "$ENV_FILE" ]]; then
+  echo "Missing environment file: $ENV_FILE" >&2
+  exit 1
+fi
+
+COMPOSE=(docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE")
+
+echo "Starting deployment with ${COMPOSE_FILE} and ${ENV_FILE} ..."
 
 if [[ "$SKIP_BUILD" == true ]]; then
-  docker compose -f "$COMPOSE_FILE" --env-file .env.local up -d --remove-orphans
+  "${COMPOSE[@]}" up -d --remove-orphans
 else
-  docker compose -f "$COMPOSE_FILE" --env-file .env.local up -d --build --remove-orphans
+  "${COMPOSE[@]}" up -d --build --remove-orphans
 fi
 
 echo "Warming Symfony cache ..."
-docker compose -f "$COMPOSE_FILE" exec -T -u www-data php php bin/console cache:clear --env=prod
-docker compose -f "$COMPOSE_FILE" exec -T -u www-data php php bin/console cache:warmup --env=prod
+"${COMPOSE[@]}" exec -T -u www-data php php bin/console cache:clear --env=prod
+"${COMPOSE[@]}" exec -T -u www-data php php bin/console cache:warmup --env=prod
 
 if [[ "$RUN_MIGRATIONS" == true ]]; then
   echo "Running Doctrine migrations ..."
-  docker compose -f "$COMPOSE_FILE" exec -T -u www-data php php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration
+  "${COMPOSE[@]}" exec -T -u www-data php php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration
 fi
 
 echo "Deployment finished."

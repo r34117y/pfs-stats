@@ -1,23 +1,94 @@
-# Docker on prod
+# Production deploy
 
-`compose.prod.yaml` now mounts the project directory into the `php` container (`.:/var/www/html`),
-so code changes from `git pull` on host are visible in container immediately.
+Production uses `compose.prod.yaml` with `.env.local`.
 
-If this is first run after enabling bind mount, recreate containers once:
-
-```bash
-docker compose -f compose.prod.yaml --env-file .env.local up -d --force-recreate
-```
-
-Then standard deploy/update flow:
+Do not deploy with only:
 
 ```bash
-git pull
 docker compose -f compose.prod.yaml --env-file .env.local up -d
 ```
 
-Po imporcie nowego dumpa MySQL odswiez cache datasetu:
+That command starts or reconciles existing containers, but it is not a full
+application deploy. After `git pull`, changes can remain invisible because:
+
+- Symfony runs with `APP_ENV=prod` and keeps compiled container/cache files in
+  the `symfony_cache_data` Docker volume.
+- The `nginx` production image copies `public/` at image build time, so changes
+  to public assets or nginx config require an image rebuild.
+- If `composer.lock` changed, the host-mounted application directory must have
+  dependencies updated because `./:/var/www/html` hides the `vendor/` directory
+  installed inside the PHP image.
+
+## Standard deploy
+
+From the production checkout:
+
+```bash
+git pull
+bin/deploy-prod.sh
+```
+
+`bin/deploy-prod.sh` runs:
+
+- `docker compose ... up -d --build --remove-orphans`
+- Symfony `cache:clear --env=prod`
+- Symfony `cache:warmup --env=prod`
+- Doctrine migrations
+
+Use `--no-migrate` only when the deploy must not run migrations:
+
+```bash
+bin/deploy-prod.sh --no-migrate
+```
+
+Use `--no-build` only for a config/data-only restart where no PHP image,
+`public/`, or nginx image changes need to be rebuilt:
+
+```bash
+bin/deploy-prod.sh --no-build
+```
+
+## Composer changes
+
+If `composer.lock` changed after `git pull`, update dependencies in the mounted
+application directory before warming cache:
+
+```bash
+docker compose -f compose.prod.yaml --env-file .env.local exec -T php composer install --no-dev --prefer-dist --no-interaction --no-progress --optimize-autoloader
+bin/deploy-prod.sh --no-build
+```
+
+If the containers are not running yet, start them first:
+
+```bash
+docker compose -f compose.prod.yaml --env-file .env.local up -d --build
+docker compose -f compose.prod.yaml --env-file .env.local exec -T php composer install --no-dev --prefer-dist --no-interaction --no-progress --optimize-autoloader
+bin/deploy-prod.sh --no-build
+```
+
+## Cache refresh after data import
+
+After importing a new MySQL dump, refresh the application dataset cache:
 
 ```bash
 docker compose -f compose.prod.yaml --env-file .env.local exec -T php php bin/console app:cache:refresh-after-import --env=prod --warmup
+```
+
+## Environment
+
+The default deploy script reads:
+
+- compose file: `compose.prod.yaml`
+- env file: `.env.local`
+
+`.env.local` must define at least:
+
+- `APP_SECRET`
+- `MYSQL_ROOT_PASSWORD`
+- `POSTGRES_PASSWORD`
+
+Override them only when deploying a different stack:
+
+```bash
+COMPOSE_FILE=compose.prod.yaml ENV_FILE=.env.local bin/deploy-prod.sh
 ```
