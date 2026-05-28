@@ -10,6 +10,7 @@ use App\Service\RefreshCacheAfterImportLauncher;
 use App\Service\TournamentRoundImportService;
 use App\Service\TournamentRoundTokenAuthorizer;
 use Doctrine\DBAL\Exception;
+use JsonException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -40,15 +41,13 @@ final readonly class TournamentRoundProcessor implements ProcessorInterface
         $this->saveRawPayload($rawPayload);
 
         try {
-            if (!$data instanceof TournamentRound) {
-                throw new BadRequestHttpException('Invalid payload.');
-            }
+            $payload = $this->createPayload($rawPayload);
 
-            if (!$this->tournamentRoundTokenAuthorizer->isAuthorized($data->token)) {
+            if (!$this->tournamentRoundTokenAuthorizer->isAuthorized($payload->token)) {
                 throw new UnauthorizedHttpException('Bearer', 'Unauthorized.');
             }
 
-            $tournamentId = $this->tournamentRoundImportService->import($data);
+            $tournamentId = $this->tournamentRoundImportService->import($payload);
             $this->refreshCacheAfterImportLauncher->launchWarmup();
 
             return new TournamentRoundResponse(sprintf('Imported tournament %d.', $tournamentId));
@@ -61,6 +60,55 @@ final readonly class TournamentRoundProcessor implements ProcessorInterface
 
             throw $exception;
         }
+    }
+
+    private function createPayload(string $rawPayload): TournamentRound
+    {
+        try {
+            $decoded = json_decode($this->stripUtf8Bom($rawPayload), true, 512, JSON_THROW_ON_ERROR);
+        } catch (JsonException $exception) {
+            throw new BadRequestHttpException('Invalid JSON payload: ' . $exception->getMessage(), $exception);
+        }
+
+        if (!is_array($decoded) || array_is_list($decoded)) {
+            throw new BadRequestHttpException('Invalid payload.');
+        }
+
+        return new TournamentRound(
+            token: $this->getStringField($decoded, 'token'),
+            tournament: $this->getArrayField($decoded, 'tournament'),
+            players: $this->getArrayField($decoded, 'players'),
+            results: $this->getArrayField($decoded, 'results'),
+            rankDay: $decoded['rankDay'] ?? null,
+            ranking: $this->getArrayField($decoded, 'ranking'),
+        );
+    }
+
+    private function stripUtf8Bom(string $payload): string
+    {
+        return str_starts_with($payload, "\xEF\xBB\xBF") ? substr($payload, 3) : $payload;
+    }
+
+    /**
+     * @param array<string, mixed> $payload
+     */
+    private function getStringField(array $payload, string $field): string
+    {
+        $value = $payload[$field] ?? '';
+
+        return is_string($value) ? $value : '';
+    }
+
+    /**
+     * @param array<string, mixed> $payload
+     *
+     * @return array<mixed>
+     */
+    private function getArrayField(array $payload, string $field): array
+    {
+        $value = $payload[$field] ?? [];
+
+        return is_array($value) ? $value : [];
     }
 
     private function saveRawPayload(string $rawPayload): void

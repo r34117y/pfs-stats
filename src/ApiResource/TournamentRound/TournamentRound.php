@@ -13,7 +13,8 @@ use App\State\Processor\TournamentRoundProcessor;
             inputFormats: ['json' => ['application/json'], 'jsonld' => ['application/ld+json']],
             description: 'Tournament round callback endpoint protected by token authorization.',
             output: TournamentRoundResponse::class,
-            read: false,
+            read: false, // we want to remove potential BOM by hand
+            deserialize: false,
             processor: TournamentRoundProcessor::class
         ),
     ],
