@@ -191,7 +191,7 @@ final readonly class PfsTournamentImportPlanner
                 player2: $guestPlayer->id,
                 result1: $roundGame->hostScore,
                 result2: $roundGame->guestScore,
-                ranko: (int) round($guestPlayer->seedRank),
+                ranko: $guestPlayer->seedRank,
                 host: 1,
             );
 
@@ -203,7 +203,7 @@ final readonly class PfsTournamentImportPlanner
                 player2: $hostPlayer->id,
                 result1: $roundGame->guestScore,
                 result2: $roundGame->hostScore,
-                ranko: (int) round($hostPlayer->seedRank),
+                ranko: $hostPlayer->seedRank,
                 host: 2,
             );
         }

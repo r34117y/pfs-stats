@@ -26,8 +26,8 @@ final readonly class PfsPlayerResolverPostgres implements PfsPlayerResolverInter
     public function resolve(array $playerRanksByName, int $tournamentId): array
     {
         $organizationId = $this->loadOrganizationId();
-        $catalog = $organizationId !== null ? $this->loadCatalog($organizationId, $tournamentId) : [];
-        $nextId = $organizationId !== null ? $this->fetchNextPlayerId($organizationId) : 1;
+        $catalog = $this->loadCatalog($organizationId, $tournamentId);
+        $nextId =  $this->fetchNextPlayerId($organizationId);
         $resolved = [];
         $newPlayers = [];
         $warnings = [];

@@ -12,7 +12,7 @@ final readonly class PfsTourHhImportRow
         public int $player2,
         public int $result1,
         public int $result2,
-        public int $ranko,
+        public float $ranko,
         public int $host,
     ) {
     }

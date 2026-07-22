@@ -9,6 +9,7 @@ use App\Service\PfsTournamentImportPlanner;
 use App\Service\PfsTournamentImportSqlRenderer;
 use App\Service\PfsTournamentResultsParser;
 use App\Service\PfsTournamentWebsiteClient;
+use DateTimeInterface;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -31,7 +32,7 @@ final class PlanPfsTournamentImportCommand extends Command
         private readonly PfsTournamentImportPlanner $planner,
         private readonly PfsTournamentImportSqlRenderer $sqlRenderer,
         private readonly PfsTournamentImportComparerInterface $comparer,
-        #[Autowire(service: 'doctrine.dbal.mysql_connection')]
+        #[Autowire(service: 'doctrine.dbal.default_connection')]
         private readonly Connection $connection,
     ) {
         parent::__construct();
@@ -40,9 +41,8 @@ final class PlanPfsTournamentImportCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addOption('urlid', null, InputOption::VALUE_REQUIRED, 'PFS tournament URL id.')
+            ->addOption('pfsid', null, InputOption::VALUE_REQUIRED, 'PFS tournament URL id.')
             ->addOption('year', null, InputOption::VALUE_REQUIRED, 'Calendar year for the tournament.', (string) date('Y'))
-            ->addOption('tournament-id', null, InputOption::VALUE_REQUIRED, 'Target PFSTOURS.id. Defaults to the existing id for this urlid if present.')
             ->addOption('short-name', null, InputOption::VALUE_REQUIRED, 'Target PFSTOURS.name short label.')
             ->addOption('team', null, InputOption::VALUE_REQUIRED, 'Override PFSTOURS.team.')
             ->addOption('mcategory', null, InputOption::VALUE_REQUIRED, 'Override PFSTOURS.mcategory.')
@@ -55,37 +55,31 @@ final class PlanPfsTournamentImportCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $urlId = (int) $input->getOption('urlid');
+        $pfsId = (int) $input->getOption('pfsid');
         $year = (int) $input->getOption('year');
 
-        if ($urlId <= 0) {
-            $io->error('Option --urlid must be a positive integer.');
+        if ($pfsId <= 0) {
+            $io->error('Option --pfsid must be a positive integer.');
 
             return Command::INVALID;
         }
 
         try {
-            $calendarTournament = $this->fetchCalendarTournament($year, $urlId);
-            $html = $this->websiteClient->fetchTournamentHtml($urlId);
+            $calendarTournament = $this->fetchCalendarTournament($year, $pfsId);
+            $html = $this->websiteClient->fetchTournamentHtml($pfsId);
             $parsedResults = $this->resultsParser->parse($html);
-
-            $existingTournament = $this->connection->fetchAssociative(
-                'SELECT id, name, team, mcategory, sertour FROM PFSTOURS WHERE urlid = :urlId ORDER BY id DESC LIMIT 1',
-                ['urlId' => $urlId],
-            );
-
-            $tournamentId = $this->resolveTournamentId($input, $existingTournament);
-            $shortName = $this->resolveShortName($input, $existingTournament, $calendarTournament->location, $calendarTournament->endDate);
+            $legacyTournamentId = $this->resolveTournamentId($calendarTournament->startDate);
+            $shortName = $this->resolveShortName($calendarTournament->location, $calendarTournament->startDate);
 
             $metadata = new TournamentImportMetadata(
-                tournamentId: $tournamentId,
-                urlId: $urlId,
+                tournamentId: $legacyTournamentId,
+                urlId: $pfsId,
                 shortName: $shortName,
                 startDate: $calendarTournament->startDate,
                 endDate: $calendarTournament->endDate,
-                team: $this->stringOrNull($input->getOption('team')) ?? ($existingTournament['team'] ?? null),
-                mcategory: $this->intOrNull($input->getOption('mcategory')) ?? ($existingTournament !== false ? (int) $existingTournament['mcategory'] : null),
-                sertour: $this->intOrNull($input->getOption('sertour')) ?? ($existingTournament !== false ? (int) $existingTournament['sertour'] : null),
+                team: $this->stringOrNull($input->getOption('team')) ?? null,
+                mcategory: $this->intOrNull($input->getOption('mcategory')) ?? null,
+                sertour: $this->intOrNull($input->getOption('sertour')) ?? null,
             );
 
             $plan = $this->planner->buildPlan($metadata, $parsedResults);
@@ -186,39 +180,28 @@ final class PlanPfsTournamentImportCommand extends Command
         throw new \RuntimeException(sprintf('Tournament urlid %d was not found in calendar year %d.', $urlId, $year));
     }
 
-    /**
-     * @param array<string, mixed>|false $existingTournament
-     */
-    private function resolveTournamentId(InputInterface $input, array|false $existingTournament): int
+    private function resolveTournamentId(DateTimeInterface $startDate): int
     {
-        $optionValue = $this->intOrNull($input->getOption('tournament-id'));
-        if ($optionValue !== null) {
-            return $optionValue;
+        $id = (int) ($startDate->format('Ymd') . '0');
+        $nextDayId = $id + 10;
+
+        $existingId = $this->connection->executeQuery(
+            'SELECT max(legacy_id) FROM tournament WHERE legacy_id BETWEEN :from AND :to',
+            ['from' => $id, 'to' => $nextDayId]
+        )->fetchFirstColumn();
+
+        if ($existingId[0] === null) {
+            return $id;
         }
 
-        if ($existingTournament !== false) {
-            return (int) $existingTournament['id'];
-        }
-
-        throw new \RuntimeException('Option --tournament-id is required when the tournament does not exist in PFSTOURS yet.');
+        return $existingId[0] + 1;
     }
 
     private function resolveShortName(
-        InputInterface $input,
-        array|false $existingTournament,
         string $location,
-        \DateTimeImmutable $endDate,
+        \DateTimeImmutable $startDate,
     ): string {
-        $optionValue = $this->stringOrNull($input->getOption('short-name'));
-        if ($optionValue !== null) {
-            return $optionValue;
-        }
-
-        if ($existingTournament !== false) {
-            return (string) $existingTournament['name'];
-        }
-
-        return sprintf('%s %s', $endDate->format('ymd'), $location);
+        return sprintf('%s %s', $startDate->format('ymd'), $location);
     }
 
     private function intOrNull(mixed $value): ?int
