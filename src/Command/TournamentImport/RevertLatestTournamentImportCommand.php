@@ -29,7 +29,8 @@ final class RevertLatestTournamentImportCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         try {
-            $summary = $this->tournamentRoundRollbackService->revertMostRecentImport();
+            // todo make this configurable
+            $summary = $this->tournamentRoundRollbackService->revertMostRecentImport(21);
         } catch (Throwable $exception) {
             $io->error(sprintf('Could not revert latest tournament round import: %s', $exception->getMessage()));
 
@@ -46,7 +47,6 @@ final class RevertLatestTournamentImportCommand extends Command
             ['Metric', 'Value'],
             [
                 ['Organization id', (string) $summary['organizationId']],
-                ['Tournament legacy id', (string) $summary['tournamentId']],
                 ['Tournament row id', (string) $summary['tournamentDbId']],
                 ['Ranking rows deleted', (string) $summary['rankingDeleted']],
                 ['Tournament result rows deleted', (string) $summary['tournamentResultsDeleted']],

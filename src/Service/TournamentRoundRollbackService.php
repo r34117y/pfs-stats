@@ -36,21 +36,17 @@ final readonly class TournamentRoundRollbackService
      * @throws JsonException
      * @throws Throwable
      */
-    public function revertMostRecentImport(): array
+    public function revertMostRecentImport(int $orgId): array
     {
-        $latestAudit = $this->fetchLatestImportAudit();
+        $latestAudit = $this->fetchLatestImportAudit($orgId);
         if ($latestAudit === null) {
             throw new RuntimeException('No tournament round import audit record was found.');
         }
 
         return $this->connection->transactional(function (Connection $connection) use ($latestAudit): array {
-            $currentLatestAudit = $this->fetchLatestImportAudit($connection);
-            if ($currentLatestAudit === null || $currentLatestAudit['textResourceId'] !== $latestAudit['textResourceId']) {
-                throw new RuntimeException('Only the most recent tournament round import can be reverted.');
-            }
 
             $deletedRanking = $connection->executeStatement(
-                'DELETE FROM ranking WHERE organization_id = :organizationId AND legacy_tournament_id = :tournamentId',
+                'DELETE FROM ranking WHERE organization_id = :organizationId AND tournament_id = :tournamentId',
                 [
                     'organizationId' => $latestAudit['organizationId'],
                     'tournamentId' => $latestAudit['tournamentId'],
@@ -58,7 +54,7 @@ final readonly class TournamentRoundRollbackService
             );
 
             $deletedTournamentResults = $connection->executeStatement(
-                'DELETE FROM tournament_result WHERE organization_id = :organizationId AND legacy_tournament_id = :tournamentId',
+                'DELETE FROM tournament_result WHERE organization_id = :organizationId AND tournament_id = :tournamentId',
                 [
                     'organizationId' => $latestAudit['organizationId'],
                     'tournamentId' => $latestAudit['tournamentId'],
@@ -66,7 +62,7 @@ final readonly class TournamentRoundRollbackService
             );
 
             $deletedTournamentGames = $connection->executeStatement(
-                'DELETE FROM tournament_game WHERE organization_id = :organizationId AND legacy_tournament_id = :tournamentId',
+                'DELETE FROM tournament_game WHERE organization_id = :organizationId AND tournament_id = :tournamentId',
                 [
                     'organizationId' => $latestAudit['organizationId'],
                     'tournamentId' => $latestAudit['tournamentId'],
@@ -74,7 +70,7 @@ final readonly class TournamentRoundRollbackService
             );
 
             $deletedTournament = $connection->executeStatement(
-                'DELETE FROM tournament WHERE organization_id = :organizationId AND legacy_id = :tournamentId',
+                'DELETE FROM tournament WHERE organization_id = :organizationId AND id = :tournamentId',
                 [
                     'organizationId' => $latestAudit['organizationId'],
                     'tournamentId' => $latestAudit['tournamentId'],
@@ -152,26 +148,28 @@ final readonly class TournamentRoundRollbackService
      * @throws JsonException
      * @throws Exception
      */
-    private function fetchLatestImportAudit(?Connection $connection = null): ?array
+    private function fetchLatestImportAudit(int $orgId): ?array
     {
-        $connection ??= $this->connection;
-
-        $row = $connection->fetchAssociative(
+        $row = $this->connection->fetchAssociative(
             'SELECT
                 tr.id AS text_resource_id,
                 tr.organization_id,
                 tr.legacy_id AS tournament_id,
                 tr.data,
-                t.id AS tournament_db_id,
+                t.name AS tournament_name,
                 COALESCE(t.fullname, t.name) AS tournament_name
              FROM text_resource tr
              LEFT JOIN tournament t
                ON t.organization_id = tr.organization_id
-              AND t.legacy_id = tr.legacy_id
+              AND t.id = tr.legacy_id
              WHERE tr.resource_type = :resourceType
+             AND tr.organization_id = :organizationId
              ORDER BY tr.id DESC
              LIMIT 1',
-            ['resourceType' => TournamentRoundImportService::AUDIT_RESOURCE_TYPE],
+            [
+                'resourceType' => TournamentRoundImportService::AUDIT_RESOURCE_TYPE,
+                'organizationId' => $orgId,
+            ],
         );
 
         if ($row === false) {
