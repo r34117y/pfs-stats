@@ -66,14 +66,6 @@ docker compose -f compose.prod.yaml --env-file .env.local exec -T php composer i
 bin/deploy-prod.sh --no-build
 ```
 
-## Cache refresh after data import
-
-After importing a new MySQL dump, refresh the application dataset cache:
-
-```bash
-docker compose -f compose.prod.yaml --env-file .env.local exec -T php php bin/console app:cache:refresh-after-import --env=prod --warmup
-```
-
 ## Environment
 
 The default deploy script reads:
