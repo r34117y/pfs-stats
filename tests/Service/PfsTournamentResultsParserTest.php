@@ -72,6 +72,14 @@ Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
                                                           --------------- ---- ------
                                                                      379 / 2 189.50
 </pre></div>
+<div id='ranking' class='page'><pre>Ranking po turnieju V Wielicki Turniej w Scrabble
+
+Lp. Imię            Nazwisko             Miasto               Ranking  Skalpy   Gry
+--- --------------- -------------------- -------------------- -------- -------- --------
+  1 Dominik         Urbacki              Pruszków              188.06    37424      199
+  2 Przemysław      Herdzina             Kraków                177.79      645        4
+  3 Paweł           Mazurek              Polanica-Zdrój        177.06      379        2
+</pre></div>
 </body>
 </html>
 HTML;
@@ -87,6 +95,7 @@ HTML;
         self::assertCount(2, $results->players);
         self::assertCount(2, $results->standings);
         self::assertCount(4, $results->roundGames);
+        self::assertCount(3, $results->ranking);
         self::assertSame(1, $results->standings[0]->place);
         self::assertSame('Paweł Mazurek', $results->standings[0]->playerName);
         self::assertSame(2.0, $results->standings[0]->bigPoints);
@@ -94,6 +103,12 @@ HTML;
         self::assertSame('Zuzanna Rapacz', $results->roundGames[0]->guestName);
         self::assertSame(464, $results->roundGames[0]->hostScore);
         self::assertSame(293, $results->roundGames[0]->guestScore);
+        self::assertSame(1, $results->ranking[0]->position);
+        self::assertSame('Dominik Urbacki', $results->ranking[0]->playerName);
+        self::assertSame('Pruszków', $results->ranking[0]->city);
+        self::assertSame(188.06, $results->ranking[0]->rank);
+        self::assertSame(37424, $results->ranking[0]->scalp);
+        self::assertSame(199, $results->ranking[0]->games);
 
         $firstPlayer = $results->players[0];
         self::assertSame('Przemysław Herdzina', $firstPlayer->playerName);
@@ -157,6 +172,12 @@ Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
     2     3 Opponent Name                       120.00 +  350: 300  170
                                                           --------------- ---- ------
                                                                      170 / 1 170.00
+</pre></div>
+<div id='ranking'><pre>Ranking po turnieju Test
+
+Lp. Imię            Nazwisko             Miasto               Ranking  Skalpy   Gry
+--- --------------- -------------------- -------------------- -------- -------- --------
+  1 Player          Example              Miasto                100.00      170        1
 </pre></div>
 HTML;
 

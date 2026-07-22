@@ -42,7 +42,9 @@ final readonly class TournamentRoundImportService
             throw new BadRequestHttpException('Field "ranking" must not be empty.');
         }
 
-        $organizationCode = $this->normalizeOrganizationCode($this->requireString($tournament, 'org', 'tournament'));
+        $organizationCode = $this->normalizeOrganizationCode(
+            $this->requireString($tournament, 'org', 'tournament')
+        );
         $organization = $this->fetchOrganization($organizationCode);
         if ($organization === null) {
             throw new BadRequestHttpException(sprintf('Organization "%s" was not found.', $organizationCode));
@@ -472,12 +474,12 @@ final readonly class TournamentRoundImportService
             $playerName = 'Teresa Radziewicz';
         }
 
-        if ($playerName === 'Bernadeta Kudlińska') {
-            $playerName = 'Bernadetta Kudlińska';
-        }
-
         if ($playerName === 'Maciej Labe') {
             $playerName = 'dane ukryte.3';
+        }
+
+        if ($playerName === 'Zuzanna Adamczewska') {
+            $playerName = 'Zuzanna Stasiak';
         }
 
         $exactMatches = array_values(array_filter(
@@ -515,6 +517,15 @@ final readonly class TournamentRoundImportService
     {
         $nameShow = $this->trimToLength($nameShow, 40);
         $nameAlph = $this->trimToLength($this->nameNormalizer->toAlphabeticalName($nameShow), 40);
+
+        $firstName = null;
+        $lastName = null;
+        $nameParts = explode(' ', $nameShow);
+        if (count($nameParts) === 2) {
+            $firstName = $nameParts[0];
+            $lastName = $nameParts[1];
+        }
+
         $playerId = (int) $connection->fetchOne(
             'INSERT INTO player (name_show, name_alph)
              VALUES (:nameShow, :nameAlph)
@@ -522,6 +533,9 @@ final readonly class TournamentRoundImportService
             [
                 'nameShow' => $nameShow,
                 'nameAlph' => $nameAlph,
+                'firstName' => $firstName,
+                'lastName' => $lastName,
+                'slug' => $this->buildSlug($nameShow),
             ],
         );
 
@@ -543,6 +557,40 @@ final readonly class TournamentRoundImportService
             'normalized' => $this->nameNormalizer->normalizeForMatch($nameShow),
             'latestRank' => 100.0,
         ];
+    }
+
+    private function buildSlug(string $name): ?string
+    {
+        return $this->slugifyPart($name);
+    }
+
+    private function slugifyPart(string $value): ?string
+    {
+        $value = strtolower(strtr($value, [
+            'Ą' => 'ą',
+            'Ć' => 'ć',
+            'Ę' => 'ę',
+            'Ł' => 'ł',
+            'Ń' => 'ń',
+            'Ó' => 'ó',
+            'Ś' => 'ś',
+            'Ź' => 'ź',
+            'Ż' => 'ż',
+            'ą' => 'a',
+            'ć' => 'c',
+            'ę' => 'e',
+            'ł' => 'l',
+            'ń' => 'n',
+            'ó' => 'o',
+            'ś' => 's',
+            'ź' => 'z',
+            'ż' => 'z',
+        ]));
+
+        $value = (string) preg_replace('/[^a-z0-9]+/u', '-', $value);
+        $value = trim($value, '-');
+
+        return $value === '' ? null : $value;
     }
 
     /**

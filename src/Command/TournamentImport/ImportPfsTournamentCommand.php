@@ -61,7 +61,8 @@ final class ImportPfsTournamentCommand extends Command
 
         try {
             $calendarTournament = $this->fetchCalendarTournament($year, $pfsId);
-            $parsedResults = $this->resultsParser->parse($this->websiteClient->fetchTournamentHtml($pfsId));
+            $html = $this->websiteClient->fetchTournamentHtml($calendarTournament->urlId);
+            $parsedResults = $this->resultsParser->parse($html);
             $payload = $this->payloadFactory->create($calendarTournament, $parsedResults);
             $legacyTournamentId = $this->importService->import($payload);
 

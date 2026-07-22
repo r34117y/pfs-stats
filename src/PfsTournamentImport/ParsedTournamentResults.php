@@ -9,6 +9,7 @@ final readonly class ParsedTournamentResults
      * @param list<ParsedTournamentPlayerResults> $players
      * @param list<ParsedTournamentStandingRow> $standings
      * @param list<ParsedTournamentRoundGame> $roundGames
+     * @param list<ParsedTournamentRankingRow> $ranking
      */
     public function __construct(
         public string $tournamentName,
@@ -16,6 +17,7 @@ final readonly class ParsedTournamentResults
         public array $players,
         public array $standings,
         public array $roundGames,
+        public array $ranking,
     ) {
     }
 

@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\ApiResource\TournamentRound\TournamentRound;
 use App\PfsTournamentImport\CalendarTournament;
+use App\PfsTournamentImport\ParsedTournamentRankingRow;
 use App\PfsTournamentImport\ParsedTournamentResults;
 use App\PfsTournamentImport\ParsedTournamentRoundGame;
 use App\PfsTournamentImport\ParsedTournamentStandingRow;
@@ -13,7 +14,6 @@ final readonly class PfsTournamentPayloadFactory
     public function create(CalendarTournament $calendarTournament, ParsedTournamentResults $results): TournamentRound
     {
         $startingPositionsByName = $this->buildStartingPositionsByName($results);
-        $playersByName = $this->buildParsedPlayersByName($results);
 
         return new TournamentRound(
             tournament: [
@@ -25,7 +25,7 @@ final readonly class PfsTournamentPayloadFactory
             players: $this->buildPlayers($results, $startingPositionsByName),
             results: $this->buildResults($results, $startingPositionsByName),
             rankDay: $calendarTournament->startDate->format('Y-m-d'),
-            ranking: $this->buildRanking($results, $playersByName),
+            ranking: $this->buildRanking($results),
         );
     }
 
@@ -45,19 +45,6 @@ final readonly class PfsTournamentPayloadFactory
         }
 
         return $positions;
-    }
-
-    /**
-     * @return array<string, object>
-     */
-    private function buildParsedPlayersByName(ParsedTournamentResults $results): array
-    {
-        $players = [];
-        foreach ($results->players as $player) {
-            $players[$this->normalizeName($player->playerName)] = $player;
-        }
-
-        return $players;
     }
 
     /**
@@ -112,31 +99,22 @@ final readonly class PfsTournamentPayloadFactory
     }
 
     /**
-     * @param array<string, object> $playersByName
      * @return list<array<string, mixed>>
      */
-    private function buildRanking(ParsedTournamentResults $results, array $playersByName): array
+    private function buildRanking(ParsedTournamentResults $results): array
     {
-        $ranking = [];
-        foreach ($results->players as $index => $player) {
-            $ranking[] = [
-                'lp' => $index + 1,
-                'main' => true,
-                'player' => $player->playerName,
-                'city' => $player->city,
-                'rank' => $player->tournamentRank,
-                'scalp' => $player->totalScalp,
-                'games' => $player->roundsPlayed,
-            ];
-        }
-
-        foreach ($results->standings as $standing) {
-            if (!isset($playersByName[$this->normalizeName($standing->playerName)])) {
-                throw new \RuntimeException(sprintf('Could not resolve ranking row for player "%s".', $standing->playerName));
-            }
-        }
-
-        return $ranking;
+        return array_map(
+            static fn (ParsedTournamentRankingRow $row): array => [
+                'lp' => $row->position,
+                'main' => $row->main,
+                'player' => $row->playerName,
+                'city' => $row->city,
+                'rank' => $row->rank,
+                'scalp' => $row->scalp,
+                'games' => $row->games,
+            ],
+            $results->ranking,
+        );
     }
 
     /**

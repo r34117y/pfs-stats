@@ -7,6 +7,7 @@ namespace App\Tests\Service;
 use App\PfsTournamentImport\CalendarTournament;
 use App\PfsTournamentImport\ParsedTournamentPlayerGame;
 use App\PfsTournamentImport\ParsedTournamentPlayerResults;
+use App\PfsTournamentImport\ParsedTournamentRankingRow;
 use App\PfsTournamentImport\ParsedTournamentResults;
 use App\PfsTournamentImport\ParsedTournamentRoundGame;
 use App\PfsTournamentImport\ParsedTournamentStandingRow;
@@ -72,6 +73,12 @@ final class PfsTournamentPayloadFactoryTest extends TestCase
                 new ParsedTournamentRoundGame(1, 1, 'Justyna Górka', 'Marta Szcześniak', 420, 390),
                 new ParsedTournamentRoundGame(1, 2, 'Alicja Bierkat', null, null, null, true),
             ],
+            ranking: [
+                new ParsedTournamentRankingRow(1, 'Dominik Urbacki', 'Pruszków', 188.06, 37424, 199),
+                new ParsedTournamentRankingRow(2, 'Justyna Górka', 'Kraków', 168.72, 998, 7),
+                new ParsedTournamentRankingRow(3, 'Marta Szcześniak', 'Krzyków', 139.40, 1141, 7),
+                new ParsedTournamentRankingRow(4, 'Alicja Bierkat', 'Ruda Śląska', 124.18, 1242, 7),
+            ],
         );
 
         $payload = $factory->create($calendarTournament, $results);
@@ -115,12 +122,13 @@ final class PfsTournamentPayloadFactoryTest extends TestCase
         self::assertSame([
             'lp' => 1,
             'main' => true,
-            'player' => 'Justyna Górka',
-            'city' => 'Kraków',
-            'rank' => 168.72,
-            'scalp' => 998,
-            'games' => 7,
+            'player' => 'Dominik Urbacki',
+            'city' => 'Pruszków',
+            'rank' => 188.06,
+            'scalp' => 37424,
+            'games' => 199,
         ], $payload->ranking[0]);
+        self::assertCount(4, $payload->ranking);
         self::assertSame('2026-03-14', $payload->rankDay);
     }
 
@@ -150,6 +158,9 @@ final class PfsTournamentPayloadFactoryTest extends TestCase
                 ],
                 roundGames: [
                     new ParsedTournamentRoundGame(1, 1, 'Known Player', 'Missing Player', 300, 250),
+                ],
+                ranking: [
+                    new ParsedTournamentRankingRow(1, 'Known Player', 'City', 100.0, 0, 0),
                 ],
             ),
         );

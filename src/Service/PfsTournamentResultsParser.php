@@ -5,6 +5,7 @@ namespace App\Service;
 use App\PfsTournamentImport\ParsedTournamentDetail;
 use App\PfsTournamentImport\ParsedTournamentPlayerGame;
 use App\PfsTournamentImport\ParsedTournamentPlayerResults;
+use App\PfsTournamentImport\ParsedTournamentRankingRow;
 use App\PfsTournamentImport\ParsedTournamentResults;
 use App\PfsTournamentImport\ParsedTournamentRoundGame;
 use App\PfsTournamentImport\ParsedTournamentStandingRow;
@@ -30,7 +31,65 @@ final readonly class PfsTournamentResultsParser
             players: $players,
             standings: $this->parseStandings($html, $players),
             roundGames: $this->parseRoundGames($html),
+            ranking: $this->parseRanking($html),
         );
+    }
+
+    /**
+     * @return list<ParsedTournamentRankingRow>
+     */
+    private function parseRanking(string $html): array
+    {
+        $text = $this->extractPreBlockText($html, 'p_ranking');
+        $lines = preg_split('/\R/u', $text) ?: [];
+
+        while ($lines !== []) {
+            $line = trim((string) array_shift($lines));
+            if (str_starts_with($line, 'Lp. ')) {
+                break;
+            }
+        }
+
+        if ($lines !== [] && preg_match('/^-+\s+-+/', trim((string) $lines[0]))) {
+            array_shift($lines);
+        }
+
+        $rows = [];
+        $main = true;
+        foreach ($lines as $line) {
+            $trimmed = trim($line);
+            if ($trimmed === '') {
+                continue;
+            }
+
+            if (!preg_match(
+                '/^\s*(\d+)\s+(.+?)\s+(\d+\.\d{2})\s+(-?\d+)\s+(\d+)$/u',
+                $trimmed,
+                $match
+            )) {
+                if (str_starts_with($line, 'Poczekalnia na dzień')) {
+                    $main = false;
+                }
+                continue;
+            }
+
+            [$playerName, $city] = $this->resolveRankingIdentity($match[2]);
+            $rows[] = new ParsedTournamentRankingRow(
+                position: (int) $match[1],
+                playerName: $playerName,
+                city: $city,
+                rank: (float) $match[3],
+                scalp: (int) $match[4],
+                games: (int) $match[5],
+                main: $main,
+            );
+        }
+
+        if ($rows === []) {
+            throw new \RuntimeException('Could not parse any rows from #ranking section.');
+        }
+
+        return $rows;
     }
 
     /**
@@ -127,6 +186,25 @@ final readonly class PfsTournamentResultsParser
         }
 
         return [$identityNormalized, ''];
+    }
+
+    /**
+     * @return array{0:string,1:string}
+     */
+    private function resolveRankingIdentity(string $identityPart): array
+    {
+        $chunks = explode("  ", $identityPart);
+        $chunks = array_filter($chunks);
+        $chunks = array_values($chunks);
+
+        if (count($chunks) !== 2) {
+            throw new \RuntimeException('Could not resolve ranking identity: ' . $identityPart);
+        }
+
+        return [
+            $this->normalizeInlineWhitespace($chunks[0]),
+            $this->normalizeInlineWhitespace($chunks[1]),
+        ];
     }
 
     /**
