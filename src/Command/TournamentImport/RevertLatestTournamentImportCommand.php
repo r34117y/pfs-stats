@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Command;
+namespace App\Command\TournamentImport;
 
 use App\Service\RefreshCacheAfterImportLauncher;
 use App\Service\TournamentRoundRollbackService;
@@ -12,10 +12,10 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Throwable;
 
 #[AsCommand(
-    name: 'app:tournament-round:revert-latest-import',
+    name: 'app:pfs:tournaments:revert-latest-import',
     description: 'Revert the most recent tournament round import.',
 )]
-final class RevertLatestTournamentRoundImportCommand extends Command
+final class RevertLatestTournamentImportCommand extends Command
 {
     public function __construct(
         private readonly TournamentRoundRollbackService $tournamentRoundRollbackService,
