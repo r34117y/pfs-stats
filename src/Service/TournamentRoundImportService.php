@@ -52,7 +52,7 @@ final readonly class TournamentRoundImportService
 
         $startDate = $this->parseDate($this->requireString($tournament, 'dateStart', 'tournament'), 'tournament.dateStart');
         $dateCode = (int) $startDate->format('Ymd');
-        $fullname = $this->trimToLength($this->requireString($tournament, 'name', 'tournament'), 80);
+        $fullName = $this->trimToLength($this->requireString($tournament, 'name', 'tournament'), 80);
         $city = $this->trimToLength($this->requireString($tournament, 'city', 'tournament'), 256);
 
         $existingTournamentId = $this->findExistingTournamentId($organization['id'], $dateCode, $fullname, $city);
@@ -68,11 +68,10 @@ final readonly class TournamentRoundImportService
             $ranking,
             $dateCode,
             $startDate,
-            $fullname,
+            $fullName,
             $city,
         ): int {
-            $legacyTournamentId = $this->allocateTournamentLegacyId((int) $organization['id'], $dateCode);
-            $catalog = $this->loadPlayerCatalog((int) $organization['id'], $legacyTournamentId);
+            $catalog = $this->loadPlayerCatalog((int) $organization['id']);
             $nextLegacyPlayerId = $this->allocateNextLegacyPlayerId((int) $organization['id']);
 
             $resolvedPlayersByStartingPosition = [];
@@ -597,7 +596,7 @@ final readonly class TournamentRoundImportService
      * @return list<array<string, mixed>>
      * @throws Exception
      */
-    private function loadPlayerCatalog(int $organizationId, int $legacyTournamentId): array
+    private function loadPlayerCatalog(int $organizationId): array
     {
         $rows = $this->connection->fetchAllAssociative(
             "WITH org_players AS (
@@ -607,50 +606,45 @@ final readonly class TournamentRoundImportService
                 WHERE po.organization_id = :organizationId
             ),
             player_map AS (
-                SELECT DISTINCT player_id, legacy_player_id
+                SELECT DISTINCT player_id
                 FROM ranking
                 WHERE organization_id = :organizationId
                   AND player_id IS NOT NULL
-                  AND legacy_player_id IS NOT NULL
                 UNION
-                SELECT DISTINCT player_id, legacy_player_id
+                SELECT DISTINCT player_id
                 FROM tournament_result
                 WHERE organization_id = :organizationId
                   AND player_id IS NOT NULL
-                  AND legacy_player_id IS NOT NULL
                 UNION
-                SELECT DISTINCT player_id, legacy_player_id
+                SELECT DISTINCT player_id
                 FROM play_summary
                 WHERE organization_id = :organizationId
                   AND player_id IS NOT NULL
-                  AND legacy_player_id IS NOT NULL
                 UNION
-                SELECT DISTINCT player1_id AS player_id, legacy_player1_id AS legacy_player_id
+                SELECT DISTINCT player1_id AS player_id
                 FROM tournament_game
                 WHERE organization_id = :organizationId
                   AND player1_id IS NOT NULL
-                  AND legacy_player1_id IS NOT NULL
                 UNION
-                SELECT DISTINCT player2_id AS player_id, legacy_player2_id AS legacy_player_id
+                SELECT DISTINCT player2_id AS player_id
                 FROM tournament_game
                 WHERE organization_id = :organizationId
                   AND player2_id IS NOT NULL
-                  AND legacy_player2_id IS NOT NULL
             ),
             latest_ranking AS (
                 SELECT r.player_id, r.rank
                 FROM ranking r
                 INNER JOIN (
-                    SELECT player_id, MAX(legacy_tournament_id) AS last_tournament_id
+                    SELECT player_id, MAX(tournament_id) AS last_tournament_id
                     FROM ranking
                     WHERE organization_id = :organizationId
                       AND rtype = 'f'
                       AND player_id IS NOT NULL
-                      AND legacy_tournament_id < :legacyTournamentId
+                      AND tournament_id < :tournamentId
                     GROUP BY player_id
                 ) latest_ids
                     ON latest_ids.player_id = r.player_id
-                   AND latest_ids.last_tournament_id = r.legacy_tournament_id
+                   AND latest_ids.last_tournament_id = r.tournament_id
                 WHERE r.organization_id = :organizationId
                   AND r.rtype = 'f'
             ),
@@ -658,20 +652,20 @@ final readonly class TournamentRoundImportService
                 SELECT tr.player_id, tr.brank
                 FROM tournament_result tr
                 INNER JOIN (
-                    SELECT player_id, MAX(legacy_tournament_id) AS last_tournament_id
+                    SELECT player_id, MAX(tournament_id) AS last_tournament_id
                     FROM tournament_result
                     WHERE organization_id = :organizationId
                       AND player_id IS NOT NULL
-                      AND legacy_tournament_id < :legacyTournamentId
+                      AND tournament_id < :tournamentId
                     GROUP BY player_id
                 ) latest_ids
                     ON latest_ids.player_id = tr.player_id
-                   AND latest_ids.last_tournament_id = tr.legacy_tournament_id
+                   AND latest_ids.last_tournament_id = tr.tournament_id
                 WHERE tr.organization_id = :organizationId
             )
             SELECT
                 op.player_id,
-                MIN(pm.legacy_player_id) AS legacy_player_id,
+                MIN(pm.player_id) AS player_id,
                 op.name_show,
                 op.name_alph,
                 COALESCE(lr.rank, ltr.brank, 100.0) AS latest_rank
@@ -683,14 +677,13 @@ final readonly class TournamentRoundImportService
             ORDER BY op.player_id ASC",
             [
                 'organizationId' => $organizationId,
-                'legacyTournamentId' => $legacyTournamentId,
             ],
         );
 
         return array_map(function (array $row): array {
             return [
                 'playerId' => (int) $row['player_id'],
-                'legacyPlayerId' => $row['legacy_player_id'] !== null ? (int) $row['legacy_player_id'] : null,
+                //'legacyPlayerId' => $row['legacy_player_id'] !== null ? (int) $row['legacy_player_id'] : null,
                 'nameShow' => (string) $row['name_show'],
                 'nameAlph' => (string) $row['name_alph'],
                 'normalized' => $this->nameNormalizer->normalizeForMatch((string) $row['name_show']),
@@ -771,20 +764,20 @@ final readonly class TournamentRoundImportService
     /**
      * @throws Exception
      */
-    private function findExistingTournamentId(int $organizationId, int $dateCode, string $fullname, string $city): ?int
+    private function findExistingTournamentId(int $organizationId, int $dateCode, string $fullName, string $city): ?int
     {
         $value = $this->connection->fetchOne(
-            "SELECT legacy_id
+            "SELECT id
              FROM tournament
              WHERE organization_id = :organizationId
                AND dt = :dateCode
-               AND LOWER(COALESCE(fullname, name, '')) = LOWER(:fullname)
+               AND LOWER(COALESCE(fullname, name, '')) = LOWER(:fullName)
                AND LOWER(COALESCE(place, '')) = LOWER(:city)
              LIMIT 1",
             [
                 'organizationId' => $organizationId,
                 'dateCode' => $dateCode,
-                'fullname' => $fullname,
+                'fullName' => $fullName,
                 'city' => $city,
             ],
         );

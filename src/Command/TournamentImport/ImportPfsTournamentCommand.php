@@ -64,9 +64,9 @@ final class ImportPfsTournamentCommand extends Command
             $html = $this->websiteClient->fetchTournamentHtml($calendarTournament->urlId);
             $parsedResults = $this->resultsParser->parse($html);
             $payload = $this->payloadFactory->create($calendarTournament, $parsedResults);
-            $legacyTournamentId = $this->importService->import($payload);
+            $tournamentId = $this->importService->import($payload);
 
-            if (!(bool) $input->getOption('no-cache-warmup')) {
+            if (!$input->getOption('no-cache-warmup')) {
                 $this->refreshCacheAfterImportLauncher->launchWarmup();
             }
         } catch (\Throwable $exception) {
@@ -76,9 +76,9 @@ final class ImportPfsTournamentCommand extends Command
         }
 
         $io->success(sprintf(
-            'Imported %s as tournament legacy id %d.',
+            'Imported %s as tournament with id %d.',
             $parsedResults->tournamentName,
-            $legacyTournamentId,
+            $tournamentId,
         ));
         $io->table(
             ['Metric', 'Value'],
