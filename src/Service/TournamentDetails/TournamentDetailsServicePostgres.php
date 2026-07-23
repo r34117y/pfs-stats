@@ -45,15 +45,11 @@ final readonly class TournamentDetailsServicePostgres implements TournamentDetai
     {
         $tournament = $this->fetchTournamentRow($tournamentId);
         $organizationId = (int) $tournament['organization_id'];
-        $legacyTournamentId = $tournament['legacy_id'] !== null ? (int) $tournament['legacy_id'] : null;
-        if ($legacyTournamentId === null) {
-            return new TournamentResults([]);
-        }
 
         $rows = $this->connection->fetchAllAssociative(
             "SELECT
                 tw.place,
-                tw.legacy_player_id AS player,
+                tw.player_id AS player,
                 p.name_show AS player_name,
                 tw.brank AS rank_before,
                 tw.gwin AS wins,
@@ -65,12 +61,12 @@ final readonly class TournamentDetailsServicePostgres implements TournamentDetai
             FROM tournament_result tw
             INNER JOIN player p ON p.id = tw.player_id
             WHERE tw.organization_id = :organizationId
-              AND tw.legacy_tournament_id = :tournamentId
-              AND tw.legacy_player_id IS NOT NULL
+              AND tw.tournament_id = :tournamentId
+              AND tw.player_id IS NOT NULL
             ORDER BY CASE WHEN tw.place = 0 THEN 1 ELSE 0 END, tw.place ASC, p.name_show ASC",
             [
                 'organizationId' => $organizationId,
-                'tournamentId' => $legacyTournamentId,
+                'tournamentId' => $tournamentId,
             ]
         );
 
@@ -105,13 +101,13 @@ final readonly class TournamentDetailsServicePostgres implements TournamentDetai
     }
 
     /**
-     * @return array{id:int|string, organization_id:int|string, legacy_id:int|string|null, tournament_name:string, dt:int|string, referee:mixed, place:mixed}
+     * @return array{id:int|string, organization_id:int|string, tournament_name:string, dt:int|string, referee:mixed, place:mixed}
      * @throws Exception
      */
     private function fetchTournamentRow(int $tournamentId): array
     {
         $row = $this->connection->fetchAssociative(
-            "SELECT id, organization_id, legacy_id, COALESCE(fullname, name) AS tournament_name, dt, referee, place
+            "SELECT id, organization_id, COALESCE(fullname, name) AS tournament_name, dt, referee, place
              FROM tournament
              WHERE id = :tournamentId",
             ['tournamentId' => $tournamentId]
