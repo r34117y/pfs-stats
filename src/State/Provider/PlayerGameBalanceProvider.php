@@ -28,7 +28,7 @@ final readonly class PlayerGameBalanceProvider implements ProviderInterface
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): PlayerGameBalance
     {
         $playerSlug = trim((string) ($uriVariables['slug'] ?? $uriVariables['playerSlug'] ?? ''));
-        $playerId = $this->playerSlugResolver->resolveLegacyPlayerId($playerSlug);
+        $playerId = $this->playerSlugResolver->resolvePlayerId($playerSlug);
 
         if ($playerSlug === '' || $playerId === null) {
             throw new NotFoundHttpException('Player not found.');

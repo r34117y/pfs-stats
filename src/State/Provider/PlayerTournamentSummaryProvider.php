@@ -30,7 +30,7 @@ final readonly class PlayerTournamentSummaryProvider implements ProviderInterfac
         $rawTournamentId = $uriVariables['tournamentId'] ?? $uriVariables['id'] ?? null;
         $playerSlug = trim((string) ($uriVariables['playerSlug'] ?? ''));
         $tournamentId = is_numeric($rawTournamentId) ? (int) $rawTournamentId : 0;
-        $playerId = $this->playerSlugResolver->resolveLegacyPlayerId($playerSlug);
+        $playerId = $this->playerSlugResolver->resolvePlayerId($playerSlug);
 
         if ($tournamentId <= 0 || $playerSlug === '' || $playerId === null) {
             throw new NotFoundHttpException('Invalid tournament or player.');

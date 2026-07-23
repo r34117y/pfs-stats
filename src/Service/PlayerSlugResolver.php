@@ -18,7 +18,7 @@ final readonly class PlayerSlugResolver
     /**
      * @throws Exception
      */
-    public function resolveLegacyPlayerId(string $slug): ?int
+    public function resolvePlayerId(string $slug): ?int
     {
         $normalizedSlug = trim($slug);
         if ($normalizedSlug === '') {
