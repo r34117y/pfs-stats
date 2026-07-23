@@ -27,6 +27,22 @@ final readonly class DevDataLookup
     /**
      * @throws Exception
      */
+    public function hasClubRows(): bool
+    {
+        $count = $this->connection->fetchOne(
+            "SELECT COUNT(*)
+             FROM organization
+             WHERE code IS NOT NULL
+               AND code <> ''
+               AND code <> 'PFS'",
+        );
+
+        return (int) $count > 0;
+    }
+
+    /**
+     * @throws Exception
+     */
     public function hasRankingRows(): bool
     {
         $count = $this->connection->fetchOne(
