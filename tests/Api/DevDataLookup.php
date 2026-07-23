@@ -39,6 +39,23 @@ final readonly class DevDataLookup
     }
 
     /**
+     * @throws Exception
+     */
+    public function hasDefaultOrganizationPlayerRows(): bool
+    {
+        $count = $this->connection->fetchOne(
+            "SELECT COUNT(*)
+             FROM player_organization po
+             INNER JOIN player p ON p.id = po.player_id
+             WHERE po.organization_id = 21
+               AND p.slug IS NOT NULL
+               AND p.slug <> ''",
+        );
+
+        return (int) $count > 0;
+    }
+
+    /**
      * @return array{id:int, slug:string}|null
      * @throws Exception
      */
