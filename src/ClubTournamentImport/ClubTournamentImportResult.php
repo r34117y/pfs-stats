@@ -12,7 +12,6 @@ final readonly class ClubTournamentImportResult
      */
     public function __construct(
         public int $tournamentId,
-        public int $legacyTournamentId,
         public int $playersCount,
         public int $gamesCount,
         public array $createdPlayerIds,

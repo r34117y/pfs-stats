@@ -27,6 +27,7 @@ final readonly class ClubTournamentResultsImportService
         private PfsNameNormalizer $nameNormalizer,
         private ClubTournamentStandingsBuilder $standingsBuilder,
         private ClubTournamentExistingTournamentFinder $existingTournamentFinder,
+        private PlayerCatalogService $playerCatalogService
     ) {
     }
 
@@ -56,9 +57,7 @@ final readonly class ClubTournamentResultsImportService
         }
 
         return $this->connection->transactional(function (Connection $connection) use ($results, $organizationId, $dateCode, $fullname): ClubTournamentImportResult {
-            $legacyTournamentId = $this->allocateTournamentLegacyId($organizationId, $dateCode);
-            $catalog = $this->loadPlayerCatalog($organizationId, $legacyTournamentId);
-            $nextLegacyPlayerId = $this->allocateNextLegacyPlayerId($organizationId);
+            $catalog = $this->playerCatalogService->loadPlayerCatalog($organizationId);
 
             $createdPlayerIds = [];
             $linkedPlayerIds = [];
@@ -71,27 +70,20 @@ final readonly class ClubTournamentResultsImportService
 
                 $resolved = $this->resolvePlayer($catalog, $player->name);
                 if ($resolved === null) {
-                    $resolved = $this->createPlayer($connection, $organizationId, $player->name, $player->city, $nextLegacyPlayerId);
+                    $resolved = $this->createPlayer($connection, $organizationId, $player->name, $player->city);
                     $catalog[] = $resolved;
                     $createdPlayerIds[] = $resolved['playerId'];
-                    $nextLegacyPlayerId++;
                 } else {
                     if (!$resolved['isInOrganization']) {
                         $this->linkPlayerToOrganization($connection, $resolved['playerId'], $organizationId);
                         $resolved['isInOrganization'] = true;
                         $linkedPlayerIds[] = $resolved['playerId'];
                     }
-
-                    if ($resolved['legacyPlayerId'] === null) {
-                        $resolved['legacyPlayerId'] = $nextLegacyPlayerId;
-                        $nextLegacyPlayerId++;
-                    }
                 }
 
                 $playersByPosition[$player->position] = [
                     'source' => $player,
                     'playerId' => $resolved['playerId'],
-                    'legacyPlayerId' => $resolved['legacyPlayerId'],
                     'nameShow' => $resolved['nameShow'],
                     'nameAlph' => $resolved['nameAlph'],
                 ];
@@ -103,22 +95,20 @@ final readonly class ClubTournamentResultsImportService
 
             $tournamentId = (int) $connection->fetchOne(
                 'INSERT INTO tournament (
-                    organization_id, legacy_id, dt, name, fullname, winner_player_id, legacy_winner_player_id,
-                    trank, players_count, rounds, rrecreated, team, mcategory, wksum, series_id, legacy_series_id,
+                    organization_id, dt, name, fullname, winner_player_id,
+                    trank, players_count, rounds, rrecreated, team, mcategory, wksum, series_id,
                     start_round, referee, place, organizer, urlid
                 ) VALUES (
-                    :organizationId, :legacyId, :dt, :name, :fullname, :winnerPlayerId, :legacyWinnerPlayerId,
-                    :trank, :playersCount, :rounds, :rrecreated, :team, :mcategory, :wksum, :seriesId, :legacySeriesId,
+                    :organizationId, :dt, :name, :fullname, :winnerPlayerId,
+                    :trank, :playersCount, :rounds, :rrecreated, :team, :mcategory, :wksum, :seriesId,
                     :startRound, :referee, :place, :organizer, :urlid
                 ) RETURNING id',
                 [
                     'organizationId' => $organizationId,
-                    'legacyId' => $legacyTournamentId,
                     'dt' => $dateCode,
                     'name' => $this->trimToLength($results->name, 40),
                     'fullname' => $fullname,
                     'winnerPlayerId' => $winner['playerId'],
-                    'legacyWinnerPlayerId' => $winner['legacyPlayerId'],
                     'trank' => $this->averageInitialRank($results->players),
                     'playersCount' => count($results->players),
                     'rounds' => $rounds,
@@ -127,7 +117,6 @@ final readonly class ClubTournamentResultsImportService
                     'mcategory' => null,
                     'wksum' => 0.0,
                     'seriesId' => null,
-                    'legacySeriesId' => null,
                     'startRound' => $dateCode,
                     'referee' => null,
                     'place' => null,
@@ -136,7 +125,7 @@ final readonly class ClubTournamentResultsImportService
                 ],
             );
 
-            $gamesCount = $this->insertTournamentGames($connection, $organizationId, $tournamentId, $legacyTournamentId, $playersByPosition);
+            $gamesCount = $this->insertTournamentGames($connection, $organizationId, $tournamentId, $playersByPosition);
 
             foreach ($standings as $index => $standing) {
                 $games = $standing['games'];
@@ -144,8 +133,6 @@ final readonly class ClubTournamentResultsImportService
                     'organization_id' => $organizationId,
                     'tournament_id' => $tournamentId,
                     'player_id' => $standing['playerId'],
-                    'legacy_tournament_id' => $legacyTournamentId,
-                    'legacy_player_id' => $standing['legacyPlayerId'],
                     'place' => $index + 1,
                     'gwin' => $standing['wins'],
                     'glost' => $standing['losses'],
@@ -164,7 +151,6 @@ final readonly class ClubTournamentResultsImportService
             $connection->insert('text_resource', [
                 'organization_id' => $organizationId,
                 'resource_type' => self::AUDIT_RESOURCE_TYPE,
-                'legacy_id' => $legacyTournamentId,
                 'data' => json_encode([
                     'tournamentDbId' => $tournamentId,
                     'createdPlayerIds' => array_values(array_unique($createdPlayerIds)),
@@ -175,7 +161,6 @@ final readonly class ClubTournamentResultsImportService
 
             return new ClubTournamentImportResult(
                 tournamentId: $tournamentId,
-                legacyTournamentId: $legacyTournamentId,
                 playersCount: count($results->players),
                 gamesCount: $gamesCount,
                 createdPlayerIds: array_values(array_unique($createdPlayerIds)),
@@ -185,14 +170,13 @@ final readonly class ClubTournamentResultsImportService
     }
 
     /**
-     * @param array<int, array{source:ParsedClubPlayer,playerId:int,legacyPlayerId:int,nameShow:string,nameAlph:string}> $playersByPosition
+     * @param array<int, array{source:ParsedClubPlayer,playerId:int,nameShow:string,nameAlph:string}> $playersByPosition
      * @throws Exception
      */
     private function insertTournamentGames(
         Connection $connection,
         int $organizationId,
         int $tournamentId,
-        int $legacyTournamentId,
         array $playersByPosition,
     ): int {
         $seenGames = [];
@@ -205,7 +189,6 @@ final readonly class ClubTournamentResultsImportService
                         $connection,
                         $organizationId,
                         $tournamentId,
-                        $legacyTournamentId,
                         $game,
                         $player,
                         null,
@@ -238,8 +221,8 @@ final readonly class ClubTournamentResultsImportService
                     throw new BadRequestHttpException(sprintf('Missing score in round %d table %d.', $game->round, $game->table ?? 0));
                 }
 
-                $this->insertGameRow($connection, $organizationId, $tournamentId, $legacyTournamentId, $game, $player1, $player2, $score1, $score2, 1);
-                $this->insertGameRow($connection, $organizationId, $tournamentId, $legacyTournamentId, $game, $player2, $player1, $score2, $score1, 2);
+                $this->insertGameRow($connection, $organizationId, $tournamentId, $game, $player1, $player2, $score1, $score2, 1);
+                $this->insertGameRow($connection, $organizationId, $tournamentId, $game, $player2, $player1, $score2, $score1, 2);
                 $inserted++;
             }
         }
@@ -248,15 +231,14 @@ final readonly class ClubTournamentResultsImportService
     }
 
     /**
-     * @param array{source:ParsedClubPlayer,playerId:int,legacyPlayerId:int,nameShow:string,nameAlph:string} $player1
-     * @param array{source:ParsedClubPlayer,playerId:int,legacyPlayerId:int,nameShow:string,nameAlph:string}|null $player2
+     * @param array{source:ParsedClubPlayer,playerId:int,nameShow:string,nameAlph:string} $player1
+     * @param array{source:ParsedClubPlayer,playerId:int,nameShow:string,nameAlph:string}|null $player2
      * @throws Exception
      */
     private function insertGameRow(
         Connection     $connection,
         int            $organizationId,
         int            $tournamentId,
-        int            $legacyTournamentId,
         ParsedClubGame $game,
         array          $player1,
         ?array         $player2,
@@ -269,11 +251,8 @@ final readonly class ClubTournamentResultsImportService
             'tournament_id' => $tournamentId,
             'player1_id' => $player1['playerId'],
             'player2_id' => $player2['playerId'] ?? null,
-            'legacy_tournament_id' => $legacyTournamentId,
             'round_no' => $game->round,
             'table_no' => $game->table,
-            'legacy_player1_id' => $player1['legacyPlayerId'],
-            'legacy_player2_id' => $player2['legacyPlayerId'] ?? null,
             'result1' => $score1,
             'result2' => $score2,
             'ranko' => $player2 !== null ? $player2['source']->initialRank : 100,
@@ -326,64 +305,8 @@ final readonly class ClubTournamentResultsImportService
     }
 
     /**
-     * @return list<array{playerId:int,legacyPlayerId:int|null,nameShow:string,nameAlph:string,normalized:string,isInOrganization:bool}>
-     * @throws Exception
-     */
-    private function loadPlayerCatalog(int $organizationId, int $legacyTournamentId): array
-    {
-        $rows = $this->connection->fetchAllAssociative(
-            "WITH player_map AS (
-                SELECT DISTINCT player_id, legacy_player_id
-                FROM ranking
-                WHERE organization_id = :organizationId
-                  AND player_id IS NOT NULL
-                  AND legacy_player_id IS NOT NULL
-                UNION
-                SELECT DISTINCT player_id, legacy_player_id
-                FROM tournament_result
-                WHERE organization_id = :organizationId
-                  AND player_id IS NOT NULL
-                  AND legacy_player_id IS NOT NULL
-                UNION
-                SELECT DISTINCT player1_id AS player_id, legacy_player1_id AS legacy_player_id
-                FROM tournament_game
-                WHERE organization_id = :organizationId
-                  AND player1_id IS NOT NULL
-                  AND legacy_player1_id IS NOT NULL
-            )
-            SELECT
-                p.id AS player_id,
-                MIN(pm.legacy_player_id) AS legacy_player_id,
-                p.name_show,
-                p.name_alph,
-                CASE WHEN po.player_id IS NULL THEN 0 ELSE 1 END AS is_in_organization
-            FROM player p
-            LEFT JOIN player_organization po
-                ON po.player_id = p.id
-               AND po.organization_id = :organizationId
-            LEFT JOIN player_map pm ON pm.player_id = p.id
-            WHERE p.name_show IS NOT NULL
-            GROUP BY p.id, p.name_show, p.name_alph, po.player_id
-            ORDER BY p.id ASC",
-            [
-                'organizationId' => $organizationId,
-                'legacyTournamentId' => $legacyTournamentId,
-            ],
-        );
-
-        return array_map(fn (array $row): array => [
-            'playerId' => (int) $row['player_id'],
-            'legacyPlayerId' => $row['legacy_player_id'] !== null ? (int) $row['legacy_player_id'] : null,
-            'nameShow' => (string) $row['name_show'],
-            'nameAlph' => (string) ($row['name_alph'] ?? ''),
-            'normalized' => $this->nameNormalizer->normalizeForMatch((string) $row['name_show']),
-            'isInOrganization' => (int) $row['is_in_organization'] === 1,
-        ], $rows);
-    }
-
-    /**
-     * @param list<array{playerId:int,legacyPlayerId:int|null,nameShow:string,nameAlph:string,normalized:string,isInOrganization:bool}> $catalog
-     * @return array{playerId:int,legacyPlayerId:int|null,nameShow:string,nameAlph:string,normalized:string,isInOrganization:bool}|null
+     * @param list<array{playerId:int,nameShow:string,nameAlph:string,normalized:string,isInOrganization:bool}> $catalog
+     * @return array{playerId:int,nameShow:string,nameAlph:string,normalized:string,isInOrganization:bool}|null
      */
     private function resolvePlayer(array $catalog, string $playerName): ?array
     {
@@ -416,10 +339,10 @@ final readonly class ClubTournamentResultsImportService
     }
 
     /**
-     * @return array{playerId:int,legacyPlayerId:int,nameShow:string,nameAlph:string,normalized:string,isInOrganization:bool}
+     * @return array{playerId:int,nameShow:string,nameAlph:string,normalized:string,isInOrganization:bool}
      * @throws Exception
      */
-    private function createPlayer(Connection $connection, int $organizationId, string $nameShow, string $city, int $legacyPlayerId): array
+    private function createPlayer(Connection $connection, int $organizationId, string $nameShow, string $city): array
     {
         $nameShow = $this->trimToLength($nameShow, 40);
         $nameAlph = $this->trimToLength($this->nameNormalizer->toAlphabeticalName($nameShow), 40);
@@ -438,7 +361,6 @@ final readonly class ClubTournamentResultsImportService
 
         return [
             'playerId' => $playerId,
-            'legacyPlayerId' => $legacyPlayerId,
             'nameShow' => $nameShow,
             'nameAlph' => $nameAlph,
             'normalized' => $this->nameNormalizer->normalizeForMatch($nameShow),
@@ -460,47 +382,6 @@ final readonly class ClubTournamentResultsImportService
                 'organizationId' => $organizationId,
             ],
         );
-    }
-
-    /**
-     * @throws Exception
-     */
-    private function allocateNextLegacyPlayerId(int $organizationId): int
-    {
-        return (int) $this->connection->fetchOne(
-            'WITH legacy_ids AS (
-                SELECT legacy_player_id FROM ranking WHERE organization_id = :organizationId AND legacy_player_id IS NOT NULL
-                UNION ALL
-                SELECT legacy_player_id FROM tournament_result WHERE organization_id = :organizationId AND legacy_player_id IS NOT NULL
-                UNION ALL
-                SELECT legacy_player1_id AS legacy_player_id FROM tournament_game WHERE organization_id = :organizationId AND legacy_player1_id IS NOT NULL
-                UNION ALL
-                SELECT legacy_player2_id AS legacy_player_id FROM tournament_game WHERE organization_id = :organizationId AND legacy_player2_id IS NOT NULL
-            )
-            SELECT COALESCE(MAX(legacy_player_id), 0) + 1
-            FROM legacy_ids',
-            ['organizationId' => $organizationId],
-        );
-    }
-
-    /**
-     * @throws Exception
-     */
-    private function allocateTournamentLegacyId(int $organizationId, int $dateCode): int
-    {
-        $suffix = (int) $this->connection->fetchOne(
-            'SELECT COALESCE(MAX(legacy_id % 10), -1) + 1
-             FROM tournament
-             WHERE organization_id = :organizationId
-               AND legacy_id BETWEEN :fromId AND :toId',
-            [
-                'organizationId' => $organizationId,
-                'fromId' => $dateCode * 10,
-                'toId' => ($dateCode * 10) + 9,
-            ],
-        );
-
-        return ($dateCode * 10) + $suffix;
     }
 
     private function trimToLength(string $value, int $limit): string

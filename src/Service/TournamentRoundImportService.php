@@ -20,6 +20,7 @@ final readonly class TournamentRoundImportService
         #[Autowire(service: 'doctrine.dbal.default_connection')]
         private Connection $connection,
         private PfsNameNormalizer $nameNormalizer,
+        private PlayerCatalogService $playerCatalogService,
     ) {
     }
 
@@ -71,7 +72,7 @@ final readonly class TournamentRoundImportService
             $tournamentName,
             $city,
         ): int {
-            $catalog = $this->loadPlayerCatalog((int) $organization['id']);
+            $catalog = $this->playerCatalogService->loadPlayerCatalog((int) $organization['id']);
             $resolvedPlayersByStartingPosition = [];
             $resolvedPlayersByName = [];
             $createdPlayerIds = [];
@@ -555,37 +556,6 @@ final readonly class TournamentRoundImportService
         $value = trim($value, '-');
 
         return $value === '' ? null : $value;
-    }
-
-    /**
-     * @return list<array<string, mixed>>
-     * @throws Exception
-     */
-    private function loadPlayerCatalog(int $organizationId): array
-    {
-        $rows = $this->connection->fetchAllAssociative(
-            "SELECT
-                p.id AS player_id,
-                p.name_show,
-                p.name_alph
-            FROM player_organization po
-            INNER JOIN player p ON p.id = po.player_id
-            WHERE po.organization_id = :organizationId
-              AND p.name_show IS NOT NULL
-            ORDER BY p.id ASC",
-            [
-                'organizationId' => $organizationId,
-            ],
-        );
-
-        return array_map(function (array $row): array {
-            return [
-                'playerId' => (int) $row['player_id'],
-                'nameShow' => (string) $row['name_show'],
-                'nameAlph' => (string) ($row['name_alph'] ?? ''),
-                'normalized' => $this->nameNormalizer->normalizeForMatch((string) $row['name_show'])
-            ];
-        }, $rows);
     }
 
     /**
