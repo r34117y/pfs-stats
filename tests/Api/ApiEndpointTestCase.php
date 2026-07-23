@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Api;
 
+use Doctrine\DBAL\Connection;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -64,5 +65,13 @@ abstract class ApiEndpointTestCase extends KernelTestCase
         self::assertInstanceOf(CacheInterface::class, $cache);
 
         return $cache;
+    }
+
+    protected static function devData(): DevDataLookup
+    {
+        $connection = self::getContainer()->get('doctrine.dbal.default_connection');
+        self::assertInstanceOf(Connection::class, $connection);
+
+        return new DevDataLookup($connection);
     }
 }
