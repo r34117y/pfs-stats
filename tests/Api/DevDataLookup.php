@@ -25,6 +25,20 @@ final readonly class DevDataLookup
     }
 
     /**
+     * @throws Exception
+     */
+    public function hasRankingRows(): bool
+    {
+        $count = $this->connection->fetchOne(
+            "SELECT COUNT(*)
+             FROM ranking
+             WHERE rtype = 'f'",
+        );
+
+        return (int) $count > 0;
+    }
+
+    /**
      * @return array{id:int, slug:string}|null
      * @throws Exception
      */
