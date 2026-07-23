@@ -9,7 +9,7 @@ use Doctrine\DBAL\Connection;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class PlayerTournamentSummaryServicePostgres implements PlayerTournamentSummaryServiceInterface
+final readonly class PlayerTournamentSummaryServicePostgres implements PlayerTournamentSummaryServiceInterface
 {
     public function __construct(
         #[Autowire(service: 'doctrine.dbal.default_connection')]
@@ -21,26 +21,25 @@ class PlayerTournamentSummaryServicePostgres implements PlayerTournamentSummaryS
     {
         $tournament = $this->fetchTournamentContext($tournamentId);
         $organizationId = $tournament['organizationId'];
-        $legacyTournamentId = $tournament['legacyTournamentId'];
 
         $playerTournamentRow = $this->connection->fetchAssociative(
             "SELECT
                 tw.place,
                 tw.trank AS rank_achieved,
-                tw.legacy_player_id AS player,
+                tw.player_id AS player,
                 p.name_show AS player_name,
                 COALESCE(t.fullname, t.name) AS tournament_name
             FROM tournament_result tw
             INNER JOIN player p ON p.id = tw.player_id
             INNER JOIN tournament t
                 ON t.organization_id = tw.organization_id
-               AND t.legacy_id = tw.legacy_tournament_id
+               AND t.id = tw.tournament_id
             WHERE tw.organization_id = :organizationId
-              AND tw.legacy_tournament_id = :tournamentId
-              AND tw.legacy_player_id = :playerId",
+              AND tw.tournament_id = :tournamentId
+              AND tw.player_id = :playerId",
             [
                 'organizationId' => $organizationId,
-                'tournamentId' => $legacyTournamentId,
+                'tournamentId' => $tournamentId,
                 'playerId' => $playerId,
             ]
         );
@@ -52,24 +51,24 @@ class PlayerTournamentSummaryServicePostgres implements PlayerTournamentSummaryS
         $gamesRaw = $this->connection->fetchAllAssociative(
             "WITH ranked_games AS (
                 SELECT
-                    h.legacy_tournament_id AS turniej,
+                    h.tournament_id AS turniej,
                     h.round_no AS runda,
                     h.table_no AS stol,
-                    h.legacy_player1_id AS player1,
-                    h.legacy_player2_id AS player2,
+                    h.player1_id AS player1,
+                    h.player2_id AS player2,
                     h.player1_id AS player1_pk,
                     h.player2_id AS player2_pk,
                     h.result1,
                     h.result2,
                     h.host,
                     ROW_NUMBER() OVER (
-                        PARTITION BY h.round_no, LEAST(h.legacy_player1_id, h.legacy_player2_id), GREATEST(h.legacy_player1_id, h.legacy_player2_id)
-                        ORDER BY CASE WHEN h.legacy_player1_id = :playerId THEN 0 ELSE 1 END, h.legacy_player1_id ASC
+                        PARTITION BY h.round_no, LEAST(h.player1_id, h.player2_id), GREATEST(h.player1_id, h.player2_id)
+                        ORDER BY CASE WHEN h.player1_id = :playerId THEN 0 ELSE 1 END, h.player1_id ASC
                     ) AS rn
                 FROM tournament_game h
                 WHERE h.organization_id = :organizationId
-                  AND h.legacy_tournament_id = :tournamentId
-                  AND (h.legacy_player1_id = :playerId OR h.legacy_player2_id = :playerId)
+                  AND h.tournament_id = :tournamentId
+                  AND (h.player1_id = :playerId OR h.player2_id = :playerId)
             )
             SELECT
                 rg.runda AS round_no,
@@ -85,13 +84,13 @@ class PlayerTournamentSummaryServicePostgres implements PlayerTournamentSummaryS
             INNER JOIN player p ON p.id = CASE WHEN rg.player1 = :playerId THEN rg.player2_pk ELSE rg.player1_pk END
             LEFT JOIN tournament_result tw_opponent
                 ON tw_opponent.organization_id = :organizationId
-               AND tw_opponent.legacy_tournament_id = rg.turniej
-               AND tw_opponent.legacy_player_id = CASE WHEN rg.player1 = :playerId THEN rg.player2 ELSE rg.player1 END
+               AND tw_opponent.tournament_id = rg.turniej
+               AND tw_opponent.player_id = CASE WHEN rg.player1 = :playerId THEN rg.player2 ELSE rg.player1 END
             WHERE rg.rn = 1
             ORDER BY rg.runda ASC, rg.stol ASC, rg.player1 ASC, rg.player2 ASC",
             [
                 'organizationId' => $organizationId,
-                'tournamentId' => $legacyTournamentId,
+                'tournamentId' => $tournamentId,
                 'playerId' => $playerId,
             ]
         );
@@ -194,25 +193,25 @@ class PlayerTournamentSummaryServicePostgres implements PlayerTournamentSummaryS
     }
 
     /**
-     * @return array{organizationId:int, legacyTournamentId:int}
+     * @return array{organizationId:int, tournamentId:int}
      */
     private function fetchTournamentContext(int $tournamentId): array
     {
         $row = $this->connection->fetchAssociative(
-            'SELECT organization_id, legacy_id
+            'SELECT organization_id, id
              FROM tournament
              WHERE id = :tournamentId
              LIMIT 1',
             ['tournamentId' => $tournamentId]
         );
 
-        if ($row === false || $row['legacy_id'] === null) {
+        if ($row === false || $row['id'] === null) {
             throw new NotFoundHttpException(sprintf('Tournament %d was not found.', $tournamentId));
         }
 
         return [
             'organizationId' => (int) $row['organization_id'],
-            'legacyTournamentId' => (int) $row['legacy_id'],
+            'tournamentId' => (int) $row['id'],
         ];
     }
 }
