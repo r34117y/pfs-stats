@@ -37,7 +37,7 @@ final class BackfillPlayerNamesCommand extends Command
         $dryRun = (bool) $input->getOption('dry-run');
 
         $rows = $this->connection->fetchAllAssociative(
-            'SELECT id, name_show, first_name, last_name, slug FROM player ORDER BY id'
+            'SELECT id, name_show, first_name, last_name, slug FROM player ORDER BY id WHERE first_name IS NULL OR last_name IS NULL OR slug IS NULL'
         );
 
         $updatedCount = 0;
