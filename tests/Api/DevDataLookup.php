@@ -43,6 +43,14 @@ final readonly class DevDataLookup
     /**
      * @throws Exception
      */
+    public function hasAnnotatedGameRows(): bool
+    {
+        return $this->findAnnotatedGameId() !== null;
+    }
+
+    /**
+     * @throws Exception
+     */
     public function hasRankingRows(): bool
     {
         $count = $this->connection->fetchOne(
