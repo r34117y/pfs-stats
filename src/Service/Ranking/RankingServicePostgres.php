@@ -88,7 +88,7 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
             'SELECT id, COALESCE(fullname, name) AS name
              FROM tournament
              WHERE organization_id = :organizationId
-               AND legacy_id = :tournamentId
+               AND id = :tournamentId
              LIMIT 1',
             [
                 'organizationId' => $organizationId,
@@ -112,7 +112,7 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
     private function getLatestRankingTournamentId(int $organizationId): ?int
     {
         $value = $this->connection->fetchOne(
-            "SELECT MAX(legacy_tournament_id)
+            "SELECT MAX(tournament_id)
              FROM ranking
              WHERE organization_id = :organizationId
                AND rtype = 'f'",
@@ -135,26 +135,26 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
     private function getPreviousRankingTournamentId(int $organizationId, int $latestTournamentId): ?int
     {
         $value = $this->connection->fetchOne(
-            "SELECT MAX(previous.legacy_tournament_id)
+            "SELECT MAX(previous.tournament_id)
              FROM (
-                SELECT DISTINCT r.legacy_tournament_id
+                SELECT DISTINCT r.tournament_id
                 FROM ranking r
                 WHERE r.organization_id = :organizationId
                   AND r.rtype = 'f'
-                  AND r.legacy_tournament_id < :latestTournamentId
+                  AND r.tournament_id < :latestTournamentId
              ) previous
              WHERE EXISTS (
                 SELECT 1
                 FROM ranking latest
                 INNER JOIN ranking prev
                     ON prev.organization_id = latest.organization_id
-                   AND prev.legacy_player_id = latest.legacy_player_id
+                   AND prev.player_id = latest.player_id
                    AND prev.rtype = 'f'
-                   AND prev.legacy_tournament_id = previous.legacy_tournament_id
+                   AND prev.tournament_id = previous.tournament_id
                 WHERE latest.organization_id = :organizationId
                   AND latest.rtype = 'f'
-                  AND latest.legacy_tournament_id = :latestTournamentId
-                  AND latest.legacy_player_id IS NOT NULL
+                  AND latest.tournament_id = :latestTournamentId
+                  AND latest.player_id IS NOT NULL
                   AND (latest.position <> prev.position OR latest.rank <> prev.rank)
              )",
             [
@@ -168,11 +168,11 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
         }
 
         $fallback = $this->connection->fetchOne(
-            "SELECT MAX(legacy_tournament_id)
+            "SELECT MAX(tournament_id)
              FROM ranking
              WHERE organization_id = :organizationId
                AND rtype = 'f'
-               AND legacy_tournament_id < :latestTournamentId",
+               AND tournament_id < :latestTournamentId",
             [
                 'organizationId' => $organizationId,
                 'latestTournamentId' => $latestTournamentId,

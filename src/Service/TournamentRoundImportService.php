@@ -55,7 +55,7 @@ final readonly class TournamentRoundImportService
         $fullName = $this->trimToLength($this->requireString($tournament, 'name', 'tournament'), 80);
         $city = $this->trimToLength($this->requireString($tournament, 'city', 'tournament'), 256);
 
-        $existingTournamentId = $this->findExistingTournamentId($organization['id'], $dateCode, $fullname, $city);
+        $existingTournamentId = $this->findExistingTournamentId($organization['id'], $dateCode, $fullName, $city);
 
         if ($existingTournamentId !== null) {
             throw new ConflictHttpException(sprintf('Tournament already exists with id %d.', $existingTournamentId));
@@ -72,8 +72,6 @@ final readonly class TournamentRoundImportService
             $city,
         ): int {
             $catalog = $this->loadPlayerCatalog((int) $organization['id']);
-            $nextLegacyPlayerId = $this->allocateNextLegacyPlayerId((int) $organization['id']);
-
             $resolvedPlayersByStartingPosition = [];
             $resolvedPlayersByName = [];
             $createdPlayerIds = [];
@@ -91,29 +89,21 @@ final readonly class TournamentRoundImportService
                     throw new BadRequestHttpException(sprintf('Duplicate startingPosition %d in players payload.', $startingPosition));
                 }
 
-                $resolved = $this->resolvePlayer($catalog, $fullName, $tournamentRank);
+                $resolved = $this->resolvePlayer($catalog, $fullName);
                 if ($resolved === null) {
                     $resolved = $this->createPlayer(
                         $connection,
                         (int) $organization['id'],
                         $fullName,
-                        $nextLegacyPlayerId,
                     );
                     $catalog[] = $resolved;
                     $createdPlayerIds[] = $resolved["playerId"];
-                    $nextLegacyPlayerId++;
-                }
-
-                if ($resolved['legacyPlayerId'] === null) {
-                    $resolved['legacyPlayerId'] = $nextLegacyPlayerId;
-                    $nextLegacyPlayerId++;
                 }
 
                 $resolvedPlayersByStartingPosition[$startingPosition] = [
                     'startingPosition' => $startingPosition,
                     'place' => $place,
                     'playerId' => $resolved['playerId'],
-                    'legacyPlayerId' => $resolved['legacyPlayerId'],
                     'nameShow' => $resolved['nameShow'],
                     'nameAlph' => $resolved['nameAlph'],
                     'tournamentRank' => $tournamentRank,
@@ -132,12 +122,10 @@ final readonly class TournamentRoundImportService
             $tournamentId = (int) $connection->fetchOne(
                 'INSERT INTO tournament (
                     organization_id,
-                    legacy_id,
                     dt,
                     name,
                     fullname,
                     winner_player_id,
-                    legacy_winner_player_id,
                     trank,
                     players_count,
                     rounds,
@@ -146,7 +134,6 @@ final readonly class TournamentRoundImportService
                     mcategory,
                     wksum,
                     series_id,
-                    legacy_series_id,
                     start_round,
                     referee,
                     place,
@@ -154,12 +141,10 @@ final readonly class TournamentRoundImportService
                     urlid
                 ) VALUES (
                     :organizationId,
-                    :legacyId,
                     :dt,
                     :name,
                     :fullname,
                     :winnerPlayerId,
-                    :legacyWinnerPlayerId,
                     :trank,
                     :playersCount,
                     :rounds,
@@ -168,7 +153,6 @@ final readonly class TournamentRoundImportService
                     :mcategory,
                     :wksum,
                     :seriesId,
-                    :legacySeriesId,
                     :startRound,
                     :referee,
                     :place,
@@ -177,12 +161,10 @@ final readonly class TournamentRoundImportService
                 ) RETURNING id',
                 [
                     'organizationId' => (int) $organization['id'],
-                    'legacyId' => $legacyTournamentId,
                     'dt' => $dateCode,
                     'name' => $shortName,
-                    'fullname' => $fullname,
+                    'fullname' => $fullName,
                     'winnerPlayerId' => $winner['playerId'],
-                    'legacyWinnerPlayerId' => $winner['legacyPlayerId'],
                     'trank' => $this->averageTournamentRank($resolvedPlayersByStartingPosition),
                     'playersCount' => count($resolvedPlayersByStartingPosition),
                     'rounds' => $rounds,
@@ -191,7 +173,6 @@ final readonly class TournamentRoundImportService
                     'mcategory' => null,
                     'wksum' => 0.0,
                     'seriesId' => null,
-                    'legacySeriesId' => null,
                     'startRound' => $dateCode,
                     'referee' => null,
                     'place' => $city,
@@ -222,11 +203,8 @@ final readonly class TournamentRoundImportService
                     'tournament_id' => $tournamentId,
                     'player1_id' => $host['playerId'],
                     'player2_id' => $guest['playerId'] ?? null,
-                    'legacy_tournament_id' => $legacyTournamentId,
                     'round_no' => $round,
                     'table_no' => $table,
-                    'legacy_player1_id' => $host['legacyPlayerId'],
-                    'legacy_player2_id' => $guest['legacyPlayerId'] ?? null,
                     'result1' => $score1,
                     'result2' => $score2,
                     'ranko' => (int) round($guest['tournamentRank'] ?? 100), // todo
@@ -240,11 +218,8 @@ final readonly class TournamentRoundImportService
                     'tournament_id' => $tournamentId,
                     'player1_id' => $guest['playerId'] ?? null,
                     'player2_id' => $host['playerId'],
-                    'legacy_tournament_id' => $legacyTournamentId,
                     'round_no' => $round,
                     'table_no' => $table,
-                    'legacy_player1_id' => $guest['legacyPlayerId'] ?? null,
-                    'legacy_player2_id' => $host['legacyPlayerId'],
                     'result1' => $score2,
                     'result2' => $score1,
                     'ranko' => (int) round($host['tournamentRank']),
@@ -255,7 +230,7 @@ final readonly class TournamentRoundImportService
             }
 
             foreach ($resolvedPlayersByStartingPosition as $player) {
-                $stats = $perPlayerStats[$player['legacyPlayerId']] ?? [
+                $stats = $perPlayerStats[$player['playerId']] ?? [
                     'wins' => 0,
                     'losses' => 0,
                     'draws' => 0,
@@ -272,8 +247,6 @@ final readonly class TournamentRoundImportService
                     'organization_id' => (int) $organization['id'],
                     'tournament_id' => $tournamentId,
                     'player_id' => $player['playerId'],
-                    'legacy_tournament_id' => $legacyTournamentId,
-                    'legacy_player_id' => $player['legacyPlayerId'],
                     'place' => $player['place'],
                     'gwin' => $stats['wins'],
                     'glost' => $stats['losses'],
@@ -303,19 +276,13 @@ final readonly class TournamentRoundImportService
 
                 $resolved = $rankingCache[$playerName] ?? null;
                 if ($resolved === null) {
-                    $resolvedCatalogPlayer = $this->resolvePlayer($catalog, $playerName, max(100.0, $rank));
+                    $resolvedCatalogPlayer = $this->resolvePlayer($catalog, $playerName);
                     if ($resolvedCatalogPlayer === null) {
                         throw new LogicException('Ranking player does not exist in db: ' . $playerName);
                     }
 
-                    if ($resolvedCatalogPlayer['legacyPlayerId'] === null) {
-                        $resolvedCatalogPlayer['legacyPlayerId'] = $nextLegacyPlayerId;
-                        $nextLegacyPlayerId++;
-                    }
-
                     $resolved = [
                         'playerId' => $resolvedCatalogPlayer['playerId'],
-                        'legacyPlayerId' => $resolvedCatalogPlayer['legacyPlayerId'],
                         'nameShow' => $resolvedCatalogPlayer['nameShow'],
                         'nameAlph' => $resolvedCatalogPlayer['nameAlph'],
                         'tournamentRank' => max(100.0, $rank),
@@ -329,8 +296,6 @@ final readonly class TournamentRoundImportService
                     'rtype' => $rtype,
                     'player_id' => $resolved['playerId'],
                     'tournament_id' => $tournamentId,
-                    'legacy_player_id' => $resolved['legacyPlayerId'],
-                    'legacy_tournament_id' => $legacyTournamentId,
                     'position' => $position,
                     'rank' => round($rank, 2),
                     'games' => $games,
@@ -340,7 +305,7 @@ final readonly class TournamentRoundImportService
             $connection->insert("text_resource", [
                 "organization_id" => (int) $organization["id"],
                 "resource_type" => self::AUDIT_RESOURCE_TYPE,
-                "legacy_id" => $legacyTournamentId,
+                "legacy_id" => $tournamentId,
                 "data" => json_encode([
                     "tournamentDbId" => $tournamentId,
                     "createdPlayerIds" => array_values(array_unique($createdPlayerIds)),
@@ -348,7 +313,7 @@ final readonly class TournamentRoundImportService
                 ], JSON_THROW_ON_ERROR),
             ]);
 
-            return $legacyTournamentId;
+            return $tournamentId;
         });
     }
 
@@ -362,7 +327,7 @@ final readonly class TournamentRoundImportService
         $stats = [];
 
         foreach ($playersByStartingPosition as $player) {
-            $stats[$player['legacyPlayerId']] = [
+            $stats[$player['playerId']] = [
                 'wins' => 0,
                 'losses' => 0,
                 'draws' => 0,
@@ -385,25 +350,25 @@ final readonly class TournamentRoundImportService
                 throw new BadRequestHttpException(sprintf('Could not resolve game participants for %s.', $context));
             }
 
-            $stats[$host['legacyPlayerId']]['games']++;
-            $stats[$host['legacyPlayerId']]['hostGames']++;
+            $stats[$host['playerId']]['games']++;
+            $stats[$host['playerId']]['hostGames']++;
 
             if ($guest) {
-                $stats[$guest['legacyPlayerId']]['games']++;
+                $stats[$guest['playerId']]['games']++;
             }
 
             if ($score1 > $score2) {
-                $stats[$host['legacyPlayerId']]['wins']++;
-                $stats[$host['legacyPlayerId']]['hostWins']++;
+                $stats[$host['playerId']]['wins']++;
+                $stats[$host['playerId']]['hostWins']++;
                 if ($guest) {
-                    $stats[$guest['legacyPlayerId']]['losses']++;
+                    $stats[$guest['playerId']]['losses']++;
                 }
             } elseif ($score1 < $score2) {
-                $stats[$host['legacyPlayerId']]['losses']++;
-                $stats[$guest['legacyPlayerId']]['wins']++;
+                $stats[$host['playerId']]['losses']++;
+                $stats[$guest['playerId']]['wins']++;
             } else {
-                $stats[$host['legacyPlayerId']]['draws']++;
-                $stats[$guest['legacyPlayerId']]['draws']++;
+                $stats[$host['playerId']]['draws']++;
+                $stats[$guest['playerId']]['draws']++;
             }
         }
 
@@ -455,7 +420,7 @@ final readonly class TournamentRoundImportService
      * @param list<array<string, mixed>> $catalog
      * @return array<string, mixed>|null
      */
-    private function resolvePlayer(array $catalog, string $playerName, float $rankHint): ?array
+    private function resolvePlayer(array $catalog, string $playerName): ?array
     {
         if ($playerName === 'Kazimierz Merklejn') {
             $playerName = 'Kazimierz.J Merklejn';
@@ -512,7 +477,7 @@ final readonly class TournamentRoundImportService
      * @return array<string, mixed>
      * @throws Exception
      */
-    private function createPlayer(Connection $connection, int $organizationId, string $nameShow, int $legacyPlayerId): array
+    private function createPlayer(Connection $connection, int $organizationId, string $nameShow): array
     {
         $nameShow = $this->trimToLength($nameShow, 40);
         $nameAlph = $this->trimToLength($this->nameNormalizer->toAlphabeticalName($nameShow), 40);
@@ -550,11 +515,11 @@ final readonly class TournamentRoundImportService
 
         return [
             'playerId' => $playerId,
-            'legacyPlayerId' => $legacyPlayerId,
             'nameShow' => $nameShow,
             'nameAlph' => $nameAlph,
+            'firstName' => $firstName,
+            'lastName' => $lastName,
             'normalized' => $this->nameNormalizer->normalizeForMatch($nameShow),
-            'latestRank' => 100.0,
         ];
     }
 
@@ -599,82 +564,15 @@ final readonly class TournamentRoundImportService
     private function loadPlayerCatalog(int $organizationId): array
     {
         $rows = $this->connection->fetchAllAssociative(
-            "WITH org_players AS (
-                SELECT p.id AS player_id, p.name_show, p.name_alph
-                FROM player p
-                INNER JOIN player_organization po ON po.player_id = p.id
-                WHERE po.organization_id = :organizationId
-            ),
-            player_map AS (
-                SELECT DISTINCT player_id
-                FROM ranking
-                WHERE organization_id = :organizationId
-                  AND player_id IS NOT NULL
-                UNION
-                SELECT DISTINCT player_id
-                FROM tournament_result
-                WHERE organization_id = :organizationId
-                  AND player_id IS NOT NULL
-                UNION
-                SELECT DISTINCT player_id
-                FROM play_summary
-                WHERE organization_id = :organizationId
-                  AND player_id IS NOT NULL
-                UNION
-                SELECT DISTINCT player1_id AS player_id
-                FROM tournament_game
-                WHERE organization_id = :organizationId
-                  AND player1_id IS NOT NULL
-                UNION
-                SELECT DISTINCT player2_id AS player_id
-                FROM tournament_game
-                WHERE organization_id = :organizationId
-                  AND player2_id IS NOT NULL
-            ),
-            latest_ranking AS (
-                SELECT r.player_id, r.rank
-                FROM ranking r
-                INNER JOIN (
-                    SELECT player_id, MAX(tournament_id) AS last_tournament_id
-                    FROM ranking
-                    WHERE organization_id = :organizationId
-                      AND rtype = 'f'
-                      AND player_id IS NOT NULL
-                      AND tournament_id < :tournamentId
-                    GROUP BY player_id
-                ) latest_ids
-                    ON latest_ids.player_id = r.player_id
-                   AND latest_ids.last_tournament_id = r.tournament_id
-                WHERE r.organization_id = :organizationId
-                  AND r.rtype = 'f'
-            ),
-            latest_result AS (
-                SELECT tr.player_id, tr.brank
-                FROM tournament_result tr
-                INNER JOIN (
-                    SELECT player_id, MAX(tournament_id) AS last_tournament_id
-                    FROM tournament_result
-                    WHERE organization_id = :organizationId
-                      AND player_id IS NOT NULL
-                      AND tournament_id < :tournamentId
-                    GROUP BY player_id
-                ) latest_ids
-                    ON latest_ids.player_id = tr.player_id
-                   AND latest_ids.last_tournament_id = tr.tournament_id
-                WHERE tr.organization_id = :organizationId
-            )
-            SELECT
-                op.player_id,
-                MIN(pm.player_id) AS player_id,
-                op.name_show,
-                op.name_alph,
-                COALESCE(lr.rank, ltr.brank, 100.0) AS latest_rank
-            FROM org_players op
-            LEFT JOIN player_map pm ON pm.player_id = op.player_id
-            LEFT JOIN latest_ranking lr ON lr.player_id = op.player_id
-            LEFT JOIN latest_result ltr ON ltr.player_id = op.player_id
-            GROUP BY op.player_id, op.name_show, op.name_alph, lr.rank, ltr.brank
-            ORDER BY op.player_id ASC",
+            "SELECT
+                p.id AS player_id,
+                p.name_show,
+                p.name_alph
+            FROM player_organization po
+            INNER JOIN player p ON p.id = po.player_id
+            WHERE po.organization_id = :organizationId
+              AND p.name_show IS NOT NULL
+            ORDER BY p.id ASC",
             [
                 'organizationId' => $organizationId,
             ],
@@ -683,56 +581,11 @@ final readonly class TournamentRoundImportService
         return array_map(function (array $row): array {
             return [
                 'playerId' => (int) $row['player_id'],
-                //'legacyPlayerId' => $row['legacy_player_id'] !== null ? (int) $row['legacy_player_id'] : null,
                 'nameShow' => (string) $row['name_show'],
-                'nameAlph' => (string) $row['name_alph'],
-                'normalized' => $this->nameNormalizer->normalizeForMatch((string) $row['name_show']),
-                'latestRank' => $row['latest_rank'] !== null ? (float) $row['latest_rank'] : 100.0,
+                'nameAlph' => (string) ($row['name_alph'] ?? ''),
+                'normalized' => $this->nameNormalizer->normalizeForMatch((string) $row['name_show'])
             ];
         }, $rows);
-    }
-
-    /**
-     * @throws Exception
-     */
-    private function allocateNextLegacyPlayerId(int $organizationId): int
-    {
-        return (int) $this->connection->fetchOne(
-            'WITH legacy_ids AS (
-                SELECT legacy_player_id FROM ranking WHERE organization_id = :organizationId AND legacy_player_id IS NOT NULL
-                UNION ALL
-                SELECT legacy_player_id FROM tournament_result WHERE organization_id = :organizationId AND legacy_player_id IS NOT NULL
-                UNION ALL
-                SELECT legacy_player_id FROM play_summary WHERE organization_id = :organizationId AND legacy_player_id IS NOT NULL
-                UNION ALL
-                SELECT legacy_player1_id AS legacy_player_id FROM tournament_game WHERE organization_id = :organizationId AND legacy_player1_id IS NOT NULL
-                UNION ALL
-                SELECT legacy_player2_id AS legacy_player_id FROM tournament_game WHERE organization_id = :organizationId AND legacy_player2_id IS NOT NULL
-            )
-            SELECT COALESCE(MAX(legacy_player_id), 0) + 1
-            FROM legacy_ids',
-            ['organizationId' => $organizationId],
-        );
-    }
-
-    /**
-     * @throws Exception
-     */
-    private function allocateTournamentLegacyId(int $organizationId, int $dateCode): int
-    {
-        $suffix = (int) $this->connection->fetchOne(
-            'SELECT COALESCE(MAX(legacy_id % 10), -1) + 1
-             FROM tournament
-             WHERE organization_id = :organizationId
-               AND legacy_id BETWEEN :fromId AND :toId',
-            [
-                'organizationId' => $organizationId,
-                'fromId' => $dateCode * 10,
-                'toId' => ($dateCode * 10) + 9,
-            ],
-        );
-
-        return ($dateCode * 10) + $suffix;
     }
 
     /**

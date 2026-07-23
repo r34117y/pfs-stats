@@ -83,7 +83,8 @@ final class ImportPfsTournamentCommand extends Command
         $io->table(
             ['Metric', 'Value'],
             [
-                ['PFS URL id', (string) $calendarTournament->urlId],
+                ['Tournament id', $tournamentId],
+                ['PFS id', (string) $calendarTournament->urlId],
                 ['Date', $calendarTournament->startDate->format('Y-m-d')],
                 ['City', $calendarTournament->location],
                 ['Players', (string) count($payload->players)],
@@ -105,6 +106,6 @@ final class ImportPfsTournamentCommand extends Command
             }
         }
 
-        throw new \RuntimeException(sprintf('Tournament urlid %d was not found in calendar year %d.', $urlId, $year));
+        throw new \RuntimeException(sprintf('Tournament with PFS id %d was not found in calendar year %d.', $urlId, $year));
     }
 }

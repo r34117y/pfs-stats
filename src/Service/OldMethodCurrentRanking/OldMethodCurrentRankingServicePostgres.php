@@ -11,7 +11,7 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
     private const int MIN_GAMES_FOR_LIST = 30;
     private const int MAX_GAMES_INCLUDED = 200;
     private const int MIN_TOURNAMENT_RANK = 100;
-    private const int NEW_METHOD_START_TOURNAMENT_ID = 202305070;
+    private const int NEW_METHOD_START_TOURNAMENT_ID = 9367;
     private const string ORGANIZATION_CODE = 'PFS';
 
     public function __construct(
@@ -181,23 +181,21 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
     {
         $rows = $this->connection->fetchAllAssociative(
             "SELECT DISTINCT
-                x.legacy_player_id AS legacy_player_id,
+                x.player_id AS player_id,
                 p.name_show,
                 p.name_alph,
                 p.slug,
                 u.photo,
                 p.slug
              FROM (
-                SELECT legacy_player_id, player_id
+                SELECT player_id
                 FROM ranking
                 WHERE organization_id = :organizationId
-                  AND legacy_player_id IS NOT NULL
                   AND player_id IS NOT NULL
                 UNION
-                SELECT legacy_player_id, player_id
+                SELECT player_id
                 FROM tournament_result
                 WHERE organization_id = :organizationId
-                  AND legacy_player_id IS NOT NULL
                   AND player_id IS NOT NULL
              ) x
              INNER JOIN player p ON p.id = x.player_id
@@ -207,7 +205,7 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
         $result = [];
 
         foreach ($rows as $row) {
-            $result[(int) $row['legacy_player_id']] = [
+            $result[(int) $row['player_id']] = [
                 'name' => (string) $row['name_show'],
                 'nameSort' => (string) $row['name_alph'],
                 'photo' => $row['photo'],
@@ -221,7 +219,7 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
     private function loadLatestRankingTournamentId(int $organizationId): ?int
     {
         $value = $this->connection->fetchOne(
-            "SELECT MAX(legacy_tournament_id)
+            "SELECT MAX(tournament_id)
              FROM ranking
              WHERE organization_id = :organizationId
                AND rtype = 'f'",
@@ -244,7 +242,7 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
             "SELECT id AS public_id, dt, COALESCE(fullname, name) AS name
              FROM tournament
              WHERE organization_id = :organizationId
-               AND legacy_id = :tournamentId",
+               AND id = :tournamentId",
             [
                 'organizationId' => $organizationId,
                 'tournamentId' => $tournamentId,
@@ -265,20 +263,20 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
     {
         $rows = $this->connection->fetchAllAssociative(
             "SELECT
-                tw.legacy_player_id AS player_id,
-                tw.legacy_tournament_id AS tournament_id,
+                tw.player_id AS player_id,
+                tw.tournament_id AS tournament_id,
                 t.dt AS tournament_date,
                 tw.games AS games,
                 tw.trank AS achieved_rank
             FROM tournament_result tw
             INNER JOIN tournament t
                 ON t.organization_id = tw.organization_id
-               AND t.legacy_id = tw.legacy_tournament_id
+               AND t.id = tw.tournament_id
             WHERE tw.organization_id = :organizationId
-              AND tw.legacy_player_id IS NOT NULL
-              AND tw.legacy_tournament_id IS NOT NULL
-              AND tw.legacy_tournament_id < :newMethodStartTournamentId
-            ORDER BY tw.legacy_player_id ASC, t.dt ASC, t.legacy_id ASC",
+              AND tw.player_id IS NOT NULL
+              AND tw.tournament_id IS NOT NULL
+              AND tw.tournament_id < :newMethodStartTournamentId
+            ORDER BY tw.player_id ASC, t.dt ASC, t.id ASC",
             [
                 'organizationId' => $organizationId,
                 'newMethodStartTournamentId' => self::NEW_METHOD_START_TOURNAMENT_ID,
@@ -341,11 +339,11 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
     private function loadOldMethodSnapshotBeforeNewMethod(int $organizationId): array
     {
         $tournamentId = $this->connection->fetchOne(
-            "SELECT MAX(legacy_tournament_id)
+            "SELECT MAX(tournament_id)
              FROM ranking
              WHERE organization_id = :organizationId
                AND rtype = 'f'
-               AND legacy_tournament_id < :newMethodStartTournamentId",
+               AND tournament_id < :newMethodStartTournamentId",
             [
                 'organizationId' => $organizationId,
                 'newMethodStartTournamentId' => self::NEW_METHOD_START_TOURNAMENT_ID,
@@ -357,12 +355,12 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
         }
 
         $rows = $this->connection->fetchAllAssociative(
-            "SELECT legacy_player_id AS player, rank, games
+            "SELECT player_id AS player, rank, games
              FROM ranking
              WHERE organization_id = :organizationId
                AND rtype = 'f'
-               AND legacy_tournament_id = :tournamentId
-               AND legacy_player_id IS NOT NULL",
+               AND tournament_id = :tournamentId
+               AND player_id IS NOT NULL",
             [
                 'organizationId' => $organizationId,
                 'tournamentId' => (int) $tournamentId,
@@ -387,12 +385,12 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
     private function loadTournamentsForSimulation(int $organizationId, int $referenceTournamentId): array
     {
         return $this->connection->fetchAllAssociative(
-            "SELECT legacy_id AS id, dt, COALESCE(fullname, name) AS name
+            "SELECT id, dt, COALESCE(fullname, name) AS name
              FROM tournament
              WHERE organization_id = :organizationId
-               AND legacy_id >= :newMethodStartTournamentId
-               AND legacy_id <= :referenceTournamentId
-             ORDER BY dt ASC, legacy_id ASC",
+               AND id >= :newMethodStartTournamentId
+               AND id <= :referenceTournamentId
+             ORDER BY dt ASC, id ASC",
             [
                 'organizationId' => $organizationId,
                 'newMethodStartTournamentId' => self::NEW_METHOD_START_TOURNAMENT_ID,
@@ -407,11 +405,11 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
     private function loadTournamentParticipants(int $organizationId, int $tournamentId): array
     {
         $values = $this->connection->fetchFirstColumn(
-            'SELECT DISTINCT legacy_player_id
+            'SELECT DISTINCT player_id
              FROM tournament_result
              WHERE organization_id = :organizationId
-               AND legacy_tournament_id = :tournamentId
-               AND legacy_player_id IS NOT NULL',
+               AND tournament_id = :tournamentId
+               AND player_id IS NOT NULL',
             [
                 'organizationId' => $organizationId,
                 'tournamentId' => $tournamentId,
@@ -434,19 +432,19 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
         $rows = $this->connection->fetchAllAssociative(
             "WITH ranked_games AS (
                 SELECT
-                    h.legacy_player1_id AS player1,
-                    h.legacy_player2_id AS player2,
+                    h.player1_id AS player1,
+                    h.player2_id AS player2,
                     h.result1,
                     h.result2,
                     ROW_NUMBER() OVER (
-                        PARTITION BY h.round_no, LEAST(h.legacy_player1_id, h.legacy_player2_id), GREATEST(h.legacy_player1_id, h.legacy_player2_id)
-                        ORDER BY h.legacy_player1_id ASC
+                        PARTITION BY h.round_no, LEAST(h.player1_id, h.player2_id), GREATEST(h.player1_id, h.player2_id)
+                        ORDER BY h.player1_id ASC
                     ) AS rn
                 FROM tournament_game h
                 WHERE h.organization_id = :organizationId
-                  AND h.legacy_tournament_id = :tournamentId
-                  AND h.legacy_player1_id IS NOT NULL
-                  AND h.legacy_player2_id IS NOT NULL
+                  AND h.tournament_id = :tournamentId
+                  AND h.player1_id IS NOT NULL
+                  AND h.player2_id IS NOT NULL
             )
             SELECT
                 player1,
