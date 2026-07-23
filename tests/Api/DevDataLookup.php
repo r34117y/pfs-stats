@@ -176,6 +176,44 @@ final readonly class DevDataLookup
     }
 
     /**
+     * @return array{id:int, slug:string}|null
+     * @throws Exception
+     */
+    public function findPfsPlayerWithTournamentGames(): ?array
+    {
+        $row = $this->connection->fetchAssociative(
+            "SELECT p.id, p.slug
+             FROM (
+                SELECT h.player1_id AS player_id, h.tournament_id
+                FROM tournament_game h
+                INNER JOIN organization o ON o.id = h.organization_id
+                WHERE o.code = 'PFS'
+                  AND h.player1_id IS NOT NULL
+                UNION ALL
+                SELECT h.player2_id AS player_id, h.tournament_id
+                FROM tournament_game h
+                INNER JOIN organization o ON o.id = h.organization_id
+                WHERE o.code = 'PFS'
+                  AND h.player2_id IS NOT NULL
+             ) games
+             INNER JOIN player p ON p.id = games.player_id
+             WHERE p.slug IS NOT NULL
+               AND p.slug <> ''
+             ORDER BY games.tournament_id DESC, p.id ASC
+             LIMIT 1",
+        );
+
+        if ($row === false) {
+            return null;
+        }
+
+        return [
+            'id' => (int) $row['id'],
+            'slug' => (string) $row['slug'],
+        ];
+    }
+
+    /**
      * @throws Exception
      */
     public function findTournamentId(): ?int
