@@ -56,8 +56,8 @@ final readonly class PlayerProfileServicePostgres implements PlayerProfileServic
             WHERE r.organization_id = :organizationId
               AND r.rtype = 'f'
               AND r.player_id = :playerId
-              AND r.legacy_tournament_id = (
-                SELECT MAX(legacy_tournament_id)
+              AND r.tournament_id = (
+                SELECT MAX(tournament_id)
                 FROM ranking
                 WHERE organization_id = :organizationId
                   AND rtype = 'f'
@@ -125,11 +125,10 @@ final readonly class PlayerProfileServicePostgres implements PlayerProfileServic
             FROM tournament_result tw
             INNER JOIN tournament t
                 ON t.organization_id = tw.organization_id
-               AND t.legacy_id = tw.legacy_tournament_id
+               AND t.id = tw.tournament_id
             WHERE tw.organization_id = :organizationId
               AND tw.player_id = :playerId
-              AND t.legacy_id IS NOT NULL
-            ORDER BY t.dt {$orderDirection}, t.legacy_id {$orderDirection}
+            ORDER BY t.dt {$orderDirection}, t.id {$orderDirection}
             LIMIT 1",
             [
                 'organizationId' => $organizationId,
@@ -161,7 +160,7 @@ final readonly class PlayerProfileServicePostgres implements PlayerProfileServic
             FROM tournament_result tw
             INNER JOIN tournament t
                 ON t.organization_id = tw.organization_id
-               AND t.legacy_id = tw.legacy_tournament_id
+               AND t.id = tw.tournament_id
             WHERE tw.organization_id = :organizationId
               AND tw.player_id = :playerId
               AND t.dt >= :fromDate
