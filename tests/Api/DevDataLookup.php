@@ -120,6 +120,34 @@ final readonly class DevDataLookup
     }
 
     /**
+     * @return array{id:int, slug:string}|null
+     * @throws Exception
+     */
+    public function findPfsPlayer(): ?array
+    {
+        $row = $this->connection->fetchAssociative(
+            "SELECT p.id, p.slug
+             FROM player_organization po
+             INNER JOIN organization o ON o.id = po.organization_id
+             INNER JOIN player p ON p.id = po.player_id
+             WHERE o.code = 'PFS'
+               AND p.slug IS NOT NULL
+               AND p.slug <> ''
+             ORDER BY p.id
+             LIMIT 1",
+        );
+
+        if ($row === false) {
+            return null;
+        }
+
+        return [
+            'id' => (int) $row['id'],
+            'slug' => (string) $row['slug'],
+        ];
+    }
+
+    /**
      * @throws Exception
      */
     public function findTournamentId(): ?int
