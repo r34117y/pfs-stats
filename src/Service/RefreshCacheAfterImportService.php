@@ -16,8 +16,6 @@ final readonly class RefreshCacheAfterImportService
     public function __construct(
         private DatasetVersionService $datasetVersionService,
         private KernelInterface $kernel,
-        #[Autowire(service: 'doctrine.dbal.mysql_connection')]
-        private Connection $mysqlConnection,
         #[Autowire(service: 'cache.app')]
         private CacheInterface $cacheApp,
     ) {
@@ -144,65 +142,6 @@ final readonly class RefreshCacheAfterImportService
         }
 
         return array_values(array_unique($paths));
-    }
-
-    private function fetchAnyPlayerId(): ?int
-    {
-        $value = $this->mysqlConnection->fetchOne('SELECT id FROM PFSPLAYER ORDER BY id ASC LIMIT 1');
-        if ($value === false || $value === null) {
-            return null;
-        }
-
-        return (int) $value;
-    }
-
-    private function fetchLatestTournamentId(): ?int
-    {
-        $value = $this->mysqlConnection->fetchOne('SELECT id FROM PFSTOURS ORDER BY dt DESC, id DESC LIMIT 1');
-        if ($value === false || $value === null) {
-            return null;
-        }
-
-        return (int) $value;
-    }
-
-    /**
-     * @return array{tournamentId: int, playerId: int}|null
-     */
-    private function fetchAnyTournamentPlayerPair(): ?array
-    {
-        $row = $this->mysqlConnection->fetchAssociative(
-            'SELECT turniej AS tournamentId, player AS playerId FROM PFSTOURWYN ORDER BY turniej DESC, player ASC LIMIT 1'
-        );
-
-        if ($row === false) {
-            return null;
-        }
-
-        return [
-            'tournamentId' => (int) $row['tournamentId'],
-            'playerId' => (int) $row['playerId'],
-        ];
-    }
-
-    /**
-     * @return array{tour: int, round: int, player1: int}|null
-     */
-    private function fetchAnyAnnotatedGameKey(): ?array
-    {
-        $row = $this->mysqlConnection->fetchAssociative(
-            'SELECT tour, `round`, player1 FROM PFSGCG ORDER BY tour DESC, `round` DESC LIMIT 1'
-        );
-
-        if ($row === false) {
-            return null;
-        }
-
-        return [
-            'tour' => (int) $row['tour'],
-            'round' => (int) $row['round'],
-            'player1' => (int) $row['player1'],
-        ];
     }
 
     private function report(?callable $reporter, string $message): void

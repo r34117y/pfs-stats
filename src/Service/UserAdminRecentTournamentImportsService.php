@@ -43,12 +43,11 @@ final readonly class UserAdminRecentTournamentImportsService
                     t.urlid,
                     ROW_NUMBER() OVER (
                         PARTITION BY t.organization_id
-                        ORDER BY t.dt DESC, t.legacy_id DESC NULLS LAST, t.id DESC
+                        ORDER BY t.dt DESC, t.id DESC
                     ) AS row_no
                 FROM tournament t
                 INNER JOIN organization o ON o.id = t.organization_id
                 WHERE t.organization_id IN (:organizationIds)
-                  AND t.legacy_id IS NOT NULL
             )
             SELECT
                 organization_id,
