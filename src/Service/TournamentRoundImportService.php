@@ -52,10 +52,10 @@ final readonly class TournamentRoundImportService
 
         $startDate = $this->parseDate($this->requireString($tournament, 'dateStart', 'tournament'), 'tournament.dateStart');
         $dateCode = (int) $startDate->format('Ymd');
-        $fullName = $this->trimToLength($this->requireString($tournament, 'name', 'tournament'), 80);
+        $tournamentName = $this->trimToLength($this->requireString($tournament, 'name', 'tournament'), 80);
         $city = $this->trimToLength($this->requireString($tournament, 'city', 'tournament'), 256);
 
-        $existingTournamentId = $this->findExistingTournamentId($organization['id'], $dateCode, $fullName, $city);
+        $existingTournamentId = $this->findExistingTournamentId($organization['id'], $dateCode, $tournamentName, $city);
 
         if ($existingTournamentId !== null) {
             throw new ConflictHttpException(sprintf('Tournament already exists with id %d.', $existingTournamentId));
@@ -68,7 +68,7 @@ final readonly class TournamentRoundImportService
             $ranking,
             $dateCode,
             $startDate,
-            $fullName,
+            $tournamentName,
             $city,
         ): int {
             $catalog = $this->loadPlayerCatalog((int) $organization['id']);
@@ -163,7 +163,7 @@ final readonly class TournamentRoundImportService
                     'organizationId' => (int) $organization['id'],
                     'dt' => $dateCode,
                     'name' => $shortName,
-                    'fullname' => $fullName,
+                    'fullname' => $tournamentName,
                     'winnerPlayerId' => $winner['playerId'],
                     'trank' => $this->averageTournamentRank($resolvedPlayersByStartingPosition),
                     'playersCount' => count($resolvedPlayersByStartingPosition),

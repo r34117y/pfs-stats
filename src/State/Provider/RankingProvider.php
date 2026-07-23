@@ -30,8 +30,7 @@ final readonly class RankingProvider implements ProviderInterface {
     {
         $organizationId = $this->resolveOrganizationId($uriVariables, $this->requestStack);
 
-        return $this->cache->get(sprintf('api.ranking.current.%d', $organizationId), function (ItemInterface $item) use ($organizationId): GetRanking {
-            $item->expiresAfter(600);
+        return $this->cache->get(sprintf('api.ranking.current.%d', $organizationId), function () use ($organizationId): GetRanking {
             return $this->rankingService->getRanking($organizationId);
         });
     }

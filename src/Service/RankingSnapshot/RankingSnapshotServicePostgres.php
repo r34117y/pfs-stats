@@ -34,10 +34,10 @@ final readonly class RankingSnapshotServicePostgres implements RankingSnapshotSe
              INNER JOIN player p ON r.player_id = p.id
              LEFT JOIN app_user u ON u.player_id = p.id
              WHERE r.organization_id = :organizationId
-               AND r.legacy_tournament_id = :tournamentId
+               AND r.tournament_id = :tournamentId
                AND r.rtype = 'f'
-               AND r.legacy_player_id IS NOT NULL
-             ORDER BY r.rank DESC, r.position ASC, r.legacy_player_id ASC",
+               AND r.player_id IS NOT NULL
+             ORDER BY r.rank DESC, r.position ASC, r.player_id ASC",
             [
                 'organizationId' => $organizationId,
                 'tournamentId' => $tournamentId,
