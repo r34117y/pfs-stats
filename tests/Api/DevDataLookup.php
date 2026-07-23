@@ -56,6 +56,21 @@ final readonly class DevDataLookup
     }
 
     /**
+     * @throws Exception
+     */
+    public function hasDefaultOrganizationTournamentRows(): bool
+    {
+        $count = $this->connection->fetchOne(
+            "SELECT COUNT(*)
+             FROM tournament t
+             INNER JOIN player p ON p.id = t.winner_player_id
+             WHERE t.organization_id = 21",
+        );
+
+        return (int) $count > 0;
+    }
+
+    /**
      * @return array{id:int, slug:string}|null
      * @throws Exception
      */
