@@ -13,9 +13,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 final readonly class PlayerTournamentsServicePostgres implements PlayerTournamentsServiceInterface
 {
     private const string ORGANIZATION_CODE = 'PFS';
-    private const array TOURNAMENT_NAME_OVERRIDES = [
-        201204220 => "XVI Mistrzostwa Ziemi Kujawskiej w Scrabble 'O Kryształowe Jajo Świąteczne' pod ",
-    ];
 
     public function __construct(
         #[Autowire(service: 'doctrine.dbal.default_connection')]
@@ -47,7 +44,6 @@ final readonly class PlayerTournamentsServicePostgres implements PlayerTournamen
         $rows = $this->connection->fetchAllAssociative(
             "SELECT
                 t.id,
-                t.legacy_id,
                 t.name,
                 t.fullname,
                 t.dt,
@@ -67,11 +63,10 @@ final readonly class PlayerTournamentsServicePostgres implements PlayerTournamen
             FROM tournament_result tw
             INNER JOIN tournament t
                 ON t.organization_id = tw.organization_id
-               AND t.legacy_id = tw.legacy_tournament_id
+               AND t.id = tw.tournament_id
             WHERE tw.organization_id = :organizationId
               AND tw.player_id = :playerId
-              AND t.legacy_id IS NOT NULL
-            ORDER BY t.dt DESC, t.legacy_id DESC",
+            ORDER BY t.dt DESC, t.id DESC",
             [
                 'organizationId' => $organizationId,
                 'playerId' => $playerId,
@@ -85,9 +80,7 @@ final readonly class PlayerTournamentsServicePostgres implements PlayerTournamen
             $averagePoints = (float) $row['average_points'];
             $averagePointsLost = (float) $row['average_points_lost'];
             $tournamentId = (int) $row['id'];
-            $legacyTournamentId = (int) $row['legacy_id'];
-            $rawName = (string) ($row['fullname'] ?: $row['name']);
-            $name = self::TOURNAMENT_NAME_OVERRIDES[$legacyTournamentId] ?? $rawName;
+            $name = (string) ($row['fullname'] ?: $row['name']);
             $shortName = $row['name'];
 
             $tournaments[] = new PlayerTournamentsTournament(
