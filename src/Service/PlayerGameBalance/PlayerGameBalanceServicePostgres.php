@@ -28,25 +28,25 @@ class PlayerGameBalanceServicePostgres implements PlayerGameBalanceServiceInterf
         $playerExists = $this->connection->fetchOne(
             'SELECT 1
              FROM (
-                SELECT legacy_player_id AS legacy_id
+                SELECT player_id
                 FROM ranking
                 WHERE organization_id = :organizationId
-                  AND legacy_player_id = :playerId
+                  AND player_id = :playerId
                 UNION ALL
-                SELECT legacy_player_id AS legacy_id
+                SELECT player_id
                 FROM tournament_result
                 WHERE organization_id = :organizationId
-                  AND legacy_player_id = :playerId
+                  AND player_id = :playerId
                 UNION ALL
-                SELECT legacy_player1_id AS legacy_id
+                SELECT player1_id as player_id
                 FROM tournament_game
                 WHERE organization_id = :organizationId
-                  AND legacy_player1_id = :playerId
+                  AND player1_id = :playerId
                 UNION ALL
-                SELECT legacy_player2_id AS legacy_id
+                SELECT player2_id AS  player_id
                 FROM tournament_game
                 WHERE organization_id = :organizationId
-                  AND legacy_player2_id = :playerId
+                  AND player2_id = :playerId
              ) x
              LIMIT 1',
             [
@@ -61,25 +61,25 @@ class PlayerGameBalanceServicePostgres implements PlayerGameBalanceServiceInterf
 
         $games = $this->connection->fetchAllAssociative(
             "SELECT
-                CASE WHEN h.legacy_player1_id = :playerId THEN h.legacy_player2_id ELSE h.legacy_player1_id END AS opponent_id,
+                CASE WHEN h.player1_id = :playerId THEN h.player2_id ELSE h.player1_id END AS opponent_id,
                 p.name_show AS opponent_name,
-                CASE WHEN h.legacy_player1_id = :playerId THEN h.result1 ELSE h.result2 END AS own_points,
-                CASE WHEN h.legacy_player1_id = :playerId THEN h.result2 ELSE h.result1 END AS opponent_points,
+                CASE WHEN h.player1_id = :playerId THEN h.result1 ELSE h.result2 END AS own_points,
+                CASE WHEN h.player1_id = :playerId THEN h.result2 ELSE h.result1 END AS opponent_points,
                 t.dt AS tournament_date,
-                h.legacy_tournament_id AS tournament_id,
+                h.tournament_id AS tournament_id,
                 h.round_no AS round_no
             FROM tournament_game h
             INNER JOIN tournament t
                 ON t.organization_id = h.organization_id
-               AND t.legacy_id = h.legacy_tournament_id
+               AND t.id = h.tournament_id
             INNER JOIN player p
-                ON p.id = CASE WHEN h.legacy_player1_id = :playerId THEN h.player2_id ELSE h.player1_id END
+                ON p.id = CASE WHEN h.player1_id = :playerId THEN h.player2_id ELSE h.player1_id END
             WHERE h.organization_id = :organizationId
-              AND (h.legacy_player1_id = :playerId OR h.legacy_player2_id = :playerId)
-              AND h.legacy_tournament_id IS NOT NULL
-              AND h.legacy_player1_id IS NOT NULL
-              AND h.legacy_player2_id IS NOT NULL
-            ORDER BY t.dt ASC, h.legacy_tournament_id ASC, h.round_no ASC",
+              AND (h.player1_id = :playerId OR h.player2_id = :playerId)
+              AND h.tournament_id IS NOT NULL
+              AND h.player1_id IS NOT NULL
+              AND h.player2_id IS NOT NULL
+            ORDER BY t.dt ASC, h.tournament_id ASC, h.round_no ASC",
             [
                 'organizationId' => $organizationId,
                 'playerId' => $playerId,
