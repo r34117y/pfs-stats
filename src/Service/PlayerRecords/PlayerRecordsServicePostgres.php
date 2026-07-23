@@ -96,25 +96,25 @@ class PlayerRecordsServicePostgres implements PlayerRecordsServiceInterface {
         $playerExists = $this->connection->fetchOne(
             'SELECT 1
              FROM (
-                SELECT legacy_player_id AS legacy_id
+                SELECT player_id
                 FROM ranking
                 WHERE organization_id = :organizationId
-                  AND legacy_player_id = :playerId
+                  AND player_id = :playerId
                 UNION ALL
-                SELECT legacy_player_id AS legacy_id
+                SELECT player_id
                 FROM tournament_result
                 WHERE organization_id = :organizationId
-                  AND legacy_player_id = :playerId
+                  AND player_id = :playerId
                 UNION ALL
-                SELECT legacy_player1_id AS legacy_id
+                SELECT player1_id AS player_id
                 FROM tournament_game
                 WHERE organization_id = :organizationId
-                  AND legacy_player1_id = :playerId
+                  AND player1_id = :playerId
                 UNION ALL
-                SELECT legacy_player2_id AS legacy_id
+                SELECT player2_id AS player_id
                 FROM tournament_game
                 WHERE organization_id = :organizationId
-                  AND legacy_player2_id = :playerId
+                  AND player2_id = :playerId
              ) x
              LIMIT 1',
             [
@@ -149,24 +149,24 @@ class PlayerRecordsServicePostgres implements PlayerRecordsServiceInterface {
 
         $rows = $this->connection->fetchAllAssociative(
             "SELECT
-                h.legacy_tournament_id AS tournament_id,
+                h.tournament_id AS tournament_id,
                 t.dt AS tournament_date,
                 COALESCE(t.fullname, t.name) AS tournament_name,
                 h.round_no AS round_no,
                 h.result1 AS own_points,
                 h.result2 AS opponent_points,
-                h.legacy_player2_id AS opponent_id,
+                h.player2_id AS opponent_id,
                 p.name_show AS opponent_name
             FROM tournament_game h
             INNER JOIN tournament t
                 ON t.organization_id = h.organization_id
-               AND t.legacy_id = h.legacy_tournament_id
+               AND t.id = h.tournament_id
             INNER JOIN player p ON p.id = h.player2_id
             WHERE h.organization_id = :organizationId
-              AND h.legacy_player1_id = :playerId
-              AND h.legacy_tournament_id IS NOT NULL
-              AND h.legacy_player2_id IS NOT NULL
-            ORDER BY t.dt ASC, h.legacy_tournament_id ASC, h.round_no ASC, h.legacy_player2_id ASC",
+              AND h.player1_id = :playerId
+              AND h.tournament_id IS NOT NULL
+              AND h.player2_id IS NOT NULL
+            ORDER BY t.dt ASC, h.tournament_id ASC, h.round_no ASC, h.player2_id ASC",
             [
                 'organizationId' => $organizationId,
                 'playerId' => $playerId,
