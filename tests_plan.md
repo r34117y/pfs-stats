@@ -16,7 +16,7 @@ Rules for this plan:
 
 ## Public List Endpoints
 
-- [ ] Test `GET /api/ranking` from a cold cache. Assert `200`, JSON object shape, non-empty `rows` when dev data exists, and public cache headers. Passes with `php bin/phpunit --filter RankingEndpointTest`.
+- [x] Test `GET /api/ranking` from a cold cache. Assert `200`, JSON object shape, non-empty `rows` when dev data exists, and public cache headers. Passes with `php bin/phpunit --filter RankingEndpointTest`.
 - [ ] Test `GET /api/old-rank` from a cold cache. Assert `200`, ranking JSON shape, and public cache headers. Passes with `php bin/phpunit --filter OldRankingEndpointTest`.
 - [ ] Test `GET /api/players` from a cold cache. Assert `200`, list JSON shape, player row identifiers/slugs/names, and public cache headers. Passes with `php bin/phpunit --filter PlayersListEndpointTest`.
 - [ ] Test `GET /api/tournaments` from a cold cache. Assert `200`, tournament list JSON shape, stable required fields, and public cache headers. Passes with `php bin/phpunit --filter TournamentsListEndpointTest`.
