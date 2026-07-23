@@ -23,44 +23,39 @@ final readonly class PlayerListServicePostgres implements PlayerListServiceInter
     public function getPlayers(int $organizationId): PlayersList
     {
         $sql = "WITH mapped AS (
-                    SELECT legacy_player_id, player_id
+                    SELECT player_id
                     FROM ranking
                     WHERE organization_id = :organizationId
-                      AND legacy_player_id IS NOT NULL
                       AND player_id IS NOT NULL
                     UNION
-                    SELECT legacy_player_id, player_id
+                    SELECT player_id
                     FROM tournament_result
                     WHERE organization_id = :organizationId
-                      AND legacy_player_id IS NOT NULL
                       AND player_id IS NOT NULL
                     UNION
-                    SELECT legacy_player_id, player_id
+                    SELECT player_id
                     FROM play_summary
                     WHERE organization_id = :organizationId
-                      AND legacy_player_id IS NOT NULL
                       AND player_id IS NOT NULL
                     UNION
-                    SELECT legacy_player1_id AS legacy_player_id, player1_id AS player_id
+                    SELECT player1_id AS player_id
                     FROM tournament_game
                     WHERE organization_id = :organizationId
-                      AND legacy_player1_id IS NOT NULL
                       AND player1_id IS NOT NULL
                     UNION
-                    SELECT legacy_player2_id AS legacy_player_id, player2_id AS player_id
+                    SELECT player2_id AS player_id
                     FROM tournament_game
                     WHERE organization_id = :organizationId
-                      AND legacy_player2_id IS NOT NULL
                       AND player2_id IS NOT NULL
                 ),
                 mapped_by_player AS (
-                    SELECT player_id, MIN(legacy_player_id) AS legacy_player_id
+                    SELECT player_id, MIN(player_id) AS min_player_id
                     FROM mapped
                     GROUP BY player_id
                 )
                 SELECT
-                    COALESCE(mbp.legacy_player_id, po.player_id) AS id,
-                    mbp.legacy_player_id AS mapped_legacy_player_id,
+                    COALESCE(mbp.player_id, po.player_id) AS id,
+                    mbp.player_id AS mapped_player_id,
                     p.name_show,
                     p.name_alph,
                     p.slug,
@@ -78,8 +73,8 @@ final readonly class PlayerListServicePostgres implements PlayerListServiceInter
         $players = [];
         foreach ($rows as $player) {
             $playerId = (int) $player['id'];
-            if ($player['mapped_legacy_player_id'] === null) {
-                // to są z jakiegoś powodu nazwy klubów. do wyczyszczenia potem
+            if ($player['mapped_player_id'] === null) {
+                // todo to są z jakiegoś powodu nazwy klubów. do wyczyszczenia potem
                 continue;
             }
             $players[] = new PlayersListPlayer(
