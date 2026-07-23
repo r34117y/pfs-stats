@@ -492,8 +492,8 @@ final readonly class TournamentRoundImportService
         }
 
         $playerId = (int) $connection->fetchOne(
-            'INSERT INTO player (name_show, name_alph)
-             VALUES (:nameShow, :nameAlph)
+            'INSERT INTO player (name_show, name_alph, first_name, last_name, slug)
+             VALUES (:nameShow, :nameAlph, :firstName, :lastName, :slug)
              RETURNING id',
             [
                 'nameShow' => $nameShow,
