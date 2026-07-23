@@ -116,15 +116,15 @@ class PlayerRankHistoryServicePostgres implements PlayerRankHistoryServiceInterf
         $playerExists = $this->connection->fetchOne(
             'SELECT 1
              FROM (
-                SELECT legacy_player_id AS legacy_id
+                SELECT player_id
                 FROM ranking
                 WHERE organization_id = :organizationId
-                  AND legacy_player_id = :playerId
+                  AND player_id = :playerId
                 UNION ALL
-                SELECT legacy_player_id AS legacy_id
+                SELECT player_id
                 FROM tournament_result
                 WHERE organization_id = :organizationId
-                  AND legacy_player_id = :playerId
+                  AND player_id = :playerId
              ) x
              LIMIT 1',
             [
@@ -139,9 +139,9 @@ class PlayerRankHistoryServicePostgres implements PlayerRankHistoryServiceInterf
 
         $rows = $this->connection->fetchAllAssociative(
             "SELECT
-                t.legacy_id AS tournament_id,
+                t.id AS tournament_id,
                 CASE
-                    WHEN t.legacy_id IN (:emptyNameTournamentIds) THEN ''
+                    WHEN t.id IN (:emptyNameTournamentIds) THEN ''
                     ELSE COALESCE(t.fullname, t.name)
                 END AS tournament_name,
                 t.dt,
@@ -149,16 +149,16 @@ class PlayerRankHistoryServicePostgres implements PlayerRankHistoryServiceInterf
             FROM tournament_result tw
             INNER JOIN tournament t
                 ON t.organization_id = tw.organization_id
-               AND t.legacy_id = tw.legacy_tournament_id
+               AND t.id = tw.tournament_id
             LEFT JOIN ranking r
                 ON r.organization_id = tw.organization_id
-               AND r.legacy_player_id = tw.legacy_player_id
-               AND r.legacy_tournament_id = tw.legacy_tournament_id
+               AND r.player_id = tw.player_id
+               AND r.tournament_id = tw.tournament_id
                AND r.rtype = 'f'
             WHERE tw.organization_id = :organizationId
-              AND tw.legacy_player_id = :playerId
-              AND t.legacy_id IS NOT NULL
-            ORDER BY t.dt ASC, t.legacy_id ASC",
+              AND tw.player_id = :playerId
+              AND t.id IS NOT NULL
+            ORDER BY t.dt ASC, t.id ASC",
             [
                 'organizationId' => $organizationId,
                 'playerId' => $playerId,
