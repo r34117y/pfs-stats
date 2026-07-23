@@ -11,7 +11,7 @@ Rules for this plan:
 
 - [x] Add `tests/Api/ApiEndpointTestCase.php` with helpers to boot the HTTP client against the dev database, request `/api...` URLs as JSON, decode JSON responses, and clear `cache.app` before each request. Passes when a tiny self-test endpoint request proves the cache-clear helper works without changing the database.
 - [x] Add a read-only dev-data lookup helper for representative IDs and slugs: organization ID, player slug, tournament ID, tournament/player pair, annotated game ID, and an organization-admin user if present. Passes when helper tests can resolve values or skip with a clear PHPUnit skipped reason without writing to the database.
-- [ ] Add an endpoint inventory test that discovers every `new Get(...)` operation under `src/ApiResource`, maps it to its `/api` route, and fails if a GET ApiResource endpoint has no explicit test coverage entry. Passes when the inventory test matches the current ApiResource GET count.
+- [x] Add an endpoint inventory test that discovers every `new Get(...)` operation under `src/ApiResource`, maps it to its `/api` route, and fails if a GET ApiResource endpoint has no explicit test coverage entry. Passes when the inventory test matches the current ApiResource GET count.
 - [ ] Add shared assertions for cache headers on successful public GETs: `Cache-Control` is public with `s-maxage=86400` and `stale-while-revalidate=3600`; profile endpoints remain private/no-store. Passes when used by at least one public and one private endpoint test.
 
 ## Public List Endpoints
