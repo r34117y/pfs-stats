@@ -287,6 +287,37 @@ final readonly class DevDataLookup
     }
 
     /**
+     * @return array{tournamentId:int, playerId:int, playerSlug:string}|null
+     * @throws Exception
+     */
+    public function findTournamentPlayerWithGames(): ?array
+    {
+        $row = $this->connection->fetchAssociative(
+            "SELECT h.tournament_id, p.id AS player_id, p.slug
+             FROM tournament_game h
+             INNER JOIN player p
+                ON p.id = h.player1_id
+             WHERE h.tournament_id IS NOT NULL
+               AND h.player1_id IS NOT NULL
+               AND h.player2_id IS NOT NULL
+               AND p.slug IS NOT NULL
+               AND p.slug <> ''
+             ORDER BY h.tournament_id DESC, h.round_no ASC, p.id ASC
+             LIMIT 1",
+        );
+
+        if ($row === false) {
+            return null;
+        }
+
+        return [
+            'tournamentId' => (int) $row['tournament_id'],
+            'playerId' => (int) $row['player_id'],
+            'playerSlug' => (string) $row['slug'],
+        ];
+    }
+
+    /**
      * Returns the route identifier used by GET /api/games/{id}.
      *
      * @throws Exception

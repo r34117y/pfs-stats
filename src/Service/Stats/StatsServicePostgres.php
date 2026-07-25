@@ -1872,7 +1872,6 @@ ORDER BY
         $rows = $this->fetchAllAssociativeCompat(
             "WITH ranking_rows AS (
                 SELECT
-                    r.tournament_id AS tournamentId,
                     t.id AS tournamentId,
                     t.dt AS tournamentDate,
                     r.player_id AS playerId,
@@ -1890,7 +1889,6 @@ ORDER BY
             ),
             leaders AS (
                 SELECT
-                    rr.tournamentId,
                     rr.tournamentId,
                     rr.tournamentDate,
                     rr.playerId,
