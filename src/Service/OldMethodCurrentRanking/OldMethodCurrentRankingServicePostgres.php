@@ -40,75 +40,121 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
      */
     public function calculateCurrentRanking(): array
     {
+        $currentSnapshot = null;
+        foreach ($this->calculateRankingSnapshots() as $snapshot) {
+            $currentSnapshot = $snapshot;
+        }
+
+        if ($currentSnapshot === null) {
+            return [
+                'referenceTournamentId' => 0,
+                'referenceTournamentName' => '',
+                'referenceDate' => '',
+                'windowStartDate' => '',
+                'rows' => [],
+            ];
+        }
+
+        return [
+            'referenceTournamentId' => $currentSnapshot['referenceTournamentId'],
+            'referenceTournamentName' => $currentSnapshot['referenceTournamentName'],
+            'referenceDate' => $currentSnapshot['referenceDate'],
+            'windowStartDate' => $currentSnapshot['windowStartDate'],
+            'rows' => $currentSnapshot['rows'],
+        ];
+    }
+
+    public function calculateRankingSnapshots(): iterable
+    {
         $organizationId = $this->loadOrganizationId();
+        if ($organizationId === null) {
+            return;
+        }
+
         $referenceTournamentId = $this->loadLatestRankingTournamentId($organizationId);
-        $referenceTournament = $this->loadTournamentById($organizationId, $referenceTournamentId);
-        $referenceDate = DateTimeImmutable::createFromFormat('Ymd', (string) $referenceTournament['dt']);
+        if ($referenceTournamentId === null) {
+            return;
+        }
 
         $playerNames = $this->loadPlayerNames($organizationId);
-
         $historyByPlayer = $this->loadHistoricalTournamentResultsBeforeNewMethod($organizationId);
         $careerStatsByPlayer = $this->buildCareerStatsFromHistory($historyByPlayer);
-
         $snapshotByPlayer = $this->loadOldMethodSnapshotBeforeNewMethod($organizationId);
 
-        $simulatedTournaments = $this->loadTournamentsForSimulation($organizationId, $referenceTournamentId);
-        foreach ($simulatedTournaments as $tournament) {
+        foreach ($this->loadTournamentsForSimulation($organizationId, $referenceTournamentId) as $tournament) {
             $tournamentId = (int) $tournament['id'];
             $tournamentDateInt = (int) $tournament['dt'];
 
             $participants = $this->loadTournamentParticipants($organizationId, $tournamentId);
-            if ($participants === []) {
-                $snapshotByPlayer = $this->rebuildSnapshot($historyByPlayer, $tournamentDateInt, $tournamentId);
-                continue;
-            }
+            if ($participants !== []) {
+                $preTournamentRankByPlayer = [];
+                foreach ($participants as $playerId) {
+                    $preTournamentRankByPlayer[$playerId] = $this->calculateTournamentRankForPlayer(
+                        $playerId,
+                        $snapshotByPlayer,
+                        $historyByPlayer,
+                        $careerStatsByPlayer,
+                    );
+                }
 
-            $preTournamentRankByPlayer = [];
-            foreach ($participants as $playerId) {
-                $preTournamentRankByPlayer[$playerId] = $this->calculateTournamentRankForPlayer(
-                    $playerId,
-                    $snapshotByPlayer,
-                    $historyByPlayer,
-                    $careerStatsByPlayer,
+                $games = $this->loadUniqueTournamentGames($organizationId, $tournamentId);
+                $tournamentPerformance = $this->calculateTournamentPerformance(
+                    $participants,
+                    $games,
+                    $preTournamentRankByPlayer,
                 );
-            }
 
-            $games = $this->loadUniqueTournamentGames($organizationId, $tournamentId);
-            $tournamentPerformance = $this->calculateTournamentPerformance(
-                $participants,
-                $games,
-                $preTournamentRankByPlayer,
-            );
+                foreach ($tournamentPerformance as $playerId => $performance) {
+                    if ($performance['games'] <= 0) {
+                        continue;
+                    }
 
-            foreach ($tournamentPerformance as $playerId => $performance) {
-                if ($performance['games'] <= 0) {
-                    continue;
+                    $achievedRank = $performance['scalps'] / $performance['games'];
+
+                    if (!isset($historyByPlayer[$playerId])) {
+                        $historyByPlayer[$playerId] = [];
+                    }
+
+                    $historyByPlayer[$playerId][] = [
+                        'tournamentId' => $tournamentId,
+                        'dateInt' => $tournamentDateInt,
+                        'games' => $performance['games'],
+                        'achievedRank' => $achievedRank,
+                    ];
+
+                    if (!isset($careerStatsByPlayer[$playerId])) {
+                        $careerStatsByPlayer[$playerId] = ['games' => 0, 'scalps' => 0.0];
+                    }
+
+                    $careerStatsByPlayer[$playerId]['games'] += $performance['games'];
+                    $careerStatsByPlayer[$playerId]['scalps'] += $performance['scalps'];
                 }
-
-                $achievedRank = $performance['scalps'] / $performance['games'];
-
-                if (!isset($historyByPlayer[$playerId])) {
-                    $historyByPlayer[$playerId] = [];
-                }
-
-                $historyByPlayer[$playerId][] = [
-                    'tournamentId' => $tournamentId,
-                    'dateInt' => $tournamentDateInt,
-                    'games' => $performance['games'],
-                    'achievedRank' => $achievedRank,
-                ];
-
-                if (!isset($careerStatsByPlayer[$playerId])) {
-                    $careerStatsByPlayer[$playerId] = ['games' => 0, 'scalps' => 0.0];
-                }
-
-                $careerStatsByPlayer[$playerId]['games'] += $performance['games'];
-                $careerStatsByPlayer[$playerId]['scalps'] += $performance['scalps'];
             }
 
             $snapshotByPlayer = $this->rebuildSnapshot($historyByPlayer, $tournamentDateInt, $tournamentId);
-        }
+            $referenceDate = DateTimeImmutable::createFromFormat('Ymd', (string) $tournamentDateInt);
+            if ($referenceDate === false) {
+                continue;
+            }
 
+            yield [
+                'organizationId' => $organizationId,
+                'referenceTournamentId' => $tournamentId,
+                'referenceTournamentName' => (string) $tournament['name'],
+                'referenceDate' => $referenceDate->format('Y-m-d'),
+                'windowStartDate' => $referenceDate->modify(sprintf('-%d years', self::WINDOW_YEARS))->format('Y-m-d'),
+                'rows' => $this->buildRankingRows($snapshotByPlayer, $playerNames),
+            ];
+        }
+    }
+
+    /**
+     * @param array<int, array{rank: float, games: int, tournaments: int}> $snapshotByPlayer
+     * @param array<int, array{name: string, nameSort: string, photo: mixed, slug: mixed}> $playerNames
+     * @return list<array<string, mixed>>
+     */
+    private function buildRankingRows(array $snapshotByPlayer, array $playerNames): array
+    {
         $rows = [];
         foreach ($snapshotByPlayer as $playerId => $snapshot) {
             $playerName = $playerNames[$playerId]['name'] ?? ('Player #' . $playerId);
@@ -149,15 +195,7 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
             unset($rows[$index]['playerNameSort']);
         }
 
-        $windowStartDate = $referenceDate->modify(sprintf('-%d years', self::WINDOW_YEARS));
-
-        return [
-            'referenceTournamentId' => (int) $referenceTournament['public_id'],
-            'referenceTournamentName' => (string) $referenceTournament['name'],
-            'referenceDate' => $referenceDate->format('Y-m-d'),
-            'windowStartDate' => $windowStartDate->format('Y-m-d'),
-            'rows' => $rows,
-        ];
+        return $rows;
     }
 
     private function loadOrganizationId(): ?int
@@ -231,29 +269,6 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
         }
 
         return (int) $value;
-    }
-
-    /**
-     * @return array{public_id: int|string, dt: int|string, name: string}|null
-     */
-    private function loadTournamentById(int $organizationId, int $tournamentId): ?array
-    {
-        $row = $this->connection->fetchAssociative(
-            "SELECT id AS public_id, dt, COALESCE(fullname, name) AS name
-             FROM tournament
-             WHERE organization_id = :organizationId
-               AND id = :tournamentId",
-            [
-                'organizationId' => $organizationId,
-                'tournamentId' => $tournamentId,
-            ]
-        );
-
-        if ($row === false) {
-            return null;
-        }
-
-        return $row;
     }
 
     /**
