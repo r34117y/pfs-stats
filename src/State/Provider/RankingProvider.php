@@ -23,9 +23,6 @@ final readonly class RankingProvider implements ProviderInterface {
     ) {
     }
 
-    /**
-     * @throws InvalidArgumentException
-     */
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): GetRanking
     {
         $organizationId = $this->resolveOrganizationId($uriVariables, $this->requestStack);
