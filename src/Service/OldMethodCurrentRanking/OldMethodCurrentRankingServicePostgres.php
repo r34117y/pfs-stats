@@ -12,6 +12,7 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
     private const int MAX_GAMES_INCLUDED = 200;
     private const int MIN_TOURNAMENT_RANK = 100;
     private const int NEW_METHOD_START_TOURNAMENT_ID = 9367;
+    private const string OLD_METHOD_RANKING_TYPE = 'n';
     private const string ORGANIZATION_CODE = 'PFS';
 
     public function __construct(
@@ -40,12 +41,8 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
      */
     public function calculateCurrentRanking(): array
     {
-        $currentSnapshot = null;
-        foreach ($this->calculateRankingSnapshots() as $snapshot) {
-            $currentSnapshot = $snapshot;
-        }
-
-        if ($currentSnapshot === null) {
+        $organizationId = $this->loadOrganizationId();
+        if ($organizationId === null) {
             return [
                 'referenceTournamentId' => 0,
                 'referenceTournamentName' => '',
@@ -55,12 +52,30 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
             ];
         }
 
+        $referenceTournamentId = $this->loadLatestStoredOldMethodRankingTournamentId($organizationId);
+        if ($referenceTournamentId === null) {
+            return [
+                'referenceTournamentId' => 0,
+                'referenceTournamentName' => '',
+                'referenceDate' => '',
+                'windowStartDate' => '',
+                'rows' => [],
+            ];
+        }
+
+        $referenceTournament = $this->loadTournamentMeta($organizationId, $referenceTournamentId);
+        $referenceDate = $referenceTournament['dateInt'] !== null
+            ? DateTimeImmutable::createFromFormat('Ymd', (string) $referenceTournament['dateInt'])
+            : false;
+
         return [
-            'referenceTournamentId' => $currentSnapshot['referenceTournamentId'],
-            'referenceTournamentName' => $currentSnapshot['referenceTournamentName'],
-            'referenceDate' => $currentSnapshot['referenceDate'],
-            'windowStartDate' => $currentSnapshot['windowStartDate'],
-            'rows' => $currentSnapshot['rows'],
+            'referenceTournamentId' => $referenceTournamentId,
+            'referenceTournamentName' => $referenceTournament['name'] ?? '',
+            'referenceDate' => $referenceDate !== false ? $referenceDate->format('Y-m-d') : '',
+            'windowStartDate' => $referenceDate !== false
+                ? $referenceDate->modify(sprintf('-%d years', self::WINDOW_YEARS))->format('Y-m-d')
+                : '',
+            'rows' => $this->loadStoredOldMethodRankingRows($organizationId, $referenceTournamentId),
         ];
     }
 
@@ -210,6 +225,102 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
         }
 
         return (int) $value;
+    }
+
+    private function loadLatestStoredOldMethodRankingTournamentId(int $organizationId): ?int
+    {
+        $value = $this->connection->fetchOne(
+            'SELECT MAX(tournament_id)
+             FROM ranking
+             WHERE organization_id = :organizationId
+               AND rtype = :rankingType',
+            [
+                'organizationId' => $organizationId,
+                'rankingType' => self::OLD_METHOD_RANKING_TYPE,
+            ],
+        );
+
+        if ($value === false || $value === null) {
+            return null;
+        }
+
+        return (int) $value;
+    }
+
+    /**
+     * @return array{dateInt:int|null, name:string}
+     */
+    private function loadTournamentMeta(int $organizationId, int $tournamentId): array
+    {
+        $row = $this->connection->fetchAssociative(
+            'SELECT dt, COALESCE(fullname, name) AS name
+             FROM tournament
+             WHERE organization_id = :organizationId
+               AND id = :tournamentId
+             LIMIT 1',
+            [
+                'organizationId' => $organizationId,
+                'tournamentId' => $tournamentId,
+            ],
+        );
+
+        if ($row === false) {
+            return ['dateInt' => null, 'name' => ''];
+        }
+
+        return [
+            'dateInt' => $row['dt'] !== null ? (int) $row['dt'] : null,
+            'name' => is_string($row['name'] ?? null) ? (string) $row['name'] : '',
+        ];
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    private function loadStoredOldMethodRankingRows(int $organizationId, int $tournamentId): array
+    {
+        $rows = $this->connection->fetchAllAssociative(
+            'SELECT
+                r.position,
+                r.player_id,
+                r.rank,
+                r.games,
+                p.name_show,
+                p.name_alph,
+                p.slug,
+                u.photo
+             FROM ranking r
+             INNER JOIN player p ON p.id = r.player_id
+             LEFT JOIN app_user u ON u.player_id = p.id
+             WHERE r.organization_id = :organizationId
+               AND r.tournament_id = :tournamentId
+               AND r.rtype = :rankingType
+               AND r.player_id IS NOT NULL
+             ORDER BY r.position ASC, r.player_id ASC',
+            [
+                'organizationId' => $organizationId,
+                'tournamentId' => $tournamentId,
+                'rankingType' => self::OLD_METHOD_RANKING_TYPE,
+            ],
+        );
+
+        $rankingRows = [];
+        foreach ($rows as $row) {
+            $rankingRows[] = [
+                'position' => (int) $row['position'],
+                'playerId' => (int) $row['player_id'],
+                'playerName' => (string) $row['name_show'],
+                'playerNameAlph' => (string) $row['name_alph'],
+                'rankExact' => (float) $row['rank'],
+                'rankRounded' => (int) round((float) $row['rank'], 0, PHP_ROUND_HALF_UP),
+                'games' => (int) $row['games'],
+                'tournaments' => 0,
+                'photo' => $row['photo'],
+                'slug' => $row['slug'],
+            ];
+        }
+
+        return $rankingRows;
     }
 
     /**

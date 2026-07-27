@@ -10,10 +10,10 @@ use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Cache\CacheInterface;
-use Symfony\Contracts\Cache\ItemInterface;
 
 final readonly class RankingProvider implements ProviderInterface {
     use ResolvesOrganizationIdFromRequestTrait;
+    use ProvidesCachedRankingTrait;
 
     public function __construct(
         #[Autowire(service: 'app.dataset_cache')]
@@ -30,8 +30,12 @@ final readonly class RankingProvider implements ProviderInterface {
     {
         $organizationId = $this->resolveOrganizationId($uriVariables, $this->requestStack);
 
-        return $this->cache->get(sprintf('api.ranking.current.%d', $organizationId), function () use ($organizationId): GetRanking {
-            return $this->rankingService->getRanking($organizationId);
-        });
+        return $this->provideCachedRanking(
+            $this->cache,
+            $this->rankingService,
+            $organizationId,
+            sprintf('api.ranking.current.%d', $organizationId),
+            'f',
+        );
     }
 }

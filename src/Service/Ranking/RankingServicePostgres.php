@@ -21,19 +21,19 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
     /**
      * @throws Exception
      */
-    public function getRanking(int $organizationId): GetRanking
+    public function getRanking(int $organizationId, string $rankingType = 'f'): GetRanking
     {
-        $latestTournamentId = $this->getLatestRankingTournamentId($organizationId);
+        $latestTournamentId = $this->getLatestRankingTournamentId($organizationId, $rankingType);
         if ($latestTournamentId === null) {
             return new GetRanking([]);
         }
 
         $lastTournament = $this->loadTournamentMeta($organizationId, $latestTournamentId);
-        $previousTournamentId = $this->getPreviousRankingTournamentId($organizationId, $latestTournamentId);
+        $previousTournamentId = $this->getPreviousRankingTournamentId($organizationId, $latestTournamentId, $rankingType);
 
-        $latestRanking = $this->rankingSnapshotService->getRankingAfterTournament($organizationId, $latestTournamentId);
+        $latestRanking = $this->rankingSnapshotService->getRankingAfterTournament($organizationId, $latestTournamentId, $rankingType);
         $previousRanking = $previousTournamentId !== null
-            ? $this->rankingSnapshotService->getRankingAfterTournament($organizationId, $previousTournamentId)
+            ? $this->rankingSnapshotService->getRankingAfterTournament($organizationId, $previousTournamentId, $rankingType)
             : [];
 
         $previousRankingByPlayer = [];
@@ -109,14 +109,17 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
     /**
      * @throws Exception
      */
-    private function getLatestRankingTournamentId(int $organizationId): ?int
+    private function getLatestRankingTournamentId(int $organizationId, string $rankingType): ?int
     {
         $value = $this->connection->fetchOne(
             "SELECT MAX(tournament_id)
              FROM ranking
              WHERE organization_id = :organizationId
-               AND rtype = 'f'",
-            ['organizationId' => $organizationId]
+               AND rtype = :rankingType",
+            [
+                'organizationId' => $organizationId,
+                'rankingType' => $rankingType,
+            ]
         );
 
         if ($value === false || $value === null) {
@@ -132,7 +135,7 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
      * versus the latest snapshot; falls back to the immediate previous snapshot.
      * @throws Exception
      */
-    private function getPreviousRankingTournamentId(int $organizationId, int $latestTournamentId): ?int
+    private function getPreviousRankingTournamentId(int $organizationId, int $latestTournamentId, string $rankingType): ?int
     {
         $value = $this->connection->fetchOne(
             "SELECT MAX(previous.tournament_id)
@@ -140,7 +143,7 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
                 SELECT DISTINCT r.tournament_id
                 FROM ranking r
                 WHERE r.organization_id = :organizationId
-                  AND r.rtype = 'f'
+                  AND r.rtype = :rankingType
                   AND r.tournament_id < :latestTournamentId
              ) previous
              WHERE EXISTS (
@@ -149,10 +152,10 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
                 INNER JOIN ranking prev
                     ON prev.organization_id = latest.organization_id
                    AND prev.player_id = latest.player_id
-                   AND prev.rtype = 'f'
+                   AND prev.rtype = :rankingType
                    AND prev.tournament_id = previous.tournament_id
                 WHERE latest.organization_id = :organizationId
-                  AND latest.rtype = 'f'
+                  AND latest.rtype = :rankingType
                   AND latest.tournament_id = :latestTournamentId
                   AND latest.player_id IS NOT NULL
                   AND (latest.position <> prev.position OR latest.rank <> prev.rank)
@@ -160,6 +163,7 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
             [
                 'organizationId' => $organizationId,
                 'latestTournamentId' => $latestTournamentId,
+                'rankingType' => $rankingType,
             ]
         );
 
@@ -171,11 +175,12 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
             "SELECT MAX(tournament_id)
              FROM ranking
              WHERE organization_id = :organizationId
-               AND rtype = 'f'
+               AND rtype = :rankingType
                AND tournament_id < :latestTournamentId",
             [
                 'organizationId' => $organizationId,
                 'latestTournamentId' => $latestTournamentId,
+                'rankingType' => $rankingType,
             ]
         );
 

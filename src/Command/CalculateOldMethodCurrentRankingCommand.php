@@ -27,7 +27,7 @@ final class CalculateOldMethodCurrentRankingCommand extends Command
 
         $result = $this->oldMethodCurrentRankingService->calculateCurrentRanking();
         if ($result['referenceTournamentId'] === 0) {
-            $io->warning('No ranking snapshots found in PFSRANKING (rtype = f).');
+            $io->warning('No saved old-method ranking snapshots found (rtype = n).');
 
             return Command::SUCCESS;
         }

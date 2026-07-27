@@ -18,7 +18,7 @@ final readonly class RankingSnapshotServicePostgres implements RankingSnapshotSe
      * @return list<array{playerId: int, position: int, rank: float, games: int, nameShow: string, nameAlph: string}>
      * @throws Exception
      */
-    public function getRankingAfterTournament(int $organizationId, int $tournamentId): array
+    public function getRankingAfterTournament(int $organizationId, int $tournamentId, string $rankingType = 'f'): array
     {
         $rows = $this->connection->fetchAllAssociative(
             "SELECT
@@ -35,12 +35,13 @@ final readonly class RankingSnapshotServicePostgres implements RankingSnapshotSe
              LEFT JOIN app_user u ON u.player_id = p.id
              WHERE r.organization_id = :organizationId
                AND r.tournament_id = :tournamentId
-               AND r.rtype = 'f'
+               AND r.rtype = :rankingType
                AND r.player_id IS NOT NULL
              ORDER BY r.rank DESC, r.position ASC, r.player_id ASC",
             [
                 'organizationId' => $organizationId,
                 'tournamentId' => $tournamentId,
+                'rankingType' => $rankingType,
             ]
         );
 
