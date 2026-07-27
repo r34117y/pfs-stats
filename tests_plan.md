@@ -50,13 +50,13 @@ Rules for this plan:
 
 ## Protected GET Endpoints
 
-- [ ] Test unauthenticated access for protected GET endpoints: `/api/user/profile/data`, `/api/user/players/manage/data`, `/api/user/tournament-results/add/data`. Assert the configured unauthenticated response without mutating data. Passes with `php bin/phpunit --filter ProtectedGetUnauthenticatedEndpointTest`.
-- [ ] Test authenticated `GET /api/user/profile/data` with an existing dev user from a cold cache or non-cached provider path. Assert `200`, profile JSON shape, and private/no-store cache headers. Passes with `php bin/phpunit --filter UserProfileEndpointTest`.
-- [ ] Test authenticated `GET /api/user/players/manage/data` with an existing organization-admin dev user. Assert `200`, admin context shape, organizations shape, and private/no-store cache headers if covered by `/api/user/profile/` rules or the actual configured headers otherwise. Passes with `php bin/phpunit --filter ManagePlayersDataEndpointTest`.
-- [ ] Test authenticated `GET /api/user/tournament-results/add/data` with an existing organization-admin dev user. Assert `200`, admin context shape, recent imports shape, and private/no-store cache headers if covered by `/api/user/profile/` rules or the actual configured headers otherwise. Passes with `php bin/phpunit --filter AddTournamentResultsDataEndpointTest`.
+- [x] Test unauthenticated access for protected GET endpoints: `/api/user/profile/data`, `/api/user/players/manage/data`, `/api/user/tournament-results/add/data`. Assert the configured unauthenticated response without mutating data. Passes with `php bin/phpunit --filter ProtectedGetUnauthenticatedEndpointTest`.
+- [x] Test authenticated `GET /api/user/profile/data` with an existing dev user from a cold cache or non-cached provider path. Assert `200`, profile JSON shape, and private/no-store cache headers. Passes with `php bin/phpunit --filter UserProfileEndpointTest`.
+- [x] Test authenticated `GET /api/user/players/manage/data` with an existing organization-admin dev user. Assert `200`, admin context shape, organizations shape, and private/no-store cache headers if covered by `/api/user/profile/` rules or the actual configured headers otherwise. Passes with `php bin/phpunit --filter ManagePlayersDataEndpointTest`.
+- [x] Test authenticated `GET /api/user/tournament-results/add/data` with an existing organization-admin dev user. Assert `200`, admin context shape, recent imports shape, and private/no-store cache headers if covered by `/api/user/profile/` rules or the actual configured headers otherwise. Passes with `php bin/phpunit --filter AddTournamentResultsDataEndpointTest`.
 
 ## Error And Coverage Guards
 
-- [ ] Add invalid identifier tests for representative route-variable endpoints: unknown player slug, unknown tournament ID, unknown game ID, and invalid tournament/player summary pair. Assert `404` or the current documented API error shape. Passes with `php bin/phpunit --filter ApiGetNotFoundEndpointTest`.
-- [ ] Add a cache regression test that primes one cacheable endpoint, clears the cache, then requests it again and verifies the response still comes from the provider path and remains valid. Passes with `php bin/phpunit --filter ApiColdCacheRegressionTest`.
-- [ ] Run the full API endpoint suite against the dev database with cache clearing enabled. Passes with `php bin/phpunit tests/Api`.
+- [x] Add invalid identifier tests for representative route-variable endpoints: unknown player slug, unknown tournament ID, unknown game ID, and invalid tournament/player summary pair. Assert `404` or the current documented API error shape. Passes with `php bin/phpunit --filter ApiGetNotFoundEndpointTest`.
+- [x] Add a cache regression test that primes one cacheable endpoint, clears the cache, then requests it again and verifies the response still comes from the provider path and remains valid. Passes with `php bin/phpunit --filter ApiColdCacheRegressionTest`.
+- [x] Run the full API endpoint suite against the dev database with cache clearing enabled. Passes with `php bin/phpunit tests/Api`.
