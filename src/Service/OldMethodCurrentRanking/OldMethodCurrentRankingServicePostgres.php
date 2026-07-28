@@ -91,6 +91,23 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
             return;
         }
 
+        yield from $this->calculateRankingSnapshotsUntilTournament($organizationId, $referenceTournamentId);
+    }
+
+    public function calculateRankingSnapshotAfterTournament(int $organizationId, int $tournamentId): ?array
+    {
+        $snapshotAfterTournament = null;
+        foreach ($this->calculateRankingSnapshotsUntilTournament($organizationId, $tournamentId) as $snapshot) {
+            if ((int) $snapshot['referenceTournamentId'] === $tournamentId) {
+                $snapshotAfterTournament = $snapshot;
+            }
+        }
+
+        return $snapshotAfterTournament;
+    }
+
+    private function calculateRankingSnapshotsUntilTournament(int $organizationId, int $referenceTournamentId): iterable
+    {
         $playerNames = $this->loadPlayerNames($organizationId);
         $historyByPlayer = $this->loadHistoricalTournamentResultsBeforeNewMethod($organizationId);
         $careerStatsByPlayer = $this->buildCareerStatsFromHistory($historyByPlayer);

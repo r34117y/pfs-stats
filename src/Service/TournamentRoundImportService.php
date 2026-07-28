@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\ApiResource\TournamentRound\TournamentRound;
+use App\Service\OldMethodCurrentRanking\OldMethodCurrentRankingServiceInterface;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\DBAL\Connection;
@@ -21,6 +22,7 @@ final readonly class TournamentRoundImportService
         private Connection $connection,
         private PfsNameNormalizer $nameNormalizer,
         private PlayerCatalogService $playerCatalogService,
+        private OldMethodCurrentRankingServiceInterface $oldMethodCurrentRankingService,
     ) {
     }
 
@@ -303,6 +305,19 @@ final readonly class TournamentRoundImportService
                 ]);
             }
 
+            $oldMethodRankingSnapshot = $this->oldMethodCurrentRankingService->calculateRankingSnapshotAfterTournament(
+                (int) $organization['id'],
+                $tournamentId,
+            );
+            if ($oldMethodRankingSnapshot !== null) {
+                $this->insertOldMethodRankingSnapshot(
+                    $connection,
+                    (int) $organization['id'],
+                    $tournamentId,
+                    $oldMethodRankingSnapshot['rows'],
+                );
+            }
+
             $connection->insert("text_resource", [
                 "organization_id" => (int) $organization["id"],
                 "resource_type" => self::AUDIT_RESOURCE_TYPE,
@@ -316,6 +331,39 @@ final readonly class TournamentRoundImportService
 
             return $tournamentId;
         });
+    }
+
+    /**
+     * @param list<array<string, mixed>> $rows
+     */
+    private function insertOldMethodRankingSnapshot(
+        Connection $connection,
+        int $organizationId,
+        int $tournamentId,
+        array $rows,
+    ): void {
+        $connection->executeStatement(
+            "DELETE FROM ranking
+             WHERE organization_id = :organizationId
+               AND tournament_id = :tournamentId
+               AND rtype = 'n'",
+            [
+                'organizationId' => $organizationId,
+                'tournamentId' => $tournamentId,
+            ],
+        );
+
+        foreach ($rows as $row) {
+            $connection->insert('ranking', [
+                'organization_id' => $organizationId,
+                'rtype' => 'n',
+                'player_id' => (int) $row['playerId'],
+                'tournament_id' => $tournamentId,
+                'position' => (int) $row['position'],
+                'rank' => round((float) $row['rankExact'], 2),
+                'games' => (int) $row['games'],
+            ]);
+        }
     }
 
     /**

@@ -88,7 +88,7 @@ final readonly class RefreshCacheAfterImportService
         $paths = [
             '/api/organizations',
             '/api/ranking?org=' . $orgId,
-            '/api/old-rank',
+            '/api/old-rank?org=' . $orgId,
             '/api/players?org=' . $orgId,
             '/api/tournaments?org=' . $orgId,
             '/api/clubs',
