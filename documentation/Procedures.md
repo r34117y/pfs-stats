@@ -2,50 +2,6 @@
 
 Zmienne środowiskowe trzymamy w `.env.local` (te z których korzysta docker muszą być w tym pliku).
 
-# MySQL
-
-- wysyłka na serwer: `scp -r /home/adam/projects/scrabble-stats-api/db_dump/20260219.sql  ubuntu@54.38.54.56:/var/www/pfs-stats/db_dump/`
-- usunąć starą bazę jeśli trzeba:
-  - `mysql -u root -p`
-  - `DROP DATABASE m1126_scrabble;`
-- wgrywanie dumpa
-  - `mysql -u root -p < dump.sql`
-  - wersja z logiem: `mysql -u root -p < dump.sql 2> import.log`
-  - pasek postępu: `pv dump.sql | mysql -u root -p`
-  - po imporcie odswiezyc cache aplikacji:
-    - szybka wersja (tylko invalidacja): `php bin/console app:cache:refresh-after-import`
-    - z warmupem endpointow: `php bin/console app:cache:refresh-after-import --warmup`
-    - opcjonalnie z czyszczeniem poola cache.app: `php bin/console app:cache:refresh-after-import --clear-cache-app --warmup`
-
-Uzycie drugiego polaczenia MySQL (domyslnie aplikacja i migracje sa na PostgreSQL):
-
-```php
-<?php
-
-namespace App\Service;
-
-use Doctrine\DBAL\Connection;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
-
-final class MysqlReader
-{
-    public function __construct(
-        #[Autowire(service: 'doctrine.dbal.mysql_connection')]
-        private readonly Connection $mysqlConnection,
-    ) {
-    }
-
-    public function fetchSampleRows(int $limit = 10): array
-    {
-        return $this->mysqlConnection->fetchAllAssociative(
-            'SELECT * FROM games ORDER BY id DESC LIMIT :limit',
-            ['limit' => $limit],
-            ['limit' => \PDO::PARAM_INT]
-        );
-    }
-}
-```
-
 # Autentykacja (Symfony Security, PostgreSQL `default` connection):
 
 - Encja uzytkownika: `App\Entity\User`

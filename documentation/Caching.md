@@ -11,20 +11,6 @@
    - `doctrine.system_cache_pool` -> `cache.system`
    - `doctrine.result_cache_pool` -> `cache.app` with `default_lifetime: 86400`
 
-## Operational flow after MySQL dump import
-
-Run after each manual dump import:
-
-```bash
-php bin/console app:cache:refresh-after-import --env=prod --warmup
-```
-
-Optional full refresh:
-
-```bash
-php bin/console app:cache:refresh-after-import --env=prod --clear-cache-app --warmup
-```
-
 ## Notes
 
 - Main performance gain comes from endpoint-level cache and HTTP cache.

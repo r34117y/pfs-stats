@@ -15,10 +15,7 @@
   - Provider / Processor - according to ApiPlatform best practices
   - Console Command - use classes provided by Symfony
   - Service - the executor of business logic (should be usable by API Platform state management classes and console commands)
-- There are two database connections in the app: Postgres and MySQL. Always choose the proper one
-  - Users stored in postgres are connected with players stored in mysql through app_user.player_id
-  - Mysql database is readonly - we never want to store anything there
-  - You can use `doctrine:query:sql` for testing created SQL
+- You can use `doctrine:query:sql` for testing created SQL
 - You can execute commands in docker containers to verify that your code works as intended
-  - Containers for this project are prefixed with `scrabble-stats-api-`, for example `scrabble-stats-api-mysql-1`
+  - Containers for this project are prefixed with `scrabble-stats-api-`, for example `scrabble-stats-api-php-1`
   - Credentials can usually be found in `.env` or `.env.local`

@@ -7,8 +7,6 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
-      mysql:
-        condition: service_healthy
       postgres:
         condition: service_healthy
       redis:
@@ -21,7 +19,6 @@ services:
       APP_ENV: dev
       APP_DEBUG: "1"
       DATABASE_URL: postgresql://${POSTGRES_USER:-app}:${POSTGRES_PASSWORD:-app}@postgres:5432/${POSTGRES_DB:-app}?serverVersion=17&charset=utf8
-      DATABASE_URL_MYSQL: mysql://root:${MYSQL_ROOT_PASSWORD:-qwerty}@mysql:3306/${MYSQL_DATABASE:-m1126_scrabble}?serverVersion=8.4.0&charset=utf8mb4
       PHP_IDE_CONFIG: serverName=scrabble-stats-api
       REDIS_URL: redis://redis:6379
 
@@ -38,24 +35,6 @@ services:
       - ./public:/var/www/html/public:ro
       - user_photos_data:/var/www/html/public/uploads/user-photos:ro
       - game_photos_data:/var/www/html/public/uploads/game-photos:ro
-
-  mysql:
-    image: mysql:8.4
-    restart: unless-stopped
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-qwerty}
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-m1126_scrabble}
-    ports:
-      - "3306:3306"
-    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
-    volumes:
-      - mysql_data:/var/lib/mysql
-      - ./db_dump:/db_dump:ro
-    healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u root -p$${MYSQL_ROOT_PASSWORD} --silent"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
 
   postgres:
     image: postgres:17-alpine
@@ -87,7 +66,6 @@ services:
       retries: 10
 
 volumes:
-  mysql_data:
   postgres_data:
   user_photos_data:
   game_photos_data:

@@ -5,8 +5,6 @@ services:
       dockerfile: Dockerfile.prod
     restart: unless-stopped
     depends_on:
-      mysql:
-        condition: service_healthy
       postgres:
         condition: service_healthy
       redis:
@@ -16,7 +14,6 @@ services:
       APP_DEBUG: "0"
       APP_SECRET: ${APP_SECRET:?APP_SECRET is required}
       DATABASE_URL: postgresql://${POSTGRES_USER:-app}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}@postgres:5432/${POSTGRES_DB:-app}?serverVersion=17&charset=utf8
-      DATABASE_URL_MYSQL: mysql://root:${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD is required}@mysql:3306/${MYSQL_DATABASE:-m1126_scrabble}?serverVersion=8.4.0&charset=utf8mb4
       REDIS_URL: redis://redis:6379
     volumes:
       - ./:/var/www/html
@@ -37,23 +34,6 @@ services:
     volumes:
       - user_photos_data:/var/www/html/public/uploads/user-photos:ro
       - game_photos_data:/var/www/html/public/uploads/game-photos:ro
-
-  mysql:
-    image: mysql:8.4
-    restart: unless-stopped
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD is required}
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-m1126_scrabble}
-      MYSQL_USER: ${MYSQL_USER:-root}
-    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
-    volumes:
-      - mysql_data:/var/lib/mysql
-      - ./db_dump:/db_dump:ro
-    healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u root -p$${MYSQL_ROOT_PASSWORD} --silent"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
 
   postgres:
     image: postgres:17-alpine
@@ -85,7 +65,6 @@ services:
       retries: 10
 
 volumes:
-  mysql_data:
   postgres_data:
   symfony_cache_data:
   symfony_log_data:

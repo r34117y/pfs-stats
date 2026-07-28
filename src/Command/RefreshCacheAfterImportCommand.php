@@ -12,7 +12,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'app:cache:refresh-after-import',
-    description: 'Refresh app caches after importing a MySQL dump: clear (optional), bump dataset version, and warmup (optional).',
+    description: 'Refresh app caches: clear (optional), bump dataset version, and warmup (optional).',
 )]
 final class RefreshCacheAfterImportCommand extends Command
 {

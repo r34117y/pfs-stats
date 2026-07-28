@@ -76,7 +76,6 @@ The default deploy script reads:
 `.env.local` must define at least:
 
 - `APP_SECRET`
-- `MYSQL_ROOT_PASSWORD`
 - `POSTGRES_PASSWORD`
 
 Override them only when deploying a different stack:

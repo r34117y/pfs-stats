@@ -19,12 +19,9 @@ Options:
 
 Required values in ENV_FILE (expected by compose.prod.yaml):
   APP_SECRET
-  MYSQL_ROOT_PASSWORD
   POSTGRES_PASSWORD
 
 Optional environment variables:
-  MYSQL_USER
-  MYSQL_DATABASE
   COMPOSE_FILE (default: compose.prod.yaml)
   ENV_FILE (default: .env.local)
 EOF

@@ -12,7 +12,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
     name: 'app:dataset-version:bump',
-    description: 'Bump dataset cache version to invalidate read caches after MySQL dump import.',
+    description: 'Bump dataset cache version to invalidate read caches.',
 )]
 final class BumpDatasetVersionCommand extends Command
 {
@@ -40,7 +40,6 @@ final class BumpDatasetVersionCommand extends Command
         $newVersion = $this->datasetVersionService->bumpVersion($input->getOption('value'));
 
         $io->success(sprintf('Dataset cache version changed: %s -> %s', $currentVersion, $newVersion));
-        $io->writeln('Use this command right after importing a new MySQL dump.');
 
         return Command::SUCCESS;
     }

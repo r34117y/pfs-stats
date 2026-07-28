@@ -11,7 +11,7 @@ final class Version20260309170000 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Create unified PostgreSQL schema for organization-based data model with temporary legacy_* columns for MySQL migration.';
+        return 'Create unified PostgreSQL schema for organization-based data model with temporary legacy_* columns for migration.';
     }
 
     public function up(Schema $schema): void
