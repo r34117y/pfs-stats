@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Command;
 
+use App\Ranking\Domain\RankingType;
 use App\Service\OldMethodCurrentRanking\OldMethodCurrentRankingServiceInterface;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -20,7 +21,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 )]
 final class BackfillOldMethodRankingSnapshotsCommand extends Command
 {
-    private const string RANKING_TYPE = 'n';
+    private const string RANKING_TYPE = RankingType::NORMAL;
 
     public function __construct(
         private readonly OldMethodCurrentRankingServiceInterface $oldMethodCurrentRankingService,

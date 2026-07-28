@@ -2,6 +2,7 @@
 
 namespace App\Service\OldMethodCurrentRanking;
 
+use App\Ranking\Domain\RankingType;
 use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -12,7 +13,7 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
     private const int MAX_GAMES_INCLUDED = 200;
     private const int MIN_TOURNAMENT_RANK = 100;
     private const int NEW_METHOD_START_TOURNAMENT_ID = 9367;
-    private const string OLD_METHOD_RANKING_TYPE = 'n';
+    private const string OLD_METHOD_RANKING_TYPE = RankingType::NORMAL;
     private const string ORGANIZATION_CODE = 'PFS';
 
     public function __construct(
@@ -388,8 +389,11 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
             "SELECT MAX(tournament_id)
              FROM ranking
              WHERE organization_id = :organizationId
-               AND rtype = 'f'",
-            ['organizationId' => $organizationId]
+               AND rtype = :rtype",
+            [
+                'organizationId' => $organizationId,
+                'rtype' => RankingType::FUCKED
+            ]
         );
 
         if ($value === false || $value === null) {
@@ -485,11 +489,12 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
             "SELECT MAX(tournament_id)
              FROM ranking
              WHERE organization_id = :organizationId
-               AND rtype = 'f'
+               AND rtype = :rtype
                AND tournament_id < :newMethodStartTournamentId",
             [
                 'organizationId' => $organizationId,
                 'newMethodStartTournamentId' => self::NEW_METHOD_START_TOURNAMENT_ID,
+                'rtype' => RankingType::FUCKED
             ]
         );
 
@@ -501,12 +506,13 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
             "SELECT player_id AS player, rank, games
              FROM ranking
              WHERE organization_id = :organizationId
-               AND rtype = 'f'
+               AND rtype = :rtype
                AND tournament_id = :tournamentId
                AND player_id IS NOT NULL",
             [
                 'organizationId' => $organizationId,
                 'tournamentId' => (int) $tournamentId,
+                'rtype' => RankingType::FUCKED
             ]
         );
 

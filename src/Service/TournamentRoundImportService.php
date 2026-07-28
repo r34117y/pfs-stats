@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\ApiResource\TournamentRound\TournamentRound;
+use App\Ranking\Domain\RankingType;
 use App\Service\OldMethodCurrentRanking\OldMethodCurrentRankingServiceInterface;
 use DateTimeImmutable;
 use DateTimeInterface;
@@ -85,7 +86,7 @@ final readonly class TournamentRoundImportService
                 $place = $this->requireInt($playerRow, 'place', $context);
                 $firstName = $this->requireString($playerRow, 'firstName', $context);
                 $lastName = $this->requireString($playerRow, 'lastName', $context);
-                $tournamentRank = max(100.0, $this->requireFloat($playerRow, 'tournamentRank', $context));
+                $tournamentRank = $this->requireFloat($playerRow, 'tournamentRank', $context);
                 $fullName = $this->buildPlayerName($firstName, $lastName);
 
                 if (isset($resolvedPlayersByStartingPosition[$startingPosition])) {
@@ -210,7 +211,7 @@ final readonly class TournamentRoundImportService
                     'table_no' => $table,
                     'result1' => $score1,
                     'result2' => $score2,
-                    'ranko' => (int) round($guest['tournamentRank'] ?? 100), // todo
+                    'ranko' => (int) round($guest['tournamentRank'] ?? 100),
                     'host' => 1,
                     'gcg' => null,
                     'gcg_updated_at' => null,
@@ -233,14 +234,8 @@ final readonly class TournamentRoundImportService
             }
 
             foreach ($resolvedPlayersByStartingPosition as $player) {
-                $stats = $perPlayerStats[$player['playerId']] ?? [
-                    'wins' => 0,
-                    'losses' => 0,
-                    'draws' => 0,
-                    'games' => 0,
-                    'hostGames' => 0,
-                    'hostWins' => 0,
-                ];
+                $stats = $perPlayerStats[$player['playerId']] ??
+                    throw new LogicException('Missing stats for player ' . $player['playerId']);
                 $games = $stats['games'];
                 $small = $player['small'];
                 $difference = $player['difference'];
@@ -267,15 +262,12 @@ final readonly class TournamentRoundImportService
 
             $rankingCache = $resolvedPlayersByName;
             foreach ($ranking as $index => $rankingRow) {
-                if (!$rankingRow['main']) {
-                    continue; // todo
-                }
                 $context = sprintf('ranking[%d]', $index);
                 $playerName = $this->requireString($rankingRow, 'player', $context);
                 $rank = $this->requireFloat($rankingRow, 'rank', $context);
                 $games = $this->requireInt($rankingRow, 'games', $context);
                 $position = $this->requireInt($rankingRow, 'lp', $context);
-                $rtype = $this->requireBool($rankingRow, 'main', $context) ? 'f' : 'w';
+                $rtype = $this->requireBool($rankingRow, 'main', $context) ? RankingType::FUCKED : RankingType::FUCKED_WAITING;
 
                 $resolved = $rankingCache[$playerName] ?? null;
                 if ($resolved === null) {
@@ -346,17 +338,18 @@ final readonly class TournamentRoundImportService
             "DELETE FROM ranking
              WHERE organization_id = :organizationId
                AND tournament_id = :tournamentId
-               AND rtype = 'n'",
+               AND rtype = :rtype",
             [
                 'organizationId' => $organizationId,
                 'tournamentId' => $tournamentId,
+                'rtype' => RankingType::NORMAL,
             ],
         );
 
         foreach ($rows as $row) {
             $connection->insert('ranking', [
                 'organization_id' => $organizationId,
-                'rtype' => 'n',
+                'rtype' => RankingType::NORMAL,
                 'player_id' => (int) $row['playerId'],
                 'tournament_id' => $tournamentId,
                 'position' => (int) $row['position'],
@@ -491,9 +484,9 @@ final readonly class TournamentRoundImportService
             $playerName = 'dane ukryte.3';
         }
 
-        if ($playerName === 'Zuzanna Adamczewska') {
+        /*if ($playerName === 'Zuzanna Adamczewska') {
             $playerName = 'Zuzanna Stasiak';
-        }
+        }*/
 
         $exactMatches = array_values(array_filter(
             $catalog,

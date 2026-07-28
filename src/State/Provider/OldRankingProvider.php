@@ -5,6 +5,7 @@ namespace App\State\Provider;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use App\ApiResource\Ranking\GetRanking;
+use App\Ranking\Domain\RankingType;
 use App\Service\Ranking\RankingServiceInterface;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -40,7 +41,7 @@ final readonly class OldRankingProvider implements ProviderInterface
             $tournamentId === null
                 ? sprintf('api.ranking.old.v3.%d', $organizationId)
                 : sprintf('api.ranking.old.v3.%d.tournament.%d', $organizationId, $tournamentId),
-            'n',
+            RankingType::NORMAL,
             $tournamentId,
         );
     }

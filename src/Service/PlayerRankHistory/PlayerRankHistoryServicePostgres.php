@@ -6,6 +6,7 @@ use App\ApiResource\PlayerRankHistory\PlayerRankHistory;
 use App\ApiResource\PlayerRankHistory\PlayerRankHistoryPoint;
 use App\ApiResource\PlayerRankHistory\PlayerRankMilestone;
 use App\ApiResource\PlayerRankHistory\PlayerRankMilestones;
+use App\Ranking\Domain\RankingType;
 use DateTime;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
@@ -154,7 +155,7 @@ class PlayerRankHistoryServicePostgres implements PlayerRankHistoryServiceInterf
                 ON r.organization_id = tw.organization_id
                AND r.player_id = tw.player_id
                AND r.tournament_id = tw.tournament_id
-               AND r.rtype = 'f'
+               AND r.rtype = :rtype
             WHERE tw.organization_id = :organizationId
               AND tw.player_id = :playerId
               AND t.id IS NOT NULL
@@ -163,6 +164,7 @@ class PlayerRankHistoryServicePostgres implements PlayerRankHistoryServiceInterf
                 'organizationId' => $organizationId,
                 'playerId' => $playerId,
                 'emptyNameTournamentIds' => self::EMPTY_NAME_TOURNAMENT_IDS,
+                'rtype' => RankingType::FUCKED
             ]
             ,
             ['emptyNameTournamentIds' => ArrayParameterType::INTEGER]

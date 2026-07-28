@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Api;
 
+use App\Ranking\Domain\RankingType;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 
@@ -56,7 +57,10 @@ final readonly class DevDataLookup
         $count = $this->connection->fetchOne(
             "SELECT COUNT(*)
              FROM ranking
-             WHERE rtype = 'f'",
+             WHERE rtype = :rtype",
+            [
+                'rtype' => RankingType::FUCKED
+            ]
         );
 
         return (int) $count > 0;
@@ -71,10 +75,13 @@ final readonly class DevDataLookup
             "SELECT r.tournament_id
              FROM ranking r
              WHERE r.organization_id = 21
-               AND r.rtype = 'f'
+               AND r.rtype = :rtype
              GROUP BY r.tournament_id
              ORDER BY r.tournament_id ASC
              LIMIT 1",
+            [
+                'rtype' => RankingType::FUCKED
+            ]
         );
 
         return $id === false || $id === null ? null : (int) $id;
@@ -243,11 +250,14 @@ final readonly class DevDataLookup
              INNER JOIN organization o ON o.id = r.organization_id
              INNER JOIN player p ON p.id = r.player_id
              WHERE o.code = 'PFS'
-               AND r.rtype = 'f'
+               AND r.rtype = :rtype
                AND p.slug IS NOT NULL
                AND p.slug <> ''
              ORDER BY r.tournament_id DESC, p.id ASC
              LIMIT 1",
+            [
+                'rtype' => RankingType::FUCKED
+            ]
         );
 
         if ($row === false) {

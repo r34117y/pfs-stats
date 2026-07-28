@@ -84,6 +84,7 @@ use App\ApiResource\Stats\GamesWon;
 use App\ApiResource\Stats\GamesWonRow;
 use App\ApiResource\Stats\TournamentsCount;
 use App\ApiResource\Stats\TournamentsCountRow;
+use App\Ranking\Domain\RankingType;
 use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
@@ -1750,7 +1751,7 @@ ORDER BY
                     MAX(CASE WHEN t.dt >= :last12MonthsDate THEN r.rank ELSE NULL END) AS highestRank12MonthsRaw
                 FROM ranking r
                 INNER JOIN tournament t ON t.id = r.tournament_id
-                WHERE r.rtype = 'f'
+                WHERE r.rtype = :rtype
                   AND r.organization_id = :orgId
                   AND r.player_id IS NOT NULL
                 GROUP BY r.player_id
@@ -1774,6 +1775,7 @@ ORDER BY
                 'orgId' => $orgId,
                 'last24MonthsDate' => $last24MonthsDateInt,
                 'last12MonthsDate' => $last12MonthsDateInt,
+                'rtype' => RankingType::FUCKED
             ]
         );
 
@@ -1812,7 +1814,7 @@ ORDER BY
                 FROM ranking r
                 INNER JOIN tournament t ON t.id = r.tournament_id
                 INNER JOIN player p ON p.id = r.player_id
-                WHERE r.rtype = 'f'
+                WHERE r.rtype = :rtype
                   AND r.organization_id = :orgId
                   AND r.player_id IS NOT NULL
             ),
@@ -1846,6 +1848,7 @@ ORDER BY
                 'orgId' => $orgId,
                 'last24MonthsDate' => $last24MonthsDateInt,
                 'last12MonthsDate' => $last12MonthsDateInt,
+                'rtype' => RankingType::FUCKED
             ]
         );
 
@@ -1883,7 +1886,7 @@ ORDER BY
                 FROM ranking r
                 INNER JOIN tournament t ON t.id = r.tournament_id
                 INNER JOIN player p ON p.id = r.player_id
-                WHERE r.rtype = 'f'
+                WHERE r.rtype = :rtype
                   AND r.organization_id = :orgId
                   AND r.player_id IS NOT NULL
             ),
@@ -1941,7 +1944,10 @@ ORDER BY
                AND tl.id = s.lastTournamentId
             ORDER BY daysOnTop DESC, s.playerName ASC, s.firstTournamentDate ASC, s.firstTournamentId ASC"
             ,
-            ['orgId' => $orgId]
+            [
+                'orgId' => $orgId,
+                'rtype' => RankingType::FUCKED
+            ]
         );
 
         $resultRows = [];
@@ -5791,7 +5797,10 @@ ORDER BY
     private function calculateSummaryMetrics(?int $fromDate, int $orgId): array
     {
         $filterSql = ' WHERE t.organization_id = :orgId';
-        $filterParams = ['orgId' => $orgId];
+        $filterParams = [
+            'orgId' => $orgId,
+            'rtype' => RankingType::FUCKED
+        ];
         if ($fromDate !== null) {
             $filterSql .= ' AND t.dt >= :fromDate ';
             $filterParams['fromDate'] = $fromDate;
@@ -5818,16 +5827,19 @@ ORDER BY
             "SELECT MAX(r.tournament_id)
             FROM ranking r
             INNER JOIN tournament t ON t.id = r.tournament_id"
-            . $filterSql . " AND r.rtype = 'f'",
+            . $filterSql . " AND r.rtype = :rtype",
             $filterParams
         );
 
         $rankingListedPlayers = 0;
         if ($latestRankingTurniej !== false && $latestRankingTurniej !== null) {
-            $qParams = $filterParams + ['tournament' => (int) $latestRankingTurniej];
+            $qParams = $filterParams + [
+                    'tournament' => (int) $latestRankingTurniej,
+                    'rtype' => RankingType::FUCKED
+                ];
             $rankingListedPlayers = (int) $this->connection->fetchOne(
                 "SELECT COUNT(*)
-                FROM ranking r WHERE r.rtype = 'f' AND r.tournament_id = :tournament",
+                FROM ranking r WHERE r.rtype = :rtype AND r.tournament_id = :tournament",
                 $qParams
             );
         }

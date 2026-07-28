@@ -4,6 +4,7 @@ namespace App\Service\PlayerProfile;
 
 use App\ApiResource\PlayerProfile\PlayerProfile;
 use App\ApiResource\PlayerProfile\PlayerProfileTournament;
+use App\Ranking\Domain\RankingType;
 use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
@@ -54,17 +55,18 @@ final readonly class PlayerProfileServicePostgres implements PlayerProfileServic
             "SELECT r.rank, r.position AS pos
             FROM ranking r
             WHERE r.organization_id = :organizationId
-              AND r.rtype = 'f'
+              AND r.rtype = :rtype
               AND r.player_id = :playerId
               AND r.tournament_id = (
                 SELECT MAX(tournament_id)
                 FROM ranking
                 WHERE organization_id = :organizationId
-                  AND rtype = 'f'
+                  AND rtype = :rtype
               )",
             [
                 'organizationId' => $organizationId,
                 'playerId' => $playerId,
+                'rtype' => RankingType::FUCKED,
             ]
         );
 

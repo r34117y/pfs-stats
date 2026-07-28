@@ -4,6 +4,7 @@ namespace App\Service\Ranking;
 
 use App\ApiResource\Ranking\GetRanking;
 use App\ApiResource\Ranking\RankingRow;
+use App\Ranking\Domain\RankingType;
 use App\Service\RankingSnapshot\RankingSnapshotServiceInterface;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
@@ -21,7 +22,7 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
     /**
      * @throws Exception
      */
-    public function getRanking(int $organizationId, string $rankingType = 'f', ?int $tournamentId = null): GetRanking
+    public function getRanking(int $organizationId, string $rankingType = RankingType::FUCKED, ?int $tournamentId = null): GetRanking
     {
         $rankingTournamentId = $tournamentId ?? $this->getLatestRankingTournamentId($organizationId, $rankingType);
         if ($rankingTournamentId === null) {

@@ -2,6 +2,7 @@
 
 namespace App\Service\RankingSnapshot;
 
+use App\Ranking\Domain\RankingType;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -18,7 +19,7 @@ final readonly class RankingSnapshotServicePostgres implements RankingSnapshotSe
      * @return list<array{playerId: int, position: int, rank: float, games: int, nameShow: string, nameAlph: string}>
      * @throws Exception
      */
-    public function getRankingAfterTournament(int $organizationId, int $tournamentId, string $rankingType = 'f'): array
+    public function getRankingAfterTournament(int $organizationId, int $tournamentId, string $rankingType = RankingType::FUCKED): array
     {
         $rows = $this->connection->fetchAllAssociative(
             "SELECT

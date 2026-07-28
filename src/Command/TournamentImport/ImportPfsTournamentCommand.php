@@ -9,12 +9,14 @@ use App\Service\PfsTournamentResultsParser;
 use App\Service\PfsTournamentWebsiteClient;
 use App\Service\RefreshCacheAfterImportLauncher;
 use App\Service\TournamentRoundImportService;
+use RuntimeException;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Throwable;
 
 #[AsCommand(
     name: 'app:pfs:tournaments:import',
@@ -37,7 +39,7 @@ final class ImportPfsTournamentCommand extends Command
     {
         $this
             ->addOption('pfsid', null, InputOption::VALUE_REQUIRED, 'PFS tournament URL id.')
-            ->addOption('year', null, InputOption::VALUE_REQUIRED, 'Calendar year for the tournament.', (string) date('Y'))
+            ->addOption('year', null, InputOption::VALUE_REQUIRED, 'Calendar year for the tournament.', date('Y'))
             ->addOption('no-cache-warmup', null, InputOption::VALUE_NONE, 'Skip launching cache warmup after import.');
     }
 
@@ -69,7 +71,7 @@ final class ImportPfsTournamentCommand extends Command
             if (!$input->getOption('no-cache-warmup')) {
                 $this->refreshCacheAfterImportLauncher->launchWarmup();
             }
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $io->error(sprintf('Could not import PFS tournament: %s', $exception->getMessage()));
 
             return Command::FAILURE;
@@ -106,6 +108,6 @@ final class ImportPfsTournamentCommand extends Command
             }
         }
 
-        throw new \RuntimeException(sprintf('Tournament with PFS id %d was not found in calendar year %d.', $urlId, $year));
+        throw new RuntimeException(sprintf('Tournament with PFS id %d was not found in calendar year %d.', $urlId, $year));
     }
 }
