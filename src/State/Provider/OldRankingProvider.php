@@ -38,8 +38,8 @@ final readonly class OldRankingProvider implements ProviderInterface
             $this->rankingService,
             $organizationId,
             $tournamentId === null
-                ? sprintf('api.ranking.old.v2.%d', $organizationId)
-                : sprintf('api.ranking.old.v2.%d.tournament.%d', $organizationId, $tournamentId),
+                ? sprintf('api.ranking.old.v3.%d', $organizationId)
+                : sprintf('api.ranking.old.v3.%d.tournament.%d', $organizationId, $tournamentId),
             'n',
             $tournamentId,
         );

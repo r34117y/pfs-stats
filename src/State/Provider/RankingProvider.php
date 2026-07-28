@@ -34,8 +34,8 @@ final readonly class RankingProvider implements ProviderInterface {
             $this->rankingService,
             $organizationId,
             $tournamentId === null
-                ? sprintf('api.ranking.current.v2.%d', $organizationId)
-                : sprintf('api.ranking.current.v2.%d.tournament.%d', $organizationId, $tournamentId),
+                ? sprintf('api.ranking.current.v3.%d', $organizationId)
+                : sprintf('api.ranking.current.v3.%d.tournament.%d', $organizationId, $tournamentId),
             'f',
             $tournamentId,
         );
