@@ -21,17 +21,19 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
     /**
      * @throws Exception
      */
-    public function getRanking(int $organizationId, string $rankingType = 'f'): GetRanking
+    public function getRanking(int $organizationId, string $rankingType = 'f', ?int $tournamentId = null): GetRanking
     {
-        $latestTournamentId = $this->getLatestRankingTournamentId($organizationId, $rankingType);
-        if ($latestTournamentId === null) {
+        $rankingTournamentId = $tournamentId ?? $this->getLatestRankingTournamentId($organizationId, $rankingType);
+        if ($rankingTournamentId === null) {
             return new GetRanking([]);
         }
 
-        $lastTournament = $this->loadTournamentMeta($organizationId, $latestTournamentId);
-        $previousTournamentId = $this->getPreviousRankingTournamentId($organizationId, $latestTournamentId, $rankingType);
+        $lastTournament = $this->loadTournamentMeta($organizationId, $rankingTournamentId);
+        $previousTournamentId = $this->getPreviousRankingTournamentId($organizationId, $rankingTournamentId, $rankingType);
+        $previousNavigationTournamentId = $this->getPreviousNavigationTournamentId($organizationId, $rankingTournamentId, $rankingType);
+        $nextNavigationTournamentId = $this->getNextNavigationTournamentId($organizationId, $rankingTournamentId, $rankingType);
 
-        $latestRanking = $this->rankingSnapshotService->getRankingAfterTournament($organizationId, $latestTournamentId, $rankingType);
+        $latestRanking = $this->rankingSnapshotService->getRankingAfterTournament($organizationId, $rankingTournamentId, $rankingType);
         $previousRanking = $previousTournamentId !== null
             ? $this->rankingSnapshotService->getRankingAfterTournament($organizationId, $previousTournamentId, $rankingType)
             : [];
@@ -75,7 +77,13 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
             );
         }
 
-        return new GetRanking($rankingRows, $lastTournament['name'], $lastTournament['id']);
+        return new GetRanking(
+            $rankingRows,
+            $lastTournament['name'],
+            $lastTournament['id'],
+            $previousNavigationTournamentId,
+            $nextNavigationTournamentId,
+        );
     }
 
     /**
@@ -190,6 +198,57 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
 
         return (int) $fallback;
     }
+
+    /**
+     * @throws Exception
+     */
+    private function getPreviousNavigationTournamentId(int $organizationId, int $tournamentId, string $rankingType): ?int
+    {
+        $value = $this->connection->fetchOne(
+            "SELECT MAX(tournament_id)
+             FROM ranking
+             WHERE organization_id = :organizationId
+               AND rtype = :rankingType
+               AND tournament_id < :tournamentId",
+            [
+                'organizationId' => $organizationId,
+                'tournamentId' => $tournamentId,
+                'rankingType' => $rankingType,
+            ]
+        );
+
+        if ($value === false || $value === null) {
+            return null;
+        }
+
+        return (int) $value;
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function getNextNavigationTournamentId(int $organizationId, int $tournamentId, string $rankingType): ?int
+    {
+        $value = $this->connection->fetchOne(
+            "SELECT MIN(tournament_id)
+             FROM ranking
+             WHERE organization_id = :organizationId
+               AND rtype = :rankingType
+               AND tournament_id > :tournamentId",
+            [
+                'organizationId' => $organizationId,
+                'tournamentId' => $tournamentId,
+                'rankingType' => $rankingType,
+            ]
+        );
+
+        if ($value === false || $value === null) {
+            return null;
+        }
+
+        return (int) $value;
+    }
+
     private function formatDecimal(float $value): string
     {
         return number_format($value, 2, '.', '');

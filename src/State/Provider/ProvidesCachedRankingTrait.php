@@ -18,9 +18,10 @@ trait ProvidesCachedRankingTrait
         int $organizationId,
         string $cacheKey,
         string $rankingType,
+        ?int $tournamentId = null,
     ): GetRanking {
-        return $cache->get($cacheKey, function () use ($rankingService, $organizationId, $rankingType): GetRanking {
-            return $rankingService->getRanking($organizationId, $rankingType);
+        return $cache->get($cacheKey, function () use ($rankingService, $organizationId, $rankingType, $tournamentId): GetRanking {
+            return $rankingService->getRanking($organizationId, $rankingType, $tournamentId);
         });
     }
 }

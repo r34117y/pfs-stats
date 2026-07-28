@@ -23,6 +23,8 @@ class GetRanking
         public array $rows,
         public ?string $lastTournamentName = null,
         public ?int $lastTournamentId = null,
+        public ?int $previousTournamentId = null,
+        public ?int $nextTournamentId = null,
     ) {
     }
 }

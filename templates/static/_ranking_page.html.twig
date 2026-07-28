@@ -13,6 +13,24 @@
                 <span x-text="lastTournamentName"></span>
             </template>
         </h6>
+        <div class="ranking-tournament-nav">
+            <button
+                class="button is-small"
+                type="button"
+                @click="goToTournament(previousTournamentId)"
+                :disabled="!previousTournamentId || loading"
+            >
+                Poprzedni turniej
+            </button>
+            <button
+                class="button is-small"
+                type="button"
+                @click="goToTournament(nextTournamentId)"
+                :disabled="!nextTournamentId || loading"
+            >
+                Następny turniej
+            </button>
+        </div>
         {% embed 'static/stats/_search_bar.html.twig' with {organization_fetch_path_prefixes: [ranking_api_endpoint]} %}{% endembed %}
         {% include 'static/_partials/_pagination.html.twig' with {position: 'top'} %}
         <div class="table-responsive">
@@ -87,10 +105,19 @@
             ranking: [],
             lastTournamentName: '',
             lastTournamentId: null,
+            previousTournamentId: null,
+            nextTournamentId: null,
             loading: true,
             async fetchRanking() {
                 try {
-                    let response = await fetch(apiEndpoint);
+                    const requestUrl = new URL(apiEndpoint, window.location.origin);
+                    const currentPageUrl = new URL(window.location.href);
+                    const requestedTournamentId = currentPageUrl.searchParams.get('tournamentId');
+                    if (requestedTournamentId) {
+                        requestUrl.searchParams.set('tournamentId', requestedTournamentId);
+                    }
+
+                    let response = await fetch(requestUrl.toString());
                     if (!response.ok) {
                         throw new Error('Błąd ładowania danych');
                     }
@@ -98,11 +125,22 @@
                     this.ranking = data.rows;
                     this.lastTournamentName = data.lastTournamentName ?? '-';
                     this.lastTournamentId = data.lastTournamentId ?? null;
+                    this.previousTournamentId = data.previousTournamentId ?? null;
+                    this.nextTournamentId = data.nextTournamentId ?? null;
                 } catch (error) {
                     console.error('Błąd:', error);
                 } finally {
                     this.loading = false;
                 }
+            },
+            goToTournament(tournamentId) {
+                if (!tournamentId) {
+                    return;
+                }
+
+                const currentPageUrl = new URL(window.location.href);
+                currentPageUrl.searchParams.set('tournamentId', tournamentId);
+                window.location.assign(currentPageUrl.toString());
             },
             sort(col) {
                 if (this.sortCol === col) this.sortAsc = !this.sortAsc;

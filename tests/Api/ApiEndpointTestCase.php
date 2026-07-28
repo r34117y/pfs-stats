@@ -106,6 +106,12 @@ abstract class ApiEndpointTestCase extends KernelTestCase
         self::assertTrue($data['lastTournamentName'] === null || is_string($data['lastTournamentName']));
         self::assertArrayHasKey('lastTournamentId', $data);
         self::assertTrue($data['lastTournamentId'] === null || is_int($data['lastTournamentId']));
+        if (array_key_exists('previousTournamentId', $data)) {
+            self::assertTrue($data['previousTournamentId'] === null || is_int($data['previousTournamentId']));
+        }
+        if (array_key_exists('nextTournamentId', $data)) {
+            self::assertTrue($data['nextTournamentId'] === null || is_int($data['nextTournamentId']));
+        }
 
         if (!$expectRows) {
             self::assertSame([], $data['rows']);

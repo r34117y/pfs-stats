@@ -65,6 +65,24 @@ final readonly class DevDataLookup
     /**
      * @throws Exception
      */
+    public function findDefaultOrganizationRankingTournamentId(): ?int
+    {
+        $id = $this->connection->fetchOne(
+            "SELECT r.tournament_id
+             FROM ranking r
+             WHERE r.organization_id = 21
+               AND r.rtype = 'f'
+             GROUP BY r.tournament_id
+             ORDER BY r.tournament_id ASC
+             LIMIT 1",
+        );
+
+        return $id === false || $id === null ? null : (int) $id;
+    }
+
+    /**
+     * @throws Exception
+     */
     public function hasDefaultOrganizationPlayerRows(): bool
     {
         $count = $this->connection->fetchOne(
