@@ -45,6 +45,7 @@ Due to the specific nature of this projects (rare updates, heavy computation rel
 ## Rules
 
 - Try to create and use reusable components, but be sure that you don't break anything while introducing DRY
+- The goal is to fully cover the projects with tests - always make sure that tests pass and add or update tests when necessary
 - Use the state-of-the-art modern PHP8:
     - make classes final and readonly whenever it is appropriate
     - make properties readonly whenever it is appropriate
