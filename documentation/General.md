@@ -22,6 +22,14 @@ There are 4 types of PFS ranking types:
 - n - the main old ranking
 - u - the old ranking waiting list
 
+PFS tournament imports store official ranking rows from the tournament ranking
+tab. Rows above the waiting-list heading are imported as `f`; rows below
+`Poczekalnia na dzień` are imported as `w`. For tournaments from "II Wielicki
+Turniej w Scrabble" onward, the import also calculates old-method snapshots:
+main old-method rows are stored as `n`, and below-threshold old-method waiting
+rows are stored as `u`. Reverting the latest PFS tournament import removes all
+ranking rows for the reverted tournament, including `f`, `w`, `n`, and `u`.
+
 ## Club games
 
 Club tournaments occur usually once a week and club admins upload the results manually (an account is required for that).

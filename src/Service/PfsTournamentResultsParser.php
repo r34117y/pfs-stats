@@ -40,7 +40,7 @@ final readonly class PfsTournamentResultsParser
      */
     private function parseRanking(string $html): array
     {
-        $text = $this->extractPreBlockText($html, 'p_ranking');
+        $text = $this->extractFirstPreBlockText($html, ['p_ranking', 'ranking']);
         $lines = preg_split('/\R/u', $text) ?: [];
 
         while ($lines !== []) {
@@ -62,14 +62,16 @@ final readonly class PfsTournamentResultsParser
                 continue;
             }
 
+            if (str_starts_with($trimmed, 'Poczekalnia na dzień')) {
+                $main = false;
+                continue;
+            }
+
             if (!preg_match(
                 '/^\s*(\d+)\s+(.+?)\s+(\d+\.\d{2})\s+(-?\d+)\s+(\d+)$/u',
                 $trimmed,
                 $match
             )) {
-                if (str_starts_with($line, 'Poczekalnia na dzień')) {
-                    $main = false;
-                }
                 continue;
             }
 
@@ -193,18 +195,28 @@ final readonly class PfsTournamentResultsParser
      */
     private function resolveRankingIdentity(string $identityPart): array
     {
-        $chunks = explode("  ", $identityPart);
-        $chunks = array_filter($chunks);
-        $chunks = array_values($chunks);
+        $chunks = preg_split('/\s{2,}/u', trim($identityPart)) ?: [];
+        $chunks = array_values(array_filter($chunks, static fn (string $chunk): bool => $chunk !== ''));
 
-        if (count($chunks) !== 2) {
-            throw new \RuntimeException('Could not resolve ranking identity: ' . $identityPart);
+        if (count($chunks) >= 3) {
+            $city = array_pop($chunks);
+            $surname = array_pop($chunks);
+            $firstName = implode(' ', $chunks);
+
+            return [
+                $this->normalizeInlineWhitespace($firstName . ' ' . $surname),
+                $this->normalizeInlineWhitespace((string) $city),
+            ];
         }
 
-        return [
-            $this->normalizeInlineWhitespace($chunks[0]),
-            $this->normalizeInlineWhitespace($chunks[1]),
-        ];
+        if (count($chunks) === 2) {
+            return [
+                $this->normalizeInlineWhitespace($chunks[0]),
+                $this->normalizeInlineWhitespace($chunks[1]),
+            ];
+        }
+
+        throw new \RuntimeException('Could not resolve ranking identity: ' . $identityPart);
     }
 
     /**
@@ -480,6 +492,21 @@ final readonly class PfsTournamentResultsParser
     private function extractRawResultsText(string $html): string
     {
         return $this->extractPreBlockText($html, 'p_hh');
+    }
+
+    /**
+     * @param list<string> $containerIds
+     */
+    private function extractFirstPreBlockText(string $html, array $containerIds): string
+    {
+        foreach ($containerIds as $containerId) {
+            try {
+                return $this->extractPreBlockText($html, $containerId);
+            } catch (\RuntimeException) {
+            }
+        }
+
+        throw new \RuntimeException(sprintf('Could not find any of these sections in tournament HTML: %s.', implode(', ', $containerIds)));
     }
 
     private function extractPreBlockText(string $html, string $containerId): string

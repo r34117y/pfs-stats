@@ -11,7 +11,7 @@ final readonly class ParsedTournamentRankingRow
         public float $rank,
         public int $scalp,
         public int $games,
-        public bool $main,
+        public bool $main = true,
     ) {
     }
 }

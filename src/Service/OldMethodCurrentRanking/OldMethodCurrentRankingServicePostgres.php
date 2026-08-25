@@ -164,7 +164,8 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
                 }
             }
 
-            $snapshotByPlayer = $this->rebuildSnapshot($historyByPlayer, $tournamentDateInt, $tournamentId);
+            $snapshot = $this->rebuildSnapshot($historyByPlayer, $tournamentDateInt, $tournamentId);
+            $snapshotByPlayer = $snapshot['main'];
             $referenceDate = DateTimeImmutable::createFromFormat('Ymd', (string) $tournamentDateInt);
             if ($referenceDate === false) {
                 continue;
@@ -177,6 +178,7 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
                 'referenceDate' => $referenceDate->format('Y-m-d'),
                 'windowStartDate' => $referenceDate->modify(sprintf('-%d years', self::WINDOW_YEARS))->format('Y-m-d'),
                 'rows' => $this->buildRankingRows($snapshotByPlayer, $playerNames),
+                'waitingRows' => $this->buildRankingRows($snapshot['waiting'], $playerNames),
             ];
         }
     }
@@ -751,18 +753,22 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
 
     /**
      * @param array<int, list<array{tournamentId: int, dateInt: int, games: int, achievedRank: float}>> $historyByPlayer
-     * @return array<int, array{rank: float, games: int, tournaments: int}>
+     * @return array{
+     *   main: array<int, array{rank: float, games: int, tournaments: int}>,
+     *   waiting: array<int, array{rank: float, games: int, tournaments: int}>
+     * }
      */
     private function rebuildSnapshot(array $historyByPlayer, int $currentDateInt, int $currentTournamentId): array
     {
         $currentDate = DateTimeImmutable::createFromFormat('Ymd', (string) $currentDateInt);
         if ($currentDate === false) {
-            return [];
+            return ['main' => [], 'waiting' => []];
         }
 
         $windowStartInt = (int) $currentDate->modify(sprintf('-%d years', self::WINDOW_YEARS))->format('Ymd');
 
-        $snapshot = [];
+        $mainSnapshot = [];
+        $waitingSnapshot = [];
 
         foreach ($historyByPlayer as $playerId => $history) {
             $windowRecords = [];
@@ -805,16 +811,21 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
             }
 
             if ($games < self::MIN_GAMES_FOR_LIST) {
+                $waitingSnapshot[$playerId] = [
+                    'rank' => $scalps / $games,
+                    'games' => $games,
+                    'tournaments' => $tournaments,
+                ];
                 continue;
             }
 
-            $snapshot[$playerId] = [
+            $mainSnapshot[$playerId] = [
                 'rank' => $scalps / $games,
                 'games' => $games,
                 'tournaments' => $tournaments,
             ];
         }
 
-        return $snapshot;
+        return ['main' => $mainSnapshot, 'waiting' => $waitingSnapshot];
     }
 }

@@ -47,10 +47,10 @@ final readonly class TournamentRoundProcessor implements ProcessorInterface
                 throw new UnauthorizedHttpException('Bearer', 'Unauthorized.');
             }
 
-            $tournamentId = $this->tournamentRoundImportService->import($payload);
+            $importResult = $this->tournamentRoundImportService->import($payload);
             $this->refreshCacheAfterImportLauncher->launchWarmup();
 
-            return new TournamentRoundResponse(sprintf('Imported tournament %d.', $tournamentId));
+            return new TournamentRoundResponse(sprintf('Imported tournament %d.', $importResult->tournamentId));
         } catch (\Throwable $exception) {
             $this->tournamentRoundErrorLogger->error('Tournament round request failed.', [
                 'exception_class' => $exception::class,

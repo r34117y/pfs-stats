@@ -196,4 +196,68 @@ HTML;
         self::assertSame(170, $results->players[0]->totalScalp);
         self::assertSame(1, $results->players[0]->roundsPlayed);
     }
+
+    public function testParsesRankingWaitingListRows(): void
+    {
+        $parser = new PfsTournamentResultsParser();
+
+        $html = <<<'HTML'
+<table id='szczegoly'><tr><td>Sędzia</td><td>Test Ref</td></tr></table>
+<div id='p_klasyfikacja'><pre>Wyniki turnieju Test
+
+Lp. Imię            Nazwisko             Miasto               Ranking  Duże pkt Małe pkt Skalpy   Różn. MP
+--- --------------- -------------------- -------------------- -------- -------- -------- -------- --------
+  1 Main            Player               Warszawa              150.00      1.0      350      150        0
+</pre></div>
+<div id='p_rundy'><pre>Wyniki poszczególnych rund turnieju Test
+
+Runda nr  1
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Main           Player                - Wait           Player               350: 300
+</pre></div>
+<div id='p_hh'><pre>Wyniki poszczególnych graczy w turnieju Test
+
+	Main Player 150.00 Warszawa
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Wait Player                         100.00 +  350: 300  150
+                                                          --------------- ---- ------
+                                                                     150 / 1 150.00
+
+	Wait Player 100.00 Kraków
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Main Player                         150.00 -  300: 350   50
+                                                          --------------- ---- ------
+                                                                      50 / 1  50.00
+</pre></div>
+<div id='ranking'><pre>Ranking po turnieju Test
+
+Lp. Imię            Nazwisko             Miasto               Ranking  Skalpy   Gry
+--- --------------- -------------------- -------------------- -------- -------- --------
+  1 Main            Player               Warszawa              150.00      150       30
+
+Poczekalnia na dzień 2026-01-01
+
+Lp. Imię            Nazwisko             Miasto               Ranking  Skalpy   Gry
+--- --------------- -------------------- -------------------- -------- -------- --------
+  1 Wait            Player               Kraków                100.00       50        1
+</pre></div>
+HTML;
+
+        $results = $parser->parse($html);
+
+        self::assertCount(2, $results->ranking);
+        self::assertTrue($results->ranking[0]->main);
+        self::assertSame('Main Player', $results->ranking[0]->playerName);
+        self::assertFalse($results->ranking[1]->main);
+        self::assertSame('Wait Player', $results->ranking[1]->playerName);
+        self::assertSame('Kraków', $results->ranking[1]->city);
+        self::assertSame(100.00, $results->ranking[1]->rank);
+        self::assertSame(1, $results->ranking[1]->games);
+    }
 }

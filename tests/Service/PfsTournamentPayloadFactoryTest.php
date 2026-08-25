@@ -165,4 +165,39 @@ final class PfsTournamentPayloadFactoryTest extends TestCase
             ),
         );
     }
+
+    public function testPreservesWaitingRankingRows(): void
+    {
+        $factory = new PfsTournamentPayloadFactory();
+
+        $payload = $factory->create(
+            new CalendarTournament(
+                urlId: 1,
+                name: 'Test',
+                location: 'City',
+                startDate: new \DateTimeImmutable('2026-01-01'),
+                endDate: new \DateTimeImmutable('2026-01-01'),
+            ),
+            new ParsedTournamentResults(
+                tournamentName: 'Test',
+                details: [],
+                players: [
+                    new ParsedTournamentPlayerResults('Main Player', 150.0, 'City', [], 0, 0, 150.0),
+                ],
+                standings: [
+                    new ParsedTournamentStandingRow(1, 'Main Player', 'City', 150.0, 1.0, 350, 150, 50),
+                ],
+                roundGames: [],
+                ranking: [
+                    new ParsedTournamentRankingRow(1, 'Main Player', 'City', 150.0, 150, 30, true),
+                    new ParsedTournamentRankingRow(1, 'Wait Player', 'Town', 100.0, 50, 1, false),
+                ],
+            ),
+        );
+
+        self::assertTrue($payload->ranking[0]['main']);
+        self::assertFalse($payload->ranking[1]['main']);
+        self::assertSame('Wait Player', $payload->ranking[1]['player']);
+        self::assertSame(1, $payload->ranking[1]['games']);
+    }
 }

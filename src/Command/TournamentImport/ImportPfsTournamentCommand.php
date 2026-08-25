@@ -66,7 +66,7 @@ final class ImportPfsTournamentCommand extends Command
             $html = $this->websiteClient->fetchTournamentHtml($calendarTournament->urlId);
             $parsedResults = $this->resultsParser->parse($html);
             $payload = $this->payloadFactory->create($calendarTournament, $parsedResults);
-            $tournamentId = $this->importService->import($payload);
+            $importResult = $this->importService->import($payload);
 
             if (!$input->getOption('no-cache-warmup')) {
                 $this->refreshCacheAfterImportLauncher->launchWarmup();
@@ -80,17 +80,21 @@ final class ImportPfsTournamentCommand extends Command
         $io->success(sprintf(
             'Imported %s as tournament with id %d.',
             $parsedResults->tournamentName,
-            $tournamentId,
+            $importResult->tournamentId,
         ));
         $io->table(
             ['Metric', 'Value'],
             [
-                ['Tournament id', $tournamentId],
+                ['Tournament id', $importResult->tournamentId],
                 ['PFS id', (string) $calendarTournament->urlId],
                 ['Date', $calendarTournament->startDate->format('Y-m-d')],
                 ['City', $calendarTournament->location],
                 ['Players', (string) count($payload->players)],
                 ['Games', (string) count($payload->results)],
+                ['Ranking rows f', (string) $importResult->rankingRowsInserted('f')],
+                ['Ranking rows w', (string) $importResult->rankingRowsInserted('w')],
+                ['Ranking rows n', (string) $importResult->rankingRowsInserted('n')],
+                ['Ranking rows u', (string) $importResult->rankingRowsInserted('u')],
             ],
         );
 

@@ -17,12 +17,10 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 #[AsCommand(
     name: 'app:ranking:backfill-old-method-snapshots',
-    description: 'Backfill simulated old-method ranking snapshots into ranking rows with rtype = n.',
+    description: 'Backfill simulated old-method ranking snapshots into ranking rows with rtype = n and u.',
 )]
 final class BackfillOldMethodRankingSnapshotsCommand extends Command
 {
-    private const string RANKING_TYPE = RankingType::NORMAL;
-
     public function __construct(
         private readonly OldMethodCurrentRankingServiceInterface $oldMethodCurrentRankingService,
         #[Autowire(service: 'doctrine.dbal.default_connection')]
@@ -42,7 +40,10 @@ final class BackfillOldMethodRankingSnapshotsCommand extends Command
         $dryRun = (bool) $input->getOption('dry-run');
 
         $snapshotCount = 0;
-        $insertedRows = 0;
+        $insertedRows = [
+            RankingType::NORMAL => 0,
+            RankingType::NORMAL_WAITING => 0,
+        ];
         $deletedRows = 0;
         $organizationId = null;
         $firstTournamentId = null;
@@ -62,25 +63,31 @@ final class BackfillOldMethodRankingSnapshotsCommand extends Command
                     $deletedRows = $this->deleteExistingRows($organizationId);
                 }
 
-                foreach ($snapshot['rows'] as $row) {
-                    $this->connection->insert('ranking', [
-                        'organization_id' => $organizationId,
-                        'rtype' => self::RANKING_TYPE,
-                        'player_id' => (int) $row['playerId'],
-                        'tournament_id' => $tournamentId,
-                        'position' => (int) $row['position'],
-                        'rank' => round((float) $row['rankExact'], 2),
-                        'games' => (int) $row['games'],
-                    ]);
+                foreach ([
+                    RankingType::NORMAL => $snapshot['rows'],
+                    RankingType::NORMAL_WAITING => $snapshot['waitingRows'] ?? [],
+                ] as $rankingType => $rows) {
+                    foreach ($rows as $row) {
+                        $this->connection->insert('ranking', [
+                            'organization_id' => $organizationId,
+                            'rtype' => $rankingType,
+                            'player_id' => (int) $row['playerId'],
+                            'tournament_id' => $tournamentId,
+                            'position' => (int) $row['position'],
+                            'rank' => round((float) $row['rankExact'], 2),
+                            'games' => (int) $row['games'],
+                        ]);
 
-                    $insertedRows++;
+                        $insertedRows[$rankingType]++;
+                    }
                 }
 
                 if ($snapshotCount % 25 === 0) {
                     $io->writeln(sprintf(
-                        'Processed %d snapshots, inserted %d rows...',
+                        'Processed %d snapshots, inserted %d main rows and %d waiting rows...',
                         $snapshotCount,
-                        $insertedRows
+                        $insertedRows[RankingType::NORMAL],
+                        $insertedRows[RankingType::NORMAL_WAITING],
                     ));
                 }
             }
@@ -112,9 +119,11 @@ final class BackfillOldMethodRankingSnapshotsCommand extends Command
             ['Metric', 'Value'],
             [
                 ['Organization ID', (string) $organizationId],
-                ['Ranking type', self::RANKING_TYPE],
+                ['Ranking type', RankingType::NORMAL],
+                ['Waiting ranking type', RankingType::NORMAL_WAITING],
                 ['Snapshots', (string) $snapshotCount],
-                ['Inserted ranking rows', (string) $insertedRows],
+                ['Inserted ranking rows', (string) $insertedRows[RankingType::NORMAL]],
+                ['Inserted waiting rows', (string) $insertedRows[RankingType::NORMAL_WAITING]],
                 ['Deleted previous rows', (string) $deletedRows],
                 ['First tournament ID', (string) $firstTournamentId],
                 ['Last tournament ID', (string) $lastTournamentId],
@@ -130,10 +139,13 @@ final class BackfillOldMethodRankingSnapshotsCommand extends Command
     private function deleteExistingRows(int $organizationId): int
     {
         return $this->connection->executeStatement(
-            'DELETE FROM ranking WHERE organization_id = :organizationId AND rtype = :rtype',
+            'DELETE FROM ranking
+             WHERE organization_id = :organizationId
+               AND rtype IN (:normalType, :waitingType)',
             [
                 'organizationId' => $organizationId,
-                'rtype' => self::RANKING_TYPE,
+                'normalType' => RankingType::NORMAL,
+                'waitingType' => RankingType::NORMAL_WAITING,
             ],
         );
     }

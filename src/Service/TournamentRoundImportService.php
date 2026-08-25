@@ -31,7 +31,7 @@ final readonly class TournamentRoundImportService
      * @throws Exception
      * @throws Throwable
      */
-    public function import(TournamentRound $payload): int
+    public function import(TournamentRound $payload): TournamentRoundImportResult
     {
         $tournament = $this->requireArray($payload->tournament, 'tournament');
         $players = $this->requireList($payload->players, 'players');
@@ -74,7 +74,13 @@ final readonly class TournamentRoundImportService
             $startDate,
             $tournamentName,
             $city,
-        ): int {
+        ): TournamentRoundImportResult {
+            $rankingRowsInsertedByType = [
+                RankingType::FUCKED => 0,
+                RankingType::FUCKED_WAITING => 0,
+                RankingType::NORMAL => 0,
+                RankingType::NORMAL_WAITING => 0,
+            ];
             $catalog = $this->playerCatalogService->loadPlayerCatalog((int) $organization['id']);
             $resolvedPlayersByStartingPosition = [];
             $resolvedPlayersByName = [];
@@ -295,6 +301,7 @@ final readonly class TournamentRoundImportService
                     'rank' => round($rank, 2),
                     'games' => $games,
                 ]);
+                $rankingRowsInsertedByType[$rtype]++;
             }
 
             $oldMethodRankingSnapshot = $this->oldMethodCurrentRankingService->calculateRankingSnapshotAfterTournament(
@@ -307,6 +314,8 @@ final readonly class TournamentRoundImportService
                     (int) $organization['id'],
                     $tournamentId,
                     $oldMethodRankingSnapshot['rows'],
+                    $oldMethodRankingSnapshot['waitingRows'] ?? [],
+                    $rankingRowsInsertedByType,
                 );
             }
 
@@ -321,41 +330,52 @@ final readonly class TournamentRoundImportService
                 ], JSON_THROW_ON_ERROR),
             ]);
 
-            return $tournamentId;
+            return new TournamentRoundImportResult($tournamentId, $rankingRowsInsertedByType);
         });
     }
 
     /**
      * @param list<array<string, mixed>> $rows
+     * @param list<array<string, mixed>> $waitingRows
+     * @param array<string, int> $rankingRowsInsertedByType
      */
     private function insertOldMethodRankingSnapshot(
         Connection $connection,
         int $organizationId,
         int $tournamentId,
         array $rows,
+        array $waitingRows,
+        array &$rankingRowsInsertedByType,
     ): void {
         $connection->executeStatement(
             "DELETE FROM ranking
              WHERE organization_id = :organizationId
                AND tournament_id = :tournamentId
-               AND rtype = :rtype",
+               AND rtype IN (:normalType, :waitingType)",
             [
                 'organizationId' => $organizationId,
                 'tournamentId' => $tournamentId,
-                'rtype' => RankingType::NORMAL,
+                'normalType' => RankingType::NORMAL,
+                'waitingType' => RankingType::NORMAL_WAITING,
             ],
         );
 
-        foreach ($rows as $row) {
-            $connection->insert('ranking', [
-                'organization_id' => $organizationId,
-                'rtype' => RankingType::NORMAL,
-                'player_id' => (int) $row['playerId'],
-                'tournament_id' => $tournamentId,
-                'position' => (int) $row['position'],
-                'rank' => round((float) $row['rankExact'], 2),
-                'games' => (int) $row['games'],
-            ]);
+        foreach ([
+            RankingType::NORMAL => $rows,
+            RankingType::NORMAL_WAITING => $waitingRows,
+        ] as $rankingType => $rankingRows) {
+            foreach ($rankingRows as $row) {
+                $connection->insert('ranking', [
+                    'organization_id' => $organizationId,
+                    'rtype' => $rankingType,
+                    'player_id' => (int) $row['playerId'],
+                    'tournament_id' => $tournamentId,
+                    'position' => (int) $row['position'],
+                    'rank' => round((float) $row['rankExact'], 2),
+                    'games' => (int) $row['games'],
+                ]);
+                $rankingRowsInsertedByType[$rankingType]++;
+            }
         }
     }
 
