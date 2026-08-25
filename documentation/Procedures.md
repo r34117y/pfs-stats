@@ -1,15 +1,10 @@
 # Credentials
 
-Zmienne środowiskowe trzymamy w `.env.local` (te z których korzysta docker muszą być w tym pliku).
+ENV Variables are kept in `.env.local`.
 
-# Autentykacja (Symfony Security, PostgreSQL `default` connection):
+## User operations:
 
-- Encja uzytkownika: `App\Entity\User`
-- Tabela auth: `app_user`
-- Logowanie endpoint: `POST /login` (form login, endpoint gotowy; sam formularz niezaimplementowany)
-- Dla zapytan AJAX/API brak sesji zwraca `401` JSON (bez redirecta na `/login`)
-
-## Utworzenie uzytkownika (haslo jest haszowane przez Symfony):
+Create a new user:
 
 ```bash
 php bin/console app:user:create admin@scrabble.local 'Scrabble!2026' \
@@ -17,13 +12,7 @@ php bin/console app:user:create admin@scrabble.local 'Scrabble!2026' \
   --player-id=1
 ```
 
-Tworzenie innego uzytkownika:
-
-```bash
-php bin/console app:user:create user@example.com 'StrongPassword123!' --role=ROLE_USER
-```
-
-Zmiana hasla istniejacego uzytkownika:
+Change user password:
 
 ```bash
 php bin/console app:user:change-password admin@scrabble.local 'NewStrongPassword123!'

@@ -30,40 +30,6 @@ Technical and implementation documentation lives in the `documentation/` directo
 
 Caching details are documented in `documentation/Caching.md`.
 
-## Ranking Calibration Command
-
-`pfs:rank:calibrate-rd` calibrates a Glicko-2 RD threshold against historical 2-year sliding windows.
-
-Example:
-
-```bash
-php bin/console pfs:rank:calibrate-rd \
-  --alpha=0.05 --alpha=0.01 \
-  --early-games=35 --stable-games=120 \
-  --k=50 --step=P1M --window=P2Y
-```
-
-Reports are written to `var/reports/pfs-rd-calibration/<timestamp>/`:
-
-- `report.md`
-- `report.json`
-- `report.html` (optional via `--format=md,json,html`)
-
-## Min-Games Calibration Command
-
-`pfs:rank:calibrate-min-games` calibrates a minimum-game eligibility threshold (`n_min`) by controlling false-leader rates in sliding 2-year windows.
-
-Example:
-
-```bash
-php bin/console pfs:rank:calibrate-min-games \
-  --alpha=0.05 --alpha=0.01 \
-  --n-grid=10..200:5 \
-  --top-k=50 --step=P1M --window=P2Y
-```
-
-Reports are written to `var/reports/pfs-min-games/<timestamp>/`.
-
 ## Local Xdebug
 
 The local `php` container includes Xdebug. Production does not: `Dockerfile.prod` does not install it, while `Dockerfile` does.
