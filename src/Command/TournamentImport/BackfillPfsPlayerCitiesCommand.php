@@ -24,7 +24,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 final class BackfillPfsPlayerCitiesCommand extends Command
 {
     private const string ORGANIZATION_CODE = 'PFS';
-    private const int MAX_REPORT_ROWS = 200;
+    private const int MAX_REPORT_ROWS = 1000;
     private const string FIRST_EMBEDDED_RANKING_FILENAME = '2002-09-14-i-mistrzostwa-lublina-lublin.html';
 
     public function __construct(
