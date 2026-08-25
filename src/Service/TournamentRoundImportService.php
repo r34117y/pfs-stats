@@ -272,7 +272,7 @@ final readonly class TournamentRoundImportService
                 $resolved = $rankingCache[$playerName] ?? null;
                 if ($resolved === null) {
                     $resolvedCatalogPlayer = $this->resolvePlayer($catalog, $playerName);
-                    if ($resolvedCatalogPlayer === null) {
+                    if ($rankingRow['main'] && $resolvedCatalogPlayer === null) {
                         throw new LogicException('Ranking player does not exist in db: ' . $playerName);
                     }
 
@@ -483,10 +483,6 @@ final readonly class TournamentRoundImportService
         if ($playerName === 'Maciej Labe') {
             $playerName = 'dane ukryte.3';
         }
-
-        /*if ($playerName === 'Zuzanna Adamczewska') {
-            $playerName = 'Zuzanna Stasiak';
-        }*/
 
         $exactMatches = array_values(array_filter(
             $catalog,
