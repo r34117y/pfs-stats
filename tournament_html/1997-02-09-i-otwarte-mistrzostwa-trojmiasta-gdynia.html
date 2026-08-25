@@ -1,0 +1,598 @@
+
+<html>
+<head>
+    <title>Polska Federacja Scrabble :: I Otwarte Mistrzostwa Trójmiasta</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="files/img/favicon.ico" />
+    <link rel="stylesheet" href="files/css/style.css" type="text/css" />
+	<link rel="stylesheet" href="files/css/style-index.css" type="text/css" />
+    <!--[if IE]><link rel="stylesheet" type="text/css" href="files/css/styleie.css" /><![endif]-->
+    <!--[if lt IE 7.]><script defer type="text/javascript" src="files/js/pngfix.js"></script><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="files/js/minmax.js"></script><![endif]-->
+    <script type="text/javascript" src="files/js/jquery.js"></script>
+    <script type="text/javascript" src="files/js/jquery-bp.js"></script>
+    <script type="text/javascript" src="files/js/java.js"></script>
+    <script>jSubmenu ("turnieje","kalendarz");jKalendarz();</script>
+    <script>
+    var url, page;
+
+    page = 'info';
+    url  = document.location.toString();
+
+    if (url.match ('#')) {
+      page = url.split ('#')[1];
+      if ($.inArray (page, [ 'info', 'relacja', 'klasyfikacja', 'hh', 'rundy', 'ranking', 'przebieg' ]) == -1)
+        page = 'info';
+    }
+
+    $(document).ready(function(){
+        $('a#listaucz').bind('click', function(event){
+            $('div#lista').toggle();
+            event.preventDefault();
+        }).toggle(function() { $(this).text('schowaj listę uczestników'); }, function() { $(this).text("pokaż listę uczestników"); });
+        $('div#lista table tr:last td').css({"border-bottom" : "none"});
+
+        $("a.przycisk").click (function (e) {
+            if ($(this).attr ('href') !== '#')
+                return true;
+
+            e.preventDefault ();
+
+            id       = this.id;
+            this.id += 'tmp';
+            window.location.hash = id;
+            this.id  = id;
+
+            $(".page").hide ();
+            $(".page#p_" + id).show ();
+
+            $("a.przycisk").removeClass ('active');
+            $(this).addClass ('active');
+
+            return false;
+        });
+
+        $("a.przycisk#" + page).click ();
+        $('html, body').animate ({ scrollTop: 0 }, 0);
+    });
+    </script>
+  <style type="text/css">
+    .page {
+        display: none;
+    }
+    #szczegoly{
+        width: 100%;
+        border-spacing: 0;
+        margin-top: 30px;
+        text-align: left;
+        font-size: inherit;
+    }
+    #szczegoly td{
+        padding: 10px 20px 10px 0;
+        vertical-align: top;
+    }
+    #szczegoly td:first-child{
+        font-weight: bold;
+        width: 160px;
+    }
+    div#lista{
+        display:none;
+        margin-top: 15px;
+    }
+    div#lista table{
+        margin-top: 10px;
+        text-align: left;
+        font-size: inherit;
+    }
+    div#lista table td{
+        padding: 3px 8px;
+        border-bottom: 1px dashed #1576AE;
+    }
+    div#lista table th{
+        padding: 0px 5px 10px 5px;
+    }
+    div#lista table td.ptaszek{
+        text-align: center;
+        background: url('files/img/tick.png') no-repeat center center;
+    }
+    div#lista table th{
+        white-space: nowrap;
+        width: auto;
+    }
+    div#lista table td:first-child, div#lista table th:first-child{
+        text-align:right;
+        width: auto;
+    }
+    </style>
+</head>
+
+<body>
+
+<script type="text/javascript">setMenu();</script>
+
+<div id="top" onclick="location.href='https://www.pfs.org.pl'">
+</div>
+<div id="menu">
+
+    <div id="m_glowna">
+        <div class="tab"><a href="https://www.pfs.org.pl/index.php"></a></div>
+
+        <ul>
+            <li class="sublink" id="aktualnosci"><a href="https://www.pfs.org.pl">Aktualności</a></li>
+            <li class="sublink" id="nowy"><a href="https://www.pfs.org.pl/dlanowych.php">Jestem tu nowy</a></li>
+            <li class="sublink" id="anagramator"><a href="https://www.pfs.org.pl/osps_online.php?main=1">Słownik online</a></li>
+            <li class="sublink" id="siodemka"><a href="https://www.pfs.org.pl/siodemka.php?main=1">Siódemka tygodnia</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+            <li class="sublink" id="dlasponsorow"><a href="https://www.pfs.org.pl/dlasponsorow.php">Dla sponsorów</a></li>
+            <li class="sublink" id="kontakt"><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+        </ul>
+    </div>
+    <div id="m_turnieje">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kalendarz.php"></a></div>
+        <ul>
+            <li class="sublink" id="kalendarz"><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+            <li class="sublink" id="regulaminy"><a href="https://www.pfs.org.pl/regulaminy.php">Regulaminy</a></li>
+            <li class="sublink" id="sedziowie"><a href="https://www.pfs.org.pl/sedziowie.php">Sędziowie</a></li>
+            <li class="sublink" id="gp"><a href="https://www.pfs.org.pl/gp2026.php">Grand Prix</a></li>
+<!--            <li class="sublink" id="mr"><a href="https://www.pfs.org.pl/mr2020.php">Mistrzostwa Regionów</a></li>-->
+            <li class="sublink" id="archiwum"><a href="https://www.pfs.org.pl/archiwum.php">Historia</a></li>
+            <li class="sublink" id="galeria"><a href="https://www.pfs.org.pl/galeria.php">Zdjęcia</a></li>
+            <li class="sublink" id="rekordy"><a href="https://www.pfs.org.pl/rekordy.php">Rekordy</a></li>
+        </ul>
+    </div>
+    <div id="m_pfs">
+        <div  class="tab"><a href="https://www.pfs.org.pl/opfs.php"></a></div>
+        <ul>
+            <li class="sublink" id="opfs"><a href="https://www.pfs.org.pl/opfs.php">O PFS</a></li>
+            <li class="sublink" id="jakprzystapic"><a href="https://www.pfs.org.pl/jakprzystapic.php">Jak przystąpić</a></li>
+            <li class="sublink" id="dlaczlonkow"><a href="https://www.pfs.org.pl/dlaczlonkow.php">Dla członków</a></li>
+            <li class="sublink" id="wladze"><a href="https://www.pfs.org.pl/wladze.php">Władze</a></li>
+            <li class="sublink" id="komisje"><a href="https://www.pfs.org.pl/komisje.php">Komisje</a></li>
+            <li class="sublink" id="statut"><a href="https://www.pfs.org.pl/statut.php">Statut</a></li>
+            <li class="sublink" id="uchwaly"><a href="https://www.pfs.org.pl/uchwaly.php">Uchwały</a></li>
+            <li class="sublink" id="honorowi"><a href="https://www.pfs.org.pl/honorowi.php">Honorowi członkowie</a></li>
+            <li class="sublink" id="finanse"><a href="https://www.pfs.org.pl/finanse.php">Finanse</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabble">
+        <div  class="tab"><a href="https://www.pfs.org.pl/osps_online.php?desktop=1"></a></div>
+        <ul>
+            <li class="sublink" id="osps_online"><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+            <li class="sublink" id="zds"><a href="https://www.pfs.org.pl/zds2.php">ZDS</a></li>
+            <li class="sublink" id="osps"><a href="https://www.pfs.org.pl/osps.php">OSPS</a></li>
+            <li class="sublink" id="aktualizacje"><a href="https://www.pfs.org.pl/osps_aktualizacje.php">Aktualizacje</a></li>
+            <li class="sublink" id="dwojki"><a href="https://www.pfs.org.pl/dwojki.php">2-literówki</a></li>
+            <li class="sublink" id="trojki"><a href="https://www.pfs.org.pl/trojki.php">3-literówki</a></li>
+            <li class="sublink" id="siodemkat"><a href="https://www.pfs.org.pl/siodemka.php">Siódemka tygodnia</a></li>
+            <li class="sublink" id="slowneroznosci"><a href="https://www.pfs.org.pl/slowneroznosci.php">Słowne różności</a></li>
+        </ul>
+    </div>
+    <div id="m_ranking">
+        <div  class="tab"><a href="https://www.pfs.org.pl/ranking.php"></a></div>
+        <ul>
+            <li class="sublink" id="aktranking"><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+            <li class="sublink" id="medale"><a href="https://www.pfs.org.pl/medale.php">Klasyfikacja medalowa</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabblisci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/mistrzowiepolski.php"></a></div>
+        <ul>
+            <li class="sublink" id="mistrzowiepolski"><a href="https://www.pfs.org.pl/mistrzowiepolski.php">Mistrzowie Polski</a></li>
+            <li class="sublink" id="zdobywcypp"><a href="https://www.pfs.org.pl/zdobywcypp.php">Zdobywcy Pucharu Polski</a></li>
+            <li class="sublink" id="zwyciezcygp"><a href="https://www.pfs.org.pl/zwyciezcygp.php">Zwycięzcy Grand Prix</a></li>
+            <li class="sublink" id="liderzyrankingu"><a href="https://www.pfs.org.pl/liderzyrankingu.php">Liderzy rankingu</a></li>
+            <li class="sublink" id="zwyciezcylemans"><a href="https://www.pfs.org.pl/zwyciezcylemans.php">Zwycięzcy 24h Le Mans</a></li>
+            <li class="sublink" id="zwyciezcykmp"><a href="https://www.pfs.org.pl/zwyciezcykmp.php">KMP</a>
+        </ul>
+    </div>
+    <div id="m_kluby">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kluby.php"></a></div>
+        <ul>
+            <li class="sublink" id="rejestrklubow"><a href="https://www.pfs.org.pl/kluby.php">Rejestr klubów</a></li>
+            <li class="sublink" id="kmp"><a href="https://www.pfs.org.pl/kmp.php">KMP</a></li>
+            <li class="sublink" id="wiescizklubow"><a href="https://www.pfs.org.pl/wiescizklubow.php">Wieści z klubów</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/about.php">Statystyki klubowe</a></li>
+        </ul>
+    </div>
+    <div id="m_roznosci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/historia.php"></a></div>
+        <ul>
+            <li class="sublink" id="historia"><a href="https://www.pfs.org.pl/historia.php">Historia</a></li>
+            <li class="sublink" id="odmiany"><a href="https://www.pfs.org.pl/odmiany.php">Odmiany</a></li>
+            <li class="sublink" id="anegdoty"><a href="https://www.pfs.org.pl/anegdoty.php">Anegdoty</a></li>
+            <li class="sublink" id="scrabblealia"><a href="https://www.pfs.org.pl/scrabblealia.php">Scrabblealia</a></li>
+            <li class="sublink" id="scrabblenet"><a href="https://www.pfs.org.pl/scrabblenet.php">Scrabble w internecie</a></li>
+            <li class="sublink" id="programy"><a href="https://www.pfs.org.pl/programy.php">Programy</a></li>
+            <li class="sublink" id="download"><a href="https://www.pfs.org.pl/download.php">Do pobrania</a></li>
+            <li class="sublink" id="ksiazki"><a href="https://www.pfs.org.pl/ksiazki.php">Książki</a></li>
+            <li class="sublink" id="slowniczek"><a href="https://www.pfs.org.pl/slowniczek.php">Słowniczek</a></li>
+        </ul>
+    </div>
+    <div id="m_english">
+        <div  class="tab"><a href="https://www.pfs.org.pl/english.php"></a></div>
+        <ul>
+            <li class="sublink" id="about"><a href="https://www.pfs.org.pl/english.php">About Polish Scrabble</a></li>
+            <li class="sublink" id="news"><a href="https://www.pfs.org.pl/en_news.php">News</a></li>
+            <li class="sublink" id="bartek"><a href="https://www.pfs.org.pl/bartek.php">Bartek w Johor Bahru</a></li>
+            <li class="sublink" id="franko"><a href="https://www.pfs.org.pl/franko.php">Scrabble frankofońskie</a></li>
+        </ul>
+    </div>
+</div>
+
+<div id="submenu"></div>
+<div id="content">
+<div id='nextTours'>
+		<div class='nextTour' onclick='location.href="turniej.php?id=415"'>
+			<div class='karteczka small1'>
+				<span class='miasto'>Włocławek</span><span class='dzien'><span class='big'> 2</span><br />lutego</span></div>
+			<div class='kartka big1'>
+				<span class='miasto'>Włocławek</span>
+				<span class='dzien'><b> 2 lutego</b></span>
+				<span class='nazwaturnieju'>I Otwarte Mistrzostwa Kujaw</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=414"'>
+			<div class='karteczka small2'>
+				<span class='miasto'>Gdynia</span><span class='dzien'><span class='big'> 9</span><br />lutego</span></div>
+			<div class='kartka big2'>
+				<span class='miasto'>Gdynia</span>
+				<span class='dzien'><b> 9 lutego</b></span>
+				<span class='nazwaturnieju'>I Otwarte Mistrzostwa Trójmiasta</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=413"'>
+			<div class='karteczka small3'>
+				<span class='miasto'>Białystok</span><span class='dzien'><span class='big'>16</span><br />lutego</span></div>
+			<div class='kartka big3'>
+				<span class='miasto'>Białystok</span>
+				<span class='dzien'><b>16 lutego</b></span>
+				<span class='nazwaturnieju'>I Otwarte Mistrzostwa Białegostoku</span></div>
+		</div></div><div class='naglowekrelacji'><span class='tytul'>I Otwarte Mistrzostwa Trójmiasta<span class='nazwa'>09 lutego 1997 —  I Otwarte Mistrzostwa Trójmiasta</span></span><a href='#' id='info' class='przycisk'>Informacje</a><a href='#' id='relacja' class='przycisk'>Relacja</a><a href='#' id='klasyfikacja' class='przycisk'>Wyniki</a><a href='#' id='hh' class='przycisk'>HH</a><div class='galleries'><img src='files/img/gallery.png' style='visibility:hidden;' alt='galeria' /></div></div><h1 style='color:black; margin-top:0px; margin-bottom:30px; padding: 0px'>I Otwarte Mistrzostwa Trójmiasta<span>Gdynia, 09 lutego 1997</span></h1><div id='p_relacja' class='page'><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><div class='relacja' style='clear:both;'><div><pre>
+ 1. Tomasz Zwoliński (Warszawa)
+ 2. Andrzej Szmidtke (Bolszewo)
+ 3. Mariusz Kubicki (Inowrocław)
+ 4. Andrzej Stankiewicz (Gdańsk)
+ 5. Zbigniew Bartold (Gdynia)
+ 6. Paweł Graczykowski (Łódź)
+ 7. Paweł Subocz (Szczecin)
+ 8. Bogusław Wróbel (Łódź)
+ 9. Agnieszka Kozak (Gdynia)
+ 10. Katarzyna Molenda-Kass (Gdańsk) 
+
+17 uczestników, 5 rund
+</pre></div><div class='autor'></div></div><div style='clear:both;'></div></div><div id='p_info' class='page'><br><p align='center'></p><br><br><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><table id='szczegoly' class='ramkadolna'></table><br /><br /></div><div id='p_klasyfikacja' class='page'><pre>Wyniki turnieju I Otwarte Mistrzostwa Trójmiasta
+
+Lp. Imię            Nazwisko             Miasto               Ranking  Duże pkt Małe pkt Skalpy   Różn. MP
+--- --------------- -------------------- -------------------- -------- -------- -------- -------- --------
+  1 Tomasz          Zwoliński            Skierdy                133.00      5.0     2193      753     1018
+  2 Andrzej         Szmidtke             Bolszewo               100.00      4.0     1649      619      270
+  3 Mariusz         Kubicki              Inowrocław             109.00      3.0     1758      561      348
+  4 Andrzej         Stankiewicz          Gdańsk                 100.00      3.0     1683      574       59
+  5 Zbigniew        Bartold              Gdynia                 100.00      3.0     1616      586       31
+  6 Paweł           Graczykowski         Łódź                   111.00      3.0     1580      533      113
+  7 Paweł           Subocz               Szczecin                94.00      3.0     1507      571      -30
+  8 Bogusław        Wróbel               Łódź                    85.00      3.0     1500      549      -26
+  9 Agnieszka       Kozak                Gdynia                 100.00      3.0     1385      542      146
+ 10 Katarzyna       Molenda-Kass         Gdańsk                  98.00      2.0     1511      455       46
+ 11 Tatiana         Łubniewicz           Łódź                    94.00      2.0     1493      427       17
+ 12 Anna            Kozłowska-Zygmunt    ?                      100.00      2.0     1421      445     -103
+ 13 Barbara         Graczykowska         Łódź                    84.00      2.0     1412      459     -184
+ 14 Szymon          Jachimek             Gdynia                 100.00      2.0     1409      428       34
+ 15 Michał          Derlacki             Warszawa               128.00      2.0      817      300      423
+ 16 Michał          Czajewski            Gdańsk                 100.00      1.0     1270      335     -178
+ 17 Zbigniew        Kozak                Gdynia                 100.00      1.0     1233      387     -416
+ 18 Natalia         Kojro                ?                      100.00      1.0      823      261       87
+ 19 Antoni          Kojro                ?                      100.00      0.0      632      311    -1655
+</pre></div><div id='p_hh' class='page'><pre>Wyniki poszczególnych graczy w turnieju I Otwarte Mistrzostwa Trójmiasta
+
+
+
+	Tomasz Zwoliński 133.00 Skierdy         
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Antoni         Kojro                 100.00 +  717:  33  150
+    2     1 Mariusz        Kubicki               109.00 +  402: 294  159
+    3     1 Andrzej        Stankiewicz           100.00 +  334: 306  150
+    4     1 Paweł          Subocz                 94.00 +  377: 250  144
+    5     1 Zbigniew       Bartold               100.00 +  363: 292  150
+                                                          --------------- ---- ------
+                                                                     753  /  5 150.60
+
+
+
+
+	Michał Derlacki 128.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    4     9 Antoni         Kojro                 100.00 +  435: 161  150
+    5     9 Zbigniew       Kozak                 100.00 +  382: 233  150
+                                                          --------------- ---- ------
+                                                                     300  /  2 150.00
+
+
+
+
+	Paweł Graczykowski 111.00 Łódź                     
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Anna           Kozłowska-Zygmunt     100.00 +  311: 275  150
+    2     3 Bogusław       Wróbel                 85.00 -  301: 348   35
+    3     5 Natalia        Kojro                 100.00 +  354: 221  150
+    4     3 Zbigniew       Bartold               100.00 -  326: 353   50
+    5     4 Katarzyna      Molenda-Kass           98.00 +  288: 270  148
+                                                          --------------- ---- ------
+                                                                     533  /  5 106.60
+
+
+
+
+	Mariusz Kubicki 109.00 Inowrocław               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Zbigniew       Kozak                 100.00 +  404: 173  150
+    2     1 Tomasz         Zwoliński             133.00 -  294: 402   83
+    3     3 Barbara        Graczykowska           84.00 +  446: 211  134
+    4     2 Andrzej        Stankiewicz           100.00 -  268: 328   50
+    5     3 Paweł          Subocz                 94.00 +  346: 296  144
+                                                          --------------- ---- ------
+                                                                     561  /  5 112.20
+
+
+
+
+	Zbigniew Bartold 100.00 Gdynia                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Tatiana        Łubniewicz             94.00 -  219: 269   44
+    2     7 Anna           Kozłowska-Zygmunt     100.00 +  445: 335  150
+    3     4 Katarzyna      Molenda-Kass           98.00 +  307: 292  148
+    4     3 Paweł          Graczykowski          111.00 +  353: 326  161
+    5     1 Tomasz         Zwoliński             133.00 -  292: 363   83
+                                                          --------------- ---- ------
+                                                                     586  /  5 117.20
+
+
+
+
+	Michał Czajewski 100.00 Gdańsk                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Bogusław       Wróbel                 85.00 -  296: 309   35
+    2     6 Szymon         Jachimek              100.00 +  274: 241  150
+    3     6 Andrzej        Szmidtke              100.00 -  241: 355   50
+    4     7 Agnieszka      Kozak                 100.00 -  228: 257   50
+    5     7 Anna           Kozłowska-Zygmunt     100.00 -  231: 286   50
+                                                          --------------- ---- ------
+                                                                     335  /  5  67.00
+
+
+
+
+	Szymon Jachimek 100.00 Gdynia                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Paweł          Subocz                 94.00 -  280: 287   44
+    2     6 Michał         Czajewski             100.00 -  241: 274   50
+    3     8 Anna           Kozłowska-Zygmunt     100.00 -  263: 268   50
+    4     8 Zbigniew       Kozak                 100.00 +  346: 289  150
+    5     6 Barbara        Graczykowska           84.00 +  279: 257  134
+                                                          --------------- ---- ------
+                                                                     428  /  5  85.60
+
+
+
+
+	Antoni Kojro 100.00 ?                        
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Tomasz         Zwoliński             133.00 -   33: 717   83
+    2     9 Natalia        Kojro                 100.00 -  121: 437   50
+    3     9 Zbigniew       Kozak                 100.00 -  115: 341   50
+    4     9 Michał         Derlacki              128.00 -  161: 435   78
+    5     8 Agnieszka      Kozak                 100.00 -  202: 357   50
+                                                          --------------- ---- ------
+                                                                     311  /  5  62.20
+
+
+
+
+	Natalia Kojro 100.00 ?                        
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Agnieszka      Kozak                 100.00 -  165: 261   50
+    2     9 Antoni         Kojro                 100.00 +  437: 121  150
+    3     5 Paweł          Graczykowski          111.00 -  221: 354   61
+                                                          --------------- ---- ------
+                                                                     261  /  3  87.00
+
+
+
+
+	Agnieszka Kozak 100.00 Gdynia                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Natalia        Kojro                 100.00 +  261: 165  150
+    2     5 Katarzyna      Molenda-Kass           98.00 -  239: 335   48
+    3     7 Tatiana        Łubniewicz             94.00 -  271: 309   44
+    4     7 Michał         Czajewski             100.00 +  257: 228  150
+    5     8 Antoni         Kojro                 100.00 +  357: 202  150
+                                                          --------------- ---- ------
+                                                                     542  /  5 108.40
+
+
+
+
+	Zbigniew Kozak 100.00 Gdynia                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Mariusz        Kubicki               109.00 -  173: 404   59
+    2     8 Andrzej        Szmidtke              100.00 -  197: 402   50
+    3     9 Antoni         Kojro                 100.00 +  341: 115  150
+    4     8 Szymon         Jachimek              100.00 -  289: 346   50
+    5     9 Michał         Derlacki              128.00 -  233: 382   78
+                                                          --------------- ---- ------
+                                                                     387  /  5  77.40
+
+
+
+
+	Anna Kozłowska-Zygmunt 100.00 ?                        
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Paweł          Graczykowski          111.00 -  275: 311   61
+    2     7 Zbigniew       Bartold               100.00 -  335: 445   50
+    3     8 Szymon         Jachimek              100.00 +  268: 263  150
+    4     6 Barbara        Graczykowska           84.00 -  257: 274   34
+    5     7 Michał         Czajewski             100.00 +  286: 231  150
+                                                          --------------- ---- ------
+                                                                     445  /  5  89.00
+
+
+
+
+	Andrzej Stankiewicz 100.00 Gdańsk                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Katarzyna      Molenda-Kass           98.00 +  335: 306  148
+    2     2 Barbara        Graczykowska           84.00 +  417: 301  134
+    3     1 Tomasz         Zwoliński             133.00 -  306: 334   83
+    4     2 Mariusz        Kubicki               109.00 +  328: 268  159
+    5     2 Andrzej        Szmidtke              100.00 -  297: 415   50
+                                                          --------------- ---- ------
+                                                                     574  /  5 114.80
+
+
+
+
+	Andrzej Szmidtke 100.00 Bolszewo                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Barbara        Graczykowska           84.00 -  197: 369   34
+    2     8 Zbigniew       Kozak                 100.00 +  402: 197  150
+    3     6 Michał         Czajewski             100.00 +  355: 241  150
+    4     4 Bogusław       Wróbel                 85.00 +  280: 275  135
+    5     2 Andrzej        Stankiewicz           100.00 +  415: 297  150
+                                                          --------------- ---- ------
+                                                                     619  /  5 123.80
+
+
+
+
+	Katarzyna Molenda-Kass  98.00 Gdańsk                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Andrzej        Stankiewicz           100.00 -  306: 335   50
+    2     5 Agnieszka      Kozak                 100.00 +  335: 239  150
+    3     4 Zbigniew       Bartold               100.00 -  292: 307   50
+    4     5 Tatiana        Łubniewicz             94.00 +  308: 296  144
+    5     4 Paweł          Graczykowski          111.00 -  270: 288   61
+                                                          --------------- ---- ------
+                                                                     455  /  5  91.00
+
+
+
+
+	Paweł Subocz  94.00 Szczecin                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Szymon         Jachimek              100.00 +  287: 280  150
+    2     4 Tatiana        Łubniewicz             94.00 +  346: 298  144
+    3     2 Bogusław       Wróbel                 85.00 +  328: 236  135
+    4     1 Tomasz         Zwoliński             133.00 -  250: 377   83
+    5     3 Mariusz        Kubicki               109.00 -  296: 346   59
+                                                          --------------- ---- ------
+                                                                     571  /  5 114.20
+
+
+
+
+	Tatiana Łubniewicz  94.00 Łódź
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Zbigniew       Bartold               100.00 +  269: 219  150
+    2     4 Paweł          Subocz                 94.00 -  298: 346   44
+    3     7 Agnieszka      Kozak                 100.00 +  309: 271  150
+    4     5 Katarzyna      Molenda-Kass           98.00 -  296: 308   48
+    5     5 Bogusław       Wróbel                 85.00 -  321: 332   35
+                                                          --------------- ---- ------
+                                                                     427  /  5  85.40
+
+
+
+
+	Bogusław Wróbel  85.00 Łódź                     
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Michał         Czajewski             100.00 +  309: 296  150
+    2     3 Paweł          Graczykowski          111.00 +  348: 301  161
+    3     2 Paweł          Subocz                 94.00 -  236: 328   44
+    4     4 Andrzej        Szmidtke              100.00 -  275: 280   50
+    5     5 Tatiana        Łubniewicz             94.00 +  332: 321  144
+                                                          --------------- ---- ------
+                                                                     549  /  5 109.80
+
+
+
+
+	Barbara Graczykowska  84.00 Łódź                     
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Andrzej        Szmidtke              100.00 +  369: 197  150
+    2     2 Andrzej        Stankiewicz           100.00 -  301: 417   50
+    3     3 Mariusz        Kubicki               109.00 -  211: 446   59
+    4     6 Anna           Kozłowska-Zygmunt     100.00 +  274: 257  150
+    5     6 Szymon         Jachimek              100.00 -  257: 279   50
+                                                          --------------- ---- ------
+                                                                     459  /  5  91.80
+
+
+</pre></div><div id='p_rundy' class='page'><pre></pre></div><div id='p_ranking' class='page'><pre></pre></div><div id='p_przebieg' class='page'>
+
+    </div><div style="clear:both;width:100%;" class="alignright">
+
+<script>
+<!--
+if ((document.getElementById("content").offsetHeight + document.getElementById("top").offsetHeight) > screen.height)
+    document.write("<br /><br /><a href='#top'>do góry</a>");
+-->
+</script>
+
+</div>
+</div>
+
+<div id="bottom">
+<ul id="bottomlinks">
+<div class='onleft'>
+ Osób on-line: 52</div>
+    <li><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+    <li><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+    <li><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+    <li><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+    <li><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+    <li><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+</ul>
+    SCRABBLE® jest zastrzeżonym znakiem towarowym J.W. Spears &amp; Sons&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://www.pfs.org.pl/prawaautorskie.php">© Prawa autorskie</a>
+</div>
+</body>
+</html>

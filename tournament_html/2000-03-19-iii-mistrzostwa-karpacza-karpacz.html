@@ -1,0 +1,767 @@
+
+<html>
+<head>
+    <title>Polska Federacja Scrabble :: III Mistrzostwa Karpacza</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="files/img/favicon.ico" />
+    <link rel="stylesheet" href="files/css/style.css" type="text/css" />
+	<link rel="stylesheet" href="files/css/style-index.css" type="text/css" />
+    <!--[if IE]><link rel="stylesheet" type="text/css" href="files/css/styleie.css" /><![endif]-->
+    <!--[if lt IE 7.]><script defer type="text/javascript" src="files/js/pngfix.js"></script><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="files/js/minmax.js"></script><![endif]-->
+    <script type="text/javascript" src="files/js/jquery.js"></script>
+    <script type="text/javascript" src="files/js/jquery-bp.js"></script>
+    <script type="text/javascript" src="files/js/java.js"></script>
+    <script>jSubmenu ("turnieje","kalendarz");jKalendarz();</script>
+    <script>
+    var url, page;
+
+    page = 'info';
+    url  = document.location.toString();
+
+    if (url.match ('#')) {
+      page = url.split ('#')[1];
+      if ($.inArray (page, [ 'info', 'relacja', 'klasyfikacja', 'hh', 'rundy', 'ranking', 'przebieg' ]) == -1)
+        page = 'info';
+    }
+
+    $(document).ready(function(){
+        $('a#listaucz').bind('click', function(event){
+            $('div#lista').toggle();
+            event.preventDefault();
+        }).toggle(function() { $(this).text('schowaj listę uczestników'); }, function() { $(this).text("pokaż listę uczestników"); });
+        $('div#lista table tr:last td').css({"border-bottom" : "none"});
+
+        $("a.przycisk").click (function (e) {
+            if ($(this).attr ('href') !== '#')
+                return true;
+
+            e.preventDefault ();
+
+            id       = this.id;
+            this.id += 'tmp';
+            window.location.hash = id;
+            this.id  = id;
+
+            $(".page").hide ();
+            $(".page#p_" + id).show ();
+
+            $("a.przycisk").removeClass ('active');
+            $(this).addClass ('active');
+
+            return false;
+        });
+
+        $("a.przycisk#" + page).click ();
+        $('html, body').animate ({ scrollTop: 0 }, 0);
+    });
+    </script>
+  <style type="text/css">
+    .page {
+        display: none;
+    }
+    #szczegoly{
+        width: 100%;
+        border-spacing: 0;
+        margin-top: 30px;
+        text-align: left;
+        font-size: inherit;
+    }
+    #szczegoly td{
+        padding: 10px 20px 10px 0;
+        vertical-align: top;
+    }
+    #szczegoly td:first-child{
+        font-weight: bold;
+        width: 160px;
+    }
+    div#lista{
+        display:none;
+        margin-top: 15px;
+    }
+    div#lista table{
+        margin-top: 10px;
+        text-align: left;
+        font-size: inherit;
+    }
+    div#lista table td{
+        padding: 3px 8px;
+        border-bottom: 1px dashed #1576AE;
+    }
+    div#lista table th{
+        padding: 0px 5px 10px 5px;
+    }
+    div#lista table td.ptaszek{
+        text-align: center;
+        background: url('files/img/tick.png') no-repeat center center;
+    }
+    div#lista table th{
+        white-space: nowrap;
+        width: auto;
+    }
+    div#lista table td:first-child, div#lista table th:first-child{
+        text-align:right;
+        width: auto;
+    }
+    </style>
+</head>
+
+<body>
+
+<script type="text/javascript">setMenu();</script>
+
+<div id="top" onclick="location.href='https://www.pfs.org.pl'">
+</div>
+<div id="menu">
+
+    <div id="m_glowna">
+        <div class="tab"><a href="https://www.pfs.org.pl/index.php"></a></div>
+
+        <ul>
+            <li class="sublink" id="aktualnosci"><a href="https://www.pfs.org.pl">Aktualności</a></li>
+            <li class="sublink" id="nowy"><a href="https://www.pfs.org.pl/dlanowych.php">Jestem tu nowy</a></li>
+            <li class="sublink" id="anagramator"><a href="https://www.pfs.org.pl/osps_online.php?main=1">Słownik online</a></li>
+            <li class="sublink" id="siodemka"><a href="https://www.pfs.org.pl/siodemka.php?main=1">Siódemka tygodnia</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+            <li class="sublink" id="dlasponsorow"><a href="https://www.pfs.org.pl/dlasponsorow.php">Dla sponsorów</a></li>
+            <li class="sublink" id="kontakt"><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+        </ul>
+    </div>
+    <div id="m_turnieje">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kalendarz.php"></a></div>
+        <ul>
+            <li class="sublink" id="kalendarz"><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+            <li class="sublink" id="regulaminy"><a href="https://www.pfs.org.pl/regulaminy.php">Regulaminy</a></li>
+            <li class="sublink" id="sedziowie"><a href="https://www.pfs.org.pl/sedziowie.php">Sędziowie</a></li>
+            <li class="sublink" id="gp"><a href="https://www.pfs.org.pl/gp2026.php">Grand Prix</a></li>
+<!--            <li class="sublink" id="mr"><a href="https://www.pfs.org.pl/mr2020.php">Mistrzostwa Regionów</a></li>-->
+            <li class="sublink" id="archiwum"><a href="https://www.pfs.org.pl/archiwum.php">Historia</a></li>
+            <li class="sublink" id="galeria"><a href="https://www.pfs.org.pl/galeria.php">Zdjęcia</a></li>
+            <li class="sublink" id="rekordy"><a href="https://www.pfs.org.pl/rekordy.php">Rekordy</a></li>
+        </ul>
+    </div>
+    <div id="m_pfs">
+        <div  class="tab"><a href="https://www.pfs.org.pl/opfs.php"></a></div>
+        <ul>
+            <li class="sublink" id="opfs"><a href="https://www.pfs.org.pl/opfs.php">O PFS</a></li>
+            <li class="sublink" id="jakprzystapic"><a href="https://www.pfs.org.pl/jakprzystapic.php">Jak przystąpić</a></li>
+            <li class="sublink" id="dlaczlonkow"><a href="https://www.pfs.org.pl/dlaczlonkow.php">Dla członków</a></li>
+            <li class="sublink" id="wladze"><a href="https://www.pfs.org.pl/wladze.php">Władze</a></li>
+            <li class="sublink" id="komisje"><a href="https://www.pfs.org.pl/komisje.php">Komisje</a></li>
+            <li class="sublink" id="statut"><a href="https://www.pfs.org.pl/statut.php">Statut</a></li>
+            <li class="sublink" id="uchwaly"><a href="https://www.pfs.org.pl/uchwaly.php">Uchwały</a></li>
+            <li class="sublink" id="honorowi"><a href="https://www.pfs.org.pl/honorowi.php">Honorowi członkowie</a></li>
+            <li class="sublink" id="finanse"><a href="https://www.pfs.org.pl/finanse.php">Finanse</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabble">
+        <div  class="tab"><a href="https://www.pfs.org.pl/osps_online.php?desktop=1"></a></div>
+        <ul>
+            <li class="sublink" id="osps_online"><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+            <li class="sublink" id="zds"><a href="https://www.pfs.org.pl/zds2.php">ZDS</a></li>
+            <li class="sublink" id="osps"><a href="https://www.pfs.org.pl/osps.php">OSPS</a></li>
+            <li class="sublink" id="aktualizacje"><a href="https://www.pfs.org.pl/osps_aktualizacje.php">Aktualizacje</a></li>
+            <li class="sublink" id="dwojki"><a href="https://www.pfs.org.pl/dwojki.php">2-literówki</a></li>
+            <li class="sublink" id="trojki"><a href="https://www.pfs.org.pl/trojki.php">3-literówki</a></li>
+            <li class="sublink" id="siodemkat"><a href="https://www.pfs.org.pl/siodemka.php">Siódemka tygodnia</a></li>
+            <li class="sublink" id="slowneroznosci"><a href="https://www.pfs.org.pl/slowneroznosci.php">Słowne różności</a></li>
+        </ul>
+    </div>
+    <div id="m_ranking">
+        <div  class="tab"><a href="https://www.pfs.org.pl/ranking.php"></a></div>
+        <ul>
+            <li class="sublink" id="aktranking"><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+            <li class="sublink" id="medale"><a href="https://www.pfs.org.pl/medale.php">Klasyfikacja medalowa</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabblisci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/mistrzowiepolski.php"></a></div>
+        <ul>
+            <li class="sublink" id="mistrzowiepolski"><a href="https://www.pfs.org.pl/mistrzowiepolski.php">Mistrzowie Polski</a></li>
+            <li class="sublink" id="zdobywcypp"><a href="https://www.pfs.org.pl/zdobywcypp.php">Zdobywcy Pucharu Polski</a></li>
+            <li class="sublink" id="zwyciezcygp"><a href="https://www.pfs.org.pl/zwyciezcygp.php">Zwycięzcy Grand Prix</a></li>
+            <li class="sublink" id="liderzyrankingu"><a href="https://www.pfs.org.pl/liderzyrankingu.php">Liderzy rankingu</a></li>
+            <li class="sublink" id="zwyciezcylemans"><a href="https://www.pfs.org.pl/zwyciezcylemans.php">Zwycięzcy 24h Le Mans</a></li>
+            <li class="sublink" id="zwyciezcykmp"><a href="https://www.pfs.org.pl/zwyciezcykmp.php">KMP</a>
+        </ul>
+    </div>
+    <div id="m_kluby">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kluby.php"></a></div>
+        <ul>
+            <li class="sublink" id="rejestrklubow"><a href="https://www.pfs.org.pl/kluby.php">Rejestr klubów</a></li>
+            <li class="sublink" id="kmp"><a href="https://www.pfs.org.pl/kmp.php">KMP</a></li>
+            <li class="sublink" id="wiescizklubow"><a href="https://www.pfs.org.pl/wiescizklubow.php">Wieści z klubów</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/about.php">Statystyki klubowe</a></li>
+        </ul>
+    </div>
+    <div id="m_roznosci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/historia.php"></a></div>
+        <ul>
+            <li class="sublink" id="historia"><a href="https://www.pfs.org.pl/historia.php">Historia</a></li>
+            <li class="sublink" id="odmiany"><a href="https://www.pfs.org.pl/odmiany.php">Odmiany</a></li>
+            <li class="sublink" id="anegdoty"><a href="https://www.pfs.org.pl/anegdoty.php">Anegdoty</a></li>
+            <li class="sublink" id="scrabblealia"><a href="https://www.pfs.org.pl/scrabblealia.php">Scrabblealia</a></li>
+            <li class="sublink" id="scrabblenet"><a href="https://www.pfs.org.pl/scrabblenet.php">Scrabble w internecie</a></li>
+            <li class="sublink" id="programy"><a href="https://www.pfs.org.pl/programy.php">Programy</a></li>
+            <li class="sublink" id="download"><a href="https://www.pfs.org.pl/download.php">Do pobrania</a></li>
+            <li class="sublink" id="ksiazki"><a href="https://www.pfs.org.pl/ksiazki.php">Książki</a></li>
+            <li class="sublink" id="slowniczek"><a href="https://www.pfs.org.pl/slowniczek.php">Słowniczek</a></li>
+        </ul>
+    </div>
+    <div id="m_english">
+        <div  class="tab"><a href="https://www.pfs.org.pl/english.php"></a></div>
+        <ul>
+            <li class="sublink" id="about"><a href="https://www.pfs.org.pl/english.php">About Polish Scrabble</a></li>
+            <li class="sublink" id="news"><a href="https://www.pfs.org.pl/en_news.php">News</a></li>
+            <li class="sublink" id="bartek"><a href="https://www.pfs.org.pl/bartek.php">Bartek w Johor Bahru</a></li>
+            <li class="sublink" id="franko"><a href="https://www.pfs.org.pl/franko.php">Scrabble frankofońskie</a></li>
+        </ul>
+    </div>
+</div>
+
+<div id="submenu"></div>
+<div id="content">
+<div id='nextTours'>
+		<div class='nextTour' onclick='location.href="turniej.php?id=319"'>
+			<div class='karteczka small1'>
+				<span class='miasto'>Częstochowa</span><span class='dzien'><span class='big'> 4</span><br />marca</span></div>
+			<div class='kartka big1'>
+				<span class='miasto'>Częstochowa</span>
+				<span class='dzien'><b> 4- 5 marca</b></span>
+				<span class='nazwaturnieju'>IV Mistrzostwa Częstochowy</span><span class='gp'>Grand&nbsp;Prix&nbsp;2000</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=318"'>
+			<div class='karteczka small2'>
+				<span class='miasto'>Karpacz</span><span class='dzien'><span class='big'>19</span><br />marca</span></div>
+			<div class='kartka big2'>
+				<span class='miasto'>Karpacz</span>
+				<span class='dzien'><b>19 marca</b></span>
+				<span class='nazwaturnieju'>III Mistrzostwa Karpacza</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=317"'>
+			<div class='karteczka small3'>
+				<span class='miasto'>Kraków</span><span class='dzien'><span class='big'> 1</span><br />kwietnia</span></div>
+			<div class='kartka big3'>
+				<span class='miasto'>Kraków</span>
+				<span class='dzien'><b> 1- 2 kwietnia</b></span>
+				<span class='nazwaturnieju'>IV Mistrzostwa Krakowa</span><span class='gp'>Grand&nbsp;Prix&nbsp;2000</span></div>
+		</div></div><div class='naglowekrelacji'><span class='tytul'>III Mistrzostwa Karpacza<span class='nazwa'>19 marca 2000 —  III Mistrzostwa Karpacza</span></span><a href='#' id='info' class='przycisk'>Informacje</a><a href='#' id='relacja' class='przycisk'>Relacja</a><a href='#' id='klasyfikacja' class='przycisk'>Wyniki</a><a href='#' id='hh' class='przycisk'>HH</a><div class='galleries'><img src='files/img/gallery.png' style='visibility:hidden;' alt='galeria' /></div></div><h1 style='color:black; margin-top:0px; margin-bottom:30px; padding: 0px'>III Mistrzostwa Karpacza<span>Karpacz, 19 marca 2000</span></h1><div id='p_relacja' class='page'><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><div class='relacja' style='clear:both;'><div><pre>
+ 1. Paweł Stanosz (Warszawa) 6.0 2300
+ 2. Stanisław Rydzik (Warszawa) 5.0 2253
+ 3. Waldemar Czerwoniec (Warszawa) 4.0 2260
+ 4. Marcin Mroziuk (Strzegom) 4.0 2252
+ 5. Zbigniew Wietecki (Gorzów Wlkp.) 4.0 2161
+ 6. Tomasz Zwoliński (Warszawa) 4.0 2150
+ 7. Leszek Stecuła (Bytom) 4.0 2143
+ 8. Grażyna Furman (Sosnowiec) 4.0 2032
+ 9. Ryszard Żydaczewski (Lubin) 3.0 2233
+ 10. Andrzej Kwiatkowski (Warszawa) 3.0 2218
+
+ 28 uczestników, 6 rund 
+</pre></div><div class='autor'></div></div><div style='clear:both;'></div></div><div id='p_info' class='page'><br><p align='center'></p><br><br><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br>Zobacz, jak było na poprzednich turniejach:<br><a href='turniej.php?id=348'>II Otwarte Mistrzostwa Karpacza</a><br><a href='turniej.php?id=378'>I Otwarte Mistrzostwa Karpacza</a><br><table id='szczegoly' class='ramkadolna'></table><br /><br /></div><div id='p_klasyfikacja' class='page'><pre>Wyniki turnieju III Otwarte Mistrzostwa Karpacza
+
+Lp. Imię            Nazwisko             Miasto               Ranking  Duże pkt Małe pkt Skalpy   Różn. MP
+--- --------------- -------------------- -------------------- -------- -------- -------- -------- --------
+  1 Paweł           Stanosz              Warszawa               133.37      6.0     2300     1016      474
+  2 Stanisław       Rydzik               Warszawa               122.68      5.0     2253      883      446
+  3 Waldemar        Czerwoniec           Warszawa               126.64      4.0     2260      821      172
+  4 Marcin          Mroziuk              Warszawa               132.17      4.0     2252      795      344
+  5 Zbigniew        Wietecki             Gorzów Wielkopolski    115.25      4.0     2161      816       51
+  6 Tomasz          Zwoliński            Warszawa               144.21      4.0     2150      775      147
+  7 Leszek          Stecuła              Bytom                  118.88      4.0     2143      756      118
+  8 Grażyna         Furman               Sosnowiec              100.00      4.0     2032      775      192
+  9 Ryszard         Żydaczewski          Lubin                  102.87      3.0     2233      677      106
+ 10 Andrzej         Kwiatkowski          Warszawa               120.72      3.0     2218      631      134
+ 11 Marek           Swoboda              Wałbrzych              100.00      3.0     2148      685      180
+ 12 Anna            Swoboda              Wałbrzych              100.00      3.0     2088      649     -137
+ 13 Aurelia         Żmuda                Lubin                  100.00      3.0     2051      641       25
+ 14 Krzysztof       Nowak                Lublin                 100.00      3.0     1971      615      -31
+ 15 Andrzej         Lożyński             Piastów                106.98      3.0     1966      620     -117
+ 16 Irena           Bura                 Lubin                  100.00      3.0     1910      639      -73
+ 17 Elżbieta        Jankowska            Wrocław                100.00      3.0     1836      652     -115
+ 18 Ewa             Brzeska              Konotopa               100.00      3.0     1740      623     -233
+ 19 Anna            Mikuć                Wrocław                100.00      2.0     2017      580     -347
+ 20 Katarzyna       Żuławska             Katowice               100.71      2.0     1992      591     -276
+ 21 Grażyna         Żol                  Lubin                  100.00      2.0     1950      510      -54
+ 22 Ewelina         Zięba                Wrocław                100.00      2.0     1725      524     -308
+ 23 Leszek          Nowak                Myślibórz              120.17      2.0      782      300      163
+ 24 Romuald         Owczarek             Wałbrzych              100.00      2.0      744      305      225
+ 25 Dariusz         Berthold             Karpacz                100.00      1.0     1958      421      -75
+ 26 Eligiusz        Jankowski            Wrocław                104.77      1.0     1818      407     -243
+ 27 Mira            Berthold             Karpacz                100.00      1.0     1614      412     -352
+ 28 Maciej          Zięba                Wrocław                100.00      0.0     1782      301     -416
+</pre></div><div id='p_hh' class='page'><pre>Wyniki poszczególnych graczy w turnieju III Otwarte Mistrzostwa Karpacza
+
+
+
+	Tomasz Zwoliński 144.21 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Grażyna        Furman                100.00 +  353: 289  150
+    2     4 Marcin         Mroziuk               132.17 +  384: 324  182
+    3     3 Zbigniew       Wietecki              115.25 -  349: 387   65
+    4     4 Katarzyna      Żuławska              100.71 +  420: 269  151
+    5     2 Waldemar       Czerwoniec            126.64 -  255: 390   77
+    6     4 Marek          Swoboda               100.00 +  389: 344  150
+                                                          --------------- ---- ------
+                                                                     775  /  6 129.17
+
+
+
+
+	Paweł Stanosz 133.37 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Aurelia        Żmuda                 100.00 +  422: 255  150
+    2     2 Waldemar       Czerwoniec            126.64 +  380: 308  177
+    3     2 Leszek         Stecuła               118.88 +  407: 299  169
+    4     1 Stanisław      Rydzik                122.68 +  361: 318  173
+    5     1 Marcin         Mroziuk               132.17 +  367: 297  182
+    6     1 Zbigniew       Wietecki              115.25 +  363: 349  165
+                                                          --------------- ---- ------
+                                                                    1016  /  6 169.33
+
+
+
+
+	Marcin Mroziuk 132.17 Warszawa
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Elżbieta       Jankowska             100.00 +  364: 229  150
+    2     4 Tomasz         Zwoliński             144.21 -  324: 384   94
+    3     6 Anna           Mikuć                 100.00 +  492: 256  150
+    4     2 Zbigniew       Wietecki              115.25 +  421: 350  165
+    5     1 Paweł          Stanosz               133.37 -  297: 367   83
+    6     3 Ryszard        Żydaczewski           102.87 +  354: 322  153
+                                                          --------------- ---- ------
+                                                                     795  /  6 132.50
+
+
+
+
+	Waldemar Czerwoniec 126.64 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Anna           Mikuć                 100.00 +  443: 418  150
+    2     2 Paweł          Stanosz               133.37 -  308: 380   83
+    3     5 Anna           Swoboda               100.00 +  401: 311  150
+    4     3 Andrzej        Kwiatkowski           120.72 +  380: 349  171
+    5     2 Tomasz         Zwoliński             144.21 +  390: 255  194
+    6     2 Stanisław      Rydzik                122.68 -  338: 375   73
+                                                          --------------- ---- ------
+                                                                     821  /  6 136.83
+
+
+
+
+	Stanisław Rydzik 122.68 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Ewa            Brzeska               100.00 +  449: 233  150
+    2     1 Ryszard        Żydaczewski           102.87 +  367: 316  153
+    3     1 Katarzyna      Żuławska              100.71 +  340: 278  151
+    4     1 Paweł          Stanosz               133.37 -  318: 361   83
+    5     3 Leszek         Stecuła               118.88 +  404: 281  169
+    6     2 Waldemar       Czerwoniec            126.64 +  375: 338  177
+                                                          --------------- ---- ------
+                                                                     883  /  6 147.17
+
+
+
+
+	Andrzej Kwiatkowski 120.72 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Dariusz        Berthold              100.00 +  386: 297  150
+    2     3 Katarzyna      Żuławska              100.71 -  407: 411   51
+    3     4 Ryszard        Żydaczewski           102.87 +  363: 322  153
+    4     3 Waldemar       Czerwoniec            126.64 -  349: 380   77
+    5     5 Marek          Swoboda               100.00 -  275: 380   50
+    6     8 Anna           Mikuć                 100.00 +  438: 294  150
+                                                          --------------- ---- ------
+                                                                     631  /  6 105.17
+
+
+
+
+	Leszek Nowak 120.17 Myślibórz                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    5    10 Elżbieta       Jankowska             100.00 +  403: 300  150
+    6     7 Irena          Bura                  100.00 +  379: 319  150
+                                                          --------------- ---- ------
+                                                                     300  /  2 150.00
+
+
+
+
+	Leszek Stecuła 118.88 Bytom                    
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Irena          Bura                  100.00 +  317: 298  150
+    2     6 Ewelina        Zięba                 100.00 +  434: 302  150
+    3     2 Paweł          Stanosz               133.37 -  299: 407   83
+    4     5 Grażyna        Furman                100.00 +  399: 281  150
+    5     3 Stanisław      Rydzik                122.68 -  281: 404   73
+    6     5 Anna           Swoboda               100.00 +  413: 333  150
+                                                          --------------- ---- ------
+                                                                     756  /  6 126.00
+
+
+
+
+	Zbigniew Wietecki 115.25 Gorzów Wielkopolski          
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Marek          Swoboda               100.00 +  343: 301  150
+    2     5 Andrzej        Lożyński              106.98 +  367: 316  157
+    3     3 Tomasz         Zwoliński             144.21 +  387: 349  194
+    4     2 Marcin         Mroziuk               132.17 -  350: 421   82
+    5     4 Krzysztof      Nowak                 100.00 +  365: 360  150
+    6     1 Paweł          Stanosz               133.37 -  349: 363   83
+                                                          --------------- ---- ------
+                                                                     816  /  6 136.00
+
+
+
+
+	Andrzej Lożyński 106.98 Piastów                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Mira           Berthold              100.00 +  323: 255  150
+    2     5 Zbigniew       Wietecki              115.25 -  316: 367   65
+    3     8 Grażyna        Furman                100.00 -  304: 364   50
+    4    10 Aurelia        Żmuda                 100.00 -  301: 435   50
+    5    12 Eligiusz       Jankowski             104.77 +  385: 333  155
+    6    10 Grażyna        Żol                   100.00 +  337: 329  150
+                                                          --------------- ---- ------
+                                                                     620  /  6 103.33
+
+
+
+
+	Eligiusz Jankowski 104.77 Wrocław                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Ewelina        Zięba                 100.00 -  296: 297   50
+    2    10 Grażyna        Furman                100.00 -  283: 337   50
+    3    11 Marek          Swoboda               100.00 -  275: 414   50
+    4    13 Mira           Berthold              100.00 +  353: 273  150
+    5    12 Andrzej        Lożyński              106.98 -  333: 385   57
+    6    13 Romuald        Owczarek              100.00 -  278: 355   50
+                                                          --------------- ---- ------
+                                                                     407  /  6  67.83
+
+
+
+
+	Ryszard Żydaczewski 102.87 Lubin                    
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Anna           Swoboda               100.00 +  452: 349  150
+    2     1 Stanisław      Rydzik                122.68 -  316: 367   73
+    3     4 Andrzej        Kwiatkowski           120.72 -  322: 363   71
+    4     7 Grażyna        Żol                   100.00 +  384: 372  150
+    5     6 Katarzyna      Żuławska              100.71 +  437: 322  151
+    6     3 Marcin         Mroziuk               132.17 -  322: 354   82
+                                                          --------------- ---- ------
+                                                                     677  /  6 112.83
+
+
+
+
+	Katarzyna Żuławska 100.71 Katowice                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    12 Maciej         Zięba                 100.00 +  421: 274  150
+    2     3 Andrzej        Kwiatkowski           120.72 +  411: 407  171
+    3     1 Stanisław      Rydzik                122.68 -  278: 340   73
+    4     4 Tomasz         Zwoliński             144.21 -  269: 420   94
+    5     6 Ryszard        Żydaczewski           102.87 -  322: 437   53
+    6     9 Aurelia        Żmuda                 100.00 -  291: 390   50
+                                                          --------------- ---- ------
+                                                                     591  /  6  98.50
+
+
+
+
+	Dariusz Berthold 100.00 Karpacz                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Andrzej        Kwiatkowski           120.72 -  297: 386   71
+    2     9 Irena          Bura                  100.00 +  383: 251  150
+    3     7 Krzysztof      Nowak                 100.00 -  313: 340   50
+    4     9 Anna           Swoboda               100.00 -  339: 366   50
+    5    11 Anna           Mikuć                 100.00 -  335: 396   50
+    6    12 Ewa            Brzeska               100.00 -  291: 294   50
+                                                          --------------- ---- ------
+                                                                     421  /  6  70.17
+
+
+
+
+	Mira Berthold 100.00 Karpacz                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Andrzej        Lożyński              106.98 -  255: 323   57
+    2    12 Aurelia        Żmuda                 100.00 -  252: 319   50
+    3    13 Elżbieta       Jankowska             100.00 -  276: 297   50
+    4    13 Eligiusz       Jankowski             104.77 -  273: 353   55
+    5    14 Romuald        Owczarek              100.00 -  241: 389   50
+    6    14 Maciej         Zięba                 100.00 +  317: 285  150
+                                                          --------------- ---- ------
+                                                                     412  /  6  68.67
+
+
+
+
+	Ewa Brzeska 100.00 Konotopa             
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Stanisław      Rydzik                122.68 -  233: 449   73
+    2    13 Elżbieta       Jankowska             100.00 +  384: 263  150
+    3     9 Ewelina        Zięba                 100.00 +  297: 286  150
+    4     6 Krzysztof      Nowak                 100.00 -  304: 357   50
+    5     9 Grażyna        Furman                100.00 -  228: 327   50
+    6    12 Dariusz        Berthold              100.00 +  294: 291  150
+                                                          --------------- ---- ------
+                                                                     623  /  6 103.83
+
+
+
+
+	Irena Bura 100.00 Lubin                    
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Leszek         Stecuła               118.88 -  298: 317   69
+    2     9 Dariusz        Berthold              100.00 -  251: 383   50
+    3    12 Maciej         Zięba                 100.00 +  361: 355  150
+    4    11 Ewelina        Zięba                 100.00 +  365: 256  150
+    5     8 Grażyna        Żol                   100.00 +  316: 293  150
+    6     7 Leszek         Nowak                 120.17 -  319: 379   70
+                                                          --------------- ---- ------
+                                                                     639  /  6 106.50
+
+
+
+
+	Grażyna Furman 100.00 Sosnowiec                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Tomasz         Zwoliński             144.21 -  289: 353   94
+    2    10 Eligiusz       Jankowski             104.77 +  337: 283  155
+    3     8 Andrzej        Lożyński              106.98 +  364: 304  157
+    4     5 Leszek         Stecuła               118.88 -  281: 399   69
+    5     9 Ewa            Brzeska               100.00 +  327: 228  150
+    6     6 Krzysztof      Nowak                 100.00 +  434: 273  150
+                                                          --------------- ---- ------
+                                                                     775  /  6 129.17
+
+
+
+
+	Elżbieta Jankowska 100.00 Wrocław                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Marcin         Mroziuk               132.17 -  229: 364   82
+    2    13 Ewa            Brzeska               100.00 -  263: 384   50
+    3    13 Mira           Berthold              100.00 +  297: 276  150
+    4    12 Maciej         Zięba                 100.00 +  398: 283  150
+    5    10 Leszek         Nowak                 120.17 -  300: 403   70
+    6    11 Ewelina        Zięba                 100.00 +  349: 241  150
+                                                          --------------- ---- ------
+                                                                     652  /  6 108.67
+
+
+
+
+	Anna Mikuć 100.00 Wrocław                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Waldemar       Czerwoniec            126.64 -  418: 443   77
+    2     7 Grażyna        Żol                   100.00 +  325: 274  150
+    3     6 Marcin         Mroziuk               132.17 -  256: 492   82
+    4     8 Marek          Swoboda               100.00 -  328: 382   50
+    5    11 Dariusz        Berthold              100.00 +  396: 335  150
+    6     8 Andrzej        Kwiatkowski           120.72 -  294: 438   71
+                                                          --------------- ---- ------
+                                                                     580  /  6  96.67
+
+
+
+
+	Krzysztof Nowak 100.00 Lublin                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    13 Grażyna        Żol                   100.00 -  283: 293   50
+    2    11 Maciej         Zięba                 100.00 +  358: 293  150
+    3     7 Dariusz        Berthold              100.00 +  340: 313  150
+    4     6 Ewa            Brzeska               100.00 +  357: 304  150
+    5     4 Zbigniew       Wietecki              115.25 -  360: 365   65
+    6     6 Grażyna        Furman                100.00 -  273: 434   50
+                                                          --------------- ---- ------
+                                                                     615  /  6 102.50
+
+
+
+
+	Romuald Owczarek 100.00 Wałbrzych                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    5    14 Mira           Berthold              100.00 +  389: 241  150
+    6    13 Eligiusz       Jankowski             104.77 +  355: 278  155
+                                                          --------------- ---- ------
+                                                                     305  /  2 152.50
+
+
+
+
+	Anna Swoboda 100.00 Wałbrzych                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Ryszard        Żydaczewski           102.87 -  349: 452   53
+    2     8 Marek          Swoboda               100.00 +  358: 327  150
+    3     5 Waldemar       Czerwoniec            126.64 -  311: 401   77
+    4     9 Dariusz        Berthold              100.00 +  366: 339  150
+    5     7 Aurelia        Żmuda                 100.00 +  371: 293  150
+    6     5 Leszek         Stecuła               118.88 -  333: 413   69
+                                                          --------------- ---- ------
+                                                                     649  /  6 108.17
+
+
+
+
+	Marek Swoboda 100.00 Wałbrzych                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Zbigniew       Wietecki              115.25 -  301: 343   65
+    2     8 Anna           Swoboda               100.00 -  327: 358   50
+    3    11 Eligiusz       Jankowski             104.77 +  414: 275  155
+    4     8 Anna           Mikuć                 100.00 +  382: 328  150
+    5     5 Andrzej        Kwiatkowski           120.72 +  380: 275  171
+    6     4 Tomasz         Zwoliński             144.21 -  344: 389   94
+                                                          --------------- ---- ------
+                                                                     685  /  6 114.17
+
+
+
+
+	Ewelina Zięba 100.00 Wrocław                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Eligiusz       Jankowski             104.77 +  297: 296  155
+    2     6 Leszek         Stecuła               118.88 -  302: 434   69
+    3     9 Ewa            Brzeska               100.00 -  286: 297   50
+    4    11 Irena          Bura                  100.00 -  256: 365   50
+    5    13 Maciej         Zięba                 100.00 +  343: 292  150
+    6    11 Elżbieta       Jankowska             100.00 -  241: 349   50
+                                                          --------------- ---- ------
+                                                                     524  /  6  87.33
+
+
+
+
+	Maciej Zięba 100.00 Wrocław                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    12 Katarzyna      Żuławska              100.71 -  274: 421   51
+    2    11 Krzysztof      Nowak                 100.00 -  293: 358   50
+    3    12 Irena          Bura                  100.00 -  355: 361   50
+    4    12 Elżbieta       Jankowska             100.00 -  283: 398   50
+    5    13 Ewelina        Zięba                 100.00 -  292: 343   50
+    6    14 Mira           Berthold              100.00 -  285: 317   50
+                                                          --------------- ---- ------
+                                                                     301  /  6  50.17
+
+
+
+
+	Aurelia Żmuda 100.00 Lubin                    
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Paweł          Stanosz               133.37 -  255: 422   83
+    2    12 Mira           Berthold              100.00 +  319: 252  150
+    3    10 Grażyna        Żol                   100.00 -  359: 389   50
+    4    10 Andrzej        Lożyński              106.98 +  435: 301  157
+    5     7 Anna           Swoboda               100.00 -  293: 371   50
+    6     9 Katarzyna      Żuławska              100.71 +  390: 291  151
+                                                          --------------- ---- ------
+                                                                     641  /  6 106.83
+
+
+
+
+	Grażyna Żol 100.00 Lubin                    
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    13 Krzysztof      Nowak                 100.00 +  293: 283  150
+    2     7 Anna           Mikuć                 100.00 -  274: 325   50
+    3    10 Aurelia        Żmuda                 100.00 +  389: 359  150
+    4     7 Ryszard        Żydaczewski           102.87 -  372: 384   53
+    5     8 Irena          Bura                  100.00 -  293: 316   50
+    6    10 Andrzej        Lożyński              106.98 -  329: 337   57
+                                                          --------------- ---- ------
+                                                                     510  /  6  85.00
+
+
+</pre></div><div id='p_rundy' class='page'><pre></pre></div><div id='p_ranking' class='page'><pre></pre></div><div id='p_przebieg' class='page'>
+
+    </div><div style="clear:both;width:100%;" class="alignright">
+
+<script>
+<!--
+if ((document.getElementById("content").offsetHeight + document.getElementById("top").offsetHeight) > screen.height)
+    document.write("<br /><br /><a href='#top'>do góry</a>");
+-->
+</script>
+
+</div>
+</div>
+
+<div id="bottom">
+<ul id="bottomlinks">
+<div class='onleft'>
+ Osób on-line: 54</div>
+    <li><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+    <li><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+    <li><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+    <li><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+    <li><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+    <li><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+</ul>
+    SCRABBLE® jest zastrzeżonym znakiem towarowym J.W. Spears &amp; Sons&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://www.pfs.org.pl/prawaautorskie.php">© Prawa autorskie</a>
+</div>
+</body>
+</html>

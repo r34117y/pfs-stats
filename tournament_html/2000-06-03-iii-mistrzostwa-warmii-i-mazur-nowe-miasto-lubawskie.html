@@ -1,0 +1,961 @@
+
+<html>
+<head>
+    <title>Polska Federacja Scrabble :: III Mistrzostwa Warmii i Mazur</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="files/img/favicon.ico" />
+    <link rel="stylesheet" href="files/css/style.css" type="text/css" />
+	<link rel="stylesheet" href="files/css/style-index.css" type="text/css" />
+    <!--[if IE]><link rel="stylesheet" type="text/css" href="files/css/styleie.css" /><![endif]-->
+    <!--[if lt IE 7.]><script defer type="text/javascript" src="files/js/pngfix.js"></script><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="files/js/minmax.js"></script><![endif]-->
+    <script type="text/javascript" src="files/js/jquery.js"></script>
+    <script type="text/javascript" src="files/js/jquery-bp.js"></script>
+    <script type="text/javascript" src="files/js/java.js"></script>
+    <script>jSubmenu ("turnieje","kalendarz");jKalendarz();</script>
+    <script>
+    var url, page;
+
+    page = 'info';
+    url  = document.location.toString();
+
+    if (url.match ('#')) {
+      page = url.split ('#')[1];
+      if ($.inArray (page, [ 'info', 'relacja', 'klasyfikacja', 'hh', 'rundy', 'ranking', 'przebieg' ]) == -1)
+        page = 'info';
+    }
+
+    $(document).ready(function(){
+        $('a#listaucz').bind('click', function(event){
+            $('div#lista').toggle();
+            event.preventDefault();
+        }).toggle(function() { $(this).text('schowaj listę uczestników'); }, function() { $(this).text("pokaż listę uczestników"); });
+        $('div#lista table tr:last td').css({"border-bottom" : "none"});
+
+        $("a.przycisk").click (function (e) {
+            if ($(this).attr ('href') !== '#')
+                return true;
+
+            e.preventDefault ();
+
+            id       = this.id;
+            this.id += 'tmp';
+            window.location.hash = id;
+            this.id  = id;
+
+            $(".page").hide ();
+            $(".page#p_" + id).show ();
+
+            $("a.przycisk").removeClass ('active');
+            $(this).addClass ('active');
+
+            return false;
+        });
+
+        $("a.przycisk#" + page).click ();
+        $('html, body').animate ({ scrollTop: 0 }, 0);
+    });
+    </script>
+  <style type="text/css">
+    .page {
+        display: none;
+    }
+    #szczegoly{
+        width: 100%;
+        border-spacing: 0;
+        margin-top: 30px;
+        text-align: left;
+        font-size: inherit;
+    }
+    #szczegoly td{
+        padding: 10px 20px 10px 0;
+        vertical-align: top;
+    }
+    #szczegoly td:first-child{
+        font-weight: bold;
+        width: 160px;
+    }
+    div#lista{
+        display:none;
+        margin-top: 15px;
+    }
+    div#lista table{
+        margin-top: 10px;
+        text-align: left;
+        font-size: inherit;
+    }
+    div#lista table td{
+        padding: 3px 8px;
+        border-bottom: 1px dashed #1576AE;
+    }
+    div#lista table th{
+        padding: 0px 5px 10px 5px;
+    }
+    div#lista table td.ptaszek{
+        text-align: center;
+        background: url('files/img/tick.png') no-repeat center center;
+    }
+    div#lista table th{
+        white-space: nowrap;
+        width: auto;
+    }
+    div#lista table td:first-child, div#lista table th:first-child{
+        text-align:right;
+        width: auto;
+    }
+    </style>
+</head>
+
+<body>
+
+<script type="text/javascript">setMenu();</script>
+
+<div id="top" onclick="location.href='https://www.pfs.org.pl'">
+</div>
+<div id="menu">
+
+    <div id="m_glowna">
+        <div class="tab"><a href="https://www.pfs.org.pl/index.php"></a></div>
+
+        <ul>
+            <li class="sublink" id="aktualnosci"><a href="https://www.pfs.org.pl">Aktualności</a></li>
+            <li class="sublink" id="nowy"><a href="https://www.pfs.org.pl/dlanowych.php">Jestem tu nowy</a></li>
+            <li class="sublink" id="anagramator"><a href="https://www.pfs.org.pl/osps_online.php?main=1">Słownik online</a></li>
+            <li class="sublink" id="siodemka"><a href="https://www.pfs.org.pl/siodemka.php?main=1">Siódemka tygodnia</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+            <li class="sublink" id="dlasponsorow"><a href="https://www.pfs.org.pl/dlasponsorow.php">Dla sponsorów</a></li>
+            <li class="sublink" id="kontakt"><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+        </ul>
+    </div>
+    <div id="m_turnieje">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kalendarz.php"></a></div>
+        <ul>
+            <li class="sublink" id="kalendarz"><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+            <li class="sublink" id="regulaminy"><a href="https://www.pfs.org.pl/regulaminy.php">Regulaminy</a></li>
+            <li class="sublink" id="sedziowie"><a href="https://www.pfs.org.pl/sedziowie.php">Sędziowie</a></li>
+            <li class="sublink" id="gp"><a href="https://www.pfs.org.pl/gp2026.php">Grand Prix</a></li>
+<!--            <li class="sublink" id="mr"><a href="https://www.pfs.org.pl/mr2020.php">Mistrzostwa Regionów</a></li>-->
+            <li class="sublink" id="archiwum"><a href="https://www.pfs.org.pl/archiwum.php">Historia</a></li>
+            <li class="sublink" id="galeria"><a href="https://www.pfs.org.pl/galeria.php">Zdjęcia</a></li>
+            <li class="sublink" id="rekordy"><a href="https://www.pfs.org.pl/rekordy.php">Rekordy</a></li>
+        </ul>
+    </div>
+    <div id="m_pfs">
+        <div  class="tab"><a href="https://www.pfs.org.pl/opfs.php"></a></div>
+        <ul>
+            <li class="sublink" id="opfs"><a href="https://www.pfs.org.pl/opfs.php">O PFS</a></li>
+            <li class="sublink" id="jakprzystapic"><a href="https://www.pfs.org.pl/jakprzystapic.php">Jak przystąpić</a></li>
+            <li class="sublink" id="dlaczlonkow"><a href="https://www.pfs.org.pl/dlaczlonkow.php">Dla członków</a></li>
+            <li class="sublink" id="wladze"><a href="https://www.pfs.org.pl/wladze.php">Władze</a></li>
+            <li class="sublink" id="komisje"><a href="https://www.pfs.org.pl/komisje.php">Komisje</a></li>
+            <li class="sublink" id="statut"><a href="https://www.pfs.org.pl/statut.php">Statut</a></li>
+            <li class="sublink" id="uchwaly"><a href="https://www.pfs.org.pl/uchwaly.php">Uchwały</a></li>
+            <li class="sublink" id="honorowi"><a href="https://www.pfs.org.pl/honorowi.php">Honorowi członkowie</a></li>
+            <li class="sublink" id="finanse"><a href="https://www.pfs.org.pl/finanse.php">Finanse</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabble">
+        <div  class="tab"><a href="https://www.pfs.org.pl/osps_online.php?desktop=1"></a></div>
+        <ul>
+            <li class="sublink" id="osps_online"><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+            <li class="sublink" id="zds"><a href="https://www.pfs.org.pl/zds2.php">ZDS</a></li>
+            <li class="sublink" id="osps"><a href="https://www.pfs.org.pl/osps.php">OSPS</a></li>
+            <li class="sublink" id="aktualizacje"><a href="https://www.pfs.org.pl/osps_aktualizacje.php">Aktualizacje</a></li>
+            <li class="sublink" id="dwojki"><a href="https://www.pfs.org.pl/dwojki.php">2-literówki</a></li>
+            <li class="sublink" id="trojki"><a href="https://www.pfs.org.pl/trojki.php">3-literówki</a></li>
+            <li class="sublink" id="siodemkat"><a href="https://www.pfs.org.pl/siodemka.php">Siódemka tygodnia</a></li>
+            <li class="sublink" id="slowneroznosci"><a href="https://www.pfs.org.pl/slowneroznosci.php">Słowne różności</a></li>
+        </ul>
+    </div>
+    <div id="m_ranking">
+        <div  class="tab"><a href="https://www.pfs.org.pl/ranking.php"></a></div>
+        <ul>
+            <li class="sublink" id="aktranking"><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+            <li class="sublink" id="medale"><a href="https://www.pfs.org.pl/medale.php">Klasyfikacja medalowa</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabblisci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/mistrzowiepolski.php"></a></div>
+        <ul>
+            <li class="sublink" id="mistrzowiepolski"><a href="https://www.pfs.org.pl/mistrzowiepolski.php">Mistrzowie Polski</a></li>
+            <li class="sublink" id="zdobywcypp"><a href="https://www.pfs.org.pl/zdobywcypp.php">Zdobywcy Pucharu Polski</a></li>
+            <li class="sublink" id="zwyciezcygp"><a href="https://www.pfs.org.pl/zwyciezcygp.php">Zwycięzcy Grand Prix</a></li>
+            <li class="sublink" id="liderzyrankingu"><a href="https://www.pfs.org.pl/liderzyrankingu.php">Liderzy rankingu</a></li>
+            <li class="sublink" id="zwyciezcylemans"><a href="https://www.pfs.org.pl/zwyciezcylemans.php">Zwycięzcy 24h Le Mans</a></li>
+            <li class="sublink" id="zwyciezcykmp"><a href="https://www.pfs.org.pl/zwyciezcykmp.php">KMP</a>
+        </ul>
+    </div>
+    <div id="m_kluby">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kluby.php"></a></div>
+        <ul>
+            <li class="sublink" id="rejestrklubow"><a href="https://www.pfs.org.pl/kluby.php">Rejestr klubów</a></li>
+            <li class="sublink" id="kmp"><a href="https://www.pfs.org.pl/kmp.php">KMP</a></li>
+            <li class="sublink" id="wiescizklubow"><a href="https://www.pfs.org.pl/wiescizklubow.php">Wieści z klubów</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/about.php">Statystyki klubowe</a></li>
+        </ul>
+    </div>
+    <div id="m_roznosci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/historia.php"></a></div>
+        <ul>
+            <li class="sublink" id="historia"><a href="https://www.pfs.org.pl/historia.php">Historia</a></li>
+            <li class="sublink" id="odmiany"><a href="https://www.pfs.org.pl/odmiany.php">Odmiany</a></li>
+            <li class="sublink" id="anegdoty"><a href="https://www.pfs.org.pl/anegdoty.php">Anegdoty</a></li>
+            <li class="sublink" id="scrabblealia"><a href="https://www.pfs.org.pl/scrabblealia.php">Scrabblealia</a></li>
+            <li class="sublink" id="scrabblenet"><a href="https://www.pfs.org.pl/scrabblenet.php">Scrabble w internecie</a></li>
+            <li class="sublink" id="programy"><a href="https://www.pfs.org.pl/programy.php">Programy</a></li>
+            <li class="sublink" id="download"><a href="https://www.pfs.org.pl/download.php">Do pobrania</a></li>
+            <li class="sublink" id="ksiazki"><a href="https://www.pfs.org.pl/ksiazki.php">Książki</a></li>
+            <li class="sublink" id="slowniczek"><a href="https://www.pfs.org.pl/slowniczek.php">Słowniczek</a></li>
+        </ul>
+    </div>
+    <div id="m_english">
+        <div  class="tab"><a href="https://www.pfs.org.pl/english.php"></a></div>
+        <ul>
+            <li class="sublink" id="about"><a href="https://www.pfs.org.pl/english.php">About Polish Scrabble</a></li>
+            <li class="sublink" id="news"><a href="https://www.pfs.org.pl/en_news.php">News</a></li>
+            <li class="sublink" id="bartek"><a href="https://www.pfs.org.pl/bartek.php">Bartek w Johor Bahru</a></li>
+            <li class="sublink" id="franko"><a href="https://www.pfs.org.pl/franko.php">Scrabble frankofońskie</a></li>
+        </ul>
+    </div>
+</div>
+
+<div id="submenu"></div>
+<div id="content">
+<div id='nextTours'>
+		<div class='nextTour' onclick='location.href="turniej.php?id=312"'>
+			<div class='karteczka small1'>
+				<span class='miasto'>Warszawa</span><span class='dzien'><span class='big'>28</span><br />maja</span></div>
+			<div class='kartka big1'>
+				<span class='miasto'>Warszawa</span>
+				<span class='dzien'><b>28 maja</b></span>
+				<span class='nazwaturnieju'>VI Puchar Polski</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=311"'>
+			<div class='karteczka small2'>
+				<span class='miasto'>Nowe Miasto Lubawskie</span><span class='dzien'><span class='big'> 3</span><br />czerwca</span></div>
+			<div class='kartka big2'>
+				<span class='miasto'>Nowe Miasto Lubawskie</span>
+				<span class='dzien'><b> 3- 4 czerwca</b></span>
+				<span class='nazwaturnieju'>III Mistrzostwa Warmii i Mazur</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=310"'>
+			<div class='karteczka small3'>
+				<span class='miasto'>Kościerzyna</span><span class='dzien'><span class='big'>11</span><br />czerwca</span></div>
+			<div class='kartka big3'>
+				<span class='miasto'>Kościerzyna</span>
+				<span class='dzien'><b>11 czerwca</b></span>
+				<span class='nazwaturnieju'>IV Mistrzostwa Kaszub</span></div>
+		</div></div><div class='naglowekrelacji'><span class='tytul'>III Mistrzostwa Warmii i&nbsp;Mazur<span class='nazwa'>03 - 04 czerwca 2000 —  III Mistrzostwa Warmii i Mazur</span></span><a href='#' id='info' class='przycisk'>Informacje</a><a href='#' id='relacja' class='przycisk'>Relacja</a><a href='#' id='klasyfikacja' class='przycisk'>Wyniki</a><a href='#' id='hh' class='przycisk'>HH</a><div class='galleries'><img src='files/img/gallery.png' style='visibility:hidden;' alt='galeria' /></div></div><h1 style='color:black; margin-top:0px; margin-bottom:30px; padding: 0px'>III Mistrzostwa Warmii i Mazur<span>Nowe Miasto Lubawskie, 03 - 04 czerwca 2000</span></h1><div id='p_relacja' class='page'><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><div class='relacja' style='clear:both;'><div><pre>
+ 1. Marcin Mroziuk (Strzegom) 9.0 4654
+ 2. Mariusz Orzeł (Nowe Miasto Lub.) 9.0 4641
+ 3. Wojciech Usakiewicz (Warszawa) 9.0 4617
+ 4. Krzysztof Bukowski (Nowe Miasto Lub.) 8.0 4290
+ 5. Mariusz Kubicki (Inowrocław) 8.0 4237
+ 6. Tomasz Zwoliński (Warszawa) 7.0 4829
+ 7. Andrzej Oleksiak (Ostróda) 7.0 4333
+ 8. Kazimierz M.Merklejn (Szczecin) 7.0 4230
+ 9. Mateusz Żbikowski (Warszawa) 7.0 4203
+ 10. Krystian Wandzlewicz (Nowe Miasto Lub.) 7.0 4141
+
+ 30 uczestników, 12 rund 
+</pre></div><div class='autor'></div></div><div style='clear:both;'></div></div><div id='p_info' class='page'><br><p align='center'></p><br><br><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br>Zobacz, jak było na poprzednich turniejach:<br><a href='turniej.php?id=337'>II Otwarte Mistrzostwa Warmii i Mazur</a><br><a href='turniej.php?id=395'>I Otwarte Mistrzostwa Warmii i Mazur</a><br><table id='szczegoly' class='ramkadolna'></table><br /><br /></div><div id='p_klasyfikacja' class='page'><pre>Wyniki turnieju III Otwarte Mistrzostwa Warmii i Mazur
+
+Lp. Imię            Nazwisko             Miasto               Ranking  Duże pkt Małe pkt Skalpy   Różn. MP
+--- --------------- -------------------- -------------------- -------- -------- -------- -------- --------
+  1 Marcin          Mroziuk              Warszawa               132.04      9.0     4654     1771      559
+  2 Mariusz         Orzeł                Nowe Miasto Lubawskie   129.17      9.0     4641     1736      583
+  3 Wojciech        Usakiewicz           Warszawa               130.93      9.0     4617     1695      787
+  4 Krzysztof       Bukowski             Milanówek              120.88      8.0     4290     1585      341
+  5 Mariusz         Kubicki              Inowrocław             112.61      8.0     4237     1618      107
+  6 Tomasz          Zwoliński            Warszawa               145.03      7.0     4829     1496      696
+  7 Andrzej         Oleksiak             Hel                    100.00      7.0     4333     1416      209
+  8 Kazimierz.J     Merklejn             Szczecin               113.14      7.0     4230     1418      386
+  9 Mateusz         Żbikowski            Warszawa               116.86      7.0     4203     1484      -69
+ 10 Krystian        Wandzlewicz          Nowe Miasto Lubawskie   100.00      7.0     4141     1423      124
+ 11 Adam            Grzona               Toruń                  109.13      6.0     4336     1360      341
+ 12 Magdalena       Merklejn             Szczecin               107.87      6.0     4312     1363      234
+ 13 Andrzej         Tyczyno              Bydgoszcz              108.65      6.0     4249     1407      199
+ 14 Aleksandra      Merklejn-Kaczanowska Szczecin               106.88      6.0     4213     1307     -143
+ 15 Wojciech        Gołęcki              Inowrocław             100.41      6.0     3978     1313       -8
+ 16 Jan             Bielaszka            Nowe Miasto Lubawskie   100.00      6.0     3800     1237      -55
+ 17 Radosław        Konca                Warszawa               104.46      5.0     4144     1172       95
+ 18 Andrzej         Rechowicz            Katowice               123.51      5.0     4081     1200      -52
+ 19 Krzysztof       Usakiewicz           Warszawa               116.77      5.0     3999     1292     -510
+ 20 Barbara         Orzeł                Nowe Miasto Lubawskie   100.00      5.0     3882     1130       69
+ 21 Bartłomiej      Boczek               Toruń                  100.00      5.0     3725     1179     -126
+ 22 Krzysztof       Noskowicz            Toruń                  102.28      5.0     3143     1019      -57
+ 23 Maria           Grzegorzewska        Nowe Miasto Lubawskie   100.00      4.0     3911     1081     -209
+ 24 Eugeniusz       Wróblewski           Inowrocław             100.00      4.0     3896     1063      -21
+ 25 Andrzej         Lożyński             Piastów                109.69      4.0     1987      713      246
+ 26 Grzegorz        Koczkodon            Ostróda                100.00      3.0     1917      688     -492
+ 27 Mirosław        Grafiński            Brodnica               100.00      3.0      927      450      239
+ 28 Krzysztof       Kokot                Nowy Targ              100.00      2.0     3331      841     -621
+ 29 Tomasz          Żbikowski            Warszawa               107.73      2.0     2297      604      -77
+ 30 Anna            Bielaszka            Nowe Miasto Lubawskie   100.00      0.0     2109      621    -2775
+</pre></div><div id='p_hh' class='page'><pre>Wyniki poszczególnych graczy w turnieju III Otwarte Mistrzostwa Warmii i Mazur
+
+
+
+	Tomasz Zwoliński 145.03 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Tomasz         Żbikowski             107.73 +  541: 270  158
+    2     1 Adam           Grzona                109.13 +  417: 333  159
+    3     1 Mariusz        Orzeł                 129.17 -  352: 424   79
+    4     3 Mateusz        Żbikowski             116.86 +  373: 305  167
+    5     2 Marcin         Mroziuk               132.04 -  294: 359   82
+    6     3 Mariusz        Kubicki               112.61 -  390: 415   63
+    7     5 Krzysztof      Noskowicz             102.28 +  550: 229  152
+    8     4 Krzysztof      Usakiewicz            116.77 +  392: 318  167
+    9     3 Andrzej        Tyczyno               108.65 +  442: 318  159
+   10     3 Magdalena      Merklejn              107.87 +  470: 379  158
+   11     2 Wojciech       Usakiewicz            130.93 -  307: 445   81
+   12     3 Krzysztof      Bukowski              120.88 -  301: 338   71
+                                                          --------------- ---- ------
+                                                                    1496  / 12 124.67
+
+
+
+
+	Marcin Mroziuk 132.04 Warszawa
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Aleksandra     Merklejn-Kaczanowska  106.88 +  342: 327  157
+    2     5 Kazimierz.J    Merklejn              113.14 +  445: 295  163
+    3     2 Andrzej        Rechowicz             123.51 +  404: 319  174
+    4     1 Mariusz        Orzeł                 129.17 -  313: 389   79
+    5     2 Tomasz         Zwoliński             145.03 +  359: 294  195
+    6     2 Krzysztof      Usakiewicz            116.77 -  361: 364   67
+    7     3 Wojciech       Usakiewicz            130.93 +  430: 315  181
+    8     2 Andrzej        Tyczyno               108.65 +  406: 388  159
+    9     2 Mateusz        Żbikowski             116.86 +  421: 320  167
+   10     2 Krzysztof      Bukowski              120.88 +  400: 344  171
+   11     1 Mariusz        Orzeł                 129.17 +  466: 297  179
+   12     1 Mariusz        Orzeł                 129.17 -  307: 443   79
+                                                          --------------- ---- ------
+                                                                    1771  / 12 147.58
+
+
+
+
+	Wojciech Usakiewicz 130.93 Warszawa               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Radosław       Konca                 104.46 +  396: 278  154
+    2     4 Krzysztof      Bukowski              120.88 -  291: 349   71
+    3     7 Kazimierz.J    Merklejn              113.14 +  440: 217  163
+    4     4 Krystian       Wandzlewicz           100.00 +  363: 281  150
+    5     3 Mariusz        Kubicki               112.61 -  322: 342   63
+    6     5 Magdalena      Merklejn              107.87 +  386: 376  158
+    7     3 Marcin         Mroziuk               132.04 -  315: 430   82
+    8     5 Bartłomiej     Boczek                100.00 +  342: 281  150
+    9     4 Krzysztof      Usakiewicz            116.77 +  452: 350  167
+   10     1 Mariusz        Orzeł                 129.17 +  421: 313  179
+   11     2 Tomasz         Zwoliński             145.03 +  445: 307  195
+   12     2 Mariusz        Kubicki               112.61 +  444: 306  163
+                                                          --------------- ---- ------
+                                                                    1695  / 12 141.25
+
+
+
+
+	Mariusz Orzeł 129.17 Nowe Miasto Lubawskie       
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Wojciech       Gołęcki               100.41 +  448: 205  150
+    2     2 Andrzej        Oleksiak              100.00 +  346: 318  150
+    3     1 Tomasz         Zwoliński             145.03 +  424: 352  195
+    4     1 Marcin         Mroziuk               132.04 +  389: 313  182
+    5     1 Krzysztof      Usakiewicz            116.77 +  452: 303  167
+    6     1 Andrzej        Tyczyno               108.65 +  445: 358  159
+    7     1 Mariusz        Kubicki               112.61 +  376: 317  163
+    8     1 Mateusz        Żbikowski             116.86 -  308: 331   67
+    9     1 Magdalena      Merklejn              107.87 +  400: 367  158
+   10     1 Wojciech       Usakiewicz            130.93 -  313: 421   81
+   11     1 Marcin         Mroziuk               132.04 -  297: 466   82
+   12     1 Marcin         Mroziuk               132.04 +  443: 307  182
+                                                          --------------- ---- ------
+                                                                    1736  / 12 144.67
+
+
+
+
+	Andrzej Rechowicz 123.51 Katowice               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Eugeniusz      Wróblewski            100.00 +  414: 260  150
+    2     3 Magdalena      Merklejn              107.87 +  346: 328  158
+    3     2 Marcin         Mroziuk               132.04 -  319: 404   82
+    4     6 Andrzej        Tyczyno               108.65 -  335: 353   59
+    5     7 Andrzej        Oleksiak              100.00 +  436: 325  150
+    6     4 Mateusz        Żbikowski             116.86 -  332: 347   67
+    7     6 Krzysztof      Bukowski              120.88 -  294: 347   71
+    8     8 Adam           Grzona                109.13 -  243: 343   59
+    9    10 Radosław       Konca                 104.46 -  303: 419   54
+   10    12 Maria          Grzegorzewska         100.00 -  331: 432   50
+   11    12 Maria          Grzegorzewska         100.00 +  377: 276  150
+   12    11 Eugeniusz      Wróblewski            100.00 +  351: 299  150
+                                                          --------------- ---- ------
+                                                                    1200  / 12 100.00
+
+
+
+
+	Krzysztof Bukowski 120.88 Milanówek
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Krzysztof      Kokot                 100.00 +  377: 325  150
+    2     4 Wojciech       Usakiewicz            130.93 +  349: 291  181
+    3     3 Mariusz        Kubicki               112.61 -  363: 367   63
+    4     5 Wojciech       Gołęcki               100.41 +  344: 317  150
+    5     4 Andrzej        Tyczyno               108.65 -  237: 397   59
+    6     6 Krystian       Wandzlewicz           100.00 -  382: 385   50
+    7     6 Andrzej        Rechowicz             123.51 +  347: 294  174
+    8     6 Kazimierz.J    Merklejn              113.14 +  346: 306  163
+    9     6 Adam           Grzona                109.13 +  381: 314  159
+   10     2 Marcin         Mroziuk               132.04 -  344: 400   82
+   11     5 Adam           Grzona                109.13 +  482: 252  159
+   12     3 Tomasz         Zwoliński             145.03 +  338: 301  195
+                                                          --------------- ---- ------
+                                                                    1585  / 12 132.08
+
+
+
+
+	Mateusz Żbikowski 116.86 Warszawa         
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Andrzej        Oleksiak              100.00 -  333: 436   50
+    2     8 Aleksandra     Merklejn-Kaczanowska  106.88 +  435: 386  157
+    3     5 Magdalena      Merklejn              107.87 +  395: 240  158
+    4     3 Tomasz         Zwoliński             145.03 -  305: 373   95
+    5     5 Adam           Grzona                109.13 +  400: 342  159
+    6     4 Andrzej        Rechowicz             123.51 +  347: 332  174
+    7     2 Krzysztof      Usakiewicz            116.77 +  465: 263  167
+    8     1 Mariusz        Orzeł                 129.17 +  331: 308  179
+    9     2 Marcin         Mroziuk               132.04 -  320: 421   82
+   10     4 Mariusz        Kubicki               112.61 -  238: 458   63
+   11     4 Krystian       Wandzlewicz           100.00 -  229: 386   50
+   12     6 Wojciech       Gołęcki               100.41 +  405: 327  150
+                                                          --------------- ---- ------
+                                                                    1484  / 12 123.67
+
+
+
+
+	Krzysztof Usakiewicz 116.77 Warszawa               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Barbara        Orzeł                 100.00 +  301: 300  150
+    2     7 Andrzej        Tyczyno               108.65 +  341: 325  159
+    3     4 Adam           Grzona                109.13 +  376: 279  159
+    4     2 Mariusz        Kubicki               112.61 +  396: 332  163
+    5     1 Mariusz        Orzeł                 129.17 -  303: 452   79
+    6     2 Marcin         Mroziuk               132.04 +  364: 361  182
+    7     2 Mateusz        Żbikowski             116.86 -  263: 465   67
+    8     4 Tomasz         Zwoliński             145.03 -  318: 392   95
+    9     4 Wojciech       Usakiewicz            130.93 -  350: 452   81
+   10     6 Krystian       Wandzlewicz           100.00 -  339: 387   50
+   11     8 Wojciech       Gołęcki               100.41 -  332: 352   50
+   12     9 Aleksandra     Merklejn-Kaczanowska  106.88 -  316: 412   57
+                                                          --------------- ---- ------
+                                                                    1292  / 12 107.67
+
+
+
+
+	Kazimierz.J Merklejn 113.14 Szczecin               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Krystian       Wandzlewicz           100.00 +  376: 321  150
+    2     5 Marcin         Mroziuk               132.04 -  295: 445   82
+    3     7 Wojciech       Usakiewicz            130.93 -  217: 440   81
+    4    11 Bartłomiej     Boczek                100.00 +  398: 248  150
+    5     9 Grzegorz       Koczkodon             100.00 +  376: 166  150
+    6     7 Krzysztof      Noskowicz             102.28 -  329: 399   52
+    7     8 Wojciech       Gołęcki               100.41 +  414: 289  150
+    8     6 Krzysztof      Bukowski              120.88 -  306: 346   71
+    9     7 Aleksandra     Merklejn-Kaczanowska  106.88 +  471: 238  157
+   10     5 Andrzej        Tyczyno               108.65 -  311: 349   59
+   11     7 Aleksandra     Merklejn-Kaczanowska  106.88 +  380: 272  157
+   12     5 Andrzej        Tyczyno               108.65 +  357: 331  159
+                                                          --------------- ---- ------
+                                                                    1418  / 12 118.17
+
+
+
+
+	Mariusz Kubicki 112.61 Inowrocław               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Maria          Grzegorzewska         100.00 +  317: 310  150
+    2     6 Andrzej        Lożyński              109.69 +  354: 271  160
+    3     3 Krzysztof      Bukowski              120.88 +  367: 363  171
+    4     2 Krzysztof      Usakiewicz            116.77 -  332: 396   67
+    5     3 Wojciech       Usakiewicz            130.93 +  342: 322  181
+    6     3 Tomasz         Zwoliński             145.03 +  415: 390  195
+    7     1 Mariusz        Orzeł                 129.17 -  317: 376   79
+    8     3 Magdalena      Merklejn              107.87 -  294: 351   58
+    9     5 Krystian       Wandzlewicz           100.00 +  369: 326  150
+   10     4 Mateusz        Żbikowski             116.86 +  458: 238  167
+   11     3 Andrzej        Tyczyno               108.65 +  366: 343  159
+   12     2 Wojciech       Usakiewicz            130.93 -  306: 444   81
+                                                          --------------- ---- ------
+                                                                    1618  / 12 134.83
+
+
+
+
+	Andrzej Lożyński 109.69 Piastów                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Jan            Bielaszka             100.00 +  323: 214  150
+    2     6 Mariusz        Kubicki               112.61 -  271: 354   63
+    3    10 Bartłomiej     Boczek                100.00 +  405: 296  150
+   10    13 Krzysztof      Kokot                 100.00 +  291: 241  150
+   11    13 Krzysztof      Kokot                 100.00 +  385: 234  150
+   12    12 Bartłomiej     Boczek                100.00 -  312: 402   50
+                                                          --------------- ---- ------
+                                                                     713  /  6 118.83
+
+
+
+
+	Adam Grzona 109.13 Toruń                    
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    12 Anna           Bielaszka             100.00 +  516: 178  150
+    2     1 Tomasz         Zwoliński             145.03 -  333: 417   95
+    3     4 Krzysztof      Usakiewicz            116.77 -  279: 376   67
+    4     7 Aleksandra     Merklejn-Kaczanowska  106.88 +  502: 269  157
+    5     5 Mateusz        Żbikowski             116.86 -  342: 400   67
+    6     8 Andrzej        Oleksiak              100.00 -  338: 380   50
+    7    10 Tomasz         Żbikowski             107.73 +  355: 293  158
+    8     8 Andrzej        Rechowicz             123.51 +  343: 243  174
+    9     6 Krzysztof      Bukowski              120.88 -  314: 381   71
+   10     7 Jan            Bielaszka             100.00 +  423: 258  150
+   11     5 Krzysztof      Bukowski              120.88 -  252: 482   71
+   12     7 Jan            Bielaszka             100.00 +  339: 318  150
+                                                          --------------- ---- ------
+                                                                    1360  / 12 113.33
+
+
+
+
+	Andrzej Tyczyno 108.65 Bydgoszcz                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    13 Bartłomiej     Boczek                100.00 +  288: 275  150
+    2     7 Krzysztof      Usakiewicz            116.77 -  325: 341   67
+    3     9 Grzegorz       Koczkodon             100.00 +  395: 278  150
+    4     6 Andrzej        Rechowicz             123.51 +  353: 335  174
+    5     4 Krzysztof      Bukowski              120.88 +  397: 237  171
+    6     1 Mariusz        Orzeł                 129.17 -  358: 445   79
+    7     4 Krystian       Wandzlewicz           100.00 +  404: 257  150
+    8     2 Marcin         Mroziuk               132.04 -  388: 406   82
+    9     3 Tomasz         Zwoliński             145.03 -  318: 442   95
+   10     5 Kazimierz.J    Merklejn              113.14 +  349: 311  163
+   11     3 Mariusz        Kubicki               112.61 -  343: 366   63
+   12     5 Kazimierz.J    Merklejn              113.14 -  331: 357   63
+                                                          --------------- ---- ------
+                                                                    1407  / 12 117.25
+
+
+
+
+	Magdalena Merklejn 107.87 Szczecin               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    14 Grzegorz       Koczkodon             100.00 +  403: 275  150
+    2     3 Andrzej        Rechowicz             123.51 -  328: 346   74
+    3     5 Mateusz        Żbikowski             116.86 -  240: 395   67
+    4     9 Maria          Grzegorzewska         100.00 +  460: 280  150
+    5     6 Wojciech       Gołęcki               100.41 +  355: 251  150
+    6     5 Wojciech       Usakiewicz            130.93 -  376: 386   81
+    7     7 Andrzej        Oleksiak              100.00 +  355: 329  150
+    8     3 Mariusz        Kubicki               112.61 +  351: 294  163
+    9     1 Mariusz        Orzeł                 129.17 -  367: 400   79
+   10     3 Tomasz         Zwoliński             145.03 -  379: 470   95
+   11     6 Andrzej        Oleksiak              100.00 -  284: 382   50
+   12     8 Radosław       Konca                 104.46 +  414: 270  154
+                                                          --------------- ---- ------
+                                                                    1363  / 12 113.58
+
+
+
+
+	Tomasz Żbikowski 107.73 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Tomasz         Zwoliński             145.03 -  270: 541   95
+    2    12 Grzegorz       Koczkodon             100.00 -  282: 321   50
+    3    14 Anna           Bielaszka             100.00 +  444: 143  150
+    4     8 Andrzej        Oleksiak              100.00 -  316: 327   50
+    5    11 Maria          Grzegorzewska         100.00 +  373: 352  150
+    6     9 Wojciech       Gołęcki               100.41 -  319: 335   50
+    7    10 Adam           Grzona                109.13 -  293: 355   59
+                                                          --------------- ---- ------
+                                                                     604  /  7  86.29
+
+
+
+
+	Aleksandra Merklejn-Kaczanowska 106.88 Szczecin                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Marcin         Mroziuk               132.04 -  327: 342   82
+    2     8 Mateusz        Żbikowski             116.86 -  386: 435   67
+    3    11 Jan            Bielaszka             100.00 +  399: 297  150
+    4     7 Adam           Grzona                109.13 -  269: 502   59
+    5    10 Krzysztof      Noskowicz             102.28 -  253: 438   52
+    6    12 Radosław       Konca                 104.46 +  421: 239  154
+    7    11 Barbara        Orzeł                 100.00 +  430: 258  150
+    8     9 Andrzej        Oleksiak              100.00 +  424: 388  150
+    9     7 Kazimierz.J    Merklejn              113.14 -  238: 471   63
+   10     9 Eugeniusz      Wróblewski            100.00 +  382: 290  150
+   11     7 Kazimierz.J    Merklejn              113.14 -  272: 380   63
+   12     9 Krzysztof      Usakiewicz            116.77 +  412: 316  167
+                                                          --------------- ---- ------
+                                                                    1307  / 12 108.92
+
+
+
+
+	Radosław Konca 104.46 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Wojciech       Usakiewicz            130.93 -  278: 396   81
+    2    11 Bartłomiej     Boczek                100.00 -  322: 331   50
+    3    12 Barbara        Orzeł                 100.00 -  311: 336   50
+    4    13 Krzysztof      Noskowicz             102.28 -  361: 386   52
+    5    14 Anna           Bielaszka             100.00 +  487: 171  150
+    6    12 Aleksandra     Merklejn-Kaczanowska  106.88 -  239: 421   57
+    7    12 Eugeniusz      Wróblewski            100.00 +  452: 273  150
+    8    11 Maria          Grzegorzewska         100.00 +  364: 311  150
+    9    10 Andrzej        Rechowicz             123.51 +  419: 303  174
+   10     8 Andrzej        Oleksiak              100.00 -  330: 411   50
+   11    10 Eugeniusz      Wróblewski            100.00 +  311: 296  150
+   12     8 Magdalena      Merklejn              107.87 -  270: 414   58
+                                                          --------------- ---- ------
+                                                                    1172  / 12  97.67
+
+
+
+
+	Krzysztof Noskowicz 102.28 Toruń                    
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    4    13 Radosław       Konca                 104.46 +  386: 361  154
+    5    10 Aleksandra     Merklejn-Kaczanowska  106.88 +  438: 253  157
+    6     7 Kazimierz.J    Merklejn              113.14 +  399: 329  163
+    7     5 Tomasz         Zwoliński             145.03 -  229: 550   95
+    8     7 Krystian       Wandzlewicz           100.00 -  324: 381   50
+    9     9 Andrzej        Oleksiak              100.00 -  309: 384   50
+   10    11 Bartłomiej     Boczek                100.00 +  347: 295  150
+   11     9 Jan            Bielaszka             100.00 -  304: 347   50
+   12    10 Barbara        Orzeł                 100.00 +  407: 300  150
+                                                          --------------- ---- ------
+                                                                    1019  /  9 113.22
+
+
+
+
+	Wojciech Gołęcki 100.41 Inowrocław               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Mariusz        Orzeł                 129.17 -  205: 448   79
+    2    14 Anna           Bielaszka             100.00 +  455: 102  150
+    3     8 Maria          Grzegorzewska         100.00 +  431: 325  150
+    4     5 Krzysztof      Bukowski              120.88 -  317: 344   71
+    5     6 Magdalena      Merklejn              107.87 -  251: 355   58
+    6     9 Tomasz         Żbikowski             107.73 +  335: 319  158
+    7     8 Kazimierz.J    Merklejn              113.14 -  289: 414   63
+    8    10 Jan            Bielaszka             100.00 -  276: 282   50
+    9    12 Krzysztof      Kokot                 100.00 +  379: 302  150
+   10    10 Barbara        Orzeł                 100.00 +  361: 358  150
+   11     8 Krzysztof      Usakiewicz            116.77 +  352: 332  167
+   12     6 Mateusz        Żbikowski             116.86 -  327: 405   67
+                                                          --------------- ---- ------
+                                                                    1313  / 12 109.42
+
+
+
+
+	Anna Bielaszka 100.00 Nowe Miasto Lubawskie   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    12 Adam           Grzona                109.13 -  178: 516   59
+    2    14 Wojciech       Gołęcki               100.41 -  102: 455   50
+    3    14 Tomasz         Żbikowski             107.73 -  143: 444   58
+    4    14 Krzysztof      Kokot                 100.00 -  184: 314   50
+    5    14 Radosław       Konca                 104.46 -  171: 487   54
+    6    14 Jan            Bielaszka             100.00 -  208: 424   50
+    7    14 Maria          Grzegorzewska         100.00 -  180: 367   50
+    8    12 Eugeniusz      Wróblewski            100.00 -  134: 500   50
+    9    13 Barbara        Orzeł                 100.00 -  121: 450   50
+   10    14 Mirosław       Grafiński             100.00 -  209: 330   50
+   11    14 Mirosław       Grafiński             100.00 -  246: 307   50
+   12    14 Mirosław       Grafiński             100.00 -  233: 290   50
+                                                          --------------- ---- ------
+                                                                     621  / 12  51.75
+
+
+
+
+	Jan Bielaszka 100.00 Nowe Miasto Lubawskie           
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Andrzej        Lożyński              109.69 -  214: 323   60
+    2    13 Eugeniusz      Wróblewski            100.00 +  361: 319  150
+    3    11 Aleksandra     Merklejn-Kaczanowska  106.88 -  297: 399   57
+    4    12 Grzegorz       Koczkodon             100.00 -  294: 356   50
+    5    12 Barbara        Orzeł                 100.00 -  293: 373   50
+    6    14 Anna           Bielaszka             100.00 +  424: 208  150
+    7    13 Krzysztof      Kokot                 100.00 +  313: 290  150
+    8    10 Wojciech       Gołęcki               100.41 +  282: 276  150
+    9     8 Bartłomiej     Boczek                100.00 +  399: 245  150
+   10     7 Adam           Grzona                109.13 -  258: 423   59
+   11     9 Krzysztof      Noskowicz             102.28 +  347: 304  152
+   12     7 Adam           Grzona                109.13 -  318: 339   59
+                                                          --------------- ---- ------
+                                                                    1237  / 12 103.08
+
+
+
+
+	Bartłomiej Boczek 100.00 Toruń                    
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    13 Andrzej        Tyczyno               108.65 -  275: 288   59
+    2    11 Radosław       Konca                 104.46 +  331: 322  154
+    3    10 Andrzej        Lożyński              109.69 -  296: 405   60
+    4    11 Kazimierz.J    Merklejn              113.14 -  248: 398   63
+    5    13 Krzysztof      Kokot                 100.00 +  392: 236  150
+    6    10 Barbara        Orzeł                 100.00 +  308: 270  150
+    7     9 Grzegorz       Koczkodon             100.00 +  360: 208  150
+    8     5 Wojciech       Usakiewicz            130.93 -  281: 342   81
+    9     8 Jan            Bielaszka             100.00 -  245: 399   50
+   10    11 Krzysztof      Noskowicz             102.28 -  295: 347   52
+   11    11 Barbara        Orzeł                 100.00 -  292: 324   50
+   12    12 Andrzej        Lożyński              109.69 +  402: 312  160
+                                                          --------------- ---- ------
+                                                                    1179  / 12  98.25
+
+
+
+
+	Mirosław Grafiński 100.00 Brodnica                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+   10    14 Anna           Bielaszka             100.00 +  330: 209  150
+   11    14 Anna           Bielaszka             100.00 +  307: 246  150
+   12    14 Anna           Bielaszka             100.00 +  290: 233  150
+                                                          --------------- ---- ------
+                                                                     450  /  3 150.00
+
+
+
+
+	Maria Grzegorzewska 100.00 Nowe Miasto Lubawskie          
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Mariusz        Kubicki               112.61 -  310: 317   63
+    2    10 Barbara        Orzeł                 100.00 +  346: 343  150
+    3     8 Wojciech       Gołęcki               100.41 -  325: 431   50
+    4     9 Magdalena      Merklejn              107.87 -  280: 460   58
+    5    11 Tomasz         Żbikowski             107.73 -  352: 373   58
+    6    13 Krzysztof      Kokot                 100.00 -  289: 330   50
+    7    14 Anna           Bielaszka             100.00 +  367: 180  150
+    8    11 Radosław       Konca                 104.46 -  311: 364   54
+    9    11 Eugeniusz      Wróblewski            100.00 -  316: 343   50
+   10    12 Andrzej        Rechowicz             123.51 +  432: 331  174
+   11    12 Andrzej        Rechowicz             123.51 -  276: 377   74
+   12    13 Krzysztof      Kokot                 100.00 +  307: 271  150
+                                                          --------------- ---- ------
+                                                                    1081  / 12  90.08
+
+
+
+
+	Grzegorz Koczkodon 100.00 Ostróda                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    14 Magdalena      Merklejn              107.87 -  275: 403   58
+    2    12 Tomasz         Żbikowski             107.73 +  321: 282  158
+    3     9 Andrzej        Tyczyno               108.65 -  278: 395   59
+    4    12 Jan            Bielaszka             100.00 +  356: 294  150
+    5     9 Kazimierz.J    Merklejn              113.14 -  166: 376   63
+    6    11 Eugeniusz      Wróblewski            100.00 +  313: 299  150
+    7     9 Bartłomiej     Boczek                100.00 -  208: 360   50
+                                                          --------------- ---- ------
+                                                                     688  /  7  98.29
+
+
+
+
+	Krzysztof Kokot 100.00 Nowy Targ                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Krzysztof      Bukowski              120.88 -  325: 377   71
+    2     9 Krystian       Wandzlewicz           100.00 -  243: 407   50
+    3    13 Eugeniusz      Wróblewski            100.00 -  252: 332   50
+    4    14 Anna           Bielaszka             100.00 +  314: 184  150
+    5    13 Bartłomiej     Boczek                100.00 -  236: 392   50
+    6    13 Maria          Grzegorzewska         100.00 +  330: 289  150
+    7    13 Jan            Bielaszka             100.00 -  290: 313   50
+    8    13 Barbara        Orzeł                 100.00 -  293: 296   50
+    9    12 Wojciech       Gołęcki               100.41 -  302: 379   50
+   10    13 Andrzej        Lożyński              109.69 -  241: 291   60
+   11    13 Andrzej        Lożyński              109.69 -  234: 385   60
+   12    13 Maria          Grzegorzewska         100.00 -  271: 307   50
+                                                          --------------- ---- ------
+                                                                     841  / 12  70.08
+
+
+
+
+	Andrzej Oleksiak 100.00 Hel     
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Mateusz        Żbikowski             116.86 +  436: 333  167
+    2     2 Mariusz        Orzeł                 129.17 -  318: 346   79
+    3     6 Krystian       Wandzlewicz           100.00 -  319: 375   50
+    4     8 Tomasz         Żbikowski             107.73 +  327: 316  158
+    5     7 Andrzej        Rechowicz             123.51 -  325: 436   74
+    6     8 Adam           Grzona                109.13 +  380: 338  159
+    7     7 Magdalena      Merklejn              107.87 -  329: 355   58
+    8     9 Aleksandra     Merklejn-Kaczanowska  106.88 -  388: 424   57
+    9     9 Krzysztof      Noskowicz             102.28 +  384: 309  152
+   10     8 Radosław       Konca                 104.46 +  411: 330  154
+   11     6 Magdalena      Merklejn              107.87 +  382: 284  158
+   12     4 Krystian       Wandzlewicz           100.00 +  334: 278  150
+                                                          --------------- ---- ------
+                                                                    1416  / 12 118.00
+
+
+
+
+	Barbara Orzeł 100.00 Nowe Miasto Lubawskie         
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Krzysztof      Usakiewicz            116.77 -  300: 301   67
+    2    10 Maria          Grzegorzewska         100.00 -  343: 346   50
+    3    12 Radosław       Konca                 104.46 +  336: 311  154
+    4    10 Eugeniusz      Wróblewski            100.00 -  274: 350   50
+    5    12 Jan            Bielaszka             100.00 +  373: 293  150
+    6    10 Bartłomiej     Boczek                100.00 -  270: 308   50
+    7    11 Aleksandra     Merklejn-Kaczanowska  106.88 -  258: 430   57
+    8    13 Krzysztof      Kokot                 100.00 +  296: 293  150
+    9    13 Anna           Bielaszka             100.00 +  450: 121  150
+   10    10 Wojciech       Gołęcki               100.41 -  358: 361   50
+   11    11 Bartłomiej     Boczek                100.00 +  324: 292  150
+   12    10 Krzysztof      Noskowicz             102.28 -  300: 407   52
+                                                          --------------- ---- ------
+                                                                    1130  / 12  94.17
+
+
+
+
+	Krystian Wandzlewicz 100.00 Nowe Miasto Lubawskie    
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Kazimierz.J    Merklejn              113.14 -  321: 376   63
+    2     9 Krzysztof      Kokot                 100.00 +  407: 243  150
+    3     6 Andrzej        Oleksiak              100.00 +  375: 319  150
+    4     4 Wojciech       Usakiewicz            130.93 -  281: 363   81
+    5     8 Eugeniusz      Wróblewski            100.00 +  357: 335  150
+    6     6 Krzysztof      Bukowski              120.88 +  385: 382  171
+    7     4 Andrzej        Tyczyno               108.65 -  257: 404   59
+    8     7 Krzysztof      Noskowicz             102.28 +  381: 324  152
+    9     5 Mariusz        Kubicki               112.61 -  326: 369   63
+   10     6 Krzysztof      Usakiewicz            116.77 +  387: 339  167
+   11     4 Mateusz        Żbikowski             116.86 +  386: 229  167
+   12     4 Andrzej        Oleksiak              100.00 -  278: 334   50
+                                                          --------------- ---- ------
+                                                                    1423  / 12 118.58
+
+
+
+
+	Eugeniusz Wróblewski 100.00 Inowrocław               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Andrzej        Rechowicz             123.51 -  260: 414   74
+    2    13 Jan            Bielaszka             100.00 -  319: 361   50
+    3    13 Krzysztof      Kokot                 100.00 +  332: 252  150
+    4    10 Barbara        Orzeł                 100.00 +  350: 274  150
+    5     8 Krystian       Wandzlewicz           100.00 -  335: 357   50
+    6    11 Grzegorz       Koczkodon             100.00 -  299: 313   50
+    7    12 Radosław       Konca                 104.46 -  273: 452   54
+    8    12 Anna           Bielaszka             100.00 +  500: 134  150
+    9    11 Maria          Grzegorzewska         100.00 +  343: 316  150
+   10     9 Aleksandra     Merklejn-Kaczanowska  106.88 -  290: 382   57
+   11    10 Radosław       Konca                 104.46 -  296: 311   54
+   12    11 Andrzej        Rechowicz             123.51 -  299: 351   74
+                                                          --------------- ---- ------
+                                                                    1063  / 12  88.58
+
+
+</pre></div><div id='p_rundy' class='page'><pre></pre></div><div id='p_ranking' class='page'><pre></pre></div><div id='p_przebieg' class='page'>
+
+    </div><div style="clear:both;width:100%;" class="alignright">
+
+<script>
+<!--
+if ((document.getElementById("content").offsetHeight + document.getElementById("top").offsetHeight) > screen.height)
+    document.write("<br /><br /><a href='#top'>do góry</a>");
+-->
+</script>
+
+</div>
+</div>
+
+<div id="bottom">
+<ul id="bottomlinks">
+<div class='onleft'>
+ Osób on-line: 54</div>
+    <li><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+    <li><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+    <li><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+    <li><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+    <li><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+    <li><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+</ul>
+    SCRABBLE® jest zastrzeżonym znakiem towarowym J.W. Spears &amp; Sons&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://www.pfs.org.pl/prawaautorskie.php">© Prawa autorskie</a>
+</div>
+</body>
+</html>

@@ -1,0 +1,805 @@
+
+<html>
+<head>
+    <title>Polska Federacja Scrabble :: III Otwarte Mistrzostwa Ziemi Słupskiej</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="files/img/favicon.ico" />
+    <link rel="stylesheet" href="files/css/style.css" type="text/css" />
+	<link rel="stylesheet" href="files/css/style-index.css" type="text/css" />
+    <!--[if IE]><link rel="stylesheet" type="text/css" href="files/css/styleie.css" /><![endif]-->
+    <!--[if lt IE 7.]><script defer type="text/javascript" src="files/js/pngfix.js"></script><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="files/js/minmax.js"></script><![endif]-->
+    <script type="text/javascript" src="files/js/jquery.js"></script>
+    <script type="text/javascript" src="files/js/jquery-bp.js"></script>
+    <script type="text/javascript" src="files/js/java.js"></script>
+    <script>jSubmenu ("turnieje","kalendarz");jKalendarz();</script>
+    <script>
+    var url, page;
+
+    page = 'info';
+    url  = document.location.toString();
+
+    if (url.match ('#')) {
+      page = url.split ('#')[1];
+      if ($.inArray (page, [ 'info', 'relacja', 'klasyfikacja', 'hh', 'rundy', 'ranking', 'przebieg' ]) == -1)
+        page = 'info';
+    }
+
+    $(document).ready(function(){
+        $('a#listaucz').bind('click', function(event){
+            $('div#lista').toggle();
+            event.preventDefault();
+        }).toggle(function() { $(this).text('schowaj listę uczestników'); }, function() { $(this).text("pokaż listę uczestników"); });
+        $('div#lista table tr:last td').css({"border-bottom" : "none"});
+
+        $("a.przycisk").click (function (e) {
+            if ($(this).attr ('href') !== '#')
+                return true;
+
+            e.preventDefault ();
+
+            id       = this.id;
+            this.id += 'tmp';
+            window.location.hash = id;
+            this.id  = id;
+
+            $(".page").hide ();
+            $(".page#p_" + id).show ();
+
+            $("a.przycisk").removeClass ('active');
+            $(this).addClass ('active');
+
+            return false;
+        });
+
+        $("a.przycisk#" + page).click ();
+        $('html, body').animate ({ scrollTop: 0 }, 0);
+    });
+    </script>
+  <style type="text/css">
+    .page {
+        display: none;
+    }
+    #szczegoly{
+        width: 100%;
+        border-spacing: 0;
+        margin-top: 30px;
+        text-align: left;
+        font-size: inherit;
+    }
+    #szczegoly td{
+        padding: 10px 20px 10px 0;
+        vertical-align: top;
+    }
+    #szczegoly td:first-child{
+        font-weight: bold;
+        width: 160px;
+    }
+    div#lista{
+        display:none;
+        margin-top: 15px;
+    }
+    div#lista table{
+        margin-top: 10px;
+        text-align: left;
+        font-size: inherit;
+    }
+    div#lista table td{
+        padding: 3px 8px;
+        border-bottom: 1px dashed #1576AE;
+    }
+    div#lista table th{
+        padding: 0px 5px 10px 5px;
+    }
+    div#lista table td.ptaszek{
+        text-align: center;
+        background: url('files/img/tick.png') no-repeat center center;
+    }
+    div#lista table th{
+        white-space: nowrap;
+        width: auto;
+    }
+    div#lista table td:first-child, div#lista table th:first-child{
+        text-align:right;
+        width: auto;
+    }
+    </style>
+</head>
+
+<body>
+
+<script type="text/javascript">setMenu();</script>
+
+<div id="top" onclick="location.href='https://www.pfs.org.pl'">
+</div>
+<div id="menu">
+
+    <div id="m_glowna">
+        <div class="tab"><a href="https://www.pfs.org.pl/index.php"></a></div>
+
+        <ul>
+            <li class="sublink" id="aktualnosci"><a href="https://www.pfs.org.pl">Aktualności</a></li>
+            <li class="sublink" id="nowy"><a href="https://www.pfs.org.pl/dlanowych.php">Jestem tu nowy</a></li>
+            <li class="sublink" id="anagramator"><a href="https://www.pfs.org.pl/osps_online.php?main=1">Słownik online</a></li>
+            <li class="sublink" id="siodemka"><a href="https://www.pfs.org.pl/siodemka.php?main=1">Siódemka tygodnia</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+            <li class="sublink" id="dlasponsorow"><a href="https://www.pfs.org.pl/dlasponsorow.php">Dla sponsorów</a></li>
+            <li class="sublink" id="kontakt"><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+        </ul>
+    </div>
+    <div id="m_turnieje">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kalendarz.php"></a></div>
+        <ul>
+            <li class="sublink" id="kalendarz"><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+            <li class="sublink" id="regulaminy"><a href="https://www.pfs.org.pl/regulaminy.php">Regulaminy</a></li>
+            <li class="sublink" id="sedziowie"><a href="https://www.pfs.org.pl/sedziowie.php">Sędziowie</a></li>
+            <li class="sublink" id="gp"><a href="https://www.pfs.org.pl/gp2026.php">Grand Prix</a></li>
+<!--            <li class="sublink" id="mr"><a href="https://www.pfs.org.pl/mr2020.php">Mistrzostwa Regionów</a></li>-->
+            <li class="sublink" id="archiwum"><a href="https://www.pfs.org.pl/archiwum.php">Historia</a></li>
+            <li class="sublink" id="galeria"><a href="https://www.pfs.org.pl/galeria.php">Zdjęcia</a></li>
+            <li class="sublink" id="rekordy"><a href="https://www.pfs.org.pl/rekordy.php">Rekordy</a></li>
+        </ul>
+    </div>
+    <div id="m_pfs">
+        <div  class="tab"><a href="https://www.pfs.org.pl/opfs.php"></a></div>
+        <ul>
+            <li class="sublink" id="opfs"><a href="https://www.pfs.org.pl/opfs.php">O PFS</a></li>
+            <li class="sublink" id="jakprzystapic"><a href="https://www.pfs.org.pl/jakprzystapic.php">Jak przystąpić</a></li>
+            <li class="sublink" id="dlaczlonkow"><a href="https://www.pfs.org.pl/dlaczlonkow.php">Dla członków</a></li>
+            <li class="sublink" id="wladze"><a href="https://www.pfs.org.pl/wladze.php">Władze</a></li>
+            <li class="sublink" id="komisje"><a href="https://www.pfs.org.pl/komisje.php">Komisje</a></li>
+            <li class="sublink" id="statut"><a href="https://www.pfs.org.pl/statut.php">Statut</a></li>
+            <li class="sublink" id="uchwaly"><a href="https://www.pfs.org.pl/uchwaly.php">Uchwały</a></li>
+            <li class="sublink" id="honorowi"><a href="https://www.pfs.org.pl/honorowi.php">Honorowi członkowie</a></li>
+            <li class="sublink" id="finanse"><a href="https://www.pfs.org.pl/finanse.php">Finanse</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabble">
+        <div  class="tab"><a href="https://www.pfs.org.pl/osps_online.php?desktop=1"></a></div>
+        <ul>
+            <li class="sublink" id="osps_online"><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+            <li class="sublink" id="zds"><a href="https://www.pfs.org.pl/zds2.php">ZDS</a></li>
+            <li class="sublink" id="osps"><a href="https://www.pfs.org.pl/osps.php">OSPS</a></li>
+            <li class="sublink" id="aktualizacje"><a href="https://www.pfs.org.pl/osps_aktualizacje.php">Aktualizacje</a></li>
+            <li class="sublink" id="dwojki"><a href="https://www.pfs.org.pl/dwojki.php">2-literówki</a></li>
+            <li class="sublink" id="trojki"><a href="https://www.pfs.org.pl/trojki.php">3-literówki</a></li>
+            <li class="sublink" id="siodemkat"><a href="https://www.pfs.org.pl/siodemka.php">Siódemka tygodnia</a></li>
+            <li class="sublink" id="slowneroznosci"><a href="https://www.pfs.org.pl/slowneroznosci.php">Słowne różności</a></li>
+        </ul>
+    </div>
+    <div id="m_ranking">
+        <div  class="tab"><a href="https://www.pfs.org.pl/ranking.php"></a></div>
+        <ul>
+            <li class="sublink" id="aktranking"><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+            <li class="sublink" id="medale"><a href="https://www.pfs.org.pl/medale.php">Klasyfikacja medalowa</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabblisci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/mistrzowiepolski.php"></a></div>
+        <ul>
+            <li class="sublink" id="mistrzowiepolski"><a href="https://www.pfs.org.pl/mistrzowiepolski.php">Mistrzowie Polski</a></li>
+            <li class="sublink" id="zdobywcypp"><a href="https://www.pfs.org.pl/zdobywcypp.php">Zdobywcy Pucharu Polski</a></li>
+            <li class="sublink" id="zwyciezcygp"><a href="https://www.pfs.org.pl/zwyciezcygp.php">Zwycięzcy Grand Prix</a></li>
+            <li class="sublink" id="liderzyrankingu"><a href="https://www.pfs.org.pl/liderzyrankingu.php">Liderzy rankingu</a></li>
+            <li class="sublink" id="zwyciezcylemans"><a href="https://www.pfs.org.pl/zwyciezcylemans.php">Zwycięzcy 24h Le Mans</a></li>
+            <li class="sublink" id="zwyciezcykmp"><a href="https://www.pfs.org.pl/zwyciezcykmp.php">KMP</a>
+        </ul>
+    </div>
+    <div id="m_kluby">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kluby.php"></a></div>
+        <ul>
+            <li class="sublink" id="rejestrklubow"><a href="https://www.pfs.org.pl/kluby.php">Rejestr klubów</a></li>
+            <li class="sublink" id="kmp"><a href="https://www.pfs.org.pl/kmp.php">KMP</a></li>
+            <li class="sublink" id="wiescizklubow"><a href="https://www.pfs.org.pl/wiescizklubow.php">Wieści z klubów</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/about.php">Statystyki klubowe</a></li>
+        </ul>
+    </div>
+    <div id="m_roznosci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/historia.php"></a></div>
+        <ul>
+            <li class="sublink" id="historia"><a href="https://www.pfs.org.pl/historia.php">Historia</a></li>
+            <li class="sublink" id="odmiany"><a href="https://www.pfs.org.pl/odmiany.php">Odmiany</a></li>
+            <li class="sublink" id="anegdoty"><a href="https://www.pfs.org.pl/anegdoty.php">Anegdoty</a></li>
+            <li class="sublink" id="scrabblealia"><a href="https://www.pfs.org.pl/scrabblealia.php">Scrabblealia</a></li>
+            <li class="sublink" id="scrabblenet"><a href="https://www.pfs.org.pl/scrabblenet.php">Scrabble w internecie</a></li>
+            <li class="sublink" id="programy"><a href="https://www.pfs.org.pl/programy.php">Programy</a></li>
+            <li class="sublink" id="download"><a href="https://www.pfs.org.pl/download.php">Do pobrania</a></li>
+            <li class="sublink" id="ksiazki"><a href="https://www.pfs.org.pl/ksiazki.php">Książki</a></li>
+            <li class="sublink" id="slowniczek"><a href="https://www.pfs.org.pl/slowniczek.php">Słowniczek</a></li>
+        </ul>
+    </div>
+    <div id="m_english">
+        <div  class="tab"><a href="https://www.pfs.org.pl/english.php"></a></div>
+        <ul>
+            <li class="sublink" id="about"><a href="https://www.pfs.org.pl/english.php">About Polish Scrabble</a></li>
+            <li class="sublink" id="news"><a href="https://www.pfs.org.pl/en_news.php">News</a></li>
+            <li class="sublink" id="bartek"><a href="https://www.pfs.org.pl/bartek.php">Bartek w Johor Bahru</a></li>
+            <li class="sublink" id="franko"><a href="https://www.pfs.org.pl/franko.php">Scrabble frankofońskie</a></li>
+        </ul>
+    </div>
+</div>
+
+<div id="submenu"></div>
+<div id="content">
+<div id='nextTours'>
+		<div class='nextTour' onclick='location.href="turniej.php?id=337"'>
+			<div class='karteczka small1'>
+				<span class='miasto'>Nowe Miasto Lubawskie</span><span class='dzien'><span class='big'>26</span><br />czerwca</span></div>
+			<div class='kartka big1'>
+				<span class='miasto'>Nowe Miasto Lubawskie</span>
+				<span class='dzien'><b>26-27 czerwca</b></span>
+				<span class='nazwaturnieju'>II Otwarte Mistrzostwa Warmii i Mazur</span><span class='gp'>Grand&nbsp;Prix&nbsp;1999</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=336"'>
+			<div class='karteczka small2'>
+				<span class='miasto'>Słupsk</span><span class='dzien'><span class='big'>31</span><br />lipca</span></div>
+			<div class='kartka big2'>
+				<span class='miasto'>Słupsk</span>
+				<span class='dzien'><b>31- 1 sierpnia</b></span>
+				<span class='nazwaturnieju'>III Otwarte Mistrzostwa Ziemi Słupskiej</span><span class='gp'>Grand&nbsp;Prix&nbsp;1999</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=335"'>
+			<div class='karteczka small3'>
+				<span class='miasto'>Tczew</span><span class='dzien'><span class='big'> 7</span><br />sierpnia</span></div>
+			<div class='kartka big3'>
+				<span class='miasto'>Tczew</span>
+				<span class='dzien'><b> 7- 8 sierpnia</b></span>
+				<span class='nazwaturnieju'>II Otwarte Mistrzostwa Tczewa</span><span class='gp'>Grand&nbsp;Prix&nbsp;1999</span></div>
+		</div></div><div class='naglowekrelacji'><span class='tytul'>III Otwarte Mistrzostwa Ziemi Słupskiej<span class='nazwa'>31 - 01 sierpnia 1999 —  III Otwarte Mistrzostwa Ziemi Słupskiej</span></span><a href='#' id='info' class='przycisk'>Informacje</a><a href='#' id='relacja' class='przycisk'>Relacja</a><a href='#' id='klasyfikacja' class='przycisk'>Wyniki</a><a href='#' id='hh' class='przycisk'>HH</a><div class='galleries'><img src='files/img/gallery.png' style='visibility:hidden;' alt='galeria' /></div></div><h1 style='color:black; margin-top:0px; margin-bottom:30px; padding: 0px'>III Otwarte Mistrzostwa Ziemi Słupskiej<span><img src='files/img/map-2.png' style='vertical-align: bottom;' title='Grand Prix'> Słupsk, 31 - 01 sierpnia 1999 <br>Grand&nbsp;Prix&nbsp;1999</span></h1><div id='p_relacja' class='page'><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><div class='relacja' style='clear:both;'><div><pre>
+ 1. Dariusz Banaszek (Warszawa)
+ 2. Andrzej Rechowicz (Katowice)
+ 3. Wojciech Usakiewicz (Warszawa)
+ 4. Krzysztof Usakiewicz (Warszawa)
+ 5. Paweł Stanosz (Warszawa)
+ 6. Krzysztof Bukowski (Nowe Miasto Lubawskie)
+ 7. Magdalena Merklejn (Szczecin)
+ 8. Eligiusz Jankowski (Wrocław)
+ 9. Mariusz Orzeł (Nowe Miasto Lubawskie)
+ 10. Tomasz Zwoliński (Warszawa) 
+
+22 uczestników, 12 rund 
+</pre></div><div class='autor'></div></div><div style='clear:both;'></div></div><div id='p_info' class='page'><br><p align='center'></p><br><br><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br>Zobacz, jak było na poprzednich turniejach:<br><a href='turniej.php?id=366'>II Otwarte Mistrzostwa Ziemi Słupskiej</a><br><a href='turniej.php?id=396'>I Otwarte Mistrzostwa Ziemi Słupskiej</a><br><table id='szczegoly' class='ramkadolna'></table><br /><br /></div><div id='p_klasyfikacja' class='page'><pre>Wyniki turnieju III Mistrzostwa Ziemi Kaszubskiej
+
+Lp. Imię            Nazwisko             Miasto               Ranking  Duże pkt Małe pkt Skalpy   Różn. MP
+--- --------------- -------------------- -------------------- -------- -------- -------- -------- --------
+  1 Dariusz         Banaszek             Warszawa               142.00     11.0     5155     1973     1153
+  2 Andrzej         Rechowicz            Katowice               122.00      9.0     4679     1759      612
+  3 Wojciech        Usakiewicz           Warszawa               131.00      9.0     4678     1792      365
+  4 Krzysztof       Usakiewicz           Warszawa               102.00      8.0     4429     1669      180
+  5 Paweł           Stanosz              Warszawa               141.00      7.0     4714     1526      249
+  6 Krzysztof       Bukowski             Milanówek              114.00      7.0     4550     1476      445
+  7 Magdalena       Merklejn             Szczecin               103.00      7.0     4402     1499      520
+  8 Eligiusz        Jankowski            Wrocław                100.00      7.0     4074     1350      656
+  9 Mariusz         Orzeł                Nowe Miasto Lubawskie   127.00      6.0     4700     1472      593
+ 10 Tomasz          Zwoliński            Warszawa               145.00      6.0     4557     1486      278
+ 11 Kazimierz.J     Merklejn             Szczecin               110.00      6.0     4441     1333      828
+ 12 Halina          Roszak               Poznań                 117.78      6.0     4258     1326       24
+ 13 Aleksandra      Merklejn-Kaczanowska Szczecin               114.30      6.0     4197     1351      235
+ 14 Leszek          Dys                  Olsztyn                100.00      6.0     3767     1316     -307
+ 15 Bogusław        Kuma                 Słupsk                 100.00      6.0     3444     1273     -421
+ 16 Zbigniew        Wietecki             Gorzów Wielkopolski    111.00      5.0     4324     1391      205
+ 17 Marek           Roszak               Poznań                 124.00      5.0     4221     1304     -184
+ 18 Ziemowit        Pazda                Wrocław                100.00      5.0     3695     1188     -187
+ 19 Zdzisław        Parnicki             Słupsk                 100.00      5.0     3012     1157     -776
+ 20 Lucyna          Sapis                Słupsk                 100.00      3.0     2856      927    -1025
+ 21 Bartłomiej      Bednarski            Łódź                   100.00      2.0     3057      853     -943
+ 22 Roman           Sikorski             Kobylnica              100.00      0.0     2024      627    -2500
+</pre></div><div id='p_hh' class='page'><pre>Wyniki poszczególnych graczy w turnieju III Mistrzostwa Ziemi Kaszubskiej
+
+
+
+	Tomasz Zwoliński 145.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Aleksandra     Merklejn-Kaczanowska  114.30 +  401: 389  164
+    2     4 Andrzej        Rechowicz             122.00 -  331: 340   72
+    3     5 Paweł          Stanosz               141.00 +  420: 384  191
+    4     5 Bogusław       Kuma                  100.00 +  529: 238  150
+    5     2 Zbigniew       Wietecki              111.00 -  314: 407   61
+    6     3 Mariusz        Orzeł                 127.00 +  370: 347  177
+    7     3 Wojciech       Usakiewicz            131.00 -  350: 408   81
+    8     4 Krzysztof      Usakiewicz            102.00 +  426: 292  152
+    9     1 Dariusz        Banaszek              142.00 -  372: 387   92
+   10     4 Marek          Roszak                124.00 +  420: 280  174
+   11     2 Wojciech       Usakiewicz            131.00 -  294: 436   81
+   12     3 Paweł          Stanosz               141.00 -  330: 371   91
+                                                          --------------- ---- ------
+                                                                    1486  / 12 123.83
+
+
+
+
+	Dariusz Banaszek 142.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Magdalena      Merklejn              103.00 +  321: 318  153
+    2     6 Aleksandra     Merklejn-Kaczanowska  114.30 +  490: 265  164
+    3     3 Andrzej        Rechowicz             122.00 -  414: 441   72
+    4     3 Krzysztof      Usakiewicz            102.00 +  420: 312  152
+    5     3 Marek          Roszak                124.00 +  417: 396  174
+    6     1 Wojciech       Usakiewicz            131.00 +  455: 271  181
+    7     1 Zbigniew       Wietecki              111.00 +  426: 259  161
+    8     1 Mariusz        Orzeł                 127.00 +  472: 291  177
+    9     1 Tomasz         Zwoliński             145.00 +  387: 372  195
+   10     1 Paweł          Stanosz               141.00 +  446: 366  191
+   11     1 Andrzej        Rechowicz             122.00 +  442: 351  172
+   12     1 Wojciech       Usakiewicz            131.00 +  465: 360  181
+                                                          --------------- ---- ------
+                                                                    1973  / 12 164.42
+
+
+
+
+	Paweł Stanosz 141.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Krzysztof      Usakiewicz            102.00 -  372: 437   52
+    2     7 Magdalena      Merklejn              103.00 +  433: 296  153
+    3     5 Tomasz         Zwoliński             145.00 -  384: 420   95
+    4     6 Ziemowit       Pazda                 100.00 +  415: 299  150
+    5     4 Mariusz        Orzeł                 127.00 -  240: 484   77
+    6     6 Krzysztof      Bukowski              114.00 -  417: 420   64
+    7     9 Kazimierz.J    Merklejn              110.00 +  388: 334  160
+    8     6 Leszek         Dys                   100.00 +  438: 336  150
+    9     4 Zbigniew       Wietecki              111.00 +  406: 330  161
+   10     1 Dariusz        Banaszek              142.00 -  366: 446   92
+   11     4 Mariusz        Orzeł                 127.00 +  484: 333  177
+   12     3 Tomasz         Zwoliński             145.00 +  371: 330  195
+                                                          --------------- ---- ------
+                                                                    1526  / 12 127.17
+
+
+
+
+	Wojciech Usakiewicz 131.00 Warszawa               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Eligiusz       Jankowski             100.00 +  413: 298  150
+    2     3 Krzysztof      Usakiewicz            102.00 +  454: 343  152
+    3     2 Krzysztof      Bukowski              114.00 +  401: 329  164
+    4     1 Zbigniew       Wietecki              111.00 +  358: 296  161
+    5     1 Andrzej        Rechowicz             122.00 +  407: 292  172
+    6     1 Dariusz        Banaszek              142.00 -  271: 455   92
+    7     3 Tomasz         Zwoliński             145.00 +  408: 350  195
+    8     2 Marek          Roszak                124.00 +  370: 312  174
+    9     3 Mariusz        Orzeł                 127.00 +  441: 401  177
+   10     2 Halina         Roszak                117.78 -  359: 478   68
+   11     2 Tomasz         Zwoliński             145.00 +  436: 294  195
+   12     1 Dariusz        Banaszek              142.00 -  360: 465   92
+                                                          --------------- ---- ------
+                                                                    1792  / 12 149.33
+
+
+
+
+	Mariusz Orzeł 127.00 Nowe Miasto Lubawskie       
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Ziemowit       Pazda                 100.00 +  529:  99  150
+    2     1 Zbigniew       Wietecki              111.00 -  355: 377   61
+    3     4 Kazimierz.J    Merklejn              110.00 +  410: 315  160
+    4     2 Andrzej        Rechowicz             122.00 -  305: 424   72
+    5     4 Paweł          Stanosz               141.00 +  484: 240  191
+    6     3 Tomasz         Zwoliński             145.00 -  347: 370   95
+    7     4 Halina         Roszak                117.78 +  373: 367  168
+    8     1 Dariusz        Banaszek              142.00 -  291: 472   92
+    9     3 Wojciech       Usakiewicz            131.00 -  401: 441   81
+   10     6 Leszek         Dys                   100.00 +  492: 220  150
+   11     4 Paweł          Stanosz               141.00 -  333: 484   91
+   12     7 Zbigniew       Wietecki              111.00 +  380: 298  161
+                                                          --------------- ---- ------
+                                                                    1472  / 12 122.67
+
+
+
+
+	Marek Roszak 124.00 Poznań                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Leszek         Dys                   100.00 +  482: 260  150
+    2     2 Kazimierz.J    Merklejn              110.00 +  386: 359  160
+    3     1 Zbigniew       Wietecki              111.00 -  289: 435   61
+    4     4 Krzysztof      Bukowski              114.00 +  386: 340  164
+    5     3 Dariusz        Banaszek              142.00 -  396: 417   92
+    6     4 Krzysztof      Usakiewicz            102.00 +  397: 303  152
+    7     2 Andrzej        Rechowicz             122.00 -  313: 375   72
+    8     2 Wojciech       Usakiewicz            131.00 -  312: 370   81
+    9     6 Magdalena      Merklejn              103.00 +  434: 353  153
+   10     4 Tomasz         Zwoliński             145.00 -  280: 420   95
+   11     6 Kazimierz.J    Merklejn              110.00 -  260: 385   60
+   12     8 Aleksandra     Merklejn-Kaczanowska  114.30 -  286: 388   64
+                                                          --------------- ---- ------
+                                                                    1304  / 12 108.67
+
+
+
+
+	Andrzej Rechowicz 122.00 Katowice               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Zdzisław       Parnicki              100.00 +  397: 217  150
+    2     4 Tomasz         Zwoliński             145.00 +  340: 331  195
+    3     3 Dariusz        Banaszek              142.00 +  441: 414  192
+    4     2 Mariusz        Orzeł                 127.00 +  424: 305  177
+    5     1 Wojciech       Usakiewicz            131.00 -  292: 407   81
+    6     2 Zbigniew       Wietecki              111.00 +  432: 317  161
+    7     2 Marek          Roszak                124.00 +  375: 313  174
+    8     3 Magdalena      Merklejn              103.00 +  397: 247  153
+    9     2 Halina         Roszak                117.78 +  393: 358  168
+   10     3 Krzysztof      Bukowski              114.00 +  459: 329  164
+   11     1 Dariusz        Banaszek              142.00 -  351: 442   92
+   12     2 Krzysztof      Usakiewicz            102.00 -  378: 387   52
+                                                          --------------- ---- ------
+                                                                    1759  / 12 146.58
+
+
+
+
+	Halina Roszak 117.78 Poznań                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Bogusław       Kuma                  100.00 +  363: 242  150
+    2     5 Krzysztof      Bukowski              114.00 -  312: 462   64
+    3     6 Krzysztof      Usakiewicz            102.00 -  244: 415   52
+    4     9 Bartłomiej     Bednarski             100.00 +  371: 232  150
+    5     7 Ziemowit       Pazda                 100.00 +  372: 306  150
+    6     5 Aleksandra     Merklejn-Kaczanowska  114.30 +  395: 267  164
+    7     4 Mariusz        Orzeł                 127.00 -  367: 373   77
+    8     5 Zbigniew       Wietecki              111.00 +  365: 327  161
+    9     2 Andrzej        Rechowicz             122.00 -  358: 393   72
+   10     2 Wojciech       Usakiewicz            131.00 +  478: 359  181
+   11     3 Krzysztof      Usakiewicz            102.00 -  273: 479   52
+   12     5 Magdalena      Merklejn              103.00 -  360: 379   53
+                                                          --------------- ---- ------
+                                                                    1326  / 12 110.50
+
+
+
+
+	Aleksandra Merklejn-Kaczanowska 114.30 Szczecin                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Tomasz         Zwoliński             145.00 -  389: 401   95
+    2     6 Dariusz        Banaszek              142.00 -  265: 490   92
+    3     9 Eligiusz       Jankowski             100.00 +  428: 282  150
+    4     8 Leszek         Dys                   100.00 +  363: 209  150
+    5     6 Magdalena      Merklejn              103.00 +  367: 347  153
+    6     5 Halina         Roszak                117.78 -  267: 395   68
+    7     6 Krzysztof      Usakiewicz            102.00 -  334: 350   52
+    8     9 Roman          Sikorski              100.00 +  438: 130  150
+    9     5 Krzysztof      Bukowski              114.00 -  277: 349   64
+   10    11 Bartłomiej     Bednarski             100.00 +  345: 311  150
+   11     7 Magdalena      Merklejn              103.00 -  336: 412   53
+   12     8 Marek          Roszak                124.00 +  388: 286  174
+                                                          --------------- ---- ------
+                                                                    1351  / 12 112.58
+
+
+
+
+	Krzysztof Bukowski 114.00 Milanówek
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Lucyna         Sapis                 100.00 +  387: 250  150
+    2     5 Halina         Roszak                117.78 +  462: 312  168
+    3     2 Wojciech       Usakiewicz            131.00 -  329: 401   81
+    4     4 Marek          Roszak                124.00 -  340: 386   74
+    5     5 Krzysztof      Usakiewicz            102.00 -  364: 369   52
+    6     6 Paweł          Stanosz               141.00 +  420: 417  191
+    7     5 Magdalena      Merklejn              103.00 -  309: 318   53
+    8     8 Zdzisław       Parnicki              100.00 +  442: 217  150
+    9     5 Aleksandra     Merklejn-Kaczanowska  114.30 +  349: 277  164
+   10     3 Andrzej        Rechowicz             122.00 -  329: 459   72
+   11     5 Zbigniew       Wietecki              111.00 +  399: 303  161
+   12     4 Kazimierz.J    Merklejn              110.00 +  420: 396  160
+                                                          --------------- ---- ------
+                                                                    1476  / 12 123.00
+
+
+
+
+	Zbigniew Wietecki 111.00 Gorzów Wielkopolski          
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Bartłomiej     Bednarski             100.00 +  566: 164  150
+    2     1 Mariusz        Orzeł                 127.00 +  377: 355  177
+    3     1 Marek          Roszak                124.00 +  435: 289  174
+    4     1 Wojciech       Usakiewicz            131.00 -  296: 358   81
+    5     2 Tomasz         Zwoliński             145.00 +  407: 314  195
+    6     2 Andrzej        Rechowicz             122.00 -  317: 432   72
+    7     1 Dariusz        Banaszek              142.00 -  259: 426   92
+    8     5 Halina         Roszak                117.78 -  327: 365   68
+    9     4 Paweł          Stanosz               141.00 -  330: 406   91
+   10     8 Zdzisław       Parnicki              100.00 +  409: 231  150
+   11     5 Krzysztof      Bukowski              114.00 -  303: 399   64
+   12     7 Mariusz        Orzeł                 127.00 -  298: 380   77
+                                                          --------------- ---- ------
+                                                                    1391  / 12 115.92
+
+
+
+
+	Kazimierz.J Merklejn 110.00 Szczecin               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Roman          Sikorski              100.00 +  450: 138  150
+    2     2 Marek          Roszak                124.00 -  359: 386   74
+    3     4 Mariusz        Orzeł                 127.00 -  315: 410   77
+    4     7 Magdalena      Merklejn              103.00 -  268: 374   53
+    5     8 Bogusław       Kuma                  100.00 +  392: 194  150
+    6     8 Leszek         Dys                   100.00 -  332: 356   50
+    7     9 Paweł          Stanosz               141.00 -  334: 388   91
+    8    11 Bartłomiej     Bednarski             100.00 +  364: 289  150
+    9    11 Zdzisław       Parnicki              100.00 +  344: 182  150
+   10     9 Lucyna         Sapis                 100.00 +  502: 216  150
+   11     6 Marek          Roszak                124.00 +  385: 260  174
+   12     4 Krzysztof      Bukowski              114.00 -  396: 420   64
+                                                          --------------- ---- ------
+                                                                    1333  / 12 111.08
+
+
+
+
+	Magdalena Merklejn 103.00 Szczecin               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Dariusz        Banaszek              142.00 -  318: 321   92
+    2     7 Paweł          Stanosz               141.00 -  296: 433   91
+    3    10 Lucyna         Sapis                 100.00 +  492: 194  150
+    4     7 Kazimierz.J    Merklejn              110.00 +  374: 268  160
+    5     6 Aleksandra     Merklejn-Kaczanowska  114.30 -  347: 367   64
+    6     7 Eligiusz       Jankowski             100.00 +  412: 302  150
+    7     5 Krzysztof      Bukowski              114.00 +  318: 309  164
+    8     3 Andrzej        Rechowicz             122.00 -  247: 397   72
+    9     6 Marek          Roszak                124.00 -  353: 434   74
+   10    10 Roman          Sikorski              100.00 +  454: 161  150
+   11     7 Aleksandra     Merklejn-Kaczanowska  114.30 +  412: 336  164
+   12     5 Halina         Roszak                117.78 +  379: 360  168
+                                                          --------------- ---- ------
+                                                                    1499  / 12 124.92
+
+
+
+
+	Krzysztof Usakiewicz 102.00 Warszawa               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Paweł          Stanosz               141.00 +  437: 372  191
+    2     3 Wojciech       Usakiewicz            131.00 -  343: 454   81
+    3     6 Halina         Roszak                117.78 +  415: 244  168
+    4     3 Dariusz        Banaszek              142.00 -  312: 420   92
+    5     5 Krzysztof      Bukowski              114.00 +  369: 364  164
+    6     4 Marek          Roszak                124.00 -  303: 397   74
+    7     6 Aleksandra     Merklejn-Kaczanowska  114.30 +  350: 334  164
+    8     4 Tomasz         Zwoliński             145.00 -  292: 426   95
+    9     7 Ziemowit       Pazda                 100.00 +  339: 318  150
+   10     5 Eligiusz       Jankowski             100.00 +  403: 269  150
+   11     3 Halina         Roszak                117.78 +  479: 273  168
+   12     2 Andrzej        Rechowicz             122.00 +  387: 378  172
+                                                          --------------- ---- ------
+                                                                    1669  / 12 139.08
+
+
+
+
+	Bartłomiej Bednarski 100.00 Łódź                     
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Zbigniew       Wietecki              111.00 -  164: 566   61
+    2    10 Zdzisław       Parnicki              100.00 -  240: 358   50
+    3    11 Roman          Sikorski              100.00 +  464: 149  150
+    4     9 Halina         Roszak                117.78 -  232: 371   68
+    5     9 Eligiusz       Jankowski             100.00 -  142: 406   50
+    6     9 Ziemowit       Pazda                 100.00 -  246: 368   50
+    7    11 Lucyna         Sapis                 100.00 +  292: 225  150
+    8    11 Kazimierz.J    Merklejn              110.00 -  289: 364   60
+    9    10 Bogusław       Kuma                  100.00 -  221: 282   50
+   10    11 Aleksandra     Merklejn-Kaczanowska  114.30 -  311: 345   64
+   11    10 Zdzisław       Parnicki              100.00 -  275: 286   50
+   12    10 Zdzisław       Parnicki              100.00 -  181: 280   50
+                                                          --------------- ---- ------
+                                                                     853  / 12  71.08
+
+
+
+
+	Leszek Dys 100.00 Olsztyn                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Marek          Roszak                124.00 -  260: 482   74
+    2     8 Eligiusz       Jankowski             100.00 +  372: 328  150
+    3     7 Bogusław       Kuma                  100.00 -  323: 335   50
+    4     8 Aleksandra     Merklejn-Kaczanowska  114.30 -  209: 363   64
+    5    10 Lucyna         Sapis                 100.00 +  283: 199  150
+    6     8 Kazimierz.J    Merklejn              110.00 +  356: 332  160
+    7     7 Ziemowit       Pazda                 100.00 +  307: 276  150
+    8     6 Paweł          Stanosz               141.00 -  336: 438   91
+    9     9 Roman          Sikorski              100.00 +  388: 161  150
+   10     6 Mariusz        Orzeł                 127.00 -  220: 492   77
+   11     9 Bogusław       Kuma                  100.00 -  361: 363   50
+   12     9 Ziemowit       Pazda                 100.00 +  352: 305  150
+                                                          --------------- ---- ------
+                                                                    1316  / 12 109.67
+
+
+
+
+	Eligiusz Jankowski 100.00 Wrocław                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Wojciech       Usakiewicz            131.00 -  298: 413   81
+    2     8 Leszek         Dys                   100.00 -  328: 372   50
+    3     9 Aleksandra     Merklejn-Kaczanowska  114.30 -  282: 428   64
+    4    10 Zdzisław       Parnicki              100.00 +  429: 207  150
+    5     9 Bartłomiej     Bednarski             100.00 +  406: 142  150
+    6     7 Magdalena      Merklejn              103.00 -  302: 412   53
+    7    10 Roman          Sikorski              100.00 +  387: 182  150
+    8     7 Bogusław       Kuma                  100.00 +  308: 186  150
+    9     8 Lucyna         Sapis                 100.00 +  426: 133  150
+   10     5 Krzysztof      Usakiewicz            102.00 -  269: 403   52
+   11     8 Ziemowit       Pazda                 100.00 +  312: 294  150
+   12     6 Bogusław       Kuma                  100.00 +  327: 246  150
+                                                          --------------- ---- ------
+                                                                    1350  / 12 112.50
+
+
+
+
+	Bogusław Kuma 100.00 Słupsk                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Halina         Roszak                117.78 -  242: 363   68
+    2     9 Lucyna         Sapis                 100.00 +  391: 261  150
+    3     7 Leszek         Dys                   100.00 +  335: 323  150
+    4     5 Tomasz         Zwoliński             145.00 -  238: 529   95
+    5     8 Kazimierz.J    Merklejn              110.00 -  194: 392   60
+    6    10 Roman          Sikorski              100.00 +  364: 173  150
+    7     8 Zdzisław       Parnicki              100.00 +  283: 280  150
+    8     7 Eligiusz       Jankowski             100.00 -  186: 308   50
+    9    10 Bartłomiej     Bednarski             100.00 +  282: 221  150
+   10     7 Ziemowit       Pazda                 100.00 -  320: 327   50
+   11     9 Leszek         Dys                   100.00 +  363: 361  150
+   12     6 Eligiusz       Jankowski             100.00 -  246: 327   50
+                                                          --------------- ---- ------
+                                                                    1273  / 12 106.08
+
+
+
+
+	Zdzisław Parnicki 100.00 Słupsk                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Andrzej        Rechowicz             122.00 -  217: 397   72
+    2    10 Bartłomiej     Bednarski             100.00 +  358: 240  150
+    3     8 Ziemowit       Pazda                 100.00 -  275: 334   50
+    4    10 Eligiusz       Jankowski             100.00 -  207: 429   50
+    5    11 Roman          Sikorski              100.00 +  263: 246  150
+    6    11 Lucyna         Sapis                 100.00 +  216: 208  150
+    7     8 Bogusław       Kuma                  100.00 -  280: 283   50
+    8     8 Krzysztof      Bukowski              114.00 -  217: 442   64
+    9    11 Kazimierz.J    Merklejn              110.00 -  182: 344   60
+   10     8 Zbigniew       Wietecki              111.00 -  231: 409   61
+   11    10 Bartłomiej     Bednarski             100.00 +  286: 275  150
+   12    10 Bartłomiej     Bednarski             100.00 +  280: 181  150
+                                                          --------------- ---- ------
+                                                                    1157  / 12  96.42
+
+
+
+
+	Ziemowit Pazda 100.00 Wrocław                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Mariusz        Orzeł                 127.00 -   99: 529   77
+    2    11 Roman          Sikorski              100.00 +  398: 163  150
+    3     8 Zdzisław       Parnicki              100.00 +  334: 275  150
+    4     6 Paweł          Stanosz               141.00 -  299: 415   91
+    5     7 Halina         Roszak                117.78 -  306: 372   68
+    6     9 Bartłomiej     Bednarski             100.00 +  368: 246  150
+    7     7 Leszek         Dys                   100.00 -  276: 307   50
+    8    10 Lucyna         Sapis                 100.00 +  371: 252  150
+    9     7 Krzysztof      Usakiewicz            102.00 -  318: 339   52
+   10     7 Bogusław       Kuma                  100.00 +  327: 320  150
+   11     8 Eligiusz       Jankowski             100.00 -  294: 312   50
+   12     9 Leszek         Dys                   100.00 -  305: 352   50
+                                                          --------------- ---- ------
+                                                                    1188  / 12  99.00
+
+
+
+
+	Lucyna Sapis 100.00 Słupsk                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Krzysztof      Bukowski              114.00 -  250: 387   64
+    2     9 Bogusław       Kuma                  100.00 -  261: 391   50
+    3    10 Magdalena      Merklejn              103.00 -  194: 492   53
+    4    11 Roman          Sikorski              100.00 +  251: 155  150
+    5    10 Leszek         Dys                   100.00 -  199: 283   50
+    6    11 Zdzisław       Parnicki              100.00 -  208: 216   50
+    7    11 Bartłomiej     Bednarski             100.00 -  225: 292   50
+    8    10 Ziemowit       Pazda                 100.00 -  252: 371   50
+    9     8 Eligiusz       Jankowski             100.00 -  133: 426   50
+   10     9 Kazimierz.J    Merklejn              110.00 -  216: 502   60
+   11    11 Roman          Sikorski              100.00 +  364: 162  150
+   12    11 Roman          Sikorski              100.00 +  303: 204  150
+                                                          --------------- ---- ------
+                                                                     927  / 12  77.25
+
+
+
+
+	Roman Sikorski 100.00 Kobylnica                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Kazimierz.J    Merklejn              110.00 -  138: 450   60
+    2    11 Ziemowit       Pazda                 100.00 -  163: 398   50
+    3    11 Bartłomiej     Bednarski             100.00 -  149: 464   50
+    4    11 Lucyna         Sapis                 100.00 -  155: 251   50
+    5    11 Zdzisław       Parnicki              100.00 -  246: 263   50
+    6    10 Bogusław       Kuma                  100.00 -  173: 364   50
+    7    10 Eligiusz       Jankowski             100.00 -  182: 387   50
+    8     9 Aleksandra     Merklejn-Kaczanowska  114.30 -  130: 438   64
+    9     9 Leszek         Dys                   100.00 -  161: 388   50
+   10    10 Magdalena      Merklejn              103.00 -  161: 454   53
+   11    11 Lucyna         Sapis                 100.00 -  162: 364   50
+   12    11 Lucyna         Sapis                 100.00 -  204: 303   50
+                                                          --------------- ---- ------
+                                                                     627  / 12  52.25
+
+
+</pre></div><div id='p_rundy' class='page'><pre></pre></div><div id='p_ranking' class='page'><pre></pre></div><div id='p_przebieg' class='page'>
+
+    </div><div style="clear:both;width:100%;" class="alignright">
+
+<script>
+<!--
+if ((document.getElementById("content").offsetHeight + document.getElementById("top").offsetHeight) > screen.height)
+    document.write("<br /><br /><a href='#top'>do góry</a>");
+-->
+</script>
+
+</div>
+</div>
+
+<div id="bottom">
+<ul id="bottomlinks">
+<div class='onleft'>
+ Osób on-line: 54</div>
+    <li><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+    <li><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+    <li><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+    <li><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+    <li><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+    <li><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+</ul>
+    SCRABBLE® jest zastrzeżonym znakiem towarowym J.W. Spears &amp; Sons&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://www.pfs.org.pl/prawaautorskie.php">© Prawa autorskie</a>
+</div>
+</body>
+</html>

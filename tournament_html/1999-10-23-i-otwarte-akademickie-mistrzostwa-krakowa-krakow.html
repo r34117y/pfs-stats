@@ -1,0 +1,891 @@
+
+<html>
+<head>
+    <title>Polska Federacja Scrabble :: I Otwarte Akademickie Mistrzostwa Krakowa</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="files/img/favicon.ico" />
+    <link rel="stylesheet" href="files/css/style.css" type="text/css" />
+	<link rel="stylesheet" href="files/css/style-index.css" type="text/css" />
+    <!--[if IE]><link rel="stylesheet" type="text/css" href="files/css/styleie.css" /><![endif]-->
+    <!--[if lt IE 7.]><script defer type="text/javascript" src="files/js/pngfix.js"></script><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="files/js/minmax.js"></script><![endif]-->
+    <script type="text/javascript" src="files/js/jquery.js"></script>
+    <script type="text/javascript" src="files/js/jquery-bp.js"></script>
+    <script type="text/javascript" src="files/js/java.js"></script>
+    <script>jSubmenu ("turnieje","kalendarz");jKalendarz();</script>
+    <script>
+    var url, page;
+
+    page = 'info';
+    url  = document.location.toString();
+
+    if (url.match ('#')) {
+      page = url.split ('#')[1];
+      if ($.inArray (page, [ 'info', 'relacja', 'klasyfikacja', 'hh', 'rundy', 'ranking', 'przebieg' ]) == -1)
+        page = 'info';
+    }
+
+    $(document).ready(function(){
+        $('a#listaucz').bind('click', function(event){
+            $('div#lista').toggle();
+            event.preventDefault();
+        }).toggle(function() { $(this).text('schowaj listę uczestników'); }, function() { $(this).text("pokaż listę uczestników"); });
+        $('div#lista table tr:last td').css({"border-bottom" : "none"});
+
+        $("a.przycisk").click (function (e) {
+            if ($(this).attr ('href') !== '#')
+                return true;
+
+            e.preventDefault ();
+
+            id       = this.id;
+            this.id += 'tmp';
+            window.location.hash = id;
+            this.id  = id;
+
+            $(".page").hide ();
+            $(".page#p_" + id).show ();
+
+            $("a.przycisk").removeClass ('active');
+            $(this).addClass ('active');
+
+            return false;
+        });
+
+        $("a.przycisk#" + page).click ();
+        $('html, body').animate ({ scrollTop: 0 }, 0);
+    });
+    </script>
+  <style type="text/css">
+    .page {
+        display: none;
+    }
+    #szczegoly{
+        width: 100%;
+        border-spacing: 0;
+        margin-top: 30px;
+        text-align: left;
+        font-size: inherit;
+    }
+    #szczegoly td{
+        padding: 10px 20px 10px 0;
+        vertical-align: top;
+    }
+    #szczegoly td:first-child{
+        font-weight: bold;
+        width: 160px;
+    }
+    div#lista{
+        display:none;
+        margin-top: 15px;
+    }
+    div#lista table{
+        margin-top: 10px;
+        text-align: left;
+        font-size: inherit;
+    }
+    div#lista table td{
+        padding: 3px 8px;
+        border-bottom: 1px dashed #1576AE;
+    }
+    div#lista table th{
+        padding: 0px 5px 10px 5px;
+    }
+    div#lista table td.ptaszek{
+        text-align: center;
+        background: url('files/img/tick.png') no-repeat center center;
+    }
+    div#lista table th{
+        white-space: nowrap;
+        width: auto;
+    }
+    div#lista table td:first-child, div#lista table th:first-child{
+        text-align:right;
+        width: auto;
+    }
+    </style>
+</head>
+
+<body>
+
+<script type="text/javascript">setMenu();</script>
+
+<div id="top" onclick="location.href='https://www.pfs.org.pl'">
+</div>
+<div id="menu">
+
+    <div id="m_glowna">
+        <div class="tab"><a href="https://www.pfs.org.pl/index.php"></a></div>
+
+        <ul>
+            <li class="sublink" id="aktualnosci"><a href="https://www.pfs.org.pl">Aktualności</a></li>
+            <li class="sublink" id="nowy"><a href="https://www.pfs.org.pl/dlanowych.php">Jestem tu nowy</a></li>
+            <li class="sublink" id="anagramator"><a href="https://www.pfs.org.pl/osps_online.php?main=1">Słownik online</a></li>
+            <li class="sublink" id="siodemka"><a href="https://www.pfs.org.pl/siodemka.php?main=1">Siódemka tygodnia</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+            <li class="sublink" id="dlasponsorow"><a href="https://www.pfs.org.pl/dlasponsorow.php">Dla sponsorów</a></li>
+            <li class="sublink" id="kontakt"><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+        </ul>
+    </div>
+    <div id="m_turnieje">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kalendarz.php"></a></div>
+        <ul>
+            <li class="sublink" id="kalendarz"><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+            <li class="sublink" id="regulaminy"><a href="https://www.pfs.org.pl/regulaminy.php">Regulaminy</a></li>
+            <li class="sublink" id="sedziowie"><a href="https://www.pfs.org.pl/sedziowie.php">Sędziowie</a></li>
+            <li class="sublink" id="gp"><a href="https://www.pfs.org.pl/gp2026.php">Grand Prix</a></li>
+<!--            <li class="sublink" id="mr"><a href="https://www.pfs.org.pl/mr2020.php">Mistrzostwa Regionów</a></li>-->
+            <li class="sublink" id="archiwum"><a href="https://www.pfs.org.pl/archiwum.php">Historia</a></li>
+            <li class="sublink" id="galeria"><a href="https://www.pfs.org.pl/galeria.php">Zdjęcia</a></li>
+            <li class="sublink" id="rekordy"><a href="https://www.pfs.org.pl/rekordy.php">Rekordy</a></li>
+        </ul>
+    </div>
+    <div id="m_pfs">
+        <div  class="tab"><a href="https://www.pfs.org.pl/opfs.php"></a></div>
+        <ul>
+            <li class="sublink" id="opfs"><a href="https://www.pfs.org.pl/opfs.php">O PFS</a></li>
+            <li class="sublink" id="jakprzystapic"><a href="https://www.pfs.org.pl/jakprzystapic.php">Jak przystąpić</a></li>
+            <li class="sublink" id="dlaczlonkow"><a href="https://www.pfs.org.pl/dlaczlonkow.php">Dla członków</a></li>
+            <li class="sublink" id="wladze"><a href="https://www.pfs.org.pl/wladze.php">Władze</a></li>
+            <li class="sublink" id="komisje"><a href="https://www.pfs.org.pl/komisje.php">Komisje</a></li>
+            <li class="sublink" id="statut"><a href="https://www.pfs.org.pl/statut.php">Statut</a></li>
+            <li class="sublink" id="uchwaly"><a href="https://www.pfs.org.pl/uchwaly.php">Uchwały</a></li>
+            <li class="sublink" id="honorowi"><a href="https://www.pfs.org.pl/honorowi.php">Honorowi członkowie</a></li>
+            <li class="sublink" id="finanse"><a href="https://www.pfs.org.pl/finanse.php">Finanse</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabble">
+        <div  class="tab"><a href="https://www.pfs.org.pl/osps_online.php?desktop=1"></a></div>
+        <ul>
+            <li class="sublink" id="osps_online"><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+            <li class="sublink" id="zds"><a href="https://www.pfs.org.pl/zds2.php">ZDS</a></li>
+            <li class="sublink" id="osps"><a href="https://www.pfs.org.pl/osps.php">OSPS</a></li>
+            <li class="sublink" id="aktualizacje"><a href="https://www.pfs.org.pl/osps_aktualizacje.php">Aktualizacje</a></li>
+            <li class="sublink" id="dwojki"><a href="https://www.pfs.org.pl/dwojki.php">2-literówki</a></li>
+            <li class="sublink" id="trojki"><a href="https://www.pfs.org.pl/trojki.php">3-literówki</a></li>
+            <li class="sublink" id="siodemkat"><a href="https://www.pfs.org.pl/siodemka.php">Siódemka tygodnia</a></li>
+            <li class="sublink" id="slowneroznosci"><a href="https://www.pfs.org.pl/slowneroznosci.php">Słowne różności</a></li>
+        </ul>
+    </div>
+    <div id="m_ranking">
+        <div  class="tab"><a href="https://www.pfs.org.pl/ranking.php"></a></div>
+        <ul>
+            <li class="sublink" id="aktranking"><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+            <li class="sublink" id="medale"><a href="https://www.pfs.org.pl/medale.php">Klasyfikacja medalowa</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabblisci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/mistrzowiepolski.php"></a></div>
+        <ul>
+            <li class="sublink" id="mistrzowiepolski"><a href="https://www.pfs.org.pl/mistrzowiepolski.php">Mistrzowie Polski</a></li>
+            <li class="sublink" id="zdobywcypp"><a href="https://www.pfs.org.pl/zdobywcypp.php">Zdobywcy Pucharu Polski</a></li>
+            <li class="sublink" id="zwyciezcygp"><a href="https://www.pfs.org.pl/zwyciezcygp.php">Zwycięzcy Grand Prix</a></li>
+            <li class="sublink" id="liderzyrankingu"><a href="https://www.pfs.org.pl/liderzyrankingu.php">Liderzy rankingu</a></li>
+            <li class="sublink" id="zwyciezcylemans"><a href="https://www.pfs.org.pl/zwyciezcylemans.php">Zwycięzcy 24h Le Mans</a></li>
+            <li class="sublink" id="zwyciezcykmp"><a href="https://www.pfs.org.pl/zwyciezcykmp.php">KMP</a>
+        </ul>
+    </div>
+    <div id="m_kluby">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kluby.php"></a></div>
+        <ul>
+            <li class="sublink" id="rejestrklubow"><a href="https://www.pfs.org.pl/kluby.php">Rejestr klubów</a></li>
+            <li class="sublink" id="kmp"><a href="https://www.pfs.org.pl/kmp.php">KMP</a></li>
+            <li class="sublink" id="wiescizklubow"><a href="https://www.pfs.org.pl/wiescizklubow.php">Wieści z klubów</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/about.php">Statystyki klubowe</a></li>
+        </ul>
+    </div>
+    <div id="m_roznosci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/historia.php"></a></div>
+        <ul>
+            <li class="sublink" id="historia"><a href="https://www.pfs.org.pl/historia.php">Historia</a></li>
+            <li class="sublink" id="odmiany"><a href="https://www.pfs.org.pl/odmiany.php">Odmiany</a></li>
+            <li class="sublink" id="anegdoty"><a href="https://www.pfs.org.pl/anegdoty.php">Anegdoty</a></li>
+            <li class="sublink" id="scrabblealia"><a href="https://www.pfs.org.pl/scrabblealia.php">Scrabblealia</a></li>
+            <li class="sublink" id="scrabblenet"><a href="https://www.pfs.org.pl/scrabblenet.php">Scrabble w internecie</a></li>
+            <li class="sublink" id="programy"><a href="https://www.pfs.org.pl/programy.php">Programy</a></li>
+            <li class="sublink" id="download"><a href="https://www.pfs.org.pl/download.php">Do pobrania</a></li>
+            <li class="sublink" id="ksiazki"><a href="https://www.pfs.org.pl/ksiazki.php">Książki</a></li>
+            <li class="sublink" id="slowniczek"><a href="https://www.pfs.org.pl/slowniczek.php">Słowniczek</a></li>
+        </ul>
+    </div>
+    <div id="m_english">
+        <div  class="tab"><a href="https://www.pfs.org.pl/english.php"></a></div>
+        <ul>
+            <li class="sublink" id="about"><a href="https://www.pfs.org.pl/english.php">About Polish Scrabble</a></li>
+            <li class="sublink" id="news"><a href="https://www.pfs.org.pl/en_news.php">News</a></li>
+            <li class="sublink" id="bartek"><a href="https://www.pfs.org.pl/bartek.php">Bartek w Johor Bahru</a></li>
+            <li class="sublink" id="franko"><a href="https://www.pfs.org.pl/franko.php">Scrabble frankofońskie</a></li>
+        </ul>
+    </div>
+</div>
+
+<div id="submenu"></div>
+<div id="content">
+<div id='nextTours'>
+		<div class='nextTour' onclick='location.href="turniej.php?id=330"'>
+			<div class='karteczka small1'>
+				<span class='miasto'>Katowice</span><span class='dzien'><span class='big'>16</span><br />października</span></div>
+			<div class='kartka big1'>
+				<span class='miasto'>Katowice</span>
+				<span class='dzien'><b>16-17 października</b></span>
+				<span class='nazwaturnieju'>IV Otwarte Mistrzostwa Górnego Śląska i Zagłębia</span><span class='gp'>Grand&nbsp;Prix&nbsp;1999</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=329"'>
+			<div class='karteczka small2'>
+				<span class='miasto'>Kraków</span><span class='dzien'><span class='big'>23</span><br />października</span></div>
+			<div class='kartka big2'>
+				<span class='miasto'>Kraków</span>
+				<span class='dzien'><b>23-24 października</b></span>
+				<span class='nazwaturnieju'>I Otwarte Akademickie Mistrzostwa Krakowa</span><span class='gp'>Grand&nbsp;Prix&nbsp;1999</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=328"'>
+			<div class='karteczka small3'>
+				<span class='miasto'>Nowy Dwór Mazowiecki</span><span class='dzien'><span class='big'>24</span><br />października</span></div>
+			<div class='kartka big3'>
+				<span class='miasto'>Nowy Dwór Mazowiecki</span>
+				<span class='dzien'><b>24 października</b></span>
+				<span class='nazwaturnieju'>II Otwarte Mistrzostwa Nowego Dworu Mazowieckiego</span></div>
+		</div></div><div class='naglowekrelacji'><span class='tytul'>I Otwarte Akademickie Mistrzostwa Krakowa<span class='nazwa'>23 - 24 października 1999 —  I Otwarte Akademickie Mistrzostwa Krakowa</span></span><a href='#' id='info' class='przycisk'>Informacje</a><a href='#' id='relacja' class='przycisk'>Relacja</a><a href='#' id='klasyfikacja' class='przycisk'>Wyniki</a><a href='#' id='hh' class='przycisk'>HH</a><div class='galleries'><img src='files/img/gallery.png' style='visibility:hidden;' alt='galeria' /></div></div><h1 style='color:black; margin-top:0px; margin-bottom:30px; padding: 0px'>I Otwarte Akademickie Mistrzostwa Krakowa<span><img src='files/img/map-2.png' style='vertical-align: bottom;' title='Grand Prix'> Kraków, 23 - 24 października 1999 <br>Grand&nbsp;Prix&nbsp;1999</span></h1><div id='p_relacja' class='page'><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><div class='relacja' style='clear:both;'><div><pre>
+ 1. Jacek Pietruszka (Kraków)
+ 2. Paweł Dawidson (Częstochowa)
+ 3. Katarzyna Stępień (Katowice)
+ 4. Robert Kaciński (Kazimierza Wielka)
+ 5. Jerzy Matyasik (Kraków)
+ 6. Anna Kowalska (Bielsko-Biała)
+ 7. Jerzy Luter (Bytom)
+ 8. Irena Ficak (Mielec)
+ 9. Wiktor Stępień (Katowice)
+ 10. Katarzyna Żuławska (Katowice) 
+
+28 uczestników, 12 rund 
+</pre></div><div class='autor'></div></div><div style='clear:both;'></div></div><div id='p_info' class='page'><br><p align='center'></p><br><br><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br>Zobacz, jak było na poprzednich turniejach:<br><a href='turniej.php?id=346'>III Otwarte Mistrzostwa Krakowa</a><br><a href='turniej.php?id=377'>II Otwarte Mistrzostwa Krakowa</a><br><a href='turniej.php?id=403'>I Otwarte Mistrzostwa Krakowa</a><br><table id='szczegoly' class='ramkadolna'></table><br /><br /></div><div id='p_klasyfikacja' class='page'><pre>Wyniki turnieju I Akademickie Mistrzostwa Krakowa
+
+Lp. Imię            Nazwisko             Miasto               Ranking  Duże pkt Małe pkt Skalpy   Różn. MP
+--- --------------- -------------------- -------------------- -------- -------- -------- -------- --------
+  1 Jacek           Pietruszka           Kraków                 137.32     10.0     4579     1795      648
+  2 Paweł           Dawidson             Częstochowa            132.20      8.0     4589     1609      372
+  3 Katarzyna       Stępień              Katowice               116.13      8.0     4549     1543      764
+  4 Robert          Kaciński             Kazimierza Wielka      121.45      8.0     4348     1505      553
+  5 Jerzy           Matyasik             Kraków                 111.44      8.0     4299     1594       35
+  6 Anna            Kowalska-Demczyszyn  Bielsko Biała          107.24      7.0     4113     1452     -403
+  7 Jerzy           Luter                Bytom                  100.00      7.0     4051     1444      111
+  8 Irena           Ficak                Mielec                 101.13      6.5     3711     1399     -524
+  9 Wiktor          Stępień              Katowice               116.09      6.0     4231     1355      313
+ 10 Katarzyna       Żuławska             Katowice               100.00      6.0     4153     1323      400
+ 11 Leszek          Stecuła              Bytom                  121.30      6.0     4113     1274      522
+ 12 Bożena          Matysiak             Kraków                 100.00      6.0     4015     1244      201
+ 13 Stefan          Dawidson             Częstochowa            111.48      6.0     3907     1342       20
+ 14 Grzegorz        Matysiak             Kraków                 100.00      5.5     4023     1246      -31
+ 15 Renata          Kowalska             Bielsko Biała          114.07      5.0     4090     1212     -188
+ 16 Agnieszka       Piskorz              Kraków                 100.00      5.0     3619     1147     -316
+ 17 Krzysztof       Kokot                Nowy Targ              100.00      5.0     3120      974     -719
+ 18 Dariusz         Puton                Ruda Śląska            132.66      5.0     2611      971      317
+ 19 Maciej          Gałecki              Łódź                   100.00      4.0     3867     1127      -49
+ 20 Andrzej         Lożyński             Piastów                102.14      4.0     2363      751      744
+ 21 Marek           Czerwonka            Kraków                 100.00      3.0     3003      871     -758
+ 22 Jerzy           Banasiak             Radom                  100.00      3.0     2834      871     -719
+ 23 Stanisław       Stanek               Olkusz                 100.00      3.0     1782      561      197
+ 24 Grażyna         Furman               Sosnowiec              100.00      3.0     1736      550      177
+ 25 Paweł           Fraś                 Kraków                 100.00      2.0     1453      461      -75
+ 26 Anna            Bogatyńska           Kraków                 100.00      1.0     1458      352     -177
+ 27 Roksana         Kościółek            Kraków                 100.00      1.0     1256      351     -240
+ 28 Artur           Witczak              Włocławek              100.00      0.0     1301      363    -1175
+</pre></div><div id='p_hh' class='page'><pre>Wyniki poszczególnych graczy w turnieju I Akademickie Mistrzostwa Krakowa
+
+
+
+	Jacek Pietruszka 137.32 Kraków                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Katarzyna      Żuławska              100.00 +  420: 330  150
+    2     1 Paweł          Dawidson              132.20 +  432: 321  182
+    3     1 Wiktor         Stępień               116.09 -  294: 415   66
+    4     3 Grzegorz       Matysiak              100.00 +  392: 284  150
+    5     3 Stefan         Dawidson              111.48 +  346: 275  161
+    6     1 Dariusz        Puton                 132.66 +  359: 358  183
+    7     2 Jerzy          Matyasik              111.44 -  320: 365   61
+    8     2 Anna           Kowalska-Demczyszyn   107.24 +  409: 305  157
+    9     2 Robert         Kaciński              121.45 +  385: 343  171
+   10     2 Jerzy          Luter                 100.00 +  371: 357  150
+   11     1 Paweł          Dawidson              132.20 +  432: 267  182
+   12     1 Paweł          Dawidson              132.20 +  419: 311  182
+                                                          --------------- ---- ------
+                                                                    1795  / 12 149.58
+
+
+
+
+	Dariusz Puton 132.66 Ruda Śląska            
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Maciej         Gałecki               100.00 +  417: 333  150
+    2     2 Stefan         Dawidson              111.48 +  316: 283  161
+    3     3 Katarzyna      Stępień               116.13 +  334: 302  166
+    4     2 Renata         Kowalska              114.07 +  395: 277  164
+    5     1 Jerzy          Matyasik              111.44 +  459: 302  161
+    6     1 Jacek          Pietruszka            137.32 -  358: 359   87
+    7     1 Paweł          Dawidson              132.20 -  332: 438   82
+                                                          --------------- ---- ------
+                                                                     971  /  7 138.71
+
+
+
+
+	Paweł Dawidson 132.20 Częstochowa              
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Jerzy          Luter                 100.00 +  425: 345  150
+    2     1 Jacek          Pietruszka            137.32 -  321: 432   87
+    3     4 Renata         Kowalska              114.07 -  358: 415   64
+    4     7 Maciej         Gałecki               100.00 +  372: 323  150
+    5     4 Irena          Ficak                 101.13 +  357: 289  151
+    6     3 Wiktor         Stępień               116.09 +  396: 302  166
+    7     1 Dariusz        Puton                 132.66 +  438: 332  183
+    8     1 Jerzy          Matyasik              111.44 +  430: 319  161
+    9     1 Katarzyna      Stępień               116.13 +  366: 361  166
+   10     1 Anna           Kowalska-Demczyszyn   107.24 +  548: 248  157
+   11     1 Jacek          Pietruszka            137.32 -  267: 432   87
+   12     1 Jacek          Pietruszka            137.32 -  311: 419   87
+                                                          --------------- ---- ------
+                                                                    1609  / 12 134.08
+
+
+
+
+	Robert Kaciński 121.45 Kazimierza Wielka        
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Jerzy          Banasiak              100.00 +  340: 323  150
+    2     6 Katarzyna      Stępień               116.13 -  323: 416   66
+    3     7 Katarzyna      Żuławska              100.00 -  232: 319   50
+    4     9 Agnieszka      Piskorz               100.00 +  409: 283  150
+    5     6 Leszek         Stecuła               121.30 +  336: 259  171
+    6     5 Stefan         Dawidson              111.48 +  395: 296  161
+    7     4 Irena          Ficak                 101.13 -  296: 350   51
+    8     5 Grzegorz       Matysiak              100.00 +  400: 303  150
+    9     2 Jacek          Pietruszka            137.32 -  343: 385   87
+   10     5 Wiktor         Stępień               116.09 +  369: 323  166
+   11     4 Andrzej        Lożyński              102.14 +  396: 314  152
+   12     3 Irena          Ficak                 101.13 +  509: 224  151
+                                                          --------------- ---- ------
+                                                                    1505  / 12 125.42
+
+
+
+
+	Leszek Stecuła 121.30 Bytom                    
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Krzysztof      Kokot                 100.00 +  384: 220  150
+    2     3 Anna           Kowalska-Demczyszyn   107.24 +  401: 293  157
+    3     2 Jerzy          Matyasik              111.44 -  355: 367   61
+    4     4 Stefan         Dawidson              111.48 -  278: 348   61
+    5     6 Robert         Kaciński              121.45 -  259: 336   71
+    6     7 Jerzy          Luter                 100.00 -  299: 321   50
+    7     9 Bożena         Matysiak              100.00 +  452: 203  150
+    8     7 Katarzyna      Żuławska              100.00 +  359: 293  150
+    9     5 Irena          Ficak                 101.13 -  270: 274   51
+   10     7 Maciej         Gałecki               100.00 +  401: 331  150
+   11     5 Wiktor         Stępień               116.09 +  346: 271  166
+   12     4 Anna           Kowalska-Demczyszyn   107.24 -  309: 334   57
+                                                          --------------- ---- ------
+                                                                    1274  / 12 106.17
+
+
+
+
+	Katarzyna Stępień 116.13 Katowice               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Grzegorz       Matysiak              100.00 +  327: 321  150
+    2     6 Robert         Kaciński              121.45 +  416: 323  171
+    3     3 Dariusz        Puton                 132.66 -  302: 334   83
+    4     5 Katarzyna      Żuławska              100.00 +  399: 290  150
+    5     2 Wiktor         Stępień               116.09 +  337: 329  166
+    6     2 Jerzy          Matyasik              111.44 -  306: 343   61
+    7     3 Anna           Kowalska-Demczyszyn   107.24 -  351: 403   57
+    8     3 Irena          Ficak                 101.13 +  515: 230  151
+    9     1 Paweł          Dawidson              132.20 -  361: 366   82
+   10     4 Stefan         Dawidson              111.48 +  421: 332  161
+   11     3 Jerzy          Luter                 100.00 +  340: 209  150
+   12     2 Jerzy          Matyasik              111.44 +  474: 305  161
+                                                          --------------- ---- ------
+                                                                    1543  / 12 128.58
+
+
+
+
+	Wiktor Stępień 116.09 Katowice               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Bożena         Matysiak              100.00 +  346: 298  150
+    2     5 Irena          Ficak                 101.13 +  480: 239  151
+    3     1 Jacek          Pietruszka            137.32 +  415: 294  187
+    4     1 Jerzy          Matyasik              111.44 -  310: 344   61
+    5     2 Katarzyna      Stępień               116.13 -  329: 337   66
+    6     3 Paweł          Dawidson              132.20 -  302: 396   82
+    7     5 Renata         Kowalska              114.07 +  428: 344  164
+    8     4 Jerzy          Luter                 100.00 -  315: 330   50
+    9     6 Maciej         Gałecki               100.00 +  361: 335  150
+   10     5 Robert         Kaciński              121.45 -  323: 369   71
+   11     5 Leszek         Stecuła               121.30 -  271: 346   71
+   12     6 Andrzej        Lożyński              102.14 +  351: 286  152
+                                                          --------------- ---- ------
+                                                                    1355  / 12 112.92
+
+
+
+
+	Renata Kowalska 114.07 Bielsko Biała          
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Agnieszka      Piskorz               100.00 +  373: 287  150
+    2     4 Jerzy          Matyasik              111.44 -  367: 421   61
+    3     4 Paweł          Dawidson              132.20 +  415: 358  182
+    4     2 Dariusz        Puton                 132.66 -  277: 395   83
+    5     5 Grzegorz       Matysiak              100.00 +  355: 332  150
+    6     4 Anna           Kowalska-Demczyszyn   107.24 -  375: 382   57
+    7     5 Wiktor         Stępień               116.09 -  344: 428   66
+    8     6 Stefan         Dawidson              111.48 -  353: 373   61
+    9     9 Marek          Czerwonka             100.00 +  392: 235  150
+   10     6 Andrzej        Lożyński              102.14 -  287: 414   52
+   11     8 Maciej         Gałecki               100.00 +  326: 268  150
+   12     7 Katarzyna      Żuławska              100.00 -  226: 385   50
+                                                          --------------- ---- ------
+                                                                    1212  / 12 101.00
+
+
+
+
+	Stefan Dawidson 111.48 Częstochowa            
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Artur          Witczak               100.00 +  408: 128  150
+    2     2 Dariusz        Puton                 132.66 -  283: 316   83
+    3     5 Maciej         Gałecki               100.00 +  362: 322  150
+    4     4 Leszek         Stecuła               121.30 +  348: 278  171
+    5     3 Jacek          Pietruszka            137.32 -  275: 346   87
+    6     5 Robert         Kaciński              121.45 -  296: 395   71
+    7     7 Agnieszka      Piskorz               100.00 +  305: 292  150
+    8     6 Renata         Kowalska              114.07 +  373: 353  164
+    9     4 Jerzy          Luter                 100.00 -  306: 427   50
+   10     4 Katarzyna      Stępień               116.13 -  332: 421   66
+   11     7 Stanisław      Stanek                100.00 +  351: 279  150
+   12     5 Jerzy          Luter                 100.00 -  268: 330   50
+                                                          --------------- ---- ------
+                                                                    1342  / 12 111.83
+
+
+
+
+	Jerzy Matyasik 111.44 Kraków                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Paweł          Fraś                  100.00 +  377: 232  150
+    2     4 Renata         Kowalska              114.07 +  421: 367  164
+    3     2 Leszek         Stecuła               121.30 +  367: 355  171
+    4     1 Wiktor         Stępień               116.09 +  344: 310  166
+    5     1 Dariusz        Puton                 132.66 -  302: 459   83
+    6     2 Katarzyna      Stępień               116.13 +  343: 306  166
+    7     2 Jacek          Pietruszka            137.32 +  365: 320  187
+    8     1 Paweł          Dawidson              132.20 -  319: 430   82
+    9     3 Anna           Kowalska-Demczyszyn   107.24 +  375: 328  157
+   10     3 Irena          Ficak                 101.13 -  340: 371   51
+   11     2 Irena          Ficak                 101.13 +  441: 312  151
+   12     2 Katarzyna      Stępień               116.13 -  305: 474   66
+                                                          --------------- ---- ------
+                                                                    1594  / 12 132.83
+
+
+
+
+	Anna Kowalska-Demczyszyn 107.24 Bielsko Biała            
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Marek          Czerwonka             100.00 +  384: 270  150
+    2     3 Leszek         Stecuła               121.30 -  293: 401   71
+    3     6 Grzegorz       Matysiak              100.00 -  313: 479   50
+    4     8 Bożena         Matysiak              100.00 +  335: 321  150
+    5     7 Katarzyna      Żuławska              100.00 +  369: 350  150
+    6     4 Renata         Kowalska              114.07 +  382: 375  164
+    7     3 Katarzyna      Stępień               116.13 +  403: 351  166
+    8     2 Jacek          Pietruszka            137.32 -  305: 409   87
+    9     3 Jerzy          Matyasik              111.44 -  328: 375   61
+   10     1 Paweł          Dawidson              132.20 -  248: 548   82
+   11     6 Katarzyna      Żuławska              100.00 +  419: 328  150
+   12     4 Leszek         Stecuła               121.30 +  334: 309  171
+                                                          --------------- ---- ------
+                                                                    1452  / 12 121.00
+
+
+
+
+	Andrzej Lożyński 102.14 Piastów                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    5    12 Artur          Witczak               100.00 +  463: 175  150
+    8    10 Anna           Bogatyńska            100.00 +  433: 240  150
+    9     7 Krzysztof      Kokot                 100.00 +  453: 170  150
+   10     6 Renata         Kowalska              114.07 +  414: 287  164
+   11     4 Robert         Kaciński              121.45 -  314: 396   71
+   12     6 Wiktor         Stępień               116.09 -  286: 351   66
+                                                          --------------- ---- ------
+                                                                     751  /  6 125.17
+
+
+
+
+	Irena Ficak 101.13 Mielec                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    12 Roksana        Kościółek             100.00 +  352: 165  150
+    2     5 Wiktor         Stępień               116.09 -  239: 480   66
+    3     8 Agnieszka      Piskorz               100.00 +  335: 271  150
+    4     6 Krzysztof      Kokot                 100.00 +  386: 242  150
+    5     4 Paweł          Dawidson              132.20 -  289: 357   82
+    6     6 Grzegorz       Matysiak              100.00 =  349: 349  100
+    7     4 Robert         Kaciński              121.45 +  350: 296  171
+    8     3 Katarzyna      Stępień               116.13 -  230: 515   66
+    9     5 Leszek         Stecuła               121.30 +  274: 270  171
+   10     3 Jerzy          Matyasik              111.44 +  371: 340  161
+   11     2 Jerzy          Matyasik              111.44 -  312: 441   61
+   12     3 Robert         Kaciński              121.45 -  224: 509   71
+                                                          --------------- ---- ------
+                                                                    1399  / 12 116.58
+
+
+
+
+	Jerzy Banasiak 100.00 Radom                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Robert         Kaciński              121.45 -  323: 340   71
+    2     8 Katarzyna      Żuławska              100.00 -  151: 338   50
+    3    12 Artur          Witczak               100.00 +  337: 222  150
+    4    10 Paweł          Fraś                  100.00 -  191: 373   50
+    6    10 Marek          Czerwonka             100.00 -  207: 270   50
+    7    10 Maciej         Gałecki               100.00 -  145: 282   50
+    8    12 Stanisław      Stanek                100.00 -  291: 438   50
+    9    12 Bożena         Matysiak              100.00 -  261: 355   50
+   10    12 Anna           Bogatyńska            100.00 -  300: 386   50
+   11    12 Marek          Czerwonka             100.00 +  336: 302  150
+   12    12 Marek          Czerwonka             100.00 +  292: 247  150
+                                                          --------------- ---- ------
+                                                                     871  / 11  79.18
+
+
+
+
+	Anna Bogatyńska 100.00 Kraków                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    8    10 Andrzej        Lożyński              102.14 -  240: 433   52
+    9    11 Grażyna        Furman                100.00 -  282: 292   50
+   10    12 Jerzy          Banasiak              100.00 +  386: 300  150
+   11    11 Grzegorz       Matysiak              100.00 -  275: 310   50
+   12    11 Krzysztof      Kokot                 100.00 -  275: 300   50
+                                                          --------------- ---- ------
+                                                                     352  /  5  70.40
+
+
+
+
+	Marek Czerwonka 100.00 Kraków                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Anna           Kowalska-Demczyszyn   107.24 -  270: 384   57
+    2    10 Agnieszka      Piskorz               100.00 -  215: 329   50
+    3    11 Paweł          Fraś                  100.00 -  312: 328   50
+    4    12 Artur          Witczak               100.00 +  333: 167  150
+    5    11 Roksana        Kościółek             100.00 +  291: 282  150
+    6    10 Jerzy          Banasiak              100.00 +  270: 207  150
+    7     8 Grzegorz       Matysiak              100.00 -  260: 369   50
+    8     9 Krzysztof      Kokot                 100.00 -    0: 300   50
+    9     9 Renata         Kowalska              114.07 -  235: 392   64
+   10    11 Bożena         Matysiak              100.00 -  268: 375   50
+   11    12 Jerzy          Banasiak              100.00 -  302: 336   50
+   12    12 Jerzy          Banasiak              100.00 -  247: 292   50
+                                                          --------------- ---- ------
+                                                                     921  / 12  76.75
+
+
+
+
+	Paweł Fraś 100.00 Kraków                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Jerzy          Matyasik              111.44 -  232: 377   61
+    2    11 Krzysztof      Kokot                 100.00 -  299: 329   50
+    3    11 Marek          Czerwonka             100.00 +  328: 312  150
+    4    10 Jerzy          Banasiak              100.00 +  373: 191  150
+    5     8 Maciej         Gałecki               100.00 -  221: 319   50
+                                                          --------------- ---- ------
+                                                                     461  /  5  92.20
+
+
+
+
+	Grażyna Furman 100.00 Sosnowiec                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    8    11 Bożena         Matysiak              100.00 +  359: 346  150
+    9    11 Anna           Bogatyńska            100.00 +  292: 282  150
+   10     9 Stanisław      Stanek                100.00 -  327: 357   50
+   11    10 Krzysztof      Kokot                 100.00 +  425: 210  150
+   12     9 Grzegorz       Matysiak              100.00 -  333: 364   50
+                                                          --------------- ---- ------
+                                                                     550  /  5 110.00
+
+
+
+
+	Maciej Gałecki 100.00 Łódź                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Dariusz        Puton                 132.66 -  333: 417   83
+    2     7 Jerzy          Luter                 100.00 +  364: 324  150
+    3     5 Stefan         Dawidson              111.48 -  322: 362   61
+    4     7 Paweł          Dawidson              132.20 -  323: 372   82
+    5     8 Paweł          Fraś                  100.00 +  319: 221  150
+    6     8 Katarzyna      Żuławska              100.00 -  288: 410   50
+    7    10 Jerzy          Banasiak              100.00 +  282: 145  150
+    8     8 Agnieszka      Piskorz               100.00 +  383: 239  150
+    9     6 Wiktor         Stępień               116.09 -  335: 361   66
+   10     7 Leszek         Stecuła               121.30 -  331: 401   71
+   11     8 Renata         Kowalska              114.07 -  268: 326   64
+   12    10 Agnieszka      Piskorz               100.00 -  319: 338   50
+                                                          --------------- ---- ------
+                                                                    1127  / 12  93.92
+
+
+
+
+	Krzysztof Kokot 100.00 Nowy Targ                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Leszek         Stecuła               121.30 -  220: 384   71
+    2    11 Paweł          Fraś                  100.00 +  329: 299  150
+    3     9 Roksana        Kościółek             100.00 +  312: 206  150
+    4     6 Irena          Ficak                 101.13 -  242: 386   51
+    5     9 Jerzy          Luter                 100.00 -  257: 419   50
+    6     9 Agnieszka      Piskorz               100.00 -  271: 328   50
+    7    11 Artur          Witczak               100.00 +  258: 223  150
+    8     9 Marek          Czerwonka             100.00 +  300:   0  150
+    9     7 Andrzej        Lożyński              102.14 -  170: 453   52
+   10     8 Katarzyna      Żuławska              100.00 -  251: 441   50
+   11    10 Grażyna        Furman                100.00 -  210: 425   50
+   12    11 Anna           Bogatyńska            100.00 +  300: 275  150
+                                                          --------------- ---- ------
+                                                                    1124  / 12  93.67
+
+
+
+
+	Roksana Kościółek 100.00 Kraków                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    12 Irena          Ficak                 101.13 -  165: 352   51
+    2    12 Artur          Witczak               100.00 +  300: 216  150
+    3     9 Krzysztof      Kokot                 100.00 -  206: 312   50
+    4    11 Jerzy          Luter                 100.00 -  303: 325   50
+    5    11 Marek          Czerwonka             100.00 -  282: 291   50
+                                                          --------------- ---- ------
+                                                                     351  /  5  70.20
+
+
+
+
+	Jerzy Luter 100.00 Bytom                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Paweł          Dawidson              132.20 -  345: 425   82
+    2     7 Maciej         Gałecki               100.00 -  324: 364   50
+    3    10 Bożena         Matysiak              100.00 -  321: 368   50
+    4    11 Roksana        Kościółek             100.00 +  325: 303  150
+    5     9 Krzysztof      Kokot                 100.00 +  419: 257  150
+    6     7 Leszek         Stecuła               121.30 +  321: 299  171
+    7     6 Katarzyna      Żuławska              100.00 +  343: 324  150
+    8     4 Wiktor         Stępień               116.09 +  330: 315  166
+    9     4 Stefan         Dawidson              111.48 +  427: 306  161
+   10     2 Jacek          Pietruszka            137.32 -  357: 371   87
+   11     3 Katarzyna      Stępień               116.13 -  209: 340   66
+   12     5 Stefan         Dawidson              111.48 +  330: 268  161
+                                                          --------------- ---- ------
+                                                                    1444  / 12 120.33
+
+
+
+
+	Bożena Matysiak 100.00 Kraków                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Wiktor         Stępień               116.09 -  298: 346   66
+    2     9 Grzegorz       Matysiak              100.00 -  320: 354   50
+    3    10 Jerzy          Luter                 100.00 +  368: 321  150
+    4     8 Anna           Kowalska-Demczyszyn   107.24 -  321: 335   57
+    5    10 Agnieszka      Piskorz               100.00 -  299: 322   50
+    6    11 Artur          Witczak               100.00 +  377: 170  150
+    7     9 Leszek         Stecuła               121.30 -  203: 452   71
+    8    11 Grażyna        Furman                100.00 -  346: 359   50
+    9    12 Jerzy          Banasiak              100.00 +  355: 261  150
+   10    11 Marek          Czerwonka             100.00 +  375: 268  150
+   11     9 Agnieszka      Piskorz               100.00 +  394: 288  150
+   12     8 Stanisław      Stanek                100.00 +  359: 338  150
+                                                          --------------- ---- ------
+                                                                    1244  / 12 103.67
+
+
+
+
+	Grzegorz Matysiak 100.00 Kraków                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Katarzyna      Stępień               116.13 -  321: 327   66
+    2     9 Bożena         Matysiak              100.00 +  354: 320  150
+    3     6 Anna           Kowalska-Demczyszyn   107.24 +  479: 313  157
+    4     3 Jacek          Pietruszka            137.32 -  284: 392   87
+    5     5 Renata         Kowalska              114.07 -  332: 355   64
+    6     6 Irena          Ficak                 101.13 =  349: 349  101
+    7     8 Marek          Czerwonka             100.00 +  369: 260  150
+    8     5 Robert         Kaciński              121.45 -  303: 400   71
+    9     8 Katarzyna      Żuławska              100.00 -  296: 345   50
+   10    10 Agnieszka      Piskorz               100.00 -  262: 385   50
+   11    11 Anna           Bogatyńska            100.00 +  310: 275  150
+   12     9 Grażyna        Furman                100.00 +  364: 333  150
+                                                          --------------- ---- ------
+                                                                    1246  / 12 103.83
+
+
+
+
+	Agnieszka Piskorz 100.00 Kraków                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Renata         Kowalska              114.07 -  287: 373   64
+    2    10 Marek          Czerwonka             100.00 +  329: 215  150
+    3     8 Irena          Ficak                 101.13 -  271: 335   51
+    4     9 Robert         Kaciński              121.45 -  283: 409   71
+    5    10 Bożena         Matysiak              100.00 +  322: 299  150
+    6     9 Krzysztof      Kokot                 100.00 +  328: 271  150
+    7     7 Stefan         Dawidson              111.48 -  292: 305   61
+    8     8 Maciej         Gałecki               100.00 -  239: 383   50
+    9    10 Stanisław      Stanek                100.00 -  257: 370   50
+   10    10 Grzegorz       Matysiak              100.00 +  385: 262  150
+   11     9 Bożena         Matysiak              100.00 -  288: 394   50
+   12    10 Maciej         Gałecki               100.00 +  338: 319  150
+                                                          --------------- ---- ------
+                                                                    1147  / 12  95.58
+
+
+
+
+	Stanisław Stanek 100.00 Olkusz                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    8    12 Jerzy          Banasiak              100.00 +  438: 291  150
+    9    10 Agnieszka      Piskorz               100.00 +  370: 257  150
+   10     9 Grażyna        Furman                100.00 +  357: 327  150
+   11     7 Stefan         Dawidson              111.48 -  279: 351   61
+   12     8 Bożena         Matysiak              100.00 -  338: 359   50
+                                                          --------------- ---- ------
+                                                                     561  /  5 112.20
+
+
+
+
+	Artur Witczak 100.00 Włocławek                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Stefan         Dawidson              111.48 -  128: 408   61
+    2    12 Roksana        Kościółek             100.00 -  216: 300   50
+    3    12 Jerzy          Banasiak              100.00 -  222: 337   50
+    4    12 Marek          Czerwonka             100.00 -  167: 333   50
+    5    12 Andrzej        Lożyński              102.14 -  175: 463   52
+    6    11 Bożena         Matysiak              100.00 -  170: 377   50
+    7    11 Krzysztof      Kokot                 100.00 -  223: 258   50
+                                                          --------------- ---- ------
+                                                                     363  /  7  51.86
+
+
+
+
+	Katarzyna Żuławska 100.00 Katowice                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Jacek          Pietruszka            137.32 -  330: 420   87
+    2     8 Jerzy          Banasiak              100.00 +  338: 151  150
+    3     7 Robert         Kaciński              121.45 +  319: 232  171
+    4     5 Katarzyna      Stępień               116.13 -  290: 399   66
+    5     7 Anna           Kowalska-Demczyszyn   107.24 -  350: 369   57
+    6     8 Maciej         Gałecki               100.00 +  410: 288  150
+    7     6 Jerzy          Luter                 100.00 -  324: 343   50
+    8     7 Leszek         Stecuła               121.30 -  293: 359   71
+    9     8 Grzegorz       Matysiak              100.00 +  345: 296  150
+   10     8 Krzysztof      Kokot                 100.00 +  441: 251  150
+   11     6 Anna           Kowalska-Demczyszyn   107.24 -  328: 419   57
+   12     7 Renata         Kowalska              114.07 +  385: 226  164
+                                                          --------------- ---- ------
+                                                                    1323  / 12 110.25
+
+
+</pre></div><div id='p_rundy' class='page'><pre></pre></div><div id='p_ranking' class='page'><pre></pre></div><div id='p_przebieg' class='page'>
+
+    </div><div style="clear:both;width:100%;" class="alignright">
+
+<script>
+<!--
+if ((document.getElementById("content").offsetHeight + document.getElementById("top").offsetHeight) > screen.height)
+    document.write("<br /><br /><a href='#top'>do góry</a>");
+-->
+</script>
+
+</div>
+</div>
+
+<div id="bottom">
+<ul id="bottomlinks">
+<div class='onleft'>
+ Osób on-line: 54</div>
+    <li><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+    <li><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+    <li><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+    <li><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+    <li><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+    <li><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+</ul>
+    SCRABBLE® jest zastrzeżonym znakiem towarowym J.W. Spears &amp; Sons&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://www.pfs.org.pl/prawaautorskie.php">© Prawa autorskie</a>
+</div>
+</body>
+</html>

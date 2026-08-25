@@ -1,0 +1,891 @@
+
+<html>
+<head>
+    <title>Polska Federacja Scrabble :: I Mistrzostwa Chojnowa</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="files/img/favicon.ico" />
+    <link rel="stylesheet" href="files/css/style.css" type="text/css" />
+	<link rel="stylesheet" href="files/css/style-index.css" type="text/css" />
+    <!--[if IE]><link rel="stylesheet" type="text/css" href="files/css/styleie.css" /><![endif]-->
+    <!--[if lt IE 7.]><script defer type="text/javascript" src="files/js/pngfix.js"></script><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="files/js/minmax.js"></script><![endif]-->
+    <script type="text/javascript" src="files/js/jquery.js"></script>
+    <script type="text/javascript" src="files/js/jquery-bp.js"></script>
+    <script type="text/javascript" src="files/js/java.js"></script>
+    <script>jSubmenu ("turnieje","kalendarz");jKalendarz();</script>
+    <script>
+    var url, page;
+
+    page = 'info';
+    url  = document.location.toString();
+
+    if (url.match ('#')) {
+      page = url.split ('#')[1];
+      if ($.inArray (page, [ 'info', 'relacja', 'klasyfikacja', 'hh', 'rundy', 'ranking', 'przebieg' ]) == -1)
+        page = 'info';
+    }
+
+    $(document).ready(function(){
+        $('a#listaucz').bind('click', function(event){
+            $('div#lista').toggle();
+            event.preventDefault();
+        }).toggle(function() { $(this).text('schowaj listę uczestników'); }, function() { $(this).text("pokaż listę uczestników"); });
+        $('div#lista table tr:last td').css({"border-bottom" : "none"});
+
+        $("a.przycisk").click (function (e) {
+            if ($(this).attr ('href') !== '#')
+                return true;
+
+            e.preventDefault ();
+
+            id       = this.id;
+            this.id += 'tmp';
+            window.location.hash = id;
+            this.id  = id;
+
+            $(".page").hide ();
+            $(".page#p_" + id).show ();
+
+            $("a.przycisk").removeClass ('active');
+            $(this).addClass ('active');
+
+            return false;
+        });
+
+        $("a.przycisk#" + page).click ();
+        $('html, body').animate ({ scrollTop: 0 }, 0);
+    });
+    </script>
+  <style type="text/css">
+    .page {
+        display: none;
+    }
+    #szczegoly{
+        width: 100%;
+        border-spacing: 0;
+        margin-top: 30px;
+        text-align: left;
+        font-size: inherit;
+    }
+    #szczegoly td{
+        padding: 10px 20px 10px 0;
+        vertical-align: top;
+    }
+    #szczegoly td:first-child{
+        font-weight: bold;
+        width: 160px;
+    }
+    div#lista{
+        display:none;
+        margin-top: 15px;
+    }
+    div#lista table{
+        margin-top: 10px;
+        text-align: left;
+        font-size: inherit;
+    }
+    div#lista table td{
+        padding: 3px 8px;
+        border-bottom: 1px dashed #1576AE;
+    }
+    div#lista table th{
+        padding: 0px 5px 10px 5px;
+    }
+    div#lista table td.ptaszek{
+        text-align: center;
+        background: url('files/img/tick.png') no-repeat center center;
+    }
+    div#lista table th{
+        white-space: nowrap;
+        width: auto;
+    }
+    div#lista table td:first-child, div#lista table th:first-child{
+        text-align:right;
+        width: auto;
+    }
+    </style>
+</head>
+
+<body>
+
+<script type="text/javascript">setMenu();</script>
+
+<div id="top" onclick="location.href='https://www.pfs.org.pl'">
+</div>
+<div id="menu">
+
+    <div id="m_glowna">
+        <div class="tab"><a href="https://www.pfs.org.pl/index.php"></a></div>
+
+        <ul>
+            <li class="sublink" id="aktualnosci"><a href="https://www.pfs.org.pl">Aktualności</a></li>
+            <li class="sublink" id="nowy"><a href="https://www.pfs.org.pl/dlanowych.php">Jestem tu nowy</a></li>
+            <li class="sublink" id="anagramator"><a href="https://www.pfs.org.pl/osps_online.php?main=1">Słownik online</a></li>
+            <li class="sublink" id="siodemka"><a href="https://www.pfs.org.pl/siodemka.php?main=1">Siódemka tygodnia</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+            <li class="sublink" id="dlasponsorow"><a href="https://www.pfs.org.pl/dlasponsorow.php">Dla sponsorów</a></li>
+            <li class="sublink" id="kontakt"><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+        </ul>
+    </div>
+    <div id="m_turnieje">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kalendarz.php"></a></div>
+        <ul>
+            <li class="sublink" id="kalendarz"><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+            <li class="sublink" id="regulaminy"><a href="https://www.pfs.org.pl/regulaminy.php">Regulaminy</a></li>
+            <li class="sublink" id="sedziowie"><a href="https://www.pfs.org.pl/sedziowie.php">Sędziowie</a></li>
+            <li class="sublink" id="gp"><a href="https://www.pfs.org.pl/gp2026.php">Grand Prix</a></li>
+<!--            <li class="sublink" id="mr"><a href="https://www.pfs.org.pl/mr2020.php">Mistrzostwa Regionów</a></li>-->
+            <li class="sublink" id="archiwum"><a href="https://www.pfs.org.pl/archiwum.php">Historia</a></li>
+            <li class="sublink" id="galeria"><a href="https://www.pfs.org.pl/galeria.php">Zdjęcia</a></li>
+            <li class="sublink" id="rekordy"><a href="https://www.pfs.org.pl/rekordy.php">Rekordy</a></li>
+        </ul>
+    </div>
+    <div id="m_pfs">
+        <div  class="tab"><a href="https://www.pfs.org.pl/opfs.php"></a></div>
+        <ul>
+            <li class="sublink" id="opfs"><a href="https://www.pfs.org.pl/opfs.php">O PFS</a></li>
+            <li class="sublink" id="jakprzystapic"><a href="https://www.pfs.org.pl/jakprzystapic.php">Jak przystąpić</a></li>
+            <li class="sublink" id="dlaczlonkow"><a href="https://www.pfs.org.pl/dlaczlonkow.php">Dla członków</a></li>
+            <li class="sublink" id="wladze"><a href="https://www.pfs.org.pl/wladze.php">Władze</a></li>
+            <li class="sublink" id="komisje"><a href="https://www.pfs.org.pl/komisje.php">Komisje</a></li>
+            <li class="sublink" id="statut"><a href="https://www.pfs.org.pl/statut.php">Statut</a></li>
+            <li class="sublink" id="uchwaly"><a href="https://www.pfs.org.pl/uchwaly.php">Uchwały</a></li>
+            <li class="sublink" id="honorowi"><a href="https://www.pfs.org.pl/honorowi.php">Honorowi członkowie</a></li>
+            <li class="sublink" id="finanse"><a href="https://www.pfs.org.pl/finanse.php">Finanse</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabble">
+        <div  class="tab"><a href="https://www.pfs.org.pl/osps_online.php?desktop=1"></a></div>
+        <ul>
+            <li class="sublink" id="osps_online"><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+            <li class="sublink" id="zds"><a href="https://www.pfs.org.pl/zds2.php">ZDS</a></li>
+            <li class="sublink" id="osps"><a href="https://www.pfs.org.pl/osps.php">OSPS</a></li>
+            <li class="sublink" id="aktualizacje"><a href="https://www.pfs.org.pl/osps_aktualizacje.php">Aktualizacje</a></li>
+            <li class="sublink" id="dwojki"><a href="https://www.pfs.org.pl/dwojki.php">2-literówki</a></li>
+            <li class="sublink" id="trojki"><a href="https://www.pfs.org.pl/trojki.php">3-literówki</a></li>
+            <li class="sublink" id="siodemkat"><a href="https://www.pfs.org.pl/siodemka.php">Siódemka tygodnia</a></li>
+            <li class="sublink" id="slowneroznosci"><a href="https://www.pfs.org.pl/slowneroznosci.php">Słowne różności</a></li>
+        </ul>
+    </div>
+    <div id="m_ranking">
+        <div  class="tab"><a href="https://www.pfs.org.pl/ranking.php"></a></div>
+        <ul>
+            <li class="sublink" id="aktranking"><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+            <li class="sublink" id="medale"><a href="https://www.pfs.org.pl/medale.php">Klasyfikacja medalowa</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabblisci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/mistrzowiepolski.php"></a></div>
+        <ul>
+            <li class="sublink" id="mistrzowiepolski"><a href="https://www.pfs.org.pl/mistrzowiepolski.php">Mistrzowie Polski</a></li>
+            <li class="sublink" id="zdobywcypp"><a href="https://www.pfs.org.pl/zdobywcypp.php">Zdobywcy Pucharu Polski</a></li>
+            <li class="sublink" id="zwyciezcygp"><a href="https://www.pfs.org.pl/zwyciezcygp.php">Zwycięzcy Grand Prix</a></li>
+            <li class="sublink" id="liderzyrankingu"><a href="https://www.pfs.org.pl/liderzyrankingu.php">Liderzy rankingu</a></li>
+            <li class="sublink" id="zwyciezcylemans"><a href="https://www.pfs.org.pl/zwyciezcylemans.php">Zwycięzcy 24h Le Mans</a></li>
+            <li class="sublink" id="zwyciezcykmp"><a href="https://www.pfs.org.pl/zwyciezcykmp.php">KMP</a>
+        </ul>
+    </div>
+    <div id="m_kluby">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kluby.php"></a></div>
+        <ul>
+            <li class="sublink" id="rejestrklubow"><a href="https://www.pfs.org.pl/kluby.php">Rejestr klubów</a></li>
+            <li class="sublink" id="kmp"><a href="https://www.pfs.org.pl/kmp.php">KMP</a></li>
+            <li class="sublink" id="wiescizklubow"><a href="https://www.pfs.org.pl/wiescizklubow.php">Wieści z klubów</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/about.php">Statystyki klubowe</a></li>
+        </ul>
+    </div>
+    <div id="m_roznosci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/historia.php"></a></div>
+        <ul>
+            <li class="sublink" id="historia"><a href="https://www.pfs.org.pl/historia.php">Historia</a></li>
+            <li class="sublink" id="odmiany"><a href="https://www.pfs.org.pl/odmiany.php">Odmiany</a></li>
+            <li class="sublink" id="anegdoty"><a href="https://www.pfs.org.pl/anegdoty.php">Anegdoty</a></li>
+            <li class="sublink" id="scrabblealia"><a href="https://www.pfs.org.pl/scrabblealia.php">Scrabblealia</a></li>
+            <li class="sublink" id="scrabblenet"><a href="https://www.pfs.org.pl/scrabblenet.php">Scrabble w internecie</a></li>
+            <li class="sublink" id="programy"><a href="https://www.pfs.org.pl/programy.php">Programy</a></li>
+            <li class="sublink" id="download"><a href="https://www.pfs.org.pl/download.php">Do pobrania</a></li>
+            <li class="sublink" id="ksiazki"><a href="https://www.pfs.org.pl/ksiazki.php">Książki</a></li>
+            <li class="sublink" id="slowniczek"><a href="https://www.pfs.org.pl/slowniczek.php">Słowniczek</a></li>
+        </ul>
+    </div>
+    <div id="m_english">
+        <div  class="tab"><a href="https://www.pfs.org.pl/english.php"></a></div>
+        <ul>
+            <li class="sublink" id="about"><a href="https://www.pfs.org.pl/english.php">About Polish Scrabble</a></li>
+            <li class="sublink" id="news"><a href="https://www.pfs.org.pl/en_news.php">News</a></li>
+            <li class="sublink" id="bartek"><a href="https://www.pfs.org.pl/bartek.php">Bartek w Johor Bahru</a></li>
+            <li class="sublink" id="franko"><a href="https://www.pfs.org.pl/franko.php">Scrabble frankofońskie</a></li>
+        </ul>
+    </div>
+</div>
+
+<div id="submenu"></div>
+<div id="content">
+<div id='nextTours'>
+		<div class='nextTour' onclick='location.href="turniej.php?id=266"'>
+			<div class='karteczka small1'>
+				<span class='miasto'>Ostróda</span><span class='dzien'><span class='big'>25</span><br />maja</span></div>
+			<div class='kartka big1'>
+				<span class='miasto'>Ostróda</span>
+				<span class='dzien'><b>25-26 maja</b></span>
+				<span class='nazwaturnieju'>II Turniej &#8222;Blanki w szranki&#8221;</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=265"'>
+			<div class='karteczka small2'>
+				<span class='miasto'>Chojnów</span><span class='dzien'><span class='big'> 1</span><br />czerwca</span></div>
+			<div class='kartka big2'>
+				<span class='miasto'>Chojnów</span>
+				<span class='dzien'><b> 1- 2 czerwca</b></span>
+				<span class='nazwaturnieju'>I Mistrzostwa Chojnowa</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=264"'>
+			<div class='karteczka small3'>
+				<span class='miasto'>Warszawa</span><span class='dzien'><span class='big'> 8</span><br />czerwca</span></div>
+			<div class='kartka big3'>
+				<span class='miasto'>Warszawa</span>
+				<span class='dzien'><b> 8- 9 czerwca</b></span>
+				<span class='nazwaturnieju'>VIII Puchar Polski</span></div>
+		</div></div><div class='naglowekrelacji'><span class='tytul'>I Mistrzostwa Chojnowa<span class='nazwa'>01 - 02 czerwca 2002 —  I Mistrzostwa Chojnowa</span></span><a href='#' id='info' class='przycisk'>Informacje</a><a href='#' id='relacja' class='przycisk'>Relacja</a><a href='#' id='klasyfikacja' class='przycisk'>Wyniki</a><a href='#' id='hh' class='przycisk'>HH</a><div class='galleries'><img src='files/img/gallery.png' style='visibility:hidden;' alt='galeria' /></div></div><h1 style='color:black; margin-top:0px; margin-bottom:30px; padding: 0px'>I Mistrzostwa Chojnowa<span>Chojnów, 01 - 02 czerwca 2002</span></h1><div id='p_relacja' class='page'><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><div class='relacja' style='clear:both;'><div><pre>
+ 1. Tomasz Zwoliński (Warszawa) 10,0 5055
+ 2. Marcin Mroziuk (Warszawa) 8,0 4644
+ 3. Krzysztof Usakiewicz (Warszawa) 8,0 4549
+ 4. Andrzej Rechowicz (Katowice) 8,0 4461
+ 5. Lucyna Korga (Zabrze) 8,0 4385
+ 6. Szymon Zaleski (Poznań) 7,0 4729
+ 7. Aleksandra Merklejn (Szczecin) 7,0 4452
+ 8. Piotr Rosół (Warszawa) 7,0 4339
+ 9. Beata Madej (Lublin) 7,0 4264
+ 10. Stanisław Rydzik (Warszawa) 6,5 4616
+
+ 28 uczestników, 12 rund 
+</pre></div><div class='autor'></div></div><div style='clear:both;'></div></div><div id='p_info' class='page'><br><p align='center'></p><br><br><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><table id='szczegoly' class='ramkadolna'></table><br /><br /></div><div id='p_klasyfikacja' class='page'><pre>sędzia: Grzegorz Wiączkowski                                                                         Nie, 2 Cze 2002
+
+Mistrzostwa Chojnowa 1-2 czerwca 2002r.
+
+                                                         VP
+MIEJSCE                                   p-ty    +/-  RAZEM
+-------------------------------------------------------------
+  1 Tomasz Zwoliński      141 Warszawa    5055          10.0
+  2 Marcin Mroziuk        137 Warszawa    4644           8.0
+  3 Krzysztof Usakiewicz  120 Warszawa    4549           8.0
+  4 Andrzej Rechowicz     124 Katowice    4461           8.0
+  5 Lucyna Korga          107 Zabrze      4385           8.0
+  6 Szymon Zaleski        125 Poznań      4729           7.0
+  7 Aleksandra Merklejn   120 Szczecin    4452           7.0
+  8 Piotr Rosół           109 Warszawa    4339           7.0
+  9 Beata Madej           113 Lublin      4264           7.0
+ 10 Stanisław Rydzik      131 Warszawa    4616           6.5
+ 11 Mariusz Skrobosz      137 Warszawa    4906           6.0
+ 12 Radosław Konca        129 Warszawa    4440           6.0
+ 13 Maciej Zięba          104 Wrocław     4324           6.0
+ 14 Jacek Petrus          100 Wrocław     4010           6.0
+ 15 Przemysław Pawlic     100 Wrocław     3848           6.0
+ 16 Renata Rosół          100 Warszawa    3836           6.0
+ 17 Piotr Madej           100 Lublin      3535           6.0
+ 18 Dawid Pikul           100 Poznań      4179           5.5
+ 19 Katarzyna Żuławska    108 Katowice    4350           5.0
+ 20 Dorota Ziembowicz     100 Gliwice     4131           5.0
+ 21 Michał Szymkowski     100 Wrocław     3878           5.0
+ 22 Ewa Fiszer            100 Wrocław     4042           4.0
+ 23 Robert Włodarczyk     100 Wrocław     3826           4.0
+ 24 Waldemar Bulkowski    100 Chojnów     3024           4.0
+ 25 Andrzej Bobik         100 Chojnów     3038           2.5
+ 26 Jacek Wszyndybył      100 Chojnów     1679           1.0
+ 27 Sylwia Skokowska      100 Chojnów      349           0.0
+ 28 Grzegorz Wiączkowski  110 Kielce       318           0.0
+
+</pre></div><div id='p_hh' class='page'><pre>sędzia: Grzegorz Wiączkowski                                                                           Nie, 2 Cze 2002
+
+   1  Tomasz Zwoliński      141 Warszawa 
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1    1   14  Maciej Zięba          104   +  519:296   154
+   2    1    2  Mariusz Skrobosz      137   +  403:392   187
+   3    1    8  Aleksandra Merklejn   120   +  500:301   170
+   4    1    9  Krzysztof Usakiewicz  120   +  395:342   170
+   5    1    4  Stanisław Rydzik      131   +  449:438   181
+   6    1    7  Andrzej Rechowicz     124   +  417:377   174
+   7    1   16  Dawid Pikul           100   +  428:279   150
+   8    1    6  Szymon Zaleski        125   +  416:370   175
+   9    1   13  Lucyna Korga          107   -  320:383    57
+  10    1   11  Piotr Rosół           109   +  435:278   159
+  11    1    9  Krzysztof Usakiewicz  120   -  348:355    70
+  12    1    9  Krzysztof Usakiewicz  120   +  425:307   170
+                                               --------------
+                                                SUMA =  1817 / 12 partii
+
+
+   2  Mariusz Skrobosz      137 Warszawa 
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1    2   15  Dorota Ziembowicz     100   +  506:273   150
+   2    1    1  Tomasz Zwoliński      141   -  392:403    91
+   3    4   11  Piotr Rosół           109   +  513:355   159
+   4    2    4  Stanisław Rydzik      131   -  366:397    81
+   5    4   13  Lucyna Korga          107   -  384:412    57
+   6    6   10  Beata Madej           113   +  395:318   163
+   7    5    3  Marcin Mroziuk        137   +  486:235   187
+   8    2    9  Krzysztof Usakiewicz  120   +  361:330   170
+   9    3    7  Andrzej Rechowicz     124   -  324:372    74
+  10    4    5  Radosław Konca        129   +  519:242   179
+  11    3    3  Marcin Mroziuk        137   -  383:404    87
+  12    4    6  Szymon Zaleski        125   -  277:514    75
+                                               --------------
+                                                SUMA =  1473 / 12 partii
+
+
+   3  Marcin Mroziuk        137 Warszawa 
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1    3   16  Dawid Pikul           100   -  357:370    50
+   2    7   10  Beata Madej           113   +  423:282   163
+   3    5    6  Szymon Zaleski        125   -  323:393    75
+   4    8   25  Jacek Petrus          100   +  514:215   150
+   5    5   12  Katarzyna Żuławska    108   +  338:263   158
+   6    4    5  Radosław Konca        129   -  396:402    79
+   7    5    2  Mariusz Skrobosz      137   -  235:486    87
+   8    7    8  Aleksandra Merklejn   120   +  353:346   170
+   9    7   23  Ewa Fiszer            100   +  487:244   150
+  10    3   13  Lucyna Korga          107   +  409:357   157
+  11    3    2  Mariusz Skrobosz      137   +  404:383   187
+  12    2   13  Lucyna Korga          107   +  405:333   157
+                                               --------------
+                                                SUMA =  1583 / 12 partii
+
+
+   4  Stanisław Rydzik      131 Warszawa 
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1    4   17  Renata Rosół          100   +  400:280   150
+   2    5    7  Andrzej Rechowicz     124   +  392:294   174
+   3    3   16  Dawid Pikul           100   =  367:367   100
+   4    2    2  Mariusz Skrobosz      137   +  397:366   187
+   5    1    1  Tomasz Zwoliński      141   -  438:449    91
+   6    2    9  Krzysztof Usakiewicz  120   -  314:452    70
+   7    4   13  Lucyna Korga          107   -  400:410    57
+   8    6   20  Przemysław Pawlic     100   +  368:244   150
+   9    4   11  Piotr Rosół           109   -  297:336    59
+  10    6    6  Szymon Zaleski        125   +  470:331   175
+  11    5    6  Szymon Zaleski        125   -  371:499    75
+  12    7   17  Renata Rosół          100   +  402:290   150
+                                               --------------
+                                                SUMA =  1438 / 12 partii
+
+
+   5  Radosław Konca        129 Warszawa 
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1    5   18  Piotr Madej           100   +  375:255   150
+   2    6   16  Dawid Pikul           100   -  398:404    50
+   3    7   23  Ewa Fiszer            100   +  556:233   150
+   4    4    6  Szymon Zaleski        125   +  381:365   175
+   5    3    7  Andrzej Rechowicz     124   -  263:383    74
+   6    4    3  Marcin Mroziuk        137   +  402:396   187
+   7    2    9  Krzysztof Usakiewicz  120   -  361:362    70
+   8    3   13  Lucyna Korga          107   -  304:307    57
+   9    6   10  Beata Madej           113   +  386:328   163
+  10    4    2  Mariusz Skrobosz      137   -  242:519    87
+  11    6    8  Aleksandra Merklejn   120   -  310:352    70
+  12    8   16  Dawid Pikul           100   +  462:357   150
+                                               --------------
+                                                SUMA =  1383 / 12 partii
+
+
+   6  Szymon Zaleski        125 Poznań   
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1    6   19  Grzegorz Wiączkowski  110   +  446:318   160
+   2    3   13  Lucyna Korga          107   -  345:405    57
+   3    5    3  Marcin Mroziuk        137   +  393:323   187
+   4    4    5  Radosław Konca        129   -  365:381    79
+   5    6   14  Maciej Zięba          104   +  361:316   154
+   6    5    8  Aleksandra Merklejn   120   +  422:375   170
+   7    3    7  Andrzej Rechowicz     124   +  422:283   174
+   8    1    1  Tomasz Zwoliński      141   -  370:416    91
+   9    2    9  Krzysztof Usakiewicz  120   -  261:446    70
+  10    6    4  Stanisław Rydzik      131   -  331:470    81
+  11    5    4  Stanisław Rydzik      131   +  499:371   181
+  12    4    2  Mariusz Skrobosz      137   +  514:277   187
+                                               --------------
+                                                SUMA =  1591 / 12 partii
+
+
+   7  Andrzej Rechowicz     124 Katowice 
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1    7   20  Przemysław Pawlic     100   +  398:303   150
+   2    5    4  Stanisław Rydzik      131   -  294:392    81
+   3    8   22  Michał Szymkowski     100   +  394:281   150
+   4    5    8  Aleksandra Merklejn   120   +  413:289   170
+   5    3    5  Radosław Konca        129   +  383:263   179
+   6    1    1  Tomasz Zwoliński      141   -  377:417    91
+   7    3    6  Szymon Zaleski        125   -  283:422    75
+   8    5   14  Maciej Zięba          104   +  431:384   154
+   9    3    2  Mariusz Skrobosz      137   +  372:324   187
+  10    2    9  Krzysztof Usakiewicz  120   +  372:294   170
+  11    2   13  Lucyna Korga          107   -  385:386    57
+  12    3   11  Piotr Rosół           109   +  359:259   159
+                                               --------------
+                                                SUMA =  1623 / 12 partii
+
+
+   8  Aleksandra Merklejn   120 Szczecin 
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1    8   21  Waldemar Bulkowski    100   +  424:212   150
+   2    4   11  Piotr Rosół           109   +  432:426   159
+   3    1    1  Tomasz Zwoliński      141   -  301:500    91
+   4    5    7  Andrzej Rechowicz     124   -  289:413    74
+   5    7   23  Ewa Fiszer            100   +  386:372   150
+   6    5    6  Szymon Zaleski        125   -  375:422    75
+   7    7   14  Maciej Zięba          104   -  325:457    54
+   8    7    3  Marcin Mroziuk        137   -  346:353    87
+   9    9   22  Michał Szymkowski     100   +  425:359   150
+  10    7   16  Dawid Pikul           100   +  356:335   150
+  11    6    5  Radosław Konca        129   +  352:310   179
+  12    5   14  Maciej Zięba          104   +  441:298   154
+                                               --------------
+                                                SUMA =  1473 / 12 partii
+
+
+   9  Krzysztof Usakiewicz  120 Warszawa 
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1    9   22  Michał Szymkowski     100   +  462:264   150
+   2    2   12  Katarzyna Żuławska    108   +  391:332   158
+   3    2   13  Lucyna Korga          107   +  446:243   157
+   4    1    1  Tomasz Zwoliński      141   -  342:395    91
+   5    2   16  Dawid Pikul           100   +  362:316   150
+   6    2    4  Stanisław Rydzik      131   +  452:314   181
+   7    2    5  Radosław Konca        129   +  362:361   179
+   8    2    2  Mariusz Skrobosz      137   -  330:361    87
+   9    2    6  Szymon Zaleski        125   +  446:261   175
+  10    2    7  Andrzej Rechowicz     124   -  294:372    74
+  11    1    1  Tomasz Zwoliński      141   +  355:348   191
+  12    1    1  Tomasz Zwoliński      141   -  307:425    91
+                                               --------------
+                                                SUMA =  1684 / 12 partii
+
+
+  10  Beata Madej           113 Lublin   
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1   10   23  Ewa Fiszer            100   +  360:359   150
+   2    7    3  Marcin Mroziuk        137   -  282:423    87
+   3    9   17  Renata Rosół          100   +  374:283   150
+   4    6   13  Lucyna Korga          107   -  362:370    57
+   5    8   15  Dorota Ziembowicz     100   +  431:311   150
+   6    6    2  Mariusz Skrobosz      137   -  318:395    87
+   7    8   20  Przemysław Pawlic     100   -  335:382    50
+   8    9   25  Jacek Petrus          100   +  360:295   150
+   9    6    5  Radosław Konca        129   -  328:386    79
+  10    9   22  Michał Szymkowski     100   +  353:347   150
+  11    7   15  Dorota Ziembowicz     100   +  451:327   150
+  12    6   20  Przemysław Pawlic     100   +  310:286   150
+                                               --------------
+                                                SUMA =  1410 / 12 partii
+
+
+  11  Piotr Rosół           109 Warszawa 
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1   11   24  Robert Włodarczyk     100   +  412:283   150
+   2    4    8  Aleksandra Merklejn   120   -  426:432    70
+   3    4    2  Mariusz Skrobosz      137   -  355:513    87
+   4    7   14  Maciej Zięba          104   -  274:327    54
+   5    9   22  Michał Szymkowski     100   +  423:213   150
+   6    7   23  Ewa Fiszer            100   +  382:321   150
+   7    6   12  Katarzyna Żuławska    108   +  402:375   158
+   8    4   16  Dawid Pikul           100   +  349:346   150
+   9    4    4  Stanisław Rydzik      131   +  336:297   181
+  10    1    1  Tomasz Zwoliński      141   -  278:435    91
+  11    4   14  Maciej Zięba          104   +  443:234   154
+  12    3    7  Andrzej Rechowicz     124   -  259:359    74
+                                               --------------
+                                                SUMA =  1469 / 12 partii
+
+
+  12  Katarzyna Żuławska    108 Katowice 
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1   12   25  Jacek Petrus          100   +  447:357   150
+   2    2    9  Krzysztof Usakiewicz  120   -  332:391    70
+   3    6   14  Maciej Zięba          104   +  495:363   154
+   4    3   16  Dawid Pikul           100   -  286:331    50
+   5    5    3  Marcin Mroziuk        137   -  263:338    87
+   6    8   15  Dorota Ziembowicz     100   +  366:361   150
+   7    6   11  Piotr Rosół           109   -  375:402    59
+   8    8   23  Ewa Fiszer            100   -  300:331    50
+   9   10   17  Renata Rosół          100   -  327:336    50
+  10   13   21  Waldemar Bulkowski    100   +  433:276   150
+  11   10   16  Dawid Pikul           100   -  277:329    50
+  12   11   23  Ewa Fiszer            100   +  449:317   150
+                                               --------------
+                                                SUMA =  1170 / 12 partii
+
+
+  13  Lucyna Korga          107 Zabrze   
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1   13   26  Andrzej Bobik         100   +  429:207   150
+   2    3    6  Szymon Zaleski        125   +  405:345   175
+   3    2    9  Krzysztof Usakiewicz  120   -  243:446    70
+   4    6   10  Beata Madej           113   +  370:362   163
+   5    4    2  Mariusz Skrobosz      137   +  412:384   187
+   6    3   16  Dawid Pikul           100   -  350:388    50
+   7    4    4  Stanisław Rydzik      131   +  410:400   181
+   8    3    5  Radosław Konca        129   +  307:304   179
+   9    1    1  Tomasz Zwoliński      141   +  383:320   191
+  10    3    3  Marcin Mroziuk        137   -  357:409    87
+  11    2    7  Andrzej Rechowicz     124   +  386:385   174
+  12    2    3  Marcin Mroziuk        137   -  333:405    87
+                                               --------------
+                                                SUMA =  1694 / 12 partii
+
+
+  14  Maciej Zięba          104 Wrocław  
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1    1    1  Tomasz Zwoliński      141   -  296:519    91
+   2    9   20  Przemysław Pawlic     100   +  482:372   150
+   3    6   12  Katarzyna Żuławska    108   -  363:495    58
+   4    7   11  Piotr Rosół           109   +  327:274   159
+   5    6    6  Szymon Zaleski        125   -  316:361    75
+   6    9   25  Jacek Petrus          100   +  416:270   150
+   7    7    8  Aleksandra Merklejn   120   +  457:325   170
+   8    5    7  Andrzej Rechowicz     124   -  384:431    74
+   9    5   16  Dawid Pikul           100   +  361:357   150
+  10    5   18  Piotr Madej           100   +  390:305   150
+  11    4   11  Piotr Rosół           109   -  234:443    59
+  12    5    8  Aleksandra Merklejn   120   -  298:441    70
+                                               --------------
+                                                SUMA =  1356 / 12 partii
+
+
+  15  Dorota Ziembowicz     100 Gliwice  
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1    2    2  Mariusz Skrobosz      137   -  273:506    87
+   2   11   22  Michał Szymkowski     100   -  283:417    50
+   3   11   20  Przemysław Pawlic     100   +  404:288   150
+   4   11   18  Piotr Madej           100   +  401:256   150
+   5    8   10  Beata Madej           113   -  311:431    63
+   6    8   12  Katarzyna Żuławska    108   -  361:366    58
+   7   10   25  Jacek Petrus          100   -  307:319    50
+   8   12   27  Sylwia Skokowska      100   +  511:147   150
+   9   11   26  Andrzej Bobik         100   +  347:245   150
+  10    8   23  Ewa Fiszer            100   +  345:325   150
+  11    7   10  Beata Madej           113   -  327:451    63
+  12    9   25  Jacek Petrus          100   -  261:404    50
+                                               --------------
+                                                SUMA =  1171 / 12 partii
+
+
+  16  Dawid Pikul           100 Poznań   
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1    3    3  Marcin Mroziuk        137   +  370:357   187
+   2    6    5  Radosław Konca        129   +  404:398   179
+   3    3    4  Stanisław Rydzik      131   =  367:367   131
+   4    3   12  Katarzyna Żuławska    108   +  331:286   158
+   5    2    9  Krzysztof Usakiewicz  120   -  316:362    70
+   6    3   13  Lucyna Korga          107   +  388:350   157
+   7    1    1  Tomasz Zwoliński      141   -  279:428    91
+   8    4   11  Piotr Rosół           109   -  346:349    59
+   9    5   14  Maciej Zięba          104   -  357:361    54
+  10    7    8  Aleksandra Merklejn   120   -  335:356    70
+  11   10   12  Katarzyna Żuławska    108   +  329:277   158
+  12    8    5  Radosław Konca        129   -  357:462    79
+                                               --------------
+                                                SUMA =  1393 / 12 partii
+
+
+  17  Renata Rosół          100 Warszawa 
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1    4    4  Stanisław Rydzik      131   -  280:400    81
+   2   10   24  Robert Włodarczyk     100   +  327:272   150
+   3    9   10  Beata Madej           113   -  283:374    63
+   4   10   22  Michał Szymkowski     100   -  291:306    50
+   5   11   25  Jacek Petrus          100   -  326:383    50
+   6   12   26  Andrzej Bobik         100   +  361:203   150
+   7   11   21  Waldemar Bulkowski    100   +  309:289   150
+   8   10   18  Piotr Madej           100   -  304:343    50
+   9   10   12  Katarzyna Żuławska    108   +  336:327   158
+  10   12   28  Jacek Wszyndybył      100   +  385:239   150
+  11    8   25  Jacek Petrus          100   +  344:335   150
+  12    7    4  Stanisław Rydzik      131   -  290:402    81
+                                               --------------
+                                                SUMA =  1283 / 12 partii
+
+
+  18  Piotr Madej           100 Lublin   
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1    5    5  Radosław Konca        129   -  255:375    79
+   2   12   26  Andrzej Bobik         100   +  343:275   150
+   3   10   25  Jacek Petrus          100   -  204:360    50
+   4   11   15  Dorota Ziembowicz     100   -  256:401    50
+   5   12   28  Jacek Wszyndybył      100   +  337:298   150
+   6   11   24  Robert Włodarczyk     100   +  334:273   150
+   7    9   23  Ewa Fiszer            100   -  283:357    50
+   8   10   17  Renata Rosół          100   +  343:304   150
+   9    8   20  Przemysław Pawlic     100   +  335:278   150
+  10    5   14  Maciej Zięba          104   -  305:390    54
+  11    9   20  Przemysław Pawlic     100   -  222:385    50
+  12   10   22  Michał Szymkowski     100   +  318:305   150
+                                               --------------
+                                                SUMA =  1233 / 12 partii
+
+
+  19  Grzegorz Wiączkowski  110 Kielce   
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1    6    6  Szymon Zaleski        125   -  318:446    75
+   2            PAUZA
+   3            PAUZA
+   4            PAUZA
+   5            PAUZA
+   6            PAUZA
+   7            PAUZA
+   8            PAUZA
+   9            PAUZA
+  10            PAUZA
+  11            PAUZA
+  12            PAUZA
+                                               --------------
+                                                SUMA =    75 /  1 partia
+
+
+  20  Przemysław Pawlic     100 Wrocław  
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1    7    7  Andrzej Rechowicz     124   -  303:398    74
+   2    9   14  Maciej Zięba          104   -  372:482    54
+   3   11   15  Dorota Ziembowicz     100   -  288:404    50
+   4   12   21  Waldemar Bulkowski    100   +  376:298   150
+   5   10   24  Robert Włodarczyk     100   +  283:274   150
+   6   10   22  Michał Szymkowski     100   +  308:237   150
+   7    8   10  Beata Madej           113   +  382:335   163
+   8    6    4  Stanisław Rydzik      131   -  244:368    81
+   9    8   18  Piotr Madej           100   -  278:335    50
+  10   11   26  Andrzej Bobik         100   +  343:269   150
+  11    9   18  Piotr Madej           100   +  385:222   150
+  12    6   10  Beata Madej           113   -  286:310    63
+                                               --------------
+                                                SUMA =  1285 / 12 partii
+
+
+  21  Waldemar Bulkowski    100 Chojnów  
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1    8    8  Aleksandra Merklejn   120   -  212:424    70
+   2            PAUZA
+   3   13   27  Sylwia Skokowska      100   +  261:202   150
+   4   12   20  Przemysław Pawlic     100   -  298:376    50
+   5            PAUZA
+   6   13   28  Jacek Wszyndybył      100   +  347:231   150
+   7   11   17  Renata Rosół          100   -  289:309    50
+   8   13   26  Andrzej Bobik         100   +  384:246   150
+   9   13   24  Robert Włodarczyk     100   -  284:299    50
+  10   13   12  Katarzyna Żuławska    108   -  276:433    58
+  11   12   24  Robert Włodarczyk     100   +  428:346   150
+  12   12   24  Robert Włodarczyk     100   -  245:265    50
+                                               --------------
+                                                SUMA =   928 / 10 partii
+
+
+  22  Michał Szymkowski     100 Wrocław  
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1    9    9  Krzysztof Usakiewicz  120   -  264:462    70
+   2   11   15  Dorota Ziembowicz     100   +  417:283   150
+   3    8    7  Andrzej Rechowicz     124   -  281:394    74
+   4   10   17  Renata Rosół          100   +  306:291   150
+   5    9   11  Piotr Rosół           109   -  213:423    59
+   6   10   20  Przemysław Pawlic     100   -  237:308    50
+   7   12   26  Andrzej Bobik         100   +  350:312   150
+   8   11   24  Robert Włodarczyk     100   +  413:380   150
+   9    9    8  Aleksandra Merklejn   120   -  359:425    70
+  10    9   10  Beata Madej           113   -  347:353    63
+  11   11   23  Ewa Fiszer            100   +  386:318   150
+  12   10   18  Piotr Madej           100   -  305:318    50
+                                               --------------
+                                                SUMA =  1186 / 12 partii
+
+
+  23  Ewa Fiszer            100 Wrocław  
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1   10   10  Beata Madej           113   -  359:360    63
+   2    8   25  Jacek Petrus          100   +  419:344   150
+   3    7    5  Radosław Konca        129   -  233:556    79
+   4    9   24  Robert Włodarczyk     100   +  446:302   150
+   5    7    8  Aleksandra Merklejn   120   -  372:386    70
+   6    7   11  Piotr Rosół           109   -  321:382    59
+   7    9   18  Piotr Madej           100   +  357:283   150
+   8    8   12  Katarzyna Żuławska    108   +  331:300   158
+   9    7    3  Marcin Mroziuk        137   -  244:487    87
+  10    8   15  Dorota Ziembowicz     100   -  325:345    50
+  11   11   22  Michał Szymkowski     100   -  318:386    50
+  12   11   12  Katarzyna Żuławska    108   -  317:449    58
+                                               --------------
+                                                SUMA =  1124 / 12 partii
+
+
+  24  Robert Włodarczyk     100 Wrocław  
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1   11   11  Piotr Rosół           109   -  283:412    59
+   2   10   17  Renata Rosół          100   -  272:327    50
+   3   12   26  Andrzej Bobik         100   +  446:232   150
+   4    9   23  Ewa Fiszer            100   -  302:446    50
+   5   10   20  Przemysław Pawlic     100   -  274:283    50
+   6   11   18  Piotr Madej           100   -  273:334    50
+   7   13   28  Jacek Wszyndybył      100   +  391:203   150
+   8   11   22  Michał Szymkowski     100   -  380:413    50
+   9   13   21  Waldemar Bulkowski    100   +  299:284   150
+  10   10   25  Jacek Petrus          100   -  295:318    50
+  11   12   21  Waldemar Bulkowski    100   -  346:428    50
+  12   12   21  Waldemar Bulkowski    100   +  265:245   150
+                                               --------------
+                                                SUMA =  1009 / 12 partii
+
+
+  25  Jacek Petrus          100 Wrocław  
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1   12   12  Katarzyna Żuławska    108   -  357:447    58
+   2    8   23  Ewa Fiszer            100   -  344:419    50
+   3   10   18  Piotr Madej           100   +  360:204   150
+   4    8    3  Marcin Mroziuk        137   -  215:514    87
+   5   11   17  Renata Rosół          100   +  383:326   150
+   6    9   14  Maciej Zięba          104   -  270:416    54
+   7   10   15  Dorota Ziembowicz     100   +  319:307   150
+   8    9   10  Beata Madej           113   -  295:360    63
+   9   12   28  Jacek Wszyndybył      100   +  410:186   150
+  10   10   24  Robert Włodarczyk     100   +  318:295   150
+  11    8   17  Renata Rosół          100   -  335:344    50
+  12    9   15  Dorota Ziembowicz     100   +  404:261   150
+                                               --------------
+                                                SUMA =  1262 / 12 partii
+
+
+  26  Andrzej Bobik         100 Chojnów  
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1   13   13  Lucyna Korga          107   -  207:429    57
+   2   12   18  Piotr Madej           100   -  275:343    50
+   3   12   24  Robert Włodarczyk     100   -  232:446    50
+   4   13   28  Jacek Wszyndybył      100   +  200: 82   150
+   5            PAUZA
+   6   12   17  Renata Rosół          100   -  203:361    50
+   7   12   22  Michał Szymkowski     100   -  312:350    50
+   8   13   21  Waldemar Bulkowski    100   -  246:384    50
+   9   11   15  Dorota Ziembowicz     100   -  245:347    50
+  10   11   20  Przemysław Pawlic     100   -  269:343    50
+  11   13   28  Jacek Wszyndybył      100   +  302:186   150
+  12   13   28  Jacek Wszyndybył      100   -  247:254    50
+                                               --------------
+                                                SUMA =   757 / 11 partii
+
+
+  27  Sylwia Skokowska      100 Chojnów  
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1            PAUZA
+   2            PAUZA
+   3   13   21  Waldemar Bulkowski    100   -  202:261    50
+   4            PAUZA
+   5            PAUZA
+   6            PAUZA
+   7            PAUZA
+   8   12   15  Dorota Ziembowicz     100   -  147:511    50
+   9            PAUZA
+  10            PAUZA
+  11            PAUZA
+  12            PAUZA
+                                               --------------
+                                                SUMA =   100 /  2 partie
+
+
+  28  Jacek Wszyndybył      100 Chojnów  
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1            PAUZA
+   2            PAUZA
+   3            PAUZA
+   4   13   26  Andrzej Bobik         100   -   82:200    50
+   5   12   18  Piotr Madej           100   -  298:337    50
+   6   13   21  Waldemar Bulkowski    100   -  231:347    50
+   7   13   24  Robert Włodarczyk     100   -  203:391    50
+   8            PAUZA
+   9   12   25  Jacek Petrus          100   -  186:410    50
+  10   12   17  Renata Rosół          100   -  239:385    50
+  11   13   26  Andrzej Bobik         100   -  186:302    50
+  12   13   26  Andrzej Bobik         100   +  254:247   150
+                                               --------------
+                                                SUMA =   500 /  8 partii
+
+
+</pre></div><div id='p_rundy' class='page'><pre></pre></div><div id='p_ranking' class='page'><pre></pre></div><div id='p_przebieg' class='page'>
+
+    </div><div style="clear:both;width:100%;" class="alignright">
+
+<script>
+<!--
+if ((document.getElementById("content").offsetHeight + document.getElementById("top").offsetHeight) > screen.height)
+    document.write("<br /><br /><a href='#top'>do góry</a>");
+-->
+</script>
+
+</div>
+</div>
+
+<div id="bottom">
+<ul id="bottomlinks">
+<div class='onleft'>
+ Osób on-line: 54</div>
+    <li><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+    <li><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+    <li><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+    <li><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+    <li><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+    <li><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+</ul>
+    SCRABBLE® jest zastrzeżonym znakiem towarowym J.W. Spears &amp; Sons&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://www.pfs.org.pl/prawaautorskie.php">© Prawa autorskie</a>
+</div>
+</body>
+</html>

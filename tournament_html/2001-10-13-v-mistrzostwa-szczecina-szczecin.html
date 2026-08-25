@@ -1,0 +1,975 @@
+
+<html>
+<head>
+    <title>Polska Federacja Scrabble :: V Mistrzostwa Szczecina</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="files/img/favicon.ico" />
+    <link rel="stylesheet" href="files/css/style.css" type="text/css" />
+	<link rel="stylesheet" href="files/css/style-index.css" type="text/css" />
+    <!--[if IE]><link rel="stylesheet" type="text/css" href="files/css/styleie.css" /><![endif]-->
+    <!--[if lt IE 7.]><script defer type="text/javascript" src="files/js/pngfix.js"></script><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="files/js/minmax.js"></script><![endif]-->
+    <script type="text/javascript" src="files/js/jquery.js"></script>
+    <script type="text/javascript" src="files/js/jquery-bp.js"></script>
+    <script type="text/javascript" src="files/js/java.js"></script>
+    <script>jSubmenu ("turnieje","kalendarz");jKalendarz();</script>
+    <script>
+    var url, page;
+
+    page = 'info';
+    url  = document.location.toString();
+
+    if (url.match ('#')) {
+      page = url.split ('#')[1];
+      if ($.inArray (page, [ 'info', 'relacja', 'klasyfikacja', 'hh', 'rundy', 'ranking', 'przebieg' ]) == -1)
+        page = 'info';
+    }
+
+    $(document).ready(function(){
+        $('a#listaucz').bind('click', function(event){
+            $('div#lista').toggle();
+            event.preventDefault();
+        }).toggle(function() { $(this).text('schowaj listę uczestników'); }, function() { $(this).text("pokaż listę uczestników"); });
+        $('div#lista table tr:last td').css({"border-bottom" : "none"});
+
+        $("a.przycisk").click (function (e) {
+            if ($(this).attr ('href') !== '#')
+                return true;
+
+            e.preventDefault ();
+
+            id       = this.id;
+            this.id += 'tmp';
+            window.location.hash = id;
+            this.id  = id;
+
+            $(".page").hide ();
+            $(".page#p_" + id).show ();
+
+            $("a.przycisk").removeClass ('active');
+            $(this).addClass ('active');
+
+            return false;
+        });
+
+        $("a.przycisk#" + page).click ();
+        $('html, body').animate ({ scrollTop: 0 }, 0);
+    });
+    </script>
+  <style type="text/css">
+    .page {
+        display: none;
+    }
+    #szczegoly{
+        width: 100%;
+        border-spacing: 0;
+        margin-top: 30px;
+        text-align: left;
+        font-size: inherit;
+    }
+    #szczegoly td{
+        padding: 10px 20px 10px 0;
+        vertical-align: top;
+    }
+    #szczegoly td:first-child{
+        font-weight: bold;
+        width: 160px;
+    }
+    div#lista{
+        display:none;
+        margin-top: 15px;
+    }
+    div#lista table{
+        margin-top: 10px;
+        text-align: left;
+        font-size: inherit;
+    }
+    div#lista table td{
+        padding: 3px 8px;
+        border-bottom: 1px dashed #1576AE;
+    }
+    div#lista table th{
+        padding: 0px 5px 10px 5px;
+    }
+    div#lista table td.ptaszek{
+        text-align: center;
+        background: url('files/img/tick.png') no-repeat center center;
+    }
+    div#lista table th{
+        white-space: nowrap;
+        width: auto;
+    }
+    div#lista table td:first-child, div#lista table th:first-child{
+        text-align:right;
+        width: auto;
+    }
+    </style>
+</head>
+
+<body>
+
+<script type="text/javascript">setMenu();</script>
+
+<div id="top" onclick="location.href='https://www.pfs.org.pl'">
+</div>
+<div id="menu">
+
+    <div id="m_glowna">
+        <div class="tab"><a href="https://www.pfs.org.pl/index.php"></a></div>
+
+        <ul>
+            <li class="sublink" id="aktualnosci"><a href="https://www.pfs.org.pl">Aktualności</a></li>
+            <li class="sublink" id="nowy"><a href="https://www.pfs.org.pl/dlanowych.php">Jestem tu nowy</a></li>
+            <li class="sublink" id="anagramator"><a href="https://www.pfs.org.pl/osps_online.php?main=1">Słownik online</a></li>
+            <li class="sublink" id="siodemka"><a href="https://www.pfs.org.pl/siodemka.php?main=1">Siódemka tygodnia</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+            <li class="sublink" id="dlasponsorow"><a href="https://www.pfs.org.pl/dlasponsorow.php">Dla sponsorów</a></li>
+            <li class="sublink" id="kontakt"><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+        </ul>
+    </div>
+    <div id="m_turnieje">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kalendarz.php"></a></div>
+        <ul>
+            <li class="sublink" id="kalendarz"><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+            <li class="sublink" id="regulaminy"><a href="https://www.pfs.org.pl/regulaminy.php">Regulaminy</a></li>
+            <li class="sublink" id="sedziowie"><a href="https://www.pfs.org.pl/sedziowie.php">Sędziowie</a></li>
+            <li class="sublink" id="gp"><a href="https://www.pfs.org.pl/gp2026.php">Grand Prix</a></li>
+<!--            <li class="sublink" id="mr"><a href="https://www.pfs.org.pl/mr2020.php">Mistrzostwa Regionów</a></li>-->
+            <li class="sublink" id="archiwum"><a href="https://www.pfs.org.pl/archiwum.php">Historia</a></li>
+            <li class="sublink" id="galeria"><a href="https://www.pfs.org.pl/galeria.php">Zdjęcia</a></li>
+            <li class="sublink" id="rekordy"><a href="https://www.pfs.org.pl/rekordy.php">Rekordy</a></li>
+        </ul>
+    </div>
+    <div id="m_pfs">
+        <div  class="tab"><a href="https://www.pfs.org.pl/opfs.php"></a></div>
+        <ul>
+            <li class="sublink" id="opfs"><a href="https://www.pfs.org.pl/opfs.php">O PFS</a></li>
+            <li class="sublink" id="jakprzystapic"><a href="https://www.pfs.org.pl/jakprzystapic.php">Jak przystąpić</a></li>
+            <li class="sublink" id="dlaczlonkow"><a href="https://www.pfs.org.pl/dlaczlonkow.php">Dla członków</a></li>
+            <li class="sublink" id="wladze"><a href="https://www.pfs.org.pl/wladze.php">Władze</a></li>
+            <li class="sublink" id="komisje"><a href="https://www.pfs.org.pl/komisje.php">Komisje</a></li>
+            <li class="sublink" id="statut"><a href="https://www.pfs.org.pl/statut.php">Statut</a></li>
+            <li class="sublink" id="uchwaly"><a href="https://www.pfs.org.pl/uchwaly.php">Uchwały</a></li>
+            <li class="sublink" id="honorowi"><a href="https://www.pfs.org.pl/honorowi.php">Honorowi członkowie</a></li>
+            <li class="sublink" id="finanse"><a href="https://www.pfs.org.pl/finanse.php">Finanse</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabble">
+        <div  class="tab"><a href="https://www.pfs.org.pl/osps_online.php?desktop=1"></a></div>
+        <ul>
+            <li class="sublink" id="osps_online"><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+            <li class="sublink" id="zds"><a href="https://www.pfs.org.pl/zds2.php">ZDS</a></li>
+            <li class="sublink" id="osps"><a href="https://www.pfs.org.pl/osps.php">OSPS</a></li>
+            <li class="sublink" id="aktualizacje"><a href="https://www.pfs.org.pl/osps_aktualizacje.php">Aktualizacje</a></li>
+            <li class="sublink" id="dwojki"><a href="https://www.pfs.org.pl/dwojki.php">2-literówki</a></li>
+            <li class="sublink" id="trojki"><a href="https://www.pfs.org.pl/trojki.php">3-literówki</a></li>
+            <li class="sublink" id="siodemkat"><a href="https://www.pfs.org.pl/siodemka.php">Siódemka tygodnia</a></li>
+            <li class="sublink" id="slowneroznosci"><a href="https://www.pfs.org.pl/slowneroznosci.php">Słowne różności</a></li>
+        </ul>
+    </div>
+    <div id="m_ranking">
+        <div  class="tab"><a href="https://www.pfs.org.pl/ranking.php"></a></div>
+        <ul>
+            <li class="sublink" id="aktranking"><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+            <li class="sublink" id="medale"><a href="https://www.pfs.org.pl/medale.php">Klasyfikacja medalowa</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabblisci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/mistrzowiepolski.php"></a></div>
+        <ul>
+            <li class="sublink" id="mistrzowiepolski"><a href="https://www.pfs.org.pl/mistrzowiepolski.php">Mistrzowie Polski</a></li>
+            <li class="sublink" id="zdobywcypp"><a href="https://www.pfs.org.pl/zdobywcypp.php">Zdobywcy Pucharu Polski</a></li>
+            <li class="sublink" id="zwyciezcygp"><a href="https://www.pfs.org.pl/zwyciezcygp.php">Zwycięzcy Grand Prix</a></li>
+            <li class="sublink" id="liderzyrankingu"><a href="https://www.pfs.org.pl/liderzyrankingu.php">Liderzy rankingu</a></li>
+            <li class="sublink" id="zwyciezcylemans"><a href="https://www.pfs.org.pl/zwyciezcylemans.php">Zwycięzcy 24h Le Mans</a></li>
+            <li class="sublink" id="zwyciezcykmp"><a href="https://www.pfs.org.pl/zwyciezcykmp.php">KMP</a>
+        </ul>
+    </div>
+    <div id="m_kluby">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kluby.php"></a></div>
+        <ul>
+            <li class="sublink" id="rejestrklubow"><a href="https://www.pfs.org.pl/kluby.php">Rejestr klubów</a></li>
+            <li class="sublink" id="kmp"><a href="https://www.pfs.org.pl/kmp.php">KMP</a></li>
+            <li class="sublink" id="wiescizklubow"><a href="https://www.pfs.org.pl/wiescizklubow.php">Wieści z klubów</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/about.php">Statystyki klubowe</a></li>
+        </ul>
+    </div>
+    <div id="m_roznosci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/historia.php"></a></div>
+        <ul>
+            <li class="sublink" id="historia"><a href="https://www.pfs.org.pl/historia.php">Historia</a></li>
+            <li class="sublink" id="odmiany"><a href="https://www.pfs.org.pl/odmiany.php">Odmiany</a></li>
+            <li class="sublink" id="anegdoty"><a href="https://www.pfs.org.pl/anegdoty.php">Anegdoty</a></li>
+            <li class="sublink" id="scrabblealia"><a href="https://www.pfs.org.pl/scrabblealia.php">Scrabblealia</a></li>
+            <li class="sublink" id="scrabblenet"><a href="https://www.pfs.org.pl/scrabblenet.php">Scrabble w internecie</a></li>
+            <li class="sublink" id="programy"><a href="https://www.pfs.org.pl/programy.php">Programy</a></li>
+            <li class="sublink" id="download"><a href="https://www.pfs.org.pl/download.php">Do pobrania</a></li>
+            <li class="sublink" id="ksiazki"><a href="https://www.pfs.org.pl/ksiazki.php">Książki</a></li>
+            <li class="sublink" id="slowniczek"><a href="https://www.pfs.org.pl/slowniczek.php">Słowniczek</a></li>
+        </ul>
+    </div>
+    <div id="m_english">
+        <div  class="tab"><a href="https://www.pfs.org.pl/english.php"></a></div>
+        <ul>
+            <li class="sublink" id="about"><a href="https://www.pfs.org.pl/english.php">About Polish Scrabble</a></li>
+            <li class="sublink" id="news"><a href="https://www.pfs.org.pl/en_news.php">News</a></li>
+            <li class="sublink" id="bartek"><a href="https://www.pfs.org.pl/bartek.php">Bartek w Johor Bahru</a></li>
+            <li class="sublink" id="franko"><a href="https://www.pfs.org.pl/franko.php">Scrabble frankofońskie</a></li>
+        </ul>
+    </div>
+</div>
+
+<div id="submenu"></div>
+<div id="content">
+<div id='nextTours'>
+		<div class='nextTour' onclick='location.href="turniej.php?id=281"'>
+			<div class='karteczka small1'>
+				<span class='miasto'>Bielsko-Biała</span><span class='dzien'><span class='big'>29</span><br />września</span></div>
+			<div class='kartka big1'>
+				<span class='miasto'>Bielsko-Biała</span>
+				<span class='dzien'><b>29-30 września</b></span>
+				<span class='nazwaturnieju'>IV Mistrzostwa Podbeskidzia</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=280"'>
+			<div class='karteczka small2'>
+				<span class='miasto'>Szczecin</span><span class='dzien'><span class='big'>13</span><br />października</span></div>
+			<div class='kartka big2'>
+				<span class='miasto'>Szczecin</span>
+				<span class='dzien'><b>13-14 października</b></span>
+				<span class='nazwaturnieju'>V Mistrzostwa Szczecina</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=279"'>
+			<div class='karteczka small3'>
+				<span class='miasto'>Nowy Dwór Mazowiecki</span><span class='dzien'><span class='big'>28</span><br />października</span></div>
+			<div class='kartka big3'>
+				<span class='miasto'>Nowy Dwór Mazowiecki</span>
+				<span class='dzien'><b>28 października</b></span>
+				<span class='nazwaturnieju'>IV Mistrzostwa Nowego Dworu Mazowieckiego</span></div>
+		</div></div><div class='naglowekrelacji'><span class='tytul'>IV Mistrzostwa Szczecina<span class='nazwa'>13 - 14 października 2001 —  V Mistrzostwa Szczecina</span></span><a href='#' id='info' class='przycisk'>Informacje</a><a href='#' id='relacja' class='przycisk'>Relacja</a><a href='#' id='klasyfikacja' class='przycisk'>Wyniki</a><a href='#' id='hh' class='przycisk'>HH</a><div class='galleries'><img src='files/img/gallery.png' style='visibility:hidden;' alt='galeria' /></div></div><h1 style='color:black; margin-top:0px; margin-bottom:30px; padding: 0px'>V Mistrzostwa Szczecina<span>Szczecin, 13 - 14 października 2001</span></h1><div id='p_relacja' class='page'><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><div class='relacja' style='clear:both;'><div><pre>
+ 1. Leszek Nowak (Myślibórz) 10.0 5148
+ 2. Wojciech Usakiewicz (Warszawa) 8.0 4888
+ 3. Mariusz Skrobosz (Warszawa) 8.0 4780
+ 4. Tomasz Zwoliński (Warszawa) 8.0 4711
+ 5. Kazimierz M. Merklejn (Szczecin) 8.0 4677
+ 6. Zbigniew Wietecki (Gorzów Wlkp.) 8.0 4247
+ 7. Andrzej Rechowicz (Katowice) 7.0 4544
+ 8. Robert Duczemiński (Gorzów Wlkp.) 7.0 4353
+ 9. Radosław Konca (Warszawa) 7.0 4350
+ 10. Szymon Zaleski (Poznań) 6.0 4782
+
+ 31 uczestników, 12 rund 
+</pre></div><div class='autor'></div></div><div style='clear:both;'></div></div><div id='p_info' class='page'><br><p align='center'></p><br><br><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br>Zobacz, jak było na poprzednich turniejach:<br><a href='turniej.php?id=302'>IV Mistrzostwa Szczecina</a><br><a href='turniej.php?id=344'>III Otwarte Mistrzostwa Ziemi Szczecińskiej</a><br><a href='turniej.php?id=374'>II Otwarte Mistrzostwa Ziemi Szczecińskiej</a><br><table id='szczegoly' class='ramkadolna'></table><br /><br /></div><div id='p_klasyfikacja' class='page'><pre>Wyniki turnieju IV Mistrzostwa Szczecina
+
+Lp. Imię            Nazwisko             Miasto               Ranking  Duże pkt Małe pkt Skalpy   Różn. MP
+--- --------------- -------------------- -------------------- -------- -------- -------- -------- --------
+  1 Leszek          Nowak                Myślibórz              132.50     10.0     5148     1896     1395
+  2 Wojciech        Usakiewicz           Warszawa               136.08      8.0     4888     1722      599
+  3 Mariusz         Skrobosz             Warszawa               134.61      8.0     4780     1707      489
+  4 Tomasz          Zwoliński            Warszawa               145.15      8.0     4711     1673      391
+  5 Kazimierz.J     Merklejn             Szczecin               125.42      8.0     4677     1726      507
+  6 Zbigniew        Wietecki             Gorzów Wielkopolski    117.85      8.0     4247     1638       58
+  7 Andrzej         Rechowicz            Katowice               121.32      7.0     4544     1601      159
+  8 Robert          Duczemiński          Gorzów Wielkopolski    126.90      7.0     4353     1468     -225
+  9 Radosław        Konca                Warszawa               128.31      7.0     4350     1530       83
+ 10 Szymon          Zaleski              Poznań                 116.47      6.0     4782     1432      427
+ 11 Magdalena       Merklejn             Szczecin               117.64      6.0     4618     1431      292
+ 12 Aleksandra      Merklejn-Kaczanowska Szczecin               118.62      6.0     4381     1361      102
+ 13 Walenty         Siemaszko            Lipiany                113.59      6.0     4263     1329      168
+ 14 Kazimierz       Merklejn             Szczecin               103.81      6.0     4106     1346        6
+ 15 Filip           Klar                 Mielec                 100.00      6.0     3916     1412     -374
+ 16 Maurycy         Machnio              Lipiany                100.00      6.0     3667     1293     -538
+ 17 Marek           Roszak               Poznań                 119.52      5.0     4794     1345      223
+ 18 Joanna          Stępień              Katowice               121.78      5.0     4433     1279     -136
+ 19 Paweł           Szulc                Szczecin               100.00      5.0     3936     1024        0
+ 20 Jarosław        Żuliński             Szczecin               103.44      5.0     3745     1054      -59
+ 21 Monika          Siemaszko            Lipiany                100.00      5.0     3591     1130      138
+ 22 Mirosław        Norwajszas           Szczecin               100.00      5.0     3356     1194     -686
+ 23 Jacek           Nowak                Szczecin               100.00      4.0     4037     1094      -79
+ 24 Jacek           Taczalski            Szczecin               100.00      3.0     2554      723     -309
+ 25 Józef           Wietecki             Gorzów Wielkopolski    100.00      3.0     2403      689      -76
+ 26 Marzena         Szulc                Szczecin               100.00      3.0     1387      550      -54
+ 27 Zbigniew        Kosewski             Szczecin               100.00      2.5     3267      631      114
+ 28 Michał          Elmerych             Szczecin               100.00      2.0     1165      420     -457
+ 29 Andrzej         Lożyński             Piastów                113.28      2.0      688      300      164
+ 30 Paula           Nowak                Szczecin               100.00      1.5     2100      567     -952
+ 31 Andrzej         Szkocki              Szczecin               100.00      0.0       96       66     -770
+ 32 Halina          Roszak               Poznań                 104.45      0.0        0        0        0
+</pre></div><div id='p_hh' class='page'><pre>Wyniki poszczególnych graczy w turnieju IV Mistrzostwa Szczecina
+
+
+
+	Tomasz Zwoliński 145.15 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Walenty        Siemaszko             113.59 +  390: 364  164
+    2     6 Marek          Roszak                119.52 +  357: 348  170
+    3     4 Magdalena      Merklejn              117.64 +  461: 321  168
+    4     2 Kazimierz.J    Merklejn              125.42 +  452: 310  175
+    5     1 Wojciech       Usakiewicz            136.08 +  428: 360  186
+    6     1 Mariusz        Skrobosz              134.61 -  300: 358   85
+    7     1 Leszek         Nowak                 132.50 -  329: 508   83
+    8     4 Andrzej        Rechowicz             121.32 -  360: 425   71
+    9     4 Zbigniew       Wietecki              117.85 -  363: 386   68
+   10     5 Filip          Klar                  100.00 +  461: 274  150
+   11     3 Magdalena      Merklejn              117.64 +  437: 336  168
+   12     2 Mariusz        Skrobosz              134.61 +  373: 330  185
+                                                          --------------- ---- ------
+                                                                    1673  / 12 139.42
+
+
+
+
+	Wojciech Usakiewicz 136.08 Warszawa               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Kazimierz      Merklejn              103.81 +  364: 285  154
+    2     7 Robert         Duczemiński           126.90 +  429: 353  177
+    3     3 Zbigniew       Wietecki              117.85 +  445: 307  168
+    4     1 Leszek         Nowak                 132.50 +  412: 339  183
+    5     1 Tomasz         Zwoliński             145.15 -  360: 428   95
+    6     3 Marek          Roszak                119.52 +  468: 373  170
+    7     2 Mariusz        Skrobosz              134.61 +  423: 385  185
+    8     2 Kazimierz.J    Merklejn              125.42 +  442: 354  175
+    9     2 Radosław       Konca                 128.31 -  345: 368   78
+   10     2 Andrzej        Rechowicz             121.32 +  458: 276  171
+   11     1 Leszek         Nowak                 132.50 -  379: 426   83
+   12     1 Leszek         Nowak                 132.50 -  363: 395   83
+                                                          --------------- ---- ------
+                                                                    1722  / 12 143.50
+
+
+
+
+	Mariusz Skrobosz 134.61 Warszawa               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Jarosław       Żuliński              103.44 +  533: 327  153
+    2     1 Magdalena      Merklejn              117.64 +  362: 351  168
+    3     1 Leszek         Nowak                 132.50 -  310: 430   83
+    4     3 Joanna         Stępień               121.78 +  510: 343  172
+    5     2 Andrzej        Rechowicz             121.32 +  420: 409  171
+    6     1 Tomasz         Zwoliński             145.15 +  358: 300  195
+    7     2 Wojciech       Usakiewicz            136.08 -  385: 423   86
+    8     3 Szymon         Zaleski               116.47 +  417: 355  166
+    9     3 Kazimierz.J    Merklejn              125.42 -  345: 363   75
+   10     3 Zbigniew       Wietecki              117.85 +  433: 261  168
+   11     2 Kazimierz.J    Merklejn              125.42 +  377: 356  175
+   12     2 Tomasz         Zwoliński             145.15 -  330: 373   95
+                                                          --------------- ---- ------
+                                                                    1707  / 12 142.25
+
+
+
+
+	Leszek Nowak 132.50 Myślibórz                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Maurycy        Machnio               100.00 +  469: 245  150
+    2     2 Szymon         Zaleski               116.47 +  458: 316  166
+    3     1 Mariusz        Skrobosz              134.61 +  430: 310  185
+    4     1 Wojciech       Usakiewicz            136.08 -  339: 412   86
+    5     3 Kazimierz.J    Merklejn              125.42 +  394: 303  175
+    6     2 Zbigniew       Wietecki              117.85 +  463: 162  168
+    7     1 Tomasz         Zwoliński             145.15 +  508: 329  195
+    8     1 Filip          Klar                  100.00 +  468: 261  150
+    9     1 Andrzej        Rechowicz             121.32 -  373: 412   71
+   10     1 Radosław       Konca                 128.31 +  425: 261  178
+   11     1 Wojciech       Usakiewicz            136.08 +  426: 379  186
+   12     1 Wojciech       Usakiewicz            136.08 +  395: 363  186
+                                                          --------------- ---- ------
+                                                                    1896  / 12 158.00
+
+
+
+
+	Radosław Konca 128.31 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Jacek          Nowak                 100.00 +  426: 320  150
+    2     3 Andrzej        Rechowicz             121.32 +  410: 375  171
+    3     2 Kazimierz.J    Merklejn              125.42 -  269: 424   75
+    4     5 Robert         Duczemiński           126.90 +  423: 351  177
+    5     4 Zbigniew       Wietecki              117.85 -  336: 381   68
+    6     6 Kazimierz      Merklejn              103.81 +  394: 248  154
+    7     4 Filip          Klar                  100.00 -  321: 329   50
+    8     5 Marek          Roszak                119.52 +  418: 338  170
+    9     2 Wojciech       Usakiewicz            136.08 +  368: 345  186
+   10     1 Leszek         Nowak                 132.50 -  261: 425   83
+   11     4 Andrzej        Rechowicz             121.32 +  348: 334  171
+   12     3 Kazimierz.J    Merklejn              125.42 -  376: 397   75
+                                                          --------------- ---- ------
+                                                                    1530  / 12 127.50
+
+
+
+
+	Robert Duczemiński 126.90 Gorzów Wielkopolski          
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Monika         Siemaszko             100.00 +  362: 356  150
+    2     7 Wojciech       Usakiewicz            136.08 -  353: 429   86
+    3     8 Jacek          Nowak                 100.00 +  426: 306  150
+    4     5 Radosław       Konca                 128.31 -  351: 423   78
+    5     7 Aleksandra     Merklejn-Kaczanowska  118.62 +  373: 326  169
+    6     5 Kazimierz.J    Merklejn              125.42 -  319: 434   75
+    7     6 Szymon         Zaleski               116.47 -  417: 587   66
+    8     8 Magdalena      Merklejn              117.64 -  288: 433   68
+    9     9 Joanna         Stępień               121.78 +  350: 312  172
+   10     8 Paweł          Szulc                 100.00 +  388: 313  150
+   11     7 Kazimierz      Merklejn              103.81 +  342: 316  154
+   12     6 Filip          Klar                  100.00 +  384: 343  150
+                                                          --------------- ---- ------
+                                                                    1468  / 12 122.33
+
+
+
+
+	Kazimierz.J Merklejn 125.42 Szczecin               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Filip          Klar                  100.00 +  397: 255  150
+    2     5 Joanna         Stępień               121.78 +  400: 395  172
+    3     2 Radosław       Konca                 128.31 +  424: 269  178
+    4     2 Tomasz         Zwoliński             145.15 -  310: 452   95
+    5     3 Leszek         Nowak                 132.50 -  303: 394   83
+    6     5 Robert         Duczemiński           126.90 +  434: 319  177
+    7     3 Andrzej        Rechowicz             121.32 +  397: 252  171
+    8     2 Wojciech       Usakiewicz            136.08 -  354: 442   86
+    9     3 Mariusz        Skrobosz              134.61 +  363: 345  185
+   10     4 Szymon         Zaleski               116.47 +  542: 294  166
+   11     2 Mariusz        Skrobosz              134.61 -  356: 377   85
+   12     3 Radosław       Konca                 128.31 +  397: 376  178
+                                                          --------------- ---- ------
+                                                                    1726  / 12 143.83
+
+
+
+
+	Joanna Stępień 121.78 Katowice               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Józef          Wietecki              100.00 +  399: 368  150
+    2     5 Kazimierz.J    Merklejn              125.42 -  395: 400   75
+    3     6 Szymon         Zaleski               116.47 +  392: 376  166
+    4     3 Mariusz        Skrobosz              134.61 -  343: 510   85
+    5     6 Marek          Roszak                119.52 -  289: 565   70
+    6     9 Jarosław       Żuliński              103.44 -  355: 359   53
+    7    10 Aleksandra     Merklejn-Kaczanowska  118.62 +  397: 357  169
+    8     9 Maurycy        Machnio               100.00 -  299: 330   50
+    9     9 Robert         Duczemiński           126.90 -  312: 350   77
+   10    10 Mirosław       Norwajszas            100.00 +  451: 187  150
+   11     9 Marek          Roszak                119.52 +  476: 341  170
+   12     8 Walenty        Siemaszko             113.59 -  325: 426   64
+                                                          --------------- ---- ------
+                                                                    1279  / 12 106.58
+
+
+
+
+	Andrzej Rechowicz 121.32 Katowice               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Mirosław       Norwajszas            100.00 +  431: 209  150
+    2     3 Radosław       Konca                 128.31 -  375: 410   78
+    3     5 Walenty        Siemaszko             113.59 +  367: 335  164
+    4     4 Marek          Roszak                119.52 +  448: 404  170
+    5     2 Mariusz        Skrobosz              134.61 -  409: 420   85
+    6     4 Magdalena      Merklejn              117.64 +  423: 372  168
+    7     3 Kazimierz.J    Merklejn              125.42 -  252: 397   75
+    8     4 Tomasz         Zwoliński             145.15 +  425: 360  195
+    9     1 Leszek         Nowak                 132.50 +  412: 373  183
+   10     2 Wojciech       Usakiewicz            136.08 -  276: 458   86
+   11     4 Radosław       Konca                 128.31 -  334: 348   78
+   12     5 Aleksandra     Merklejn-Kaczanowska  118.62 +  392: 299  169
+                                                          --------------- ---- ------
+                                                                    1601  / 12 133.42
+
+
+
+
+	Marek Roszak 119.52 Poznań                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Michał         Elmerych              100.00 +  395: 251  150
+    2     6 Tomasz         Zwoliński             145.15 -  348: 357   95
+    3     7 Aleksandra     Merklejn-Kaczanowska  118.62 +  405: 386  169
+    4     4 Andrzej        Rechowicz             121.32 -  404: 448   71
+    5     6 Joanna         Stępień               121.78 +  565: 289  172
+    6     3 Wojciech       Usakiewicz            136.08 -  373: 468   86
+    7     5 Zbigniew       Wietecki              117.85 +  427: 378  168
+    8     5 Radosław       Konca                 128.31 -  338: 418   78
+    9     6 Szymon         Zaleski               116.47 -  352: 369   66
+   10     6 Magdalena      Merklejn              117.64 -  341: 438   68
+   11     9 Joanna         Stępień               121.78 -  341: 476   72
+   12    10 Mirosław       Norwajszas            100.00 +  505: 293  150
+                                                          --------------- ---- ------
+                                                                    1345  / 12 112.08
+
+
+
+
+	Aleksandra Merklejn-Kaczanowska 118.62 Szczecin                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Jacek          Taczalski             100.00 +  408: 288  150
+    2     4 Zbigniew       Wietecki              117.85 -  323: 357   68
+    3     7 Marek          Roszak                119.52 -  386: 405   70
+    4     9 Jarosław       Żuliński              103.44 +  354: 262  153
+    5     7 Robert         Duczemiński           126.90 -  326: 373   77
+    6     8 Szymon         Zaleski               116.47 -  313: 472   66
+    7    10 Joanna         Stępień               121.78 -  357: 397   72
+    8    11 Jacek          Nowak                 100.00 +  422: 307  150
+    9    10 Walenty        Siemaszko             113.59 +  385: 349  164
+   10     7 Kazimierz      Merklejn              103.81 +  425: 357  154
+   11     6 Szymon         Zaleski               116.47 +  383: 320  166
+   12     5 Andrzej        Rechowicz             121.32 -  299: 392   71
+                                                          --------------- ---- ------
+                                                                    1361  / 12 113.42
+
+
+
+
+	Zbigniew Wietecki 117.85 Gorzów Wielkopolski          
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    12 Zbigniew       Kosewski              100.00 +  405: 226  150
+    2     4 Aleksandra     Merklejn-Kaczanowska  118.62 +  357: 323  169
+    3     3 Wojciech       Usakiewicz            136.08 -  307: 445   86
+    4     6 Kazimierz      Merklejn              103.81 +  456: 312  154
+    5     4 Radosław       Konca                 128.31 +  381: 336  178
+    6     2 Leszek         Nowak                 132.50 -  162: 463   83
+    7     5 Marek          Roszak                119.52 -  378: 427   70
+    8     6 Paweł          Szulc                 100.00 +  418: 233  150
+    9     4 Tomasz         Zwoliński             145.15 +  386: 363  195
+   10     3 Mariusz        Skrobosz              134.61 -  261: 433   85
+   11     5 Filip          Klar                  100.00 +  381: 282  150
+   12     4 Magdalena      Merklejn              117.64 +  355: 346  168
+                                                          --------------- ---- ------
+                                                                    1638  / 12 136.50
+
+
+
+
+	Magdalena Merklejn 117.64 Szczecin               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    13 Paweł          Szulc                 100.00 +  490: 345  150
+    2     1 Mariusz        Skrobosz              134.61 -  351: 362   85
+    3     4 Tomasz         Zwoliński             145.15 -  321: 461   95
+    4     8 Szymon         Zaleski               116.47 +  487: 348  166
+    5     5 Filip          Klar                  100.00 +  340: 334  150
+    6     4 Andrzej        Rechowicz             121.32 -  372: 423   71
+    7     7 Kazimierz      Merklejn              103.81 -  320: 330   54
+    8     8 Robert         Duczemiński           126.90 +  433: 288  177
+    9     7 Maurycy        Machnio               100.00 +  384: 302  150
+   10     6 Marek          Roszak                119.52 +  438: 341  170
+   11     3 Tomasz         Zwoliński             145.15 -  336: 437   95
+   12     4 Zbigniew       Wietecki              117.85 -  346: 355   68
+                                                          --------------- ---- ------
+                                                                    1431  / 12 119.25
+
+
+
+
+	Szymon Zaleski 116.47 Poznań                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    14 Andrzej        Szkocki               100.00 +  466:  96  150
+    2     2 Leszek         Nowak                 132.50 -  316: 458   83
+    3     6 Joanna         Stępień               121.78 -  376: 392   72
+    4     8 Magdalena      Merklejn              117.64 -  348: 487   68
+    5    10 Walenty        Siemaszko             113.59 +  393: 255  164
+    6     8 Aleksandra     Merklejn-Kaczanowska  118.62 +  472: 313  169
+    7     6 Robert         Duczemiński           126.90 +  587: 417  177
+    8     3 Mariusz        Skrobosz              134.61 -  355: 417   85
+    9     6 Marek          Roszak                119.52 +  369: 352  170
+   10     4 Kazimierz.J    Merklejn              125.42 -  294: 542   75
+   11     6 Aleksandra     Merklejn-Kaczanowska  118.62 -  320: 383   69
+   12     7 Maurycy        Machnio               100.00 +  486: 243  150
+                                                          --------------- ---- ------
+                                                                    1432  / 12 119.33
+
+
+
+
+	Walenty Siemaszko 113.59 Lipiany                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Tomasz         Zwoliński             145.15 -  364: 390   95
+    2     8 Józef          Wietecki              100.00 +  500: 407  150
+    3     5 Andrzej        Rechowicz             121.32 -  335: 367   71
+    4     7 Filip          Klar                  100.00 -  312: 414   50
+    5    10 Szymon         Zaleski               116.47 -  255: 393   66
+    6    11 Mirosław       Norwajszas            100.00 -  282: 395   50
+    7    13 Paula          Nowak                 100.00 +  466: 151  150
+    8    10 Jarosław       Żuliński              103.44 +  333: 266  153
+    9    10 Aleksandra     Merklejn-Kaczanowska  118.62 -  349: 385   69
+   10    11 Jacek          Nowak                 100.00 +  322: 312  150
+   11    10 Jarosław       Żuliński              103.44 +  319: 290  153
+   12     8 Joanna         Stępień               121.78 +  426: 325  172
+                                                          --------------- ---- ------
+                                                                    1329  / 12 110.75
+
+
+
+
+	Andrzej Lożyński 113.28 Piastów                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    2    14 Mirosław       Norwajszas            100.00 +  343: 218  150
+    9    14 Zbigniew       Kosewski              100.00 +  345: 306  150
+                                                          --------------- ---- ------
+                                                                     300  /  2 150.00
+
+
+
+
+	Halina Roszak 104.45 Poznań                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+
+
+	Kazimierz Merklejn 103.81 Szczecin                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Wojciech       Usakiewicz            136.08 -  285: 364   86
+    2    11 Jacek          Taczalski             100.00 +  392: 263  150
+    3     9 Paweł          Szulc                 100.00 +  419: 305  150
+    4     6 Zbigniew       Wietecki              117.85 -  312: 456   68
+    5     8 Maurycy        Machnio               100.00 +  385: 280  150
+    6     6 Radosław       Konca                 128.31 -  248: 394   78
+    7     7 Magdalena      Merklejn              117.64 +  330: 320  168
+    8     7 Mirosław       Norwajszas            100.00 +  319: 287  150
+    9     5 Filip          Klar                  100.00 -  349: 352   50
+   10     7 Aleksandra     Merklejn-Kaczanowska  118.62 -  357: 425   69
+   11     7 Robert         Duczemiński           126.90 -  316: 342   77
+   12     9 Paweł          Szulc                 100.00 +  394: 312  150
+                                                          --------------- ---- ------
+                                                                    1346  / 12 112.17
+
+
+
+
+	Jarosław Żuliński 103.44 Szczecin                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Mariusz        Skrobosz              134.61 -  327: 533   85
+    2    10 Jacek          Nowak                 100.00 -  345: 380   50
+    3    11 Józef          Wietecki              100.00 +  347: 313  150
+    4     9 Aleksandra     Merklejn-Kaczanowska  118.62 -  262: 354   69
+    5    12 Jacek          Taczalski             100.00 +  400:   0    0
+    6     9 Joanna         Stępień               121.78 +  359: 355  172
+    7     8 Paweł          Szulc                 100.00 -  297: 371   50
+    8    10 Walenty        Siemaszko             113.59 -  266: 333   64
+    9    11 Monika         Siemaszko             100.00 -  257: 318   50
+   10    12 Paula          Nowak                 100.00 +  254: 226  150
+   11    10 Walenty        Siemaszko             113.59 -  290: 319   64
+   12    11 Jacek          Nowak                 100.00 +  341: 302  150
+                                                          --------------- ---- ------
+                                                                    1054  / 11  95.82
+
+
+
+
+	Michał Elmerych 100.00 Szczecin                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Marek          Roszak                119.52 -  251: 395   70
+    2    12 Filip          Klar                  100.00 -  309: 321   50
+    3    12 Monika         Siemaszko             100.00 +  280: 256  150
+    4    12 Mirosław       Norwajszas            100.00 +  325: 250  150
+    5     9 Paweł          Szulc                 100.00 -    0: 400    0
+                                                          --------------- ---- ------
+                                                                     420  /  4 105.00
+
+
+
+
+	Filip Klar 100.00 Mielec                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Kazimierz.J    Merklejn              125.42 -  255: 397   75
+    2    12 Michał         Elmerych              100.00 +  321: 309  150
+    3    10 Maurycy        Machnio               100.00 +  427: 260  150
+    4     7 Walenty        Siemaszko             113.59 +  414: 312  164
+    5     5 Magdalena      Merklejn              117.64 -  334: 340   68
+    6     7 Paweł          Szulc                 100.00 +  324: 308  150
+    7     4 Radosław       Konca                 128.31 +  329: 321  178
+    8     1 Leszek         Nowak                 132.50 -  261: 468   83
+    9     5 Kazimierz      Merklejn              103.81 +  352: 349  154
+   10     5 Tomasz         Zwoliński             145.15 -  274: 461   95
+   11     5 Zbigniew       Wietecki              117.85 -  282: 381   68
+   12     6 Robert         Duczemiński           126.90 -  343: 384   77
+                                                          --------------- ---- ------
+                                                                    1412  / 12 117.67
+
+
+
+
+	Zbigniew Kosewski 100.00 Szczecin                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    12 Zbigniew       Wietecki              117.85 -  226: 405   68
+    2    13 Maurycy        Machnio               100.00 -  209: 335   50
+    3    13 Jacek          Taczalski             100.00 -  220: 336   50
+    4    14 Paula          Nowak                 100.00 +  376: 149  150
+    5    13 Mirosław       Norwajszas            100.00 -  240: 329   50
+    6    13 Monika         Siemaszko             100.00 -  240: 257   50
+    7    11 Józef          Wietecki              100.00 -  278: 356   50
+    8    13 Andrzej        Szkocki               100.00 +  400:   0    0
+    9    14 Andrzej        Lożyński              113.28 -  306: 345   63
+   10    14 PAUZA
+   11    13 Marzena        Szulc                 100.00 -  258: 282   50
+   12    12 Monika         Siemaszko             100.00 -  214: 359   50
+                                                          --------------- ---- ------
+                                                                     631  / 10  63.10
+
+
+
+
+	Maurycy Machnio 100.00 Lipiany                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Leszek         Nowak                 132.50 -  245: 469   83
+    2    13 Zbigniew       Kosewski              100.00 +  335: 209  150
+    3    10 Filip          Klar                  100.00 -  260: 427   50
+    4    11 Jacek          Taczalski             100.00 +  326: 325  150
+    5     8 Kazimierz      Merklejn              103.81 -  280: 385   54
+    6    10 Józef          Wietecki              100.00 +  368: 295  150
+    7     9 Mirosław       Norwajszas            100.00 -  306: 327   50
+    8     9 Joanna         Stępień               121.78 +  330: 299  172
+    9     7 Magdalena      Merklejn              117.64 -  302: 384   68
+   10     9 Monika         Siemaszko             100.00 +  365: 319  150
+   11     8 Paweł          Szulc                 100.00 +  307: 280  150
+   12     7 Szymon         Zaleski               116.47 -  243: 486   66
+                                                          --------------- ---- ------
+                                                                    1293  / 12 107.75
+
+
+
+
+	Mirosław Norwajszas 100.00 Szczecin                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Andrzej        Rechowicz             121.32 -  209: 431   71
+    2    14 Andrzej        Lożyński              113.28 -  218: 343   63
+    3    14 Paula          Nowak                 100.00 +  306: 209  150
+    4    12 Michał         Elmerych              100.00 -  250: 325   50
+    5    13 Zbigniew       Kosewski              100.00 +  329: 240  150
+    6    11 Walenty        Siemaszko             113.59 +  395: 282  164
+    7     9 Maurycy        Machnio               100.00 +  327: 306  150
+    8     7 Kazimierz      Merklejn              103.81 -  287: 319   54
+    9     8 Paweł          Szulc                 100.00 -  289: 379   50
+   10    10 Joanna         Stępień               121.78 -  187: 451   72
+   11    11 Monika         Siemaszko             100.00 +  266: 252  150
+   12    10 Marek          Roszak                119.52 -  293: 505   70
+                                                          --------------- ---- ------
+                                                                    1194  / 12  99.50
+
+
+
+
+	Jacek Nowak 100.00 Szczecin                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Radosław       Konca                 128.31 -  320: 426   78
+    2    10 Jarosław       Żuliński              103.44 +  380: 345  153
+    3     8 Robert         Duczemiński           126.90 -  306: 426   77
+    4    10 Paweł          Szulc                 100.00 -  350: 361   50
+    5    11 Józef          Wietecki              100.00 -  323: 345   50
+    6    12 Paula          Nowak                 100.00 -  270: 309   50
+    7    12 Monika         Siemaszko             100.00 +  350: 297  150
+    8    11 Aleksandra     Merklejn-Kaczanowska  118.62 -  307: 422   69
+    9    12 Marzena        Szulc                 100.00 +  412: 255  150
+   10    11 Walenty        Siemaszko             113.59 -  312: 322   64
+   11    12 Jacek          Taczalski             100.00 +  405: 267  150
+   12    11 Jarosław       Żuliński              103.44 -  302: 341   53
+                                                          --------------- ---- ------
+                                                                    1094  / 12  91.17
+
+
+
+
+	Paula Nowak 100.00 Szczecin                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    3    14 Mirosław       Norwajszas            100.00 -  209: 306   50
+    4    14 Zbigniew       Kosewski              100.00 -  149: 376   50
+    5    14 Monika         Siemaszko             100.00 -  206: 351   50
+    6    12 Jacek          Nowak                 100.00 +  309: 270  150
+    7    13 Walenty        Siemaszko             113.59 -  151: 466   64
+    8    14 Marzena        Szulc                 100.00 -  183: 277   50
+    9    13 Jacek          Taczalski             100.00 -  157: 432   50
+   10    12 Jarosław       Żuliński              103.44 -  226: 254   53
+   11    14 PAUZA
+   12    13 Marzena        Szulc                 100.00 -  210: 320   50
+                                                          --------------- ---- ------
+                                                                     567  /  9  63.00
+
+
+
+
+	Monika Siemaszko 100.00 Lipiany                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Robert         Duczemiński           126.90 -  356: 362   77
+    2     9 Paweł          Szulc                 100.00 -  260: 329   50
+    3    12 Michał         Elmerych              100.00 -  256: 280   50
+    4    13 Józef          Wietecki              100.00 -  264: 319   50
+    5    14 Paula          Nowak                 100.00 +  351: 206  150
+    6    13 Zbigniew       Kosewski              100.00 +  257: 240  150
+    7    12 Jacek          Nowak                 100.00 -  297: 350   50
+    8    12 Jacek          Taczalski             100.00 +  302: 265  150
+    9    11 Jarosław       Żuliński              103.44 +  318: 257  153
+   10     9 Maurycy        Machnio               100.00 -  319: 365   50
+   11    11 Mirosław       Norwajszas            100.00 -  252: 266   50
+   12    12 Zbigniew       Kosewski              100.00 +  359: 214  150
+                                                          --------------- ---- ------
+                                                                    1130  / 12  94.17
+
+
+
+
+	Andrzej Szkocki 100.00 Szczecin                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    14 Szymon         Zaleski               116.47 -   96: 466   66
+    8    13 Zbigniew       Kosewski              100.00 -    0: 400    0
+                                                          --------------- ---- ------
+                                                                      66  /  1  66.00
+
+
+
+
+	Marzena Szulc 100.00 Szczecin                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    8    14 Paula          Nowak                 100.00 +  277: 183  150
+    9    12 Jacek          Nowak                 100.00 -  255: 412   50
+   10    13 Jacek          Taczalski             100.00 -  253: 378   50
+   11    13 Zbigniew       Kosewski              100.00 +  282: 258  150
+   12    13 Paula          Nowak                 100.00 +  320: 210  150
+                                                          --------------- ---- ------
+                                                                     550  /  5 110.00
+
+
+
+
+	Paweł Szulc 100.00 Szczecin                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    13 Magdalena      Merklejn              117.64 -  345: 490   68
+    2     9 Monika         Siemaszko             100.00 +  329: 260  150
+    3     9 Kazimierz      Merklejn              103.81 -  305: 419   54
+    4    10 Jacek          Nowak                 100.00 +  361: 350  150
+    5     9 Michał         Elmerych              100.00 +  400:   0    0
+    6     7 Filip          Klar                  100.00 -  308: 324   50
+    7     8 Jarosław       Żuliński              103.44 +  371: 297  153
+    8     6 Zbigniew       Wietecki              117.85 -  233: 418   68
+    9     8 Mirosław       Norwajszas            100.00 +  379: 289  150
+   10     8 Robert         Duczemiński           126.90 -  313: 388   77
+   11     8 Maurycy        Machnio               100.00 -  280: 307   50
+   12     9 Kazimierz      Merklejn              103.81 -  312: 394   54
+                                                          --------------- ---- ------
+                                                                    1024  / 11  93.09
+
+
+
+
+	Jacek Taczalski 100.00 Szczecin                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Aleksandra     Merklejn-Kaczanowska  118.62 -  288: 408   69
+    2    11 Kazimierz      Merklejn              103.81 -  263: 392   54
+    3    13 Zbigniew       Kosewski              100.00 +  336: 220  150
+    4    11 Maurycy        Machnio               100.00 -  325: 326   50
+    5    12 Jarosław       Żuliński              103.44 -    0: 400    0
+    8    12 Monika         Siemaszko             100.00 -  265: 302   50
+    9    13 Paula          Nowak                 100.00 +  432: 157  150
+   10    13 Marzena        Szulc                 100.00 +  378: 253  150
+   11    12 Jacek          Nowak                 100.00 -  267: 405   50
+                                                          --------------- ---- ------
+                                                                     723  /  8  90.38
+
+
+
+
+	Józef Wietecki 100.00 Gorzów Wielkopolski
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Joanna         Stępień               121.78 -  368: 399   72
+    2     8 Walenty        Siemaszko             113.59 -  407: 500   64
+    3    11 Jarosław       Żuliński              103.44 -  313: 347   53
+    4    13 Monika         Siemaszko             100.00 +  319: 264  150
+    5    11 Jacek          Nowak                 100.00 +  345: 323  150
+    6    10 Maurycy        Machnio               100.00 -  295: 368   50
+    7    11 Zbigniew       Kosewski              100.00 +  356: 278  150
+                                                          --------------- ---- ------
+                                                                     689  /  7  98.43
+
+
+</pre></div><div id='p_rundy' class='page'><pre></pre></div><div id='p_ranking' class='page'><pre></pre></div><div id='p_przebieg' class='page'>
+
+    </div><div style="clear:both;width:100%;" class="alignright">
+
+<script>
+<!--
+if ((document.getElementById("content").offsetHeight + document.getElementById("top").offsetHeight) > screen.height)
+    document.write("<br /><br /><a href='#top'>do góry</a>");
+-->
+</script>
+
+</div>
+</div>
+
+<div id="bottom">
+<ul id="bottomlinks">
+<div class='onleft'>
+ Osób on-line: 55</div>
+    <li><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+    <li><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+    <li><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+    <li><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+    <li><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+    <li><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+</ul>
+    SCRABBLE® jest zastrzeżonym znakiem towarowym J.W. Spears &amp; Sons&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://www.pfs.org.pl/prawaautorskie.php">© Prawa autorskie</a>
+</div>
+</body>
+</html>

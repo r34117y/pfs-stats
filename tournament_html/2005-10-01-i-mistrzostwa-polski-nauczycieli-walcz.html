@@ -1,0 +1,788 @@
+
+<html>
+<head>
+    <title>Polska Federacja Scrabble :: I Mistrzostwa Polski Nauczycieli</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="files/img/favicon.ico" />
+    <link rel="stylesheet" href="files/css/style.css" type="text/css" />
+	<link rel="stylesheet" href="files/css/style-index.css" type="text/css" />
+    <!--[if IE]><link rel="stylesheet" type="text/css" href="files/css/styleie.css" /><![endif]-->
+    <!--[if lt IE 7.]><script defer type="text/javascript" src="files/js/pngfix.js"></script><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="files/js/minmax.js"></script><![endif]-->
+    <script type="text/javascript" src="files/js/jquery.js"></script>
+    <script type="text/javascript" src="files/js/jquery-bp.js"></script>
+    <script type="text/javascript" src="files/js/java.js"></script>
+    <script>jSubmenu ("turnieje","kalendarz");jKalendarz();</script>
+    <script>
+    var url, page;
+
+    page = 'info';
+    url  = document.location.toString();
+
+    if (url.match ('#')) {
+      page = url.split ('#')[1];
+      if ($.inArray (page, [ 'info', 'relacja', 'klasyfikacja', 'hh', 'rundy', 'ranking', 'przebieg' ]) == -1)
+        page = 'info';
+    }
+
+    $(document).ready(function(){
+        $('a#listaucz').bind('click', function(event){
+            $('div#lista').toggle();
+            event.preventDefault();
+        }).toggle(function() { $(this).text('schowaj listę uczestników'); }, function() { $(this).text("pokaż listę uczestników"); });
+        $('div#lista table tr:last td').css({"border-bottom" : "none"});
+
+        $("a.przycisk").click (function (e) {
+            if ($(this).attr ('href') !== '#')
+                return true;
+
+            e.preventDefault ();
+
+            id       = this.id;
+            this.id += 'tmp';
+            window.location.hash = id;
+            this.id  = id;
+
+            $(".page").hide ();
+            $(".page#p_" + id).show ();
+
+            $("a.przycisk").removeClass ('active');
+            $(this).addClass ('active');
+
+            return false;
+        });
+
+        $("a.przycisk#" + page).click ();
+        $('html, body').animate ({ scrollTop: 0 }, 0);
+    });
+    </script>
+  <style type="text/css">
+    .page {
+        display: none;
+    }
+    #szczegoly{
+        width: 100%;
+        border-spacing: 0;
+        margin-top: 30px;
+        text-align: left;
+        font-size: inherit;
+    }
+    #szczegoly td{
+        padding: 10px 20px 10px 0;
+        vertical-align: top;
+    }
+    #szczegoly td:first-child{
+        font-weight: bold;
+        width: 160px;
+    }
+    div#lista{
+        display:none;
+        margin-top: 15px;
+    }
+    div#lista table{
+        margin-top: 10px;
+        text-align: left;
+        font-size: inherit;
+    }
+    div#lista table td{
+        padding: 3px 8px;
+        border-bottom: 1px dashed #1576AE;
+    }
+    div#lista table th{
+        padding: 0px 5px 10px 5px;
+    }
+    div#lista table td.ptaszek{
+        text-align: center;
+        background: url('files/img/tick.png') no-repeat center center;
+    }
+    div#lista table th{
+        white-space: nowrap;
+        width: auto;
+    }
+    div#lista table td:first-child, div#lista table th:first-child{
+        text-align:right;
+        width: auto;
+    }
+    </style>
+</head>
+
+<body>
+
+<script type="text/javascript">setMenu();</script>
+
+<div id="top" onclick="location.href='https://www.pfs.org.pl'">
+</div>
+<div id="menu">
+
+    <div id="m_glowna">
+        <div class="tab"><a href="https://www.pfs.org.pl/index.php"></a></div>
+
+        <ul>
+            <li class="sublink" id="aktualnosci"><a href="https://www.pfs.org.pl">Aktualności</a></li>
+            <li class="sublink" id="nowy"><a href="https://www.pfs.org.pl/dlanowych.php">Jestem tu nowy</a></li>
+            <li class="sublink" id="anagramator"><a href="https://www.pfs.org.pl/osps_online.php?main=1">Słownik online</a></li>
+            <li class="sublink" id="siodemka"><a href="https://www.pfs.org.pl/siodemka.php?main=1">Siódemka tygodnia</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+            <li class="sublink" id="dlasponsorow"><a href="https://www.pfs.org.pl/dlasponsorow.php">Dla sponsorów</a></li>
+            <li class="sublink" id="kontakt"><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+        </ul>
+    </div>
+    <div id="m_turnieje">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kalendarz.php"></a></div>
+        <ul>
+            <li class="sublink" id="kalendarz"><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+            <li class="sublink" id="regulaminy"><a href="https://www.pfs.org.pl/regulaminy.php">Regulaminy</a></li>
+            <li class="sublink" id="sedziowie"><a href="https://www.pfs.org.pl/sedziowie.php">Sędziowie</a></li>
+            <li class="sublink" id="gp"><a href="https://www.pfs.org.pl/gp2026.php">Grand Prix</a></li>
+<!--            <li class="sublink" id="mr"><a href="https://www.pfs.org.pl/mr2020.php">Mistrzostwa Regionów</a></li>-->
+            <li class="sublink" id="archiwum"><a href="https://www.pfs.org.pl/archiwum.php">Historia</a></li>
+            <li class="sublink" id="galeria"><a href="https://www.pfs.org.pl/galeria.php">Zdjęcia</a></li>
+            <li class="sublink" id="rekordy"><a href="https://www.pfs.org.pl/rekordy.php">Rekordy</a></li>
+        </ul>
+    </div>
+    <div id="m_pfs">
+        <div  class="tab"><a href="https://www.pfs.org.pl/opfs.php"></a></div>
+        <ul>
+            <li class="sublink" id="opfs"><a href="https://www.pfs.org.pl/opfs.php">O PFS</a></li>
+            <li class="sublink" id="jakprzystapic"><a href="https://www.pfs.org.pl/jakprzystapic.php">Jak przystąpić</a></li>
+            <li class="sublink" id="dlaczlonkow"><a href="https://www.pfs.org.pl/dlaczlonkow.php">Dla członków</a></li>
+            <li class="sublink" id="wladze"><a href="https://www.pfs.org.pl/wladze.php">Władze</a></li>
+            <li class="sublink" id="komisje"><a href="https://www.pfs.org.pl/komisje.php">Komisje</a></li>
+            <li class="sublink" id="statut"><a href="https://www.pfs.org.pl/statut.php">Statut</a></li>
+            <li class="sublink" id="uchwaly"><a href="https://www.pfs.org.pl/uchwaly.php">Uchwały</a></li>
+            <li class="sublink" id="honorowi"><a href="https://www.pfs.org.pl/honorowi.php">Honorowi członkowie</a></li>
+            <li class="sublink" id="finanse"><a href="https://www.pfs.org.pl/finanse.php">Finanse</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabble">
+        <div  class="tab"><a href="https://www.pfs.org.pl/osps_online.php?desktop=1"></a></div>
+        <ul>
+            <li class="sublink" id="osps_online"><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+            <li class="sublink" id="zds"><a href="https://www.pfs.org.pl/zds2.php">ZDS</a></li>
+            <li class="sublink" id="osps"><a href="https://www.pfs.org.pl/osps.php">OSPS</a></li>
+            <li class="sublink" id="aktualizacje"><a href="https://www.pfs.org.pl/osps_aktualizacje.php">Aktualizacje</a></li>
+            <li class="sublink" id="dwojki"><a href="https://www.pfs.org.pl/dwojki.php">2-literówki</a></li>
+            <li class="sublink" id="trojki"><a href="https://www.pfs.org.pl/trojki.php">3-literówki</a></li>
+            <li class="sublink" id="siodemkat"><a href="https://www.pfs.org.pl/siodemka.php">Siódemka tygodnia</a></li>
+            <li class="sublink" id="slowneroznosci"><a href="https://www.pfs.org.pl/slowneroznosci.php">Słowne różności</a></li>
+        </ul>
+    </div>
+    <div id="m_ranking">
+        <div  class="tab"><a href="https://www.pfs.org.pl/ranking.php"></a></div>
+        <ul>
+            <li class="sublink" id="aktranking"><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+            <li class="sublink" id="medale"><a href="https://www.pfs.org.pl/medale.php">Klasyfikacja medalowa</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabblisci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/mistrzowiepolski.php"></a></div>
+        <ul>
+            <li class="sublink" id="mistrzowiepolski"><a href="https://www.pfs.org.pl/mistrzowiepolski.php">Mistrzowie Polski</a></li>
+            <li class="sublink" id="zdobywcypp"><a href="https://www.pfs.org.pl/zdobywcypp.php">Zdobywcy Pucharu Polski</a></li>
+            <li class="sublink" id="zwyciezcygp"><a href="https://www.pfs.org.pl/zwyciezcygp.php">Zwycięzcy Grand Prix</a></li>
+            <li class="sublink" id="liderzyrankingu"><a href="https://www.pfs.org.pl/liderzyrankingu.php">Liderzy rankingu</a></li>
+            <li class="sublink" id="zwyciezcylemans"><a href="https://www.pfs.org.pl/zwyciezcylemans.php">Zwycięzcy 24h Le Mans</a></li>
+            <li class="sublink" id="zwyciezcykmp"><a href="https://www.pfs.org.pl/zwyciezcykmp.php">KMP</a>
+        </ul>
+    </div>
+    <div id="m_kluby">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kluby.php"></a></div>
+        <ul>
+            <li class="sublink" id="rejestrklubow"><a href="https://www.pfs.org.pl/kluby.php">Rejestr klubów</a></li>
+            <li class="sublink" id="kmp"><a href="https://www.pfs.org.pl/kmp.php">KMP</a></li>
+            <li class="sublink" id="wiescizklubow"><a href="https://www.pfs.org.pl/wiescizklubow.php">Wieści z klubów</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/about.php">Statystyki klubowe</a></li>
+        </ul>
+    </div>
+    <div id="m_roznosci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/historia.php"></a></div>
+        <ul>
+            <li class="sublink" id="historia"><a href="https://www.pfs.org.pl/historia.php">Historia</a></li>
+            <li class="sublink" id="odmiany"><a href="https://www.pfs.org.pl/odmiany.php">Odmiany</a></li>
+            <li class="sublink" id="anegdoty"><a href="https://www.pfs.org.pl/anegdoty.php">Anegdoty</a></li>
+            <li class="sublink" id="scrabblealia"><a href="https://www.pfs.org.pl/scrabblealia.php">Scrabblealia</a></li>
+            <li class="sublink" id="scrabblenet"><a href="https://www.pfs.org.pl/scrabblenet.php">Scrabble w internecie</a></li>
+            <li class="sublink" id="programy"><a href="https://www.pfs.org.pl/programy.php">Programy</a></li>
+            <li class="sublink" id="download"><a href="https://www.pfs.org.pl/download.php">Do pobrania</a></li>
+            <li class="sublink" id="ksiazki"><a href="https://www.pfs.org.pl/ksiazki.php">Książki</a></li>
+            <li class="sublink" id="slowniczek"><a href="https://www.pfs.org.pl/slowniczek.php">Słowniczek</a></li>
+        </ul>
+    </div>
+    <div id="m_english">
+        <div  class="tab"><a href="https://www.pfs.org.pl/english.php"></a></div>
+        <ul>
+            <li class="sublink" id="about"><a href="https://www.pfs.org.pl/english.php">About Polish Scrabble</a></li>
+            <li class="sublink" id="news"><a href="https://www.pfs.org.pl/en_news.php">News</a></li>
+            <li class="sublink" id="bartek"><a href="https://www.pfs.org.pl/bartek.php">Bartek w Johor Bahru</a></li>
+            <li class="sublink" id="franko"><a href="https://www.pfs.org.pl/franko.php">Scrabble frankofońskie</a></li>
+        </ul>
+    </div>
+</div>
+
+<div id="submenu"></div>
+<div id="content">
+<div id='nextTours'>
+		<div class='nextTour' onclick='location.href="turniej.php?id=152"'>
+			<div class='karteczka small1'>
+				<span class='miasto'>Wałcz</span><span class='dzien'><span class='big'> 1</span><br />października</span></div>
+			<div class='kartka big1'>
+				<span class='miasto'>Wałcz</span>
+				<span class='dzien'><b> 1- 2 października</b></span>
+				<span class='nazwaturnieju'>I Mistrzostwa Wałcza</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=153"'>
+			<div class='karteczka small2'>
+				<span class='miasto'>Wałcz</span><span class='dzien'><span class='big'> 1</span><br />października</span></div>
+			<div class='kartka big2'>
+				<span class='miasto'>Wałcz</span>
+				<span class='dzien'><b> 1- 2 października</b></span>
+				<span class='nazwaturnieju'>I Mistrzostwa Polski Nauczycieli</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=151"'>
+			<div class='karteczka small3'>
+				<span class='miasto'>Poznań</span><span class='dzien'><span class='big'> 8</span><br />października</span></div>
+			<div class='kartka big3'>
+				<span class='miasto'>Poznań</span>
+				<span class='dzien'><b> 8- 9 października</b></span>
+				<span class='nazwaturnieju'>IV Mistrzostwa Poznania</span></div>
+		</div></div><div class='naglowekrelacji'><span class='tytul'>Piotr Pietuchowski belfrem roku !!!<span class='nazwa'>01 - 02 października 2005 —  I Mistrzostwa Polski Nauczycieli</span></span><a href='#' id='info' class='przycisk'>Informacje</a><a href='#' id='relacja' class='przycisk'>Relacja</a><a href='#' id='klasyfikacja' class='przycisk'>Wyniki</a><a href='#' id='hh' class='przycisk'>HH</a><a href='#' id='rundy' class='przycisk'>Rundy</a><div class='galleries'><a href='http://picasaweb.google.com/111288975904311020713/WaCz2005#'></a> <img src='files/img/gallery.png' style='visibility:hidden;' alt='galeria' /></div></div><h1 style='color:black; margin-top:0px; margin-bottom:30px; padding: 0px'>I Mistrzostwa Polski Nauczycieli<span>Wałcz, 01 - 02 października 2005 <br>turniej&nbsp;nierankingowy</span></h1><div id='p_relacja' class='page'><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><div class='relacja' style='clear:both;'><figure style='display:inline-block;float:left;margin:5px'><img src='https://pfs.org.pl/foto_action.php?id=488' alt='Piotr Pietuchowski belfrem roku !!!' /></figure><div>Dzięki <b>Jolancie Chłopińskiej</b> i licznemu gronu sponsorów <b>I Mistrzostwa
+Polski Nauczycieli</b> były turniejem niezwykłym. Znakomite warunki do gry, wyśmienita kuchnia, mnóstwo przekąsek i napojów oraz
+darmowy nocleg dla uczestników na miejscu gry. Każdy z uczestników kwitował to jednym słowem: Rewelacja!
+Za rok, jak zapewnia organizatorka turniej planowany jest latem i chyba nikt, kto tutaj był,
+nie dopuszcza do siebie myśli, by mógł się na Mistrzostwach w Wałczu nie zjawić. Wysoka frekwencja murowana!<br>
+W <b>I Mistrzostwach Polski Nauczycieli</b> ton rywalizacji od początku nadawał <b>Piotr Pietuchowski</b> (nauczyciel fizyki z Białegostoku), by już na dwie
+rundy przed końcem zapewnić sobie mistrzowski tytuł i złoty medal. Natomiast walka o pozostałe medale toczyła się do ostatniej rundy.
+<b>Magdalena Merklejn</b> (matematyczka ze Szczecina), jako jedyna w turnieju pokonała w 11 rundzie świeżo upieczonego mistrza, a w 12 obroniła przewagę w małych punktach,
+wywalczyła tym samym srebrny medal.
+W bezpośrednim pojedynku o brąz <b> Mariusz Orzeł</b> (anglista z Nowego Miasta Lubawskiego) pokonał <b>Joannę Brychcy</b> z Katowic.
+
+</div><div class='autor'>relacja: Karol Wyrębkiewicz</div></div><div style='clear:both;'></div></div><div id='p_info' class='page'><br><p align='center'></p><br><br><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><table id='szczegoly' class='ramkadolna'></table><br /><br /></div><div id='p_klasyfikacja' class='page'><pre>Wyniki turnieju I Mistrzostwa Polski Nauczycieli w Wałczu
+
+Lp. Imię            Nazwisko             Miasto               Ranking  Duże pkt Małe pkt Skalpy   Różn. MP
+--- --------------- -------------------- -------------------- -------- -------- -------- -------- --------
+  1 Piotr           Pietuchowski         Białystok              129.72     11.0     5351     1847     1217
+  2 Magdalena       Merklejn             Szczecin               118.63      8.0     4742     1587      127
+  3 Mariusz         Orzeł                Nowe Miasto Lubawskie   117.29      8.0     4474     1483      602
+  4 Aleksandra      Merklejn-Kaczanowska Szczecin               119.76      7.0     4718     1403      520
+  5 Magdalena.Maja  Rusak                Poznań                 100.00      7.0     4315     1455      247
+  6 Joanna          Brychcy              Katowice               100.20      7.0     4246     1391        1
+  7 Jolanta         Chłopińska           Wałcz                  107.78      6.0     4495     1243      269
+  8 Maciej          |liwa                Zabrze                 111.02      6.0     4352     1300       81
+  9 Walenty         Siemaszko            Lipiany                109.91      6.0     4280     1382     -115
+ 10 Zbigniew        Skrzypczyk           Jawor                  100.00      5.0     4077     1169      -40
+ 11 Marcin          Białkowski           Piła                   100.00      4.5     4057     1011      164
+ 12 Lech            Szymczak             Gorzów Wielkopolski    102.58      4.0     4007     1106     -296
+ 13 Krystyna        Borecka              Wałcz                  100.00      3.5     3615      886     -111
+ 14 Ewa             Żydownik             Szczecin               100.00      2.5     3073      789    -1318
+ 15 Ewa             Kropisz              Biała Podlaska         100.00      0.5     1032      164     -148
+</pre></div><div id='p_hh' class='page'><pre>Wyniki poszczególnych graczy w turnieju I Mistrzostwa Polski Nauczycieli w Wałczu
+
+
+
+	Piotr Pietuchowski 129.72 Białystok                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Lech           Szymczak              102.58 +  466: 331  153
+    2     1 Maciej         |liwa                 111.02 +  464: 357  161
+    3     1 Aleksandra     Merklejn-Kaczanowska  119.76 +  403: 299  170
+    4     1 Magdalena      Merklejn              118.63 +  478: 320  169
+    5     1 Walenty        Siemaszko             109.91 +  476: 341  160
+    6     1 Magdalena.Maja Rusak                 100.00 +  439: 324  150
+    7     1 Magdalena      Merklejn              118.63 +  418: 340  169
+    8     1 Magdalena.Maja Rusak                 100.00 +  409: 313  150
+    9     1 Walenty        Siemaszko             109.91 +  360: 328  160
+   10     1 Mariusz        Orzeł                 117.29 +  537: 293  167
+   11     1 Magdalena      Merklejn              118.63 -  453: 488   69
+   12     1 Magdalena      Merklejn              118.63 +  448: 400  169
+                                                          --------------- ---- ------
+                                                                    1847  / 12 153.92
+
+
+
+
+	Aleksandra Merklejn-Kaczanowska 119.76 Szczecin                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Joanna         Brychcy               100.20 +  431: 311  150
+    2     2 Jolanta        Chłopińska            107.78 +  416: 335  158
+    3     1 Piotr          Pietuchowski          129.72 -  299: 403   80
+    4     3 Walenty        Siemaszko             109.91 -  342: 350   60
+    5     5 Marcin         Białkowski            100.00 +  445: 393  150
+    6     2 Magdalena      Merklejn              118.63 -  359: 392   69
+    7     4 Lech           Szymczak              102.58 +  382: 262  153
+    8     4 Maciej         |liwa                 111.02 -  313: 412   61
+    9     5 Lech           Szymczak              102.58 +  559: 320  153
+   10     3 Magdalena.Maja Rusak                 100.00 -  309: 358   50
+   11     4 Jolanta        Chłopińska            107.78 +  457: 337  158
+   12     3 Maciej         |liwa                 111.02 +  406: 325  161
+                                                          --------------- ---- ------
+                                                                    1403  / 12 116.92
+
+
+
+
+	Magdalena Merklejn 118.63 Szczecin               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Marcin         Białkowski            100.00 +  408: 340  150
+    2     3 Walenty        Siemaszko             109.91 +  407: 391  160
+    3     2 Mariusz        Orzeł                 117.29 +  352: 350  167
+    4     1 Piotr          Pietuchowski          129.72 -  320: 478   80
+    5     3 Zbigniew       Skrzypczyk            100.00 +  429: 270  150
+    6     2 Aleksandra     Merklejn-Kaczanowska  119.76 +  392: 359  170
+    7     1 Piotr          Pietuchowski          129.72 -  340: 418   80
+    8     2 Walenty        Siemaszko             109.91 -  378: 501   60
+    9     3 Magdalena.Maja Rusak                 100.00 +  393: 333  150
+   10     2 Walenty        Siemaszko             109.91 +  435: 274  160
+   11     1 Piotr          Pietuchowski          129.72 +  488: 453  180
+   12     1 Piotr          Pietuchowski          129.72 -  400: 448   80
+                                                          --------------- ---- ------
+                                                                    1587  / 12 132.25
+
+
+
+
+	Mariusz Orzeł 117.29 Nowe Miasto Lubawskie       
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Krystyna       Borecka               100.00 +  376: 269  150
+    2     4 Ewa            Żydownik              100.00 +  493: 183  150
+    3     2 Magdalena      Merklejn              118.63 -  350: 352   69
+    4     2 Lech           Szymczak              102.58 +  348: 313  153
+    5     2 Magdalena.Maja Rusak                 100.00 -  278: 456   50
+    6     4 Walenty        Siemaszko             109.91 -  355: 369   60
+    7     5 Zbigniew       Skrzypczyk            100.00 +  496: 254  150
+    8     3 Joanna         Brychcy               100.20 +  316: 299  150
+    9     2 Maciej         |liwa                 111.02 +  469: 235  161
+   10     1 Piotr          Pietuchowski          129.72 -  293: 537   80
+   11     2 Walenty        Siemaszko             109.91 +  314: 305  160
+   12     2 Joanna         Brychcy               100.20 +  386: 300  150
+                                                          --------------- ---- ------
+                                                                    1483  / 12 123.58
+
+
+
+
+	Maciej |liwa 111.02 Zabrze                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Ewa            Kropisz               100.00 +  375: 277  150
+    2     1 Piotr          Pietuchowski          129.72 -  357: 464   80
+    3     4 Magdalena.Maja Rusak                 100.00 -  317: 361   50
+    4     6 Krystyna       Borecka               100.00 +  365: 283  150
+    5     7 Ewa            Żydownik              100.00 +  485: 239  150
+    6     3 Lech           Szymczak              102.58 +  391: 314  153
+    7     2 Walenty        Siemaszko             109.91 -  340: 406   60
+    8     4 Aleksandra     Merklejn-Kaczanowska  119.76 +  412: 313  170
+    9     2 Mariusz        Orzeł                 117.29 -  235: 469   67
+   10     4 Joanna         Brychcy               100.20 -  362: 410   50
+   11     5 Zbigniew       Skrzypczyk            100.00 +  388: 329  150
+   12     3 Aleksandra     Merklejn-Kaczanowska  119.76 -  325: 406   70
+                                                          --------------- ---- ------
+                                                                    1300  / 12 108.33
+
+
+
+
+	Walenty Siemaszko 109.91 Lipiany                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Magdalena.Maja Rusak                 100.00 +  358: 308  150
+    2     3 Magdalena      Merklejn              118.63 -  391: 407   69
+    3     3 Joanna         Brychcy               100.20 +  353: 348  150
+    4     3 Aleksandra     Merklejn-Kaczanowska  119.76 +  350: 342  170
+    5     1 Piotr          Pietuchowski          129.72 -  341: 476   80
+    6     4 Mariusz        Orzeł                 117.29 +  369: 355  167
+    7     2 Maciej         |liwa                 111.02 +  406: 340  161
+    8     2 Magdalena      Merklejn              118.63 +  501: 378  169
+    9     1 Piotr          Pietuchowski          129.72 -  328: 360   80
+   10     2 Magdalena      Merklejn              118.63 -  274: 435   69
+   11     2 Mariusz        Orzeł                 117.29 -  305: 314   67
+   12     4 Magdalena.Maja Rusak                 100.00 -  304: 332   50
+                                                          --------------- ---- ------
+                                                                    1382  / 12 115.17
+
+
+
+
+	Jolanta Chłopińska 107.78 Wałcz
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Zbigniew       Skrzypczyk            100.00 +  367: 344  150
+    2     2 Aleksandra     Merklejn-Kaczanowska  119.76 -  335: 416   70
+    3     5 Krystyna       Borecka               100.00 +  442: 241  150
+    4     4 Magdalena.Maja Rusak                 100.00 -  359: 363   50
+    5     4 Lech           Szymczak              102.58 -  327: 397   53
+    6     5 Joanna         Brychcy               100.20 -  388: 402   50
+    7     6 Ewa            Żydownik              100.00 +  396: 238  150
+    8     5 Marcin         Białkowski            100.00 +  416: 279  150
+    9     4 Joanna         Brychcy               100.20 -  358: 398   50
+   10     5 Zbigniew       Skrzypczyk            100.00 +  374: 350  150
+   11     4 Aleksandra     Merklejn-Kaczanowska  119.76 -  337: 457   70
+   12     5 Marcin         Białkowski            100.00 +  396: 341  150
+                                                          --------------- ---- ------
+                                                                    1243  / 12 103.58
+
+
+
+
+	Lech Szymczak 102.58 Gorzów Wielkopolski      
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Piotr          Pietuchowski          129.72 -  331: 466   80
+    2     7 Ewa            Kropisz               100.00 +  370: 271  150
+    3     6 Ewa            Żydownik              100.00 +  408: 242  150
+    4     2 Mariusz        Orzeł                 117.29 -  313: 348   67
+    5     4 Jolanta        Chłopińska            107.78 +  397: 327  158
+    6     3 Maciej         |liwa                 111.02 -  314: 391   61
+    7     4 Aleksandra     Merklejn-Kaczanowska  119.76 -  262: 382   70
+    8     6 Zbigniew       Skrzypczyk            100.00 +  397: 267  150
+    9     5 Aleksandra     Merklejn-Kaczanowska  119.76 -  320: 559   70
+   10     6 Marcin         Białkowski            100.00 -  263: 357   50
+   11     6 Marcin         Białkowski            100.00 -  332: 343   50
+   12     6 Zbigniew       Skrzypczyk            100.00 -  300: 350   50
+                                                          --------------- ---- ------
+                                                                    1106  / 12  92.17
+
+
+
+
+	Joanna Brychcy 100.20 Katowice                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Aleksandra     Merklejn-Kaczanowska  119.76 -  311: 431   70
+    2     5 Zbigniew       Skrzypczyk            100.00 +  364: 355  150
+    3     3 Walenty        Siemaszko             109.91 -  348: 353   60
+    4     7 Ewa            Żydownik              100.00 +  449: 212  150
+    5     6 Krystyna       Borecka               100.00 +  356: 310  150
+    6     5 Jolanta        Chłopińska            107.78 +  402: 388  158
+    7     3 Magdalena.Maja Rusak                 100.00 -  265: 449   50
+    8     3 Mariusz        Orzeł                 117.29 -  299: 316   67
+    9     4 Jolanta        Chłopińska            107.78 +  398: 358  158
+   10     4 Maciej         |liwa                 111.02 +  410: 362  161
+   11     3 Magdalena.Maja Rusak                 100.00 +  344: 325  150
+   12     2 Mariusz        Orzeł                 117.29 -  300: 386   67
+                                                          --------------- ---- ------
+                                                                    1391  / 12 115.92
+
+
+
+
+	Marcin Białkowski 100.00 Piła                     
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Magdalena      Merklejn              118.63 -  340: 408   69
+    2     6 Magdalena.Maja Rusak                 100.00 -  293: 393   50
+    3     7 Zbigniew       Skrzypczyk            100.00 -  281: 409   50
+    5     5 Aleksandra     Merklejn-Kaczanowska  119.76 -  393: 445   70
+    6     7 Ewa            Żydownik              100.00 -  292: 296   50
+    7     7 Krystyna       Borecka               100.00 +  385: 260  150
+    8     5 Jolanta        Chłopińska            107.78 -  279: 416   58
+    9     7 Ewa            Żydownik              100.00 +  453: 275  150
+   10     6 Lech           Szymczak              102.58 +  357: 263  153
+   11     6 Lech           Szymczak              102.58 +  343: 332  153
+   12     5 Jolanta        Chłopińska            107.78 -  341: 396   58
+                                                          --------------- ---- ------
+                                                                    1011  / 11  91.91
+
+
+
+
+	Krystyna Borecka 100.00 Wałcz                    
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Mariusz        Orzeł                 117.29 -  269: 376   67
+    3     5 Jolanta        Chłopińska            107.78 -  241: 442   58
+    4     6 Maciej         |liwa                 111.02 -  283: 365   61
+    5     6 Joanna         Brychcy               100.20 -  310: 356   50
+    6     6 Zbigniew       Skrzypczyk            100.00 -  295: 353   50
+    7     7 Marcin         Białkowski            100.00 -  260: 385   50
+    8     7 Ewa            Żydownik              100.00 +  370: 203  150
+    9     6 Zbigniew       Skrzypczyk            100.00 -  242: 361   50
+   10     7 Ewa            Żydownik              100.00 +  361: 314  150
+   11     7 Ewa            Żydownik              100.00 +  370: 249  150
+   12     7 Ewa            Żydownik              100.00 -  314: 322   50
+                                                          --------------- ---- ------
+                                                                     886  / 11  80.55
+
+
+
+
+	Ewa Kropisz 100.00 Biała Podlaska           
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Maciej         |liwa                 111.02 -  277: 375   61
+    2     7 Lech           Szymczak              102.58 -  271: 370   53
+    4     5 Zbigniew       Skrzypczyk            100.00 -  184: 435   50
+                                                          --------------- ---- ------
+                                                                     164  /  3  54.67
+
+
+
+
+	Magdalena.Maja Rusak 100.00 Poznań                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Walenty        Siemaszko             109.91 -  308: 358   60
+    2     6 Marcin         Białkowski            100.00 +  393: 293  150
+    3     4 Maciej         |liwa                 111.02 +  361: 317  161
+    4     4 Jolanta        Chłopińska            107.78 +  363: 359  158
+    5     2 Mariusz        Orzeł                 117.29 +  456: 278  167
+    6     1 Piotr          Pietuchowski          129.72 -  324: 439   80
+    7     3 Joanna         Brychcy               100.20 +  449: 265  150
+    8     1 Piotr          Pietuchowski          129.72 -  313: 409   80
+    9     3 Magdalena      Merklejn              118.63 -  333: 393   69
+   10     3 Aleksandra     Merklejn-Kaczanowska  119.76 +  358: 309  170
+   11     3 Joanna         Brychcy               100.20 -  325: 344   50
+   12     4 Walenty        Siemaszko             109.91 +  332: 304  160
+                                                          --------------- ---- ------
+                                                                    1455  / 12 121.25
+
+
+
+
+	Zbigniew Skrzypczyk 100.00 Jawor                    
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Jolanta        Chłopińska            107.78 -  344: 367   58
+    2     5 Joanna         Brychcy               100.20 -  355: 364   50
+    3     7 Marcin         Białkowski            100.00 +  409: 281  150
+    4     5 Ewa            Kropisz               100.00 +  435: 184  150
+    5     3 Magdalena      Merklejn              118.63 -  270: 429   69
+    6     6 Krystyna       Borecka               100.00 +  353: 295  150
+    7     5 Mariusz        Orzeł                 117.29 -  254: 496   67
+    8     6 Lech           Szymczak              102.58 -  267: 397   53
+    9     6 Krystyna       Borecka               100.00 +  361: 242  150
+   10     5 Jolanta        Chłopińska            107.78 -  350: 374   58
+   11     5 Maciej         |liwa                 111.02 -  329: 388   61
+   12     6 Lech           Szymczak              102.58 +  350: 300  153
+                                                          --------------- ---- ------
+                                                                    1169  / 12  97.42
+
+
+
+
+	Ewa Żydownik 100.00 Szczecin                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    2     4 Mariusz        Orzeł                 117.29 -  183: 493   67
+    3     6 Lech           Szymczak              102.58 -  242: 408   53
+    4     7 Joanna         Brychcy               100.20 -  212: 449   50
+    5     7 Maciej         |liwa                 111.02 -  239: 485   61
+    6     7 Marcin         Białkowski            100.00 +  296: 292  150
+    7     6 Jolanta        Chłopińska            107.78 -  238: 396   58
+    8     7 Krystyna       Borecka               100.00 -  203: 370   50
+    9     7 Marcin         Białkowski            100.00 -  275: 453   50
+   10     7 Krystyna       Borecka               100.00 -  314: 361   50
+   11     7 Krystyna       Borecka               100.00 -  249: 370   50
+   12     7 Krystyna       Borecka               100.00 +  322: 314  150
+                                                          --------------- ---- ------
+                                                                     789  / 11  71.73
+
+
+</pre></div><div id='p_rundy' class='page'><pre>Wyniki poszczególnych rund turnieju I Mistrzostwa Polski Nauczycieli w Wałczu
+
+
+
+Runda nr  1
+-----------
+Stół Gospodarz                             GoPć                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Piotr          Pietuchowski         - Lech           Szymczak              466: 331
+   2 Joanna         Brychcy              - Aleksandra     Merklejn-Kaczanowska  311: 431
+   3 Magdalena      Merklejn             - Marcin         Białkowski            408: 340
+   4 Krystyna       Borecka              - Mariusz        Orzeł                 269: 376
+   5 Maciej         |liwa                - Ewa            Kropisz               375: 277
+   6 Magdalena.Maja Rusak                - Walenty        Siemaszko             308: 358
+   7 Jolanta        Chłopińska           - Zbigniew       Skrzypczyk            367: 344
+
+
+Runda nr  2
+-----------
+Stół Gospodarz                             GoPć                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Piotr          Pietuchowski         - Maciej         |liwa                 464: 357
+   2 Aleksandra     Merklejn-Kaczanowska - Jolanta        Chłopińska            416: 335
+   3 Walenty        Siemaszko            - Magdalena      Merklejn              391: 407
+   4 Mariusz        Orzeł                - Ewa            Żydownik              493: 183
+   5 Zbigniew       Skrzypczyk           - Joanna         Brychcy               355: 364
+   6 Marcin         Białkowski           - Magdalena.Maja Rusak                 293: 393
+   7 Lech           Szymczak             - Ewa            Kropisz               370: 271
+
+
+Runda nr  3
+-----------
+Stół Gospodarz                             GoPć                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Aleksandra     Merklejn-Kaczanowska - Piotr          Pietuchowski          299: 403
+   2 Magdalena      Merklejn             - Mariusz        Orzeł                 352: 350
+   3 Walenty        Siemaszko            - Joanna         Brychcy               353: 348
+   4 Maciej         |liwa                - Magdalena.Maja Rusak                 317: 361
+   5 Jolanta        Chłopińska           - Krystyna       Borecka               442: 241
+   6 Lech           Szymczak             - Ewa            Żydownik              408: 242
+   7 Zbigniew       Skrzypczyk           - Marcin         Białkowski            409: 281
+
+
+Runda nr  4
+-----------
+Stół Gospodarz                             GoPć                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Magdalena      Merklejn             - Piotr          Pietuchowski          320: 478
+   2 Mariusz        Orzeł                - Lech           Szymczak              348: 313
+   3 Aleksandra     Merklejn-Kaczanowska - Walenty        Siemaszko             342: 350
+   4 Magdalena.Maja Rusak                - Jolanta        Chłopińska            363: 359
+   5 Ewa            Kropisz              - Zbigniew       Skrzypczyk            184: 435
+   6 Maciej         |liwa                - Krystyna       Borecka               365: 283
+   7 Joanna         Brychcy              - Ewa            Żydownik              449: 212
+
+
+Runda nr  5
+-----------
+Stół Gospodarz                             GoPć                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Walenty        Siemaszko            - Piotr          Pietuchowski          341: 476
+   2 Magdalena.Maja Rusak                - Mariusz        Orzeł                 456: 278
+   3 Zbigniew       Skrzypczyk           - Magdalena      Merklejn              270: 429
+   4 Jolanta        Chłopińska           - Lech           Szymczak              327: 397
+   5 Marcin         Białkowski           - Aleksandra     Merklejn-Kaczanowska  393: 445
+   6 Joanna         Brychcy              - Krystyna       Borecka               356: 310
+   7 Ewa            Żydownik             - Maciej         |liwa                 239: 485
+
+
+Runda nr  6
+-----------
+Stół Gospodarz                             GoPć                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Piotr          Pietuchowski         - Magdalena.Maja Rusak                 439: 324
+   2 Magdalena      Merklejn             - Aleksandra     Merklejn-Kaczanowska  392: 359
+   3 Lech           Szymczak             - Maciej         |liwa                 314: 391
+   4 Mariusz        Orzeł                - Walenty        Siemaszko             355: 369
+   5 Jolanta        Chłopińska           - Joanna         Brychcy               388: 402
+   6 Krystyna       Borecka              - Zbigniew       Skrzypczyk            295: 353
+   7 Ewa            Żydownik             - Marcin         Białkowski            296: 292
+
+
+Runda nr  7
+-----------
+Stół Gospodarz                             GoPć                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Piotr          Pietuchowski         - Magdalena      Merklejn              418: 340
+   2 Walenty        Siemaszko            - Maciej         |liwa                 406: 340
+   3 Joanna         Brychcy              - Magdalena.Maja Rusak                 265: 449
+   4 Aleksandra     Merklejn-Kaczanowska - Lech           Szymczak              382: 262
+   5 Mariusz        Orzeł                - Zbigniew       Skrzypczyk            496: 254
+   6 Ewa            Żydownik             - Jolanta        Chłopińska            238: 396
+   7 Marcin         Białkowski           - Krystyna       Borecka               385: 260
+
+
+Runda nr  8
+-----------
+Stół Gospodarz                             GoPć                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Magdalena.Maja Rusak                - Piotr          Pietuchowski          313: 409
+   2 Walenty        Siemaszko            - Magdalena      Merklejn              501: 378
+   3 Mariusz        Orzeł                - Joanna         Brychcy               316: 299
+   4 Maciej         |liwa                - Aleksandra     Merklejn-Kaczanowska  412: 313
+   5 Jolanta        Chłopińska           - Marcin         Białkowski            416: 279
+   6 Zbigniew       Skrzypczyk           - Lech           Szymczak              267: 397
+   7 Krystyna       Borecka              - Ewa            Żydownik              370: 203
+
+
+Runda nr  9
+-----------
+Stół Gospodarz                             GoPć                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Piotr          Pietuchowski         - Walenty        Siemaszko             360: 328
+   2 Maciej         |liwa                - Mariusz        Orzeł                 235: 469
+   3 Magdalena      Merklejn             - Magdalena.Maja Rusak                 393: 333
+   4 Joanna         Brychcy              - Jolanta        Chłopińska            398: 358
+   5 Lech           Szymczak             - Aleksandra     Merklejn-Kaczanowska  320: 559
+   6 Krystyna       Borecka              - Zbigniew       Skrzypczyk            242: 361
+   7 Ewa            Żydownik             - Marcin         Białkowski            275: 453
+
+
+Runda nr 10
+-----------
+Stół Gospodarz                             GoPć                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Mariusz        Orzeł                - Piotr          Pietuchowski          293: 537
+   2 Magdalena      Merklejn             - Walenty        Siemaszko             435: 274
+   3 Magdalena.Maja Rusak                - Aleksandra     Merklejn-Kaczanowska  358: 309
+   4 Joanna         Brychcy              - Maciej         |liwa                 410: 362
+   5 Zbigniew       Skrzypczyk           - Jolanta        Chłopińska            350: 374
+   6 Lech           Szymczak             - Marcin         Białkowski            263: 357
+   7 Krystyna       Borecka              - Ewa            Żydownik              361: 314
+
+
+Runda nr 11
+-----------
+Stół Gospodarz                             GoPć                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Piotr          Pietuchowski         - Magdalena      Merklejn              453: 488
+   2 Walenty        Siemaszko            - Mariusz        Orzeł                 305: 314
+   3 Magdalena.Maja Rusak                - Joanna         Brychcy               325: 344
+   4 Aleksandra     Merklejn-Kaczanowska - Jolanta        Chłopińska            457: 337
+   5 Zbigniew       Skrzypczyk           - Maciej         |liwa                 329: 388
+   6 Marcin         Białkowski           - Lech           Szymczak              343: 332
+   7 Ewa            Żydownik             - Krystyna       Borecka               249: 370
+
+
+Runda nr 12
+-----------
+Stół Gospodarz                             GoPć                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Magdalena      Merklejn             - Piotr          Pietuchowski          400: 448
+   2 Joanna         Brychcy              - Mariusz        Orzeł                 300: 386
+   3 Aleksandra     Merklejn-Kaczanowska - Maciej         |liwa                 406: 325
+   4 Walenty        Siemaszko            - Magdalena.Maja Rusak                 304: 332
+   5 Marcin         Białkowski           - Jolanta        Chłopińska            341: 396
+   6 Lech           Szymczak             - Zbigniew       Skrzypczyk            300: 350
+   7 Ewa            Żydownik             - Krystyna       Borecka               322: 314
+</pre></div><div id='p_ranking' class='page'><pre></pre></div><div id='p_przebieg' class='page'>
+
+    </div><div style="clear:both;width:100%;" class="alignright">
+
+<script>
+<!--
+if ((document.getElementById("content").offsetHeight + document.getElementById("top").offsetHeight) > screen.height)
+    document.write("<br /><br /><a href='#top'>do góry</a>");
+-->
+</script>
+
+</div>
+</div>
+
+<div id="bottom">
+<ul id="bottomlinks">
+<div class='onleft'>
+ Osób on-line: 56</div>
+    <li><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+    <li><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+    <li><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+    <li><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+    <li><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+    <li><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+</ul>
+    SCRABBLE® jest zastrzeżonym znakiem towarowym J.W. Spears &amp; Sons&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://www.pfs.org.pl/prawaautorskie.php">© Prawa autorskie</a>
+</div>
+</body>
+</html>

@@ -1,0 +1,811 @@
+
+<html>
+<head>
+    <title>Polska Federacja Scrabble :: I Otwarte Mistrzostwa Białegostoku</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="files/img/favicon.ico" />
+    <link rel="stylesheet" href="files/css/style.css" type="text/css" />
+	<link rel="stylesheet" href="files/css/style-index.css" type="text/css" />
+    <!--[if IE]><link rel="stylesheet" type="text/css" href="files/css/styleie.css" /><![endif]-->
+    <!--[if lt IE 7.]><script defer type="text/javascript" src="files/js/pngfix.js"></script><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="files/js/minmax.js"></script><![endif]-->
+    <script type="text/javascript" src="files/js/jquery.js"></script>
+    <script type="text/javascript" src="files/js/jquery-bp.js"></script>
+    <script type="text/javascript" src="files/js/java.js"></script>
+    <script>jSubmenu ("turnieje","kalendarz");jKalendarz();</script>
+    <script>
+    var url, page;
+
+    page = 'info';
+    url  = document.location.toString();
+
+    if (url.match ('#')) {
+      page = url.split ('#')[1];
+      if ($.inArray (page, [ 'info', 'relacja', 'klasyfikacja', 'hh', 'rundy', 'ranking', 'przebieg' ]) == -1)
+        page = 'info';
+    }
+
+    $(document).ready(function(){
+        $('a#listaucz').bind('click', function(event){
+            $('div#lista').toggle();
+            event.preventDefault();
+        }).toggle(function() { $(this).text('schowaj listę uczestników'); }, function() { $(this).text("pokaż listę uczestników"); });
+        $('div#lista table tr:last td').css({"border-bottom" : "none"});
+
+        $("a.przycisk").click (function (e) {
+            if ($(this).attr ('href') !== '#')
+                return true;
+
+            e.preventDefault ();
+
+            id       = this.id;
+            this.id += 'tmp';
+            window.location.hash = id;
+            this.id  = id;
+
+            $(".page").hide ();
+            $(".page#p_" + id).show ();
+
+            $("a.przycisk").removeClass ('active');
+            $(this).addClass ('active');
+
+            return false;
+        });
+
+        $("a.przycisk#" + page).click ();
+        $('html, body').animate ({ scrollTop: 0 }, 0);
+    });
+    </script>
+  <style type="text/css">
+    .page {
+        display: none;
+    }
+    #szczegoly{
+        width: 100%;
+        border-spacing: 0;
+        margin-top: 30px;
+        text-align: left;
+        font-size: inherit;
+    }
+    #szczegoly td{
+        padding: 10px 20px 10px 0;
+        vertical-align: top;
+    }
+    #szczegoly td:first-child{
+        font-weight: bold;
+        width: 160px;
+    }
+    div#lista{
+        display:none;
+        margin-top: 15px;
+    }
+    div#lista table{
+        margin-top: 10px;
+        text-align: left;
+        font-size: inherit;
+    }
+    div#lista table td{
+        padding: 3px 8px;
+        border-bottom: 1px dashed #1576AE;
+    }
+    div#lista table th{
+        padding: 0px 5px 10px 5px;
+    }
+    div#lista table td.ptaszek{
+        text-align: center;
+        background: url('files/img/tick.png') no-repeat center center;
+    }
+    div#lista table th{
+        white-space: nowrap;
+        width: auto;
+    }
+    div#lista table td:first-child, div#lista table th:first-child{
+        text-align:right;
+        width: auto;
+    }
+    </style>
+</head>
+
+<body>
+
+<script type="text/javascript">setMenu();</script>
+
+<div id="top" onclick="location.href='https://www.pfs.org.pl'">
+</div>
+<div id="menu">
+
+    <div id="m_glowna">
+        <div class="tab"><a href="https://www.pfs.org.pl/index.php"></a></div>
+
+        <ul>
+            <li class="sublink" id="aktualnosci"><a href="https://www.pfs.org.pl">Aktualności</a></li>
+            <li class="sublink" id="nowy"><a href="https://www.pfs.org.pl/dlanowych.php">Jestem tu nowy</a></li>
+            <li class="sublink" id="anagramator"><a href="https://www.pfs.org.pl/osps_online.php?main=1">Słownik online</a></li>
+            <li class="sublink" id="siodemka"><a href="https://www.pfs.org.pl/siodemka.php?main=1">Siódemka tygodnia</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+            <li class="sublink" id="dlasponsorow"><a href="https://www.pfs.org.pl/dlasponsorow.php">Dla sponsorów</a></li>
+            <li class="sublink" id="kontakt"><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+        </ul>
+    </div>
+    <div id="m_turnieje">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kalendarz.php"></a></div>
+        <ul>
+            <li class="sublink" id="kalendarz"><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+            <li class="sublink" id="regulaminy"><a href="https://www.pfs.org.pl/regulaminy.php">Regulaminy</a></li>
+            <li class="sublink" id="sedziowie"><a href="https://www.pfs.org.pl/sedziowie.php">Sędziowie</a></li>
+            <li class="sublink" id="gp"><a href="https://www.pfs.org.pl/gp2026.php">Grand Prix</a></li>
+<!--            <li class="sublink" id="mr"><a href="https://www.pfs.org.pl/mr2020.php">Mistrzostwa Regionów</a></li>-->
+            <li class="sublink" id="archiwum"><a href="https://www.pfs.org.pl/archiwum.php">Historia</a></li>
+            <li class="sublink" id="galeria"><a href="https://www.pfs.org.pl/galeria.php">Zdjęcia</a></li>
+            <li class="sublink" id="rekordy"><a href="https://www.pfs.org.pl/rekordy.php">Rekordy</a></li>
+        </ul>
+    </div>
+    <div id="m_pfs">
+        <div  class="tab"><a href="https://www.pfs.org.pl/opfs.php"></a></div>
+        <ul>
+            <li class="sublink" id="opfs"><a href="https://www.pfs.org.pl/opfs.php">O PFS</a></li>
+            <li class="sublink" id="jakprzystapic"><a href="https://www.pfs.org.pl/jakprzystapic.php">Jak przystąpić</a></li>
+            <li class="sublink" id="dlaczlonkow"><a href="https://www.pfs.org.pl/dlaczlonkow.php">Dla członków</a></li>
+            <li class="sublink" id="wladze"><a href="https://www.pfs.org.pl/wladze.php">Władze</a></li>
+            <li class="sublink" id="komisje"><a href="https://www.pfs.org.pl/komisje.php">Komisje</a></li>
+            <li class="sublink" id="statut"><a href="https://www.pfs.org.pl/statut.php">Statut</a></li>
+            <li class="sublink" id="uchwaly"><a href="https://www.pfs.org.pl/uchwaly.php">Uchwały</a></li>
+            <li class="sublink" id="honorowi"><a href="https://www.pfs.org.pl/honorowi.php">Honorowi członkowie</a></li>
+            <li class="sublink" id="finanse"><a href="https://www.pfs.org.pl/finanse.php">Finanse</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabble">
+        <div  class="tab"><a href="https://www.pfs.org.pl/osps_online.php?desktop=1"></a></div>
+        <ul>
+            <li class="sublink" id="osps_online"><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+            <li class="sublink" id="zds"><a href="https://www.pfs.org.pl/zds2.php">ZDS</a></li>
+            <li class="sublink" id="osps"><a href="https://www.pfs.org.pl/osps.php">OSPS</a></li>
+            <li class="sublink" id="aktualizacje"><a href="https://www.pfs.org.pl/osps_aktualizacje.php">Aktualizacje</a></li>
+            <li class="sublink" id="dwojki"><a href="https://www.pfs.org.pl/dwojki.php">2-literówki</a></li>
+            <li class="sublink" id="trojki"><a href="https://www.pfs.org.pl/trojki.php">3-literówki</a></li>
+            <li class="sublink" id="siodemkat"><a href="https://www.pfs.org.pl/siodemka.php">Siódemka tygodnia</a></li>
+            <li class="sublink" id="slowneroznosci"><a href="https://www.pfs.org.pl/slowneroznosci.php">Słowne różności</a></li>
+        </ul>
+    </div>
+    <div id="m_ranking">
+        <div  class="tab"><a href="https://www.pfs.org.pl/ranking.php"></a></div>
+        <ul>
+            <li class="sublink" id="aktranking"><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+            <li class="sublink" id="medale"><a href="https://www.pfs.org.pl/medale.php">Klasyfikacja medalowa</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabblisci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/mistrzowiepolski.php"></a></div>
+        <ul>
+            <li class="sublink" id="mistrzowiepolski"><a href="https://www.pfs.org.pl/mistrzowiepolski.php">Mistrzowie Polski</a></li>
+            <li class="sublink" id="zdobywcypp"><a href="https://www.pfs.org.pl/zdobywcypp.php">Zdobywcy Pucharu Polski</a></li>
+            <li class="sublink" id="zwyciezcygp"><a href="https://www.pfs.org.pl/zwyciezcygp.php">Zwycięzcy Grand Prix</a></li>
+            <li class="sublink" id="liderzyrankingu"><a href="https://www.pfs.org.pl/liderzyrankingu.php">Liderzy rankingu</a></li>
+            <li class="sublink" id="zwyciezcylemans"><a href="https://www.pfs.org.pl/zwyciezcylemans.php">Zwycięzcy 24h Le Mans</a></li>
+            <li class="sublink" id="zwyciezcykmp"><a href="https://www.pfs.org.pl/zwyciezcykmp.php">KMP</a>
+        </ul>
+    </div>
+    <div id="m_kluby">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kluby.php"></a></div>
+        <ul>
+            <li class="sublink" id="rejestrklubow"><a href="https://www.pfs.org.pl/kluby.php">Rejestr klubów</a></li>
+            <li class="sublink" id="kmp"><a href="https://www.pfs.org.pl/kmp.php">KMP</a></li>
+            <li class="sublink" id="wiescizklubow"><a href="https://www.pfs.org.pl/wiescizklubow.php">Wieści z klubów</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/about.php">Statystyki klubowe</a></li>
+        </ul>
+    </div>
+    <div id="m_roznosci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/historia.php"></a></div>
+        <ul>
+            <li class="sublink" id="historia"><a href="https://www.pfs.org.pl/historia.php">Historia</a></li>
+            <li class="sublink" id="odmiany"><a href="https://www.pfs.org.pl/odmiany.php">Odmiany</a></li>
+            <li class="sublink" id="anegdoty"><a href="https://www.pfs.org.pl/anegdoty.php">Anegdoty</a></li>
+            <li class="sublink" id="scrabblealia"><a href="https://www.pfs.org.pl/scrabblealia.php">Scrabblealia</a></li>
+            <li class="sublink" id="scrabblenet"><a href="https://www.pfs.org.pl/scrabblenet.php">Scrabble w internecie</a></li>
+            <li class="sublink" id="programy"><a href="https://www.pfs.org.pl/programy.php">Programy</a></li>
+            <li class="sublink" id="download"><a href="https://www.pfs.org.pl/download.php">Do pobrania</a></li>
+            <li class="sublink" id="ksiazki"><a href="https://www.pfs.org.pl/ksiazki.php">Książki</a></li>
+            <li class="sublink" id="slowniczek"><a href="https://www.pfs.org.pl/slowniczek.php">Słowniczek</a></li>
+        </ul>
+    </div>
+    <div id="m_english">
+        <div  class="tab"><a href="https://www.pfs.org.pl/english.php"></a></div>
+        <ul>
+            <li class="sublink" id="about"><a href="https://www.pfs.org.pl/english.php">About Polish Scrabble</a></li>
+            <li class="sublink" id="news"><a href="https://www.pfs.org.pl/en_news.php">News</a></li>
+            <li class="sublink" id="bartek"><a href="https://www.pfs.org.pl/bartek.php">Bartek w Johor Bahru</a></li>
+            <li class="sublink" id="franko"><a href="https://www.pfs.org.pl/franko.php">Scrabble frankofońskie</a></li>
+        </ul>
+    </div>
+</div>
+
+<div id="submenu"></div>
+<div id="content">
+<div id='nextTours'>
+		<div class='nextTour' onclick='location.href="turniej.php?id=414"'>
+			<div class='karteczka small1'>
+				<span class='miasto'>Gdynia</span><span class='dzien'><span class='big'> 9</span><br />lutego</span></div>
+			<div class='kartka big1'>
+				<span class='miasto'>Gdynia</span>
+				<span class='dzien'><b> 9 lutego</b></span>
+				<span class='nazwaturnieju'>I Otwarte Mistrzostwa Trójmiasta</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=413"'>
+			<div class='karteczka small2'>
+				<span class='miasto'>Białystok</span><span class='dzien'><span class='big'>16</span><br />lutego</span></div>
+			<div class='kartka big2'>
+				<span class='miasto'>Białystok</span>
+				<span class='dzien'><b>16 lutego</b></span>
+				<span class='nazwaturnieju'>I Otwarte Mistrzostwa Białegostoku</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=412"'>
+			<div class='karteczka small3'>
+				<span class='miasto'>Częstochowa</span><span class='dzien'><span class='big'>22</span><br />lutego</span></div>
+			<div class='kartka big3'>
+				<span class='miasto'>Częstochowa</span>
+				<span class='dzien'><b>22 lutego</b></span>
+				<span class='nazwaturnieju'>I Otwarte Mistrzostwa Częstochowy</span></div>
+		</div></div><div class='naglowekrelacji'><span class='tytul'>I Otwarte Mistrzostwa Białegostoku<span class='nazwa'>16 lutego 1997 —  I Otwarte Mistrzostwa Białegostoku</span></span><a href='#' id='info' class='przycisk'>Informacje</a><a href='#' id='relacja' class='przycisk'>Relacja</a><a href='#' id='klasyfikacja' class='przycisk'>Wyniki</a><a href='#' id='hh' class='przycisk'>HH</a><div class='galleries'><img src='files/img/gallery.png' style='visibility:hidden;' alt='galeria' /></div></div><h1 style='color:black; margin-top:0px; margin-bottom:30px; padding: 0px'>I Otwarte Mistrzostwa Białegostoku<span>Białystok, 16 lutego 1997</span></h1><div id='p_relacja' class='page'><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><div class='relacja' style='clear:both;'><div><pre>
+ 1. Dariusz Banaszek (Sokołów Podlaski)
+ 2. Zdzisław Szota (Warszawa)
+ 3. Ryszard Dębski (Biała Podlaska)
+ 4. Paweł Stefaniak (Biała Podlaska)
+ 5. Irena Stefaniak (Biała Podlaska)
+ 6. Andrzej Lożyński (Piastów)
+ 7. Tomasz Zwoliński (Warszawa)
+ 8. Edward Stefaniak (Biała Podlaska)
+ 9. Grzegorz Święcki (Białystok)
+ 10. Waldemar Czerwoniec (Warszawa) 
+
+32 uczestników, 5 rund 
+</pre></div><div class='autor'></div></div><div style='clear:both;'></div></div><div id='p_info' class='page'><br><p align='center'></p><br><br><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><table id='szczegoly' class='ramkadolna'></table><br /><br /></div><div id='p_klasyfikacja' class='page'><pre>Wyniki turnieju I Otwarte Mistrzostwa Białegostoku  
+
+Lp. Imię            Nazwisko             Miasto               Ranking  Duże pkt Małe pkt Skalpy   Różn. MP
+--- --------------- -------------------- -------------------- -------- -------- -------- -------- --------
+  1 Dariusz         Banaszek             Warszawa               133.00      5.0     2109      843      870
+  2 Zdzisław        Szota                Warszawa               128.00      4.0     1971      731      290
+  3 Ryszard         Dębski               Biała Podlaska         122.00      4.0     1914      752      235
+  4 Paweł           Stefaniak            Biała Podlaska         133.00      4.0     1848      711      135
+  5 Irena           Stefaniak            Biała Podlaska         136.00      4.0     1770      680      227
+  6 Andrzej         Lożyński             Piastów                 98.00      4.0     1625      703       30
+  7 Tomasz          Zwoliński            Skierdy                134.00      3.0     2037      641      431
+  8 Edward          Stefaniak            Biała Podlaska         110.00      3.0     1822      660      296
+  9 Grzegorz        Święcki              Białystok              125.00      3.0     1821      630      167
+ 10 Waldemar        Czerwoniec           Warszawa               118.00      3.0     1791      666      234
+ 11 Jarosław        Borowski             Bielsk Podlaski        100.00      3.0     1779      625      262
+ 12 Marek           Charytoniuk          Biała Podlaska         117.00      3.0     1776      593       92
+ 13 Marianna        Kozłowska            Białystok              100.00      3.0     1697      562       93
+ 14 Sławomir        Latała               Piastów                100.00      3.0     1643      557      237
+ 15 Marek           Antosik              Nowy Dwór Mazowiecki   100.00      3.0     1555      615      -67
+ 16 Marcin          Surowiński           ?                      100.00      3.0     1153      566     -273
+ 17 Paweł           Stanosz              Warszawa               136.00      2.0     1843      518      -69
+ 18 Wojciech        Usakiewicz           Warszawa               112.00      2.0     1727      486      136
+ 19 Józef           Burzyński            Ełk                    113.00      2.0     1713      515      125
+ 20 Mariusz         Wójcik               Warszawa                86.00      2.0     1651      498      129
+ 21 Bogdan          Kozłowski            Białystok              112.00      2.0     1566      535     -155
+ 22 Janusz          Rudziński            Warszawa                90.00      2.0     1482      488     -100
+ 23 Ryszard         Czarnopyś            ?                      100.00      2.0     1365      469     -272
+ 24 Agata           Janucik              ?                      100.00      2.0     1177      452     -164
+ 25 Krzysztof       Kacperczyk           ?                      100.00      2.0     1126      462     -456
+ 26 Dariusz         Bogusłowicz          ?                      100.00      2.0      886      460     -428
+ 27 Elżbieta        Święcka              Białystok              102.00      1.0     1613      380       13
+ 28 Tadeusz         Sokólski             Białystok              100.00      1.0     1480      334     -139
+ 29 Wojciech        Rogalski             ?                      100.00      1.0     1451      386      -71
+ 30 Sławomir        Halicki              ?                      100.00      1.0     1054      361     -713
+ 31 Jan             Chilkiewicz          ?                      100.00      1.0      843      383     -566
+ 32 Grażyna         Chilkiewicz          ?                      100.00      0.0      911      263     -529
+</pre></div><div id='p_hh' class='page'><pre>Wyniki poszczególnych graczy w turnieju I Otwarte Mistrzostwa Białegostoku  
+
+
+
+	Paweł Stanosz 136.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Janusz         Rudziński              90.00 +  379: 373  140
+    2     5 Bogdan         Kozłowski             112.00 +  410: 369  162
+    3     3 Ryszard        Dębski                122.00 -  355: 438   72
+    4     3 Edward         Stefaniak             110.00 -  320: 350   60
+    5     6 Tomasz         Zwoliński             134.00 -  379: 382   84
+                                                          --------------- ---- ------
+                                                                     518  /  5 103.60
+
+
+
+
+	Irena Stefaniak 136.00 Biała Podlaska
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Mariusz        Wójcik                 86.00 +  358: 295  136
+    2     7 Marek          Antosik               100.00 +  344: 257  150
+    3     4 Andrzej        Lożyński               98.00 +  466: 256  148
+    4     2 Zdzisław       Szota                 128.00 -  261: 416   78
+    5     4 Waldemar       Czerwoniec            118.00 +  341: 319  168
+                                                          --------------- ---- ------
+                                                                     680  /  5 136.00
+
+
+
+
+	Tomasz Zwoliński 134.00 Skierdy         
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Wojciech       Rogalski              100.00 +  442: 311  150
+    2     2 Waldemar       Czerwoniec            118.00 -  364: 391   68
+    3     5 Grzegorz       Święcki               125.00 -  365: 374   75
+    4     9 Bogdan         Kozłowski             112.00 +  484: 151  162
+    5     6 Paweł          Stanosz               136.00 +  382: 379  186
+                                                          --------------- ---- ------
+                                                                     641  /  5 128.20
+
+
+
+
+	Dariusz Banaszek 133.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Jan            Chilkiewicz           100.00 +  522: 107  150
+    2     1 Grzegorz       Święcki               125.00 +  387: 295  175
+    3     1 Waldemar       Czerwoniec            118.00 +  338: 224  168
+    4     1 Ryszard        Dębski                122.00 +  405: 263  172
+    5     1 Zdzisław       Szota                 128.00 +  457: 350  178
+                                                          --------------- ---- ------
+                                                                     843  /  5 168.60
+
+
+
+
+	Paweł Stefaniak 133.00 Biała Podlaska           
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Ryszard        Czarnopyś             100.00 +  407: 302  150
+    2     4 Ryszard        Dębski                122.00 -  270: 382   72
+    3     7 Wojciech       Usakiewicz            112.00 +  345: 326  162
+    4     7 Marek          Charytoniuk           117.00 +  478: 374  167
+    5     2 Edward         Stefaniak             110.00 +  348: 329  160
+                                                          --------------- ---- ------
+                                                                     711  /  5 142.20
+
+
+
+
+	Zdzisław Szota 128.00 Warszawa               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Jarosław       Borowski              100.00 +  377: 297  150
+    2     6 Elżbieta       Święcka               102.00 +  418: 328  152
+    3     2 Edward         Stefaniak             110.00 +  410: 338  160
+    4     2 Irena          Stefaniak             136.00 +  416: 261  186
+    5     1 Dariusz        Banaszek              133.00 -  350: 457   83
+                                                          --------------- ---- ------
+                                                                     731  /  5 146.20
+
+
+
+
+	Grzegorz Święcki 125.00 Białystok                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Sławomir       Halicki               100.00 +  473: 238  150
+    2     1 Dariusz        Banaszek              133.00 -  295: 387   83
+    3     5 Tomasz         Zwoliński             134.00 +  374: 365  184
+    4     4 Jarosław       Borowski              100.00 -  307: 376   50
+    5     7 Józef          Burzyński             113.00 +  372: 288  163
+                                                          --------------- ---- ------
+                                                                     630  /  5 126.00
+
+
+
+
+	Ryszard Dębski 122.00 Biała Podlaska           
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Marianna       Kozłowska             100.00 +  409: 345  150
+    2     4 Paweł          Stefaniak             133.00 +  382: 270  183
+    3     3 Paweł          Stanosz               136.00 +  438: 355  186
+    4     1 Dariusz        Banaszek              133.00 -  263: 405   83
+    5     3 Jarosław       Borowski              100.00 +  422: 304  150
+                                                          --------------- ---- ------
+                                                                     752  /  5 150.40
+
+
+
+
+	Waldemar Czerwoniec 118.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Marcin         Surowiński            100.00 +  440: 148  150
+    2     2 Tomasz         Zwoliński             134.00 +  391: 364  184
+    3     1 Dariusz        Banaszek              133.00 -  224: 338   83
+    4     5 Józef          Burzyński             113.00 +  417: 366  163
+    5     4 Irena          Stefaniak             136.00 -  319: 341   86
+                                                          --------------- ---- ------
+                                                                     666  /  5 133.20
+
+
+
+
+	Marek Charytoniuk 117.00 Biała Podlaska           
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Sławomir       Latała                100.00 +  292: 229  150
+    2     8 Andrzej        Lożyński               98.00 -  298: 331   48
+    3    10 Marek          Antosik               100.00 +  411: 281  150
+    4     7 Paweł          Stefaniak             133.00 -  374: 478   83
+    5     8 Wojciech       Usakiewicz            112.00 +  401: 365  162
+                                                          --------------- ---- ------
+                                                                     593  /  5 118.60
+
+
+
+
+	Józef Burzyński 113.00 Ełk                      
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Grażyna        Chilkiewicz           100.00 +  413:  97  150
+    2     3 Edward         Stefaniak             110.00 -  319: 378   60
+    3     6 Bogdan         Kozłowski             112.00 +  327: 324  162
+    4     5 Waldemar       Czerwoniec            118.00 -  366: 417   68
+    5     7 Grzegorz       Święcki               125.00 -  288: 372   75
+                                                          --------------- ---- ------
+                                                                     515  /  5 103.00
+
+
+
+
+	Bogdan Kozłowski 112.00 Białystok                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    13 Krzysztof      Kacperczyk            100.00 +  379: 164  150
+    2     5 Paweł          Stanosz               136.00 -  369: 410   86
+    3     6 Józef          Burzyński             113.00 -  324: 327   63
+    4     9 Tomasz         Zwoliński             134.00 -  151: 484   84
+    5    12 Elżbieta       Święcka               102.00 +  343: 336  152
+                                                          --------------- ---- ------
+                                                                     535  /  5 107.00
+
+
+
+
+	Wojciech Usakiewicz 112.00 Warszawa               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    12 Marek          Antosik               100.00 -  312: 331   50
+    2    10 Wojciech       Rogalski              100.00 +  321: 270  150
+    3     7 Paweł          Stefaniak             133.00 -  326: 345   83
+    4    10 Mariusz        Wójcik                 86.00 +  403: 244  136
+    5     8 Marek          Charytoniuk           117.00 -  365: 401   67
+                                                          --------------- ---- ------
+                                                                     486  /  5  97.20
+
+
+
+
+	Edward Stefaniak 110.00 Biała Podlaska           
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    14 Dariusz        Bogusłowicz           100.00 +  427: 129  150
+    2     3 Józef          Burzyński             113.00 +  378: 319  163
+    3     2 Zdzisław       Szota                 128.00 -  338: 410   78
+    4     3 Paweł          Stanosz               136.00 +  350: 320  186
+    5     2 Paweł          Stefaniak             133.00 -  329: 348   83
+                                                          --------------- ---- ------
+                                                                     660  /  5 132.00
+
+
+
+
+	Elżbieta Święcka 102.00 Białystok                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    15 Agata          Janucik               100.00 +  362: 198  150
+    2     6 Zdzisław       Szota                 128.00 -  328: 418   78
+    3     8 Marianna       Kozłowska             100.00 -  315: 359   50
+    4    11 Janusz         Rudziński              90.00 -  272: 282   40
+    5    12 Bogdan         Kozłowski             112.00 -  336: 343   62
+                                                          --------------- ---- ------
+                                                                     380  /  5  76.00
+
+
+
+
+	Marek Antosik 100.00 Nowy Dwór Mazowiecki          
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    12 Wojciech       Usakiewicz            112.00 +  331: 312  162
+    2     7 Irena          Stefaniak             136.00 -  257: 344   86
+    3    10 Marek          Charytoniuk           117.00 -  281: 411   67
+    4    12 Tadeusz        Sokólski              100.00 +  324: 315  150
+    5    10 Agata          Janucik               100.00 +  362: 240  150
+                                                          --------------- ---- ------
+                                                                     615  /  5 123.00
+
+
+
+
+	Dariusz Bogusłowicz 100.00 ?                        
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    14 Edward         Stefaniak             110.00 -  129: 427   60
+    2    15 Marcin         Surowiński            100.00 -  172: 291   50
+    3    16 Grażyna        Chilkiewicz           100.00 +  183: 181  150
+    4    14 Krzysztof      Kacperczyk            100.00 -  196: 279   50
+    5    15 Jan            Chilkiewicz           100.00 +  206: 136  150
+                                                          --------------- ---- ------
+                                                                     460  /  5  92.00
+
+
+
+
+	Jarosław Borowski 100.00 Bielsk Podlaski          
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Zdzisław       Szota                 128.00 -  297: 377   78
+    2    11 Ryszard        Czarnopyś             100.00 +  290: 269  150
+    3    11 Krzysztof      Kacperczyk            100.00 +  512: 142  150
+    4     4 Grzegorz       Święcki               125.00 +  376: 307  175
+    5     3 Ryszard        Dębski                122.00 -  304: 422   72
+                                                          --------------- ---- ------
+                                                                     625  /  5 125.00
+
+
+
+
+	Grażyna Chilkiewicz 100.00 ?                        
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Józef          Burzyński             113.00 -   97: 413   63
+    2    16 Jan            Chilkiewicz           100.00 -  206: 231   50
+    3    16 Dariusz        Bogusłowicz           100.00 -  181: 183   50
+    4    16 Sławomir       Halicki               100.00 -  222: 231   50
+    5    16 Wojciech       Rogalski              100.00 -  205: 382   50
+                                                          --------------- ---- ------
+                                                                     263  /  5  52.60
+
+
+
+
+	Jan Chilkiewicz 100.00 ?                        
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Dariusz        Banaszek              133.00 -  107: 522   83
+    2    16 Grażyna        Chilkiewicz           100.00 +  231: 206  150
+    3    12 Marcin         Surowiński            100.00 -  184: 220   50
+    4    13 Agata          Janucik               100.00 -  185: 255   50
+    5    15 Dariusz        Bogusłowicz           100.00 -  136: 206   50
+                                                          --------------- ---- ------
+                                                                     383  /  5  76.60
+
+
+
+
+	Ryszard Czarnopyś 100.00 ?                        
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Paweł          Stefaniak             133.00 -  302: 407   83
+    2    11 Jarosław       Borowski              100.00 -  269: 290   50
+    3    14 Mariusz        Wójcik                 86.00 -  255: 414   36
+    4    15 Wojciech       Rogalski              100.00 +  248: 237  150
+    5    14 Tadeusz        Sokólski              100.00 +  291: 289  150
+                                                          --------------- ---- ------
+                                                                     469  /  5  93.80
+
+
+
+
+	Sławomir Halicki 100.00 ?                        
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Grzegorz       Święcki               125.00 -  238: 473   75
+    2    13 Sławomir       Latała                100.00 -  231: 373   50
+    3    15 Agata          Janucik               100.00 -  152: 269   50
+    4    16 Grażyna        Chilkiewicz           100.00 +  231: 222  150
+    5    13 Mariusz        Wójcik                 86.00 -  202: 430   36
+                                                          --------------- ---- ------
+                                                                     361  /  5  72.20
+
+
+
+
+	Agata Janucik 100.00 ?                        
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    15 Elżbieta       Święcka               102.00 -  198: 362   52
+    2    14 Krzysztof      Kacperczyk            100.00 -  215: 280   50
+    3    15 Sławomir       Halicki               100.00 +  269: 152  150
+    4    13 Jan            Chilkiewicz           100.00 +  255: 185  150
+    5    10 Marek          Antosik               100.00 -  240: 362   50
+                                                          --------------- ---- ------
+                                                                     452  /  5  90.40
+
+
+
+
+	Krzysztof Kacperczyk 100.00 ?                        
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    13 Bogdan         Kozłowski             112.00 -  164: 379   62
+    2    14 Agata          Janucik               100.00 +  280: 215  150
+    3    11 Jarosław       Borowski              100.00 -  142: 512   50
+    4    14 Dariusz        Bogusłowicz           100.00 +  279: 196  150
+    5    11 Marcin         Surowiński            100.00 -  261: 280   50
+                                                          --------------- ---- ------
+                                                                     462  /  5  92.40
+
+
+
+
+	Marianna Kozłowska 100.00 Białystok                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Ryszard        Dębski                122.00 -  345: 409   72
+    2     9 Janusz         Rudziński              90.00 +  327: 259  140
+    3     8 Elżbieta       Święcka               102.00 +  359: 315  152
+    4     6 Sławomir       Latała                100.00 +  346: 255  150
+    5     5 Andrzej        Lożyński               98.00 -  320: 366   48
+                                                          --------------- ---- ------
+                                                                     562  /  5 112.40
+
+
+
+
+	Sławomir Latała 100.00 Piastów                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Marek          Charytoniuk           117.00 -  229: 292   67
+    2    13 Sławomir       Halicki               100.00 +  373: 231  150
+    3     9 Tadeusz        Sokólski              100.00 +  433: 275  150
+    4     6 Marianna       Kozłowska             100.00 -  255: 346   50
+    5     9 Janusz         Rudziński              90.00 +  353: 262  140
+                                                          --------------- ---- ------
+                                                                     557  /  5 111.40
+
+
+
+
+	Wojciech Rogalski 100.00 ?                        
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Tomasz         Zwoliński             134.00 -  311: 442   84
+    2    10 Wojciech       Usakiewicz            112.00 -  270: 321   62
+    3    13 Janusz         Rudziński              90.00 -  251: 306   40
+    4    15 Ryszard        Czarnopyś             100.00 -  237: 248   50
+    5    16 Grażyna        Chilkiewicz           100.00 +  382: 205  150
+                                                          --------------- ---- ------
+                                                                     386  /  5  77.20
+
+
+
+
+	Tadeusz Sokólski 100.00 Białystok                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    16 Andrzej        Lożyński               98.00 -  297: 303   48
+    2    12 Mariusz        Wójcik                 86.00 +  304: 268  136
+    3     9 Sławomir       Latała                100.00 -  275: 433   50
+    4    12 Marek          Antosik               100.00 -  315: 324   50
+    5    14 Ryszard        Czarnopyś             100.00 -  289: 291   50
+                                                          --------------- ---- ------
+                                                                     334  /  5  66.80
+
+
+
+
+	Marcin Surowiński 100.00 ?                        
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Waldemar       Czerwoniec            118.00 -  148: 440   68
+    2    15 Dariusz        Bogusłowicz           100.00 +  291: 172  150
+    3    12 Jan            Chilkiewicz           100.00 +  220: 184  150
+    4     8 Andrzej        Lożyński               98.00 -  214: 369   48
+    5    11 Krzysztof      Kacperczyk            100.00 +  280: 261  150
+                                                          --------------- ---- ------
+                                                                     566  /  5 113.20
+
+
+
+
+	Andrzej Lożyński  98.00 Piastów                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    16 Tadeusz        Sokólski              100.00 +  303: 297  150
+    2     8 Marek          Charytoniuk           117.00 +  331: 298  167
+    3     4 Irena          Stefaniak             136.00 -  256: 466   86
+    4     8 Marcin         Surowiński            100.00 +  369: 214  150
+    5     5 Marianna       Kozłowska             100.00 +  366: 320  150
+                                                          --------------- ---- ------
+                                                                     703  /  5 140.60
+
+
+
+
+	Janusz Rudziński  90.00 Warszawa
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Paweł          Stanosz               136.00 -  373: 379   86
+    2     9 Marianna       Kozłowska             100.00 -  259: 327   50
+    3    13 Wojciech       Rogalski              100.00 +  306: 251  150
+    4    11 Elżbieta       Święcka               102.00 +  282: 272  152
+    5     9 Sławomir       Latała                100.00 -  262: 353   50
+                                                          --------------- ---- ------
+                                                                     488  /  5  97.60
+
+
+
+
+	Mariusz Wójcik  86.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Irena          Stefaniak             136.00 -  295: 358   86
+    2    12 Tadeusz        Sokólski              100.00 -  268: 304   50
+    3    14 Ryszard        Czarnopyś             100.00 +  414: 255  150
+    4    10 Wojciech       Usakiewicz            112.00 -  244: 403   62
+    5    13 Sławomir       Halicki               100.00 +  430: 202  150
+                                                          --------------- ---- ------
+                                                                     498  /  5  99.60
+
+
+</pre></div><div id='p_rundy' class='page'><pre></pre></div><div id='p_ranking' class='page'><pre></pre></div><div id='p_przebieg' class='page'>
+
+    </div><div style="clear:both;width:100%;" class="alignright">
+
+<script>
+<!--
+if ((document.getElementById("content").offsetHeight + document.getElementById("top").offsetHeight) > screen.height)
+    document.write("<br /><br /><a href='#top'>do góry</a>");
+-->
+</script>
+
+</div>
+</div>
+
+<div id="bottom">
+<ul id="bottomlinks">
+<div class='onleft'>
+ Osób on-line: 52</div>
+    <li><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+    <li><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+    <li><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+    <li><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+    <li><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+    <li><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+</ul>
+    SCRABBLE® jest zastrzeżonym znakiem towarowym J.W. Spears &amp; Sons&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://www.pfs.org.pl/prawaautorskie.php">© Prawa autorskie</a>
+</div>
+</body>
+</html>

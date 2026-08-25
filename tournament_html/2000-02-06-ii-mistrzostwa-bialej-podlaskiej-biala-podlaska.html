@@ -1,0 +1,716 @@
+
+<html>
+<head>
+    <title>Polska Federacja Scrabble :: II Mistrzostwa Białej Podlaskiej</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="files/img/favicon.ico" />
+    <link rel="stylesheet" href="files/css/style.css" type="text/css" />
+	<link rel="stylesheet" href="files/css/style-index.css" type="text/css" />
+    <!--[if IE]><link rel="stylesheet" type="text/css" href="files/css/styleie.css" /><![endif]-->
+    <!--[if lt IE 7.]><script defer type="text/javascript" src="files/js/pngfix.js"></script><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="files/js/minmax.js"></script><![endif]-->
+    <script type="text/javascript" src="files/js/jquery.js"></script>
+    <script type="text/javascript" src="files/js/jquery-bp.js"></script>
+    <script type="text/javascript" src="files/js/java.js"></script>
+    <script>jSubmenu ("turnieje","kalendarz");jKalendarz();</script>
+    <script>
+    var url, page;
+
+    page = 'info';
+    url  = document.location.toString();
+
+    if (url.match ('#')) {
+      page = url.split ('#')[1];
+      if ($.inArray (page, [ 'info', 'relacja', 'klasyfikacja', 'hh', 'rundy', 'ranking', 'przebieg' ]) == -1)
+        page = 'info';
+    }
+
+    $(document).ready(function(){
+        $('a#listaucz').bind('click', function(event){
+            $('div#lista').toggle();
+            event.preventDefault();
+        }).toggle(function() { $(this).text('schowaj listę uczestników'); }, function() { $(this).text("pokaż listę uczestników"); });
+        $('div#lista table tr:last td').css({"border-bottom" : "none"});
+
+        $("a.przycisk").click (function (e) {
+            if ($(this).attr ('href') !== '#')
+                return true;
+
+            e.preventDefault ();
+
+            id       = this.id;
+            this.id += 'tmp';
+            window.location.hash = id;
+            this.id  = id;
+
+            $(".page").hide ();
+            $(".page#p_" + id).show ();
+
+            $("a.przycisk").removeClass ('active');
+            $(this).addClass ('active');
+
+            return false;
+        });
+
+        $("a.przycisk#" + page).click ();
+        $('html, body').animate ({ scrollTop: 0 }, 0);
+    });
+    </script>
+  <style type="text/css">
+    .page {
+        display: none;
+    }
+    #szczegoly{
+        width: 100%;
+        border-spacing: 0;
+        margin-top: 30px;
+        text-align: left;
+        font-size: inherit;
+    }
+    #szczegoly td{
+        padding: 10px 20px 10px 0;
+        vertical-align: top;
+    }
+    #szczegoly td:first-child{
+        font-weight: bold;
+        width: 160px;
+    }
+    div#lista{
+        display:none;
+        margin-top: 15px;
+    }
+    div#lista table{
+        margin-top: 10px;
+        text-align: left;
+        font-size: inherit;
+    }
+    div#lista table td{
+        padding: 3px 8px;
+        border-bottom: 1px dashed #1576AE;
+    }
+    div#lista table th{
+        padding: 0px 5px 10px 5px;
+    }
+    div#lista table td.ptaszek{
+        text-align: center;
+        background: url('files/img/tick.png') no-repeat center center;
+    }
+    div#lista table th{
+        white-space: nowrap;
+        width: auto;
+    }
+    div#lista table td:first-child, div#lista table th:first-child{
+        text-align:right;
+        width: auto;
+    }
+    </style>
+</head>
+
+<body>
+
+<script type="text/javascript">setMenu();</script>
+
+<div id="top" onclick="location.href='https://www.pfs.org.pl'">
+</div>
+<div id="menu">
+
+    <div id="m_glowna">
+        <div class="tab"><a href="https://www.pfs.org.pl/index.php"></a></div>
+
+        <ul>
+            <li class="sublink" id="aktualnosci"><a href="https://www.pfs.org.pl">Aktualności</a></li>
+            <li class="sublink" id="nowy"><a href="https://www.pfs.org.pl/dlanowych.php">Jestem tu nowy</a></li>
+            <li class="sublink" id="anagramator"><a href="https://www.pfs.org.pl/osps_online.php?main=1">Słownik online</a></li>
+            <li class="sublink" id="siodemka"><a href="https://www.pfs.org.pl/siodemka.php?main=1">Siódemka tygodnia</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+            <li class="sublink" id="dlasponsorow"><a href="https://www.pfs.org.pl/dlasponsorow.php">Dla sponsorów</a></li>
+            <li class="sublink" id="kontakt"><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+        </ul>
+    </div>
+    <div id="m_turnieje">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kalendarz.php"></a></div>
+        <ul>
+            <li class="sublink" id="kalendarz"><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+            <li class="sublink" id="regulaminy"><a href="https://www.pfs.org.pl/regulaminy.php">Regulaminy</a></li>
+            <li class="sublink" id="sedziowie"><a href="https://www.pfs.org.pl/sedziowie.php">Sędziowie</a></li>
+            <li class="sublink" id="gp"><a href="https://www.pfs.org.pl/gp2026.php">Grand Prix</a></li>
+<!--            <li class="sublink" id="mr"><a href="https://www.pfs.org.pl/mr2020.php">Mistrzostwa Regionów</a></li>-->
+            <li class="sublink" id="archiwum"><a href="https://www.pfs.org.pl/archiwum.php">Historia</a></li>
+            <li class="sublink" id="galeria"><a href="https://www.pfs.org.pl/galeria.php">Zdjęcia</a></li>
+            <li class="sublink" id="rekordy"><a href="https://www.pfs.org.pl/rekordy.php">Rekordy</a></li>
+        </ul>
+    </div>
+    <div id="m_pfs">
+        <div  class="tab"><a href="https://www.pfs.org.pl/opfs.php"></a></div>
+        <ul>
+            <li class="sublink" id="opfs"><a href="https://www.pfs.org.pl/opfs.php">O PFS</a></li>
+            <li class="sublink" id="jakprzystapic"><a href="https://www.pfs.org.pl/jakprzystapic.php">Jak przystąpić</a></li>
+            <li class="sublink" id="dlaczlonkow"><a href="https://www.pfs.org.pl/dlaczlonkow.php">Dla członków</a></li>
+            <li class="sublink" id="wladze"><a href="https://www.pfs.org.pl/wladze.php">Władze</a></li>
+            <li class="sublink" id="komisje"><a href="https://www.pfs.org.pl/komisje.php">Komisje</a></li>
+            <li class="sublink" id="statut"><a href="https://www.pfs.org.pl/statut.php">Statut</a></li>
+            <li class="sublink" id="uchwaly"><a href="https://www.pfs.org.pl/uchwaly.php">Uchwały</a></li>
+            <li class="sublink" id="honorowi"><a href="https://www.pfs.org.pl/honorowi.php">Honorowi członkowie</a></li>
+            <li class="sublink" id="finanse"><a href="https://www.pfs.org.pl/finanse.php">Finanse</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabble">
+        <div  class="tab"><a href="https://www.pfs.org.pl/osps_online.php?desktop=1"></a></div>
+        <ul>
+            <li class="sublink" id="osps_online"><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+            <li class="sublink" id="zds"><a href="https://www.pfs.org.pl/zds2.php">ZDS</a></li>
+            <li class="sublink" id="osps"><a href="https://www.pfs.org.pl/osps.php">OSPS</a></li>
+            <li class="sublink" id="aktualizacje"><a href="https://www.pfs.org.pl/osps_aktualizacje.php">Aktualizacje</a></li>
+            <li class="sublink" id="dwojki"><a href="https://www.pfs.org.pl/dwojki.php">2-literówki</a></li>
+            <li class="sublink" id="trojki"><a href="https://www.pfs.org.pl/trojki.php">3-literówki</a></li>
+            <li class="sublink" id="siodemkat"><a href="https://www.pfs.org.pl/siodemka.php">Siódemka tygodnia</a></li>
+            <li class="sublink" id="slowneroznosci"><a href="https://www.pfs.org.pl/slowneroznosci.php">Słowne różności</a></li>
+        </ul>
+    </div>
+    <div id="m_ranking">
+        <div  class="tab"><a href="https://www.pfs.org.pl/ranking.php"></a></div>
+        <ul>
+            <li class="sublink" id="aktranking"><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+            <li class="sublink" id="medale"><a href="https://www.pfs.org.pl/medale.php">Klasyfikacja medalowa</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabblisci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/mistrzowiepolski.php"></a></div>
+        <ul>
+            <li class="sublink" id="mistrzowiepolski"><a href="https://www.pfs.org.pl/mistrzowiepolski.php">Mistrzowie Polski</a></li>
+            <li class="sublink" id="zdobywcypp"><a href="https://www.pfs.org.pl/zdobywcypp.php">Zdobywcy Pucharu Polski</a></li>
+            <li class="sublink" id="zwyciezcygp"><a href="https://www.pfs.org.pl/zwyciezcygp.php">Zwycięzcy Grand Prix</a></li>
+            <li class="sublink" id="liderzyrankingu"><a href="https://www.pfs.org.pl/liderzyrankingu.php">Liderzy rankingu</a></li>
+            <li class="sublink" id="zwyciezcylemans"><a href="https://www.pfs.org.pl/zwyciezcylemans.php">Zwycięzcy 24h Le Mans</a></li>
+            <li class="sublink" id="zwyciezcykmp"><a href="https://www.pfs.org.pl/zwyciezcykmp.php">KMP</a>
+        </ul>
+    </div>
+    <div id="m_kluby">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kluby.php"></a></div>
+        <ul>
+            <li class="sublink" id="rejestrklubow"><a href="https://www.pfs.org.pl/kluby.php">Rejestr klubów</a></li>
+            <li class="sublink" id="kmp"><a href="https://www.pfs.org.pl/kmp.php">KMP</a></li>
+            <li class="sublink" id="wiescizklubow"><a href="https://www.pfs.org.pl/wiescizklubow.php">Wieści z klubów</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/about.php">Statystyki klubowe</a></li>
+        </ul>
+    </div>
+    <div id="m_roznosci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/historia.php"></a></div>
+        <ul>
+            <li class="sublink" id="historia"><a href="https://www.pfs.org.pl/historia.php">Historia</a></li>
+            <li class="sublink" id="odmiany"><a href="https://www.pfs.org.pl/odmiany.php">Odmiany</a></li>
+            <li class="sublink" id="anegdoty"><a href="https://www.pfs.org.pl/anegdoty.php">Anegdoty</a></li>
+            <li class="sublink" id="scrabblealia"><a href="https://www.pfs.org.pl/scrabblealia.php">Scrabblealia</a></li>
+            <li class="sublink" id="scrabblenet"><a href="https://www.pfs.org.pl/scrabblenet.php">Scrabble w internecie</a></li>
+            <li class="sublink" id="programy"><a href="https://www.pfs.org.pl/programy.php">Programy</a></li>
+            <li class="sublink" id="download"><a href="https://www.pfs.org.pl/download.php">Do pobrania</a></li>
+            <li class="sublink" id="ksiazki"><a href="https://www.pfs.org.pl/ksiazki.php">Książki</a></li>
+            <li class="sublink" id="slowniczek"><a href="https://www.pfs.org.pl/slowniczek.php">Słowniczek</a></li>
+        </ul>
+    </div>
+    <div id="m_english">
+        <div  class="tab"><a href="https://www.pfs.org.pl/english.php"></a></div>
+        <ul>
+            <li class="sublink" id="about"><a href="https://www.pfs.org.pl/english.php">About Polish Scrabble</a></li>
+            <li class="sublink" id="news"><a href="https://www.pfs.org.pl/en_news.php">News</a></li>
+            <li class="sublink" id="bartek"><a href="https://www.pfs.org.pl/bartek.php">Bartek w Johor Bahru</a></li>
+            <li class="sublink" id="franko"><a href="https://www.pfs.org.pl/franko.php">Scrabble frankofońskie</a></li>
+        </ul>
+    </div>
+</div>
+
+<div id="submenu"></div>
+<div id="content">
+<div id='nextTours'>
+		<div class='nextTour' onclick='location.href="turniej.php?id=322"'>
+			<div class='karteczka small1'>
+				<span class='miasto'>Warszawa</span><span class='dzien'><span class='big'>22</span><br />stycznia</span></div>
+			<div class='kartka big1'>
+				<span class='miasto'>Warszawa</span>
+				<span class='dzien'><b>22-23 stycznia</b></span>
+				<span class='nazwaturnieju'>Turniej Otwarcia Sezonu</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=321"'>
+			<div class='karteczka small2'>
+				<span class='miasto'>Biała Podlaska</span><span class='dzien'><span class='big'> 6</span><br />lutego</span></div>
+			<div class='kartka big2'>
+				<span class='miasto'>Biała Podlaska</span>
+				<span class='dzien'><b> 6 lutego</b></span>
+				<span class='nazwaturnieju'>II Mistrzostwa Białej Podlaskiej</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=320"'>
+			<div class='karteczka small3'>
+				<span class='miasto'>Warszawa</span><span class='dzien'><span class='big'>19</span><br />lutego</span></div>
+			<div class='kartka big3'>
+				<span class='miasto'>Warszawa</span>
+				<span class='dzien'><b>19-20 lutego</b></span>
+				<span class='nazwaturnieju'>V Mistrzostwa Warszawy</span><span class='gp'>Grand&nbsp;Prix&nbsp;2000</span></div>
+		</div></div><div class='naglowekrelacji'><span class='tytul'>II Mistrzostwa Białej Podlaskiej<span class='nazwa'>06 lutego 2000 —  II Mistrzostwa Białej Podlaskiej</span></span><a href='#' id='info' class='przycisk'>Informacje</a><a href='#' id='relacja' class='przycisk'>Relacja</a><a href='#' id='klasyfikacja' class='przycisk'>Wyniki</a><a href='#' id='hh' class='przycisk'>HH</a><div class='galleries'><img src='files/img/gallery.png' style='visibility:hidden;' alt='galeria' /></div></div><h1 style='color:black; margin-top:0px; margin-bottom:30px; padding: 0px'>II Mistrzostwa Białej Podlaskiej<span>Biała Podlaska, 06 lutego 2000</span></h1><div id='p_relacja' class='page'><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><div class='relacja' style='clear:both;'><div><pre>
+ 1. Zdzisław Szota (Warszawa) 6.0 2589
+ 2. Krzysztof Usakiewicz (Warszawa) 5.0 2318
+ 3. Tomasz Zwoliński (Warszawa) 4.0 2565
+ 4. Marek Antosik (Nowy Dwór Maz.) 4.0 2283
+ 5. Paweł Stefaniak (Biała Podlaska) 4.0 2203
+ 6. Marek Charytoniuk (Biała Podlaska) 4.0 2180
+ 7. Radosław Konca (Warszawa) 4.0 2141
+ 8. Piotr Jachimowicz (Warszawa) 3.5 2086
+ 9. Wojciech Usakiewicz (Warszawa) 3.0 2466
+ 10. Ryszard Dębski (Biała Podlaska) 3.0 2356
+
+ 25 uczestników, 6 rund 
+</pre></div><div class='autor'></div></div><div style='clear:both;'></div></div><div id='p_info' class='page'><br><p align='center'></p><br><br><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br>Zobacz, jak było na poprzednich turniejach:<br><a href='turniej.php?id=339'>III Otwarte Mistrzostwa Podlasia</a><br><a href='turniej.php?id=370'>II Otwarte Mistrzostwa Podlasia</a><br><a href='turniej.php?id=420'>I Otwarte Mistrzostwa Podlasia</a><br><table id='szczegoly' class='ramkadolna'></table><br /><br /></div><div id='p_klasyfikacja' class='page'><pre>Wyniki turnieju II Mistrzostwa Białej Podlaskiej
+
+Lp. Imię            Nazwisko             Miasto               Ranking  Duże pkt Małe pkt Skalpy   Różn. MP
+--- --------------- -------------------- -------------------- -------- -------- -------- -------- --------
+  1 Zdzisław        Szota                Warszawa               130.00      6.0     2589     1023      664
+  2 Krzysztof       Usakiewicz           Warszawa               114.00      5.0     2318      882      512
+  3 Tomasz          Zwoliński            Warszawa               143.00      4.0     2565      822      558
+  4 Marek           Antosik              Nowy Dwór Mazowiecki   121.00      4.0     2283      801      398
+  5 Paweł           Stefaniak            Biała Podlaska         137.00      4.0     2203      809      161
+  6 Marek           Charytoniuk          Biała Podlaska         121.10      4.0     2180      763      183
+  7 Radosław        Konca                Warszawa               100.00      4.0     2141      794      238
+  8 Piotr           Jachimowicz          Warszawa               100.00      3.5     2086      701      193
+  9 Wojciech        Usakiewicz           Warszawa               129.00      3.0     2466      743      515
+ 10 Ryszard         Dębski               Biała Podlaska         127.00      3.0     2356      714       60
+ 11 Mateusz         Żbikowski            Warszawa               115.00      3.0     2116      715       36
+ 12 Marcin          Flegier              Warszawa               100.00      3.0     1949      656       13
+ 13 Stanisław       Kozłowski            Biała Podlaska         100.00      3.0     1886      642       95
+ 14 Jagoda          Żbikowska            Warszawa               100.00      3.0     1721      627      -92
+ 15 Ryszard         Machnio              Biała Podlaska         100.00      3.0     1686      662     -681
+ 16 Andrzej         Lożyński             Piastów                106.00      2.5     1847      600     -115
+ 17 Edward          Stefaniak            Biała Podlaska         120.90      2.0     2007      533      139
+ 18 Tomasz          Żbikowski            Warszawa               100.00      2.0     1800      529     -190
+ 19 Jacek           Cichecki             Józefów                100.00      2.0     1736      548     -309
+ 20 Artur           Gawroński            Halinów                100.00      2.0     1724      499      337
+ 21 Maciej          Lewczuk              Biała Podlaska         100.00      2.0     1172      515     -583
+ 22 Paweł           Mogielnicki          Warszawa               100.00      2.0      925      350      255
+ 23 Daniel          Lewczuk              Biała Podlaska         100.00      1.0     1153      385     -291
+ 24 Emil            Prudaczuk            Biała Podlaska         100.00      0.0      705      271    -1073
+ 25 Piotr           Grzegorczyk          Biała Podlaska         100.00      0.0      457      200    -1023
+</pre></div><div id='p_hh' class='page'><pre>Wyniki poszczególnych graczy w turnieju II Mistrzostwa Białej Podlaskiej
+
+
+
+	Tomasz Zwoliński 143.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Artur          Gawroński             100.00 +  523: 294  150
+    2     1 Ryszard        Dębski                127.00 +  481: 291  177
+    3     1 Zdzisław       Szota                 130.00 -  381: 463   80
+    4     3 Marek          Antosik               121.00 -  330: 331   71
+    5     4 Wojciech       Usakiewicz            129.00 +  411: 363  179
+    6     3 Mateusz        Żbikowski             115.00 +  439: 265  165
+                                                          --------------- ---- ------
+                                                                     822  /  6 137.00
+
+
+
+
+	Paweł Stefaniak 137.00 Biała Podlaska           
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Radosław       Konca                 100.00 +  376: 301  150
+    2     5 Marek          Antosik               121.00 +  394: 339  171
+    3     2 Mateusz        Żbikowski             115.00 +  350: 347  165
+    4     2 Wojciech       Usakiewicz            129.00 +  372: 302  179
+    5     1 Zdzisław       Szota                 130.00 -  335: 374   80
+    6     2 Krzysztof      Usakiewicz            114.00 -  376: 379   64
+                                                          --------------- ---- ------
+                                                                     809  /  6 134.83
+
+
+
+
+	Zdzisław Szota 130.00 Warszawa               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Piotr          Jachimowicz           100.00 +  428: 238  150
+    2     2 Wojciech       Usakiewicz            129.00 +  365: 314  179
+    3     1 Tomasz         Zwoliński             143.00 +  463: 381  193
+    4     1 Krzysztof      Usakiewicz            114.00 +  476: 279  164
+    5     1 Paweł          Stefaniak             137.00 +  374: 335  187
+    6     1 Radosław       Konca                 100.00 +  483: 378  150
+                                                          --------------- ---- ------
+                                                                    1023  /  6 170.50
+
+
+
+
+	Wojciech Usakiewicz 129.00 Warszawa               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Tomasz         Żbikowski             100.00 +  515: 206  150
+    2     2 Zdzisław       Szota                 130.00 -  314: 365   80
+    3     4 Ryszard        Dębski                127.00 +  561: 302  177
+    4     2 Paweł          Stefaniak             137.00 -  302: 372   87
+    5     4 Tomasz         Zwoliński             143.00 -  363: 411   93
+    6     7 Andrzej        Lożyński              106.00 +  411: 295  156
+                                                          --------------- ---- ------
+                                                                     743  /  6 123.83
+
+
+
+
+	Ryszard Dębski 127.00 Biała Podlaska           
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Jagoda         Żbikowska             100.00 +  562: 218  150
+    2     1 Tomasz         Zwoliński             143.00 -  291: 481   93
+    3     4 Wojciech       Usakiewicz            129.00 -  302: 561   79
+    4     6 Jacek          Cichecki              100.00 +  431: 290  150
+    5     5 Marek          Charytoniuk           121.10 -  339: 375   71
+    6     8 Edward         Stefaniak             120.90 +  431: 371  171
+                                                          --------------- ---- ------
+                                                                     714  /  6 119.00
+
+
+
+
+	Marek Charytoniuk 121.10 Biała Podlaska           
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Jacek          Cichecki              100.00 +  399: 287  150
+    2     3 Mateusz        Żbikowski             115.00 -  362: 384   65
+    3     5 Marek          Antosik               121.00 -  263: 435   71
+    4     7 Marcin         Flegier               100.00 +  404: 287  150
+    5     5 Ryszard        Dębski                127.00 +  375: 339  177
+    6     4 Stanisław      Kozłowski             100.00 +  377: 265  150
+                                                          --------------- ---- ------
+                                                                     763  /  6 127.17
+
+
+
+
+	Marek Antosik 121.00 Nowy Dwór Mazowiecki          
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Stanisław      Kozłowski             100.00 +  382: 275  150
+    2     5 Paweł          Stefaniak             137.00 -  339: 394   87
+    3     5 Marek          Charytoniuk           121.10 +  435: 263  171
+    4     3 Tomasz         Zwoliński             143.00 +  331: 330  193
+    5     3 Radosław       Konca                 100.00 -  276: 337   50
+    6     5 Ryszard        Machnio               100.00 +  520: 286  150
+                                                          --------------- ---- ------
+                                                                     801  /  6 133.50
+
+
+
+
+	Edward Stefaniak 120.90 Biała Podlaska           
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Marcin         Flegier               100.00 -  325: 391   50
+    2     6 Ryszard        Machnio               100.00 -  286: 365   50
+    3     9 Daniel         Lewczuk               100.00 +  311: 236  150
+    4     9 Andrzej        Lożyński              106.00 -  288: 294   56
+    5    10 Emil           Prudaczuk             100.00 +  426: 151  150
+    6     8 Ryszard        Dębski                127.00 -  371: 431   77
+                                                          --------------- ---- ------
+                                                                     533  /  6  88.83
+
+
+
+
+	Mateusz Żbikowski 115.00 Warszawa         
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Maciej         Lewczuk               100.00 +  408: 174  150
+    2     3 Marek          Charytoniuk           121.10 +  384: 362  171
+    3     2 Paweł          Stefaniak             137.00 -  347: 350   87
+    4     4 Piotr          Jachimowicz           100.00 +  381: 359  150
+    5     2 Krzysztof      Usakiewicz            114.00 -  331: 396   64
+    6     3 Tomasz         Zwoliński             143.00 -  265: 439   93
+                                                          --------------- ---- ------
+                                                                     715  /  6 119.17
+
+
+
+
+	Krzysztof Usakiewicz 114.00 Warszawa               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Daniel         Lewczuk               100.00 +  388: 125  150
+    2     4 Marcin         Flegier               100.00 +  354: 259  150
+    3     3 Ryszard        Machnio               100.00 +  522: 239  150
+    4     1 Zdzisław       Szota                 130.00 -  279: 476   80
+    5     2 Mateusz        Żbikowski             115.00 +  396: 331  165
+    6     2 Paweł          Stefaniak             137.00 +  379: 376  187
+                                                          --------------- ---- ------
+                                                                     882  /  6 147.00
+
+
+
+
+	Andrzej Lożyński 106.00 Piastów                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Ryszard        Machnio               100.00 -  298: 305   50
+    2     7 Radosław       Konca                 100.00 -  312: 340   50
+    3    10 Artur          Gawroński             100.00 +  308: 278  150
+    4     9 Edward         Stefaniak             120.90 +  294: 288  171
+    5     6 Piotr          Jachimowicz           100.00 =  340: 340  100
+    6     7 Wojciech       Usakiewicz            129.00 -  295: 411   79
+                                                          --------------- ---- ------
+                                                                     600  /  6 100.00
+
+
+
+
+	Jacek Cichecki 100.00 Józefów                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Marek          Charytoniuk           121.10 -  287: 399   71
+    2     8 Artur          Gawroński             100.00 +  335: 281  150
+    3     7 Jagoda         Żbikowska             100.00 +  267: 244  150
+    4     6 Ryszard        Dębski                127.00 -  290: 431   77
+    5     7 Stanisław      Kozłowski             100.00 -  311: 340   50
+    6     9 Marcin         Flegier               100.00 -  246: 350   50
+                                                          --------------- ---- ------
+                                                                     548  /  6  91.33
+
+
+
+
+	Marcin Flegier 100.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Edward         Stefaniak             120.90 +  391: 325  171
+    2     4 Krzysztof      Usakiewicz            114.00 -  259: 354   64
+    3     6 Radosław       Konca                 100.00 -  304: 309   50
+    4     7 Marek          Charytoniuk           121.10 -  287: 404   71
+    5     9 Tomasz         Żbikowski             100.00 +  358: 298  150
+    6     9 Jacek          Cichecki              100.00 +  350: 246  150
+                                                          --------------- ---- ------
+                                                                     656  /  6 109.33
+
+
+
+
+	Artur Gawroński 100.00 Halinów                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Tomasz         Zwoliński             143.00 -  294: 523   93
+    2     8 Jacek          Cichecki              100.00 -  281: 335   50
+    3    10 Andrzej        Lożyński              106.00 -  278: 308   56
+    5    12 Piotr          Grzegorczyk           100.00 +  422:  86  150
+    6    11 Emil           Prudaczuk             100.00 +  449: 135  150
+                                                          --------------- ---- ------
+                                                                     499  /  5  99.80
+
+
+
+
+	Piotr Grzegorczyk 100.00 Biała Podlaska           
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    2    11 Maciej         Lewczuk               100.00 -  161: 253   50
+    3    11 Tomasz         Żbikowski             100.00 -   92: 456   50
+    4    12 Paweł          Mogielnicki           100.00 -  118: 349   50
+    5    12 Artur          Gawroński             100.00 -   86: 422   50
+                                                          --------------- ---- ------
+                                                                     200  /  4  50.00
+
+
+
+
+	Piotr Jachimowicz 100.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Zdzisław       Szota                 130.00 -  238: 428   80
+    2     9 Stanisław      Kozłowski             100.00 +  343: 277  150
+    3     8 Maciej         Lewczuk               100.00 +  412: 189  150
+    4     4 Mateusz        Żbikowski             115.00 -  359: 381   65
+    5     6 Andrzej        Lożyński              106.00 =  340: 340  106
+    6     6 Paweł          Mogielnicki           100.00 +  394: 278  150
+                                                          --------------- ---- ------
+                                                                     701  /  6 116.83
+
+
+
+
+	Radosław Konca 100.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Paweł          Stefaniak             137.00 -  301: 376   87
+    2     7 Andrzej        Lożyński              106.00 +  340: 312  156
+    3     6 Marcin         Flegier               100.00 +  309: 304  150
+    4     5 Ryszard        Machnio               100.00 +  476: 152  150
+    5     3 Marek          Antosik               121.00 +  337: 276  171
+    6     1 Zdzisław       Szota                 130.00 -  378: 483   80
+                                                          --------------- ---- ------
+                                                                     794  /  6 132.33
+
+
+
+
+	Stanisław Kozłowski 100.00 Biała Podlaska           
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Marek          Antosik               121.00 -  275: 382   71
+    2     9 Piotr          Jachimowicz           100.00 -  277: 343   50
+    3    12 Emil           Prudaczuk             100.00 +  393: 132  150
+    4     8 Tomasz         Żbikowski             100.00 +  336: 246  150
+    5     7 Jacek          Cichecki              100.00 +  340: 311  150
+    6     4 Marek          Charytoniuk           121.10 -  265: 377   71
+                                                          --------------- ---- ------
+                                                                     642  /  6 107.00
+
+
+
+
+	Daniel Lewczuk 100.00 Biała Podlaska           
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Krzysztof      Usakiewicz            114.00 -  125: 388   64
+    2    12 Emil           Prudaczuk             100.00 +  269: 154  150
+    3     9 Edward         Stefaniak             120.90 -  236: 311   71
+    4    10 Jagoda         Żbikowska             100.00 -  218: 267   50
+    6    12 Tomasz         Żbikowski             100.00 -  305: 324   50
+                                                          --------------- ---- ------
+                                                                     385  /  5  77.00
+
+
+
+
+	Maciej Lewczuk 100.00 Biała Podlaska           
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Mateusz        Żbikowski             115.00 -  174: 408   65
+    2    11 Piotr          Grzegorczyk           100.00 +  253: 161  150
+    3     8 Piotr          Jachimowicz           100.00 -  189: 412   50
+    4    11 Emil           Prudaczuk             100.00 +  241: 133  150
+    5    11 Paweł          Mogielnicki           100.00 -  158: 298   50
+    6    10 Jagoda         Żbikowska             100.00 -  157: 343   50
+                                                          --------------- ---- ------
+                                                                     515  /  6  85.83
+
+
+
+
+	Ryszard Machnio 100.00 Biała Podlaska           
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Andrzej        Lożyński              106.00 +  305: 298  156
+    2     6 Edward         Stefaniak             120.90 +  365: 286  171
+    3     3 Krzysztof      Usakiewicz            114.00 -  239: 522   64
+    4     5 Radosław       Konca                 100.00 -  152: 476   50
+    5     8 Jagoda         Żbikowska             100.00 +  339: 265  150
+    6     5 Marek          Antosik               121.00 -  286: 520   71
+                                                          --------------- ---- ------
+                                                                     662  /  6 110.33
+
+
+
+
+	Paweł Mogielnicki 100.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    4    12 Piotr          Grzegorczyk           100.00 +  349: 118  150
+    5    11 Maciej         Lewczuk               100.00 +  298: 158  150
+    6     6 Piotr          Jachimowicz           100.00 -  278: 394   50
+                                                          --------------- ---- ------
+                                                                     350  /  3 116.67
+
+
+
+
+	Emil Prudaczuk 100.00 Biała Podlaska           
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    2    12 Daniel         Lewczuk               100.00 -  154: 269   50
+    3    12 Stanisław      Kozłowski             100.00 -  132: 393   50
+    4    11 Maciej         Lewczuk               100.00 -  133: 241   50
+    5    10 Edward         Stefaniak             120.90 -  151: 426   71
+    6    11 Artur          Gawroński             100.00 -  135: 449   50
+                                                          --------------- ---- ------
+                                                                     271  /  5  54.20
+
+
+
+
+	Jagoda Żbikowska 100.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Ryszard        Dębski                127.00 -  218: 562   77
+    2    10 Tomasz         Żbikowski             100.00 +  384: 270  150
+    3     7 Jacek          Cichecki              100.00 -  244: 267   50
+    4    10 Daniel         Lewczuk               100.00 +  267: 218  150
+    5     8 Ryszard        Machnio               100.00 -  265: 339   50
+    6    10 Maciej         Lewczuk               100.00 +  343: 157  150
+                                                          --------------- ---- ------
+                                                                     627  /  6 104.50
+
+
+
+
+	Tomasz Żbikowski 100.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Wojciech       Usakiewicz            129.00 -  206: 515   79
+    2    10 Jagoda         Żbikowska             100.00 -  270: 384   50
+    3    11 Piotr          Grzegorczyk           100.00 +  456:  92  150
+    4     8 Stanisław      Kozłowski             100.00 -  246: 336   50
+    5     9 Marcin         Flegier               100.00 -  298: 358   50
+    6    12 Daniel         Lewczuk               100.00 +  324: 305  150
+                                                          --------------- ---- ------
+                                                                     529  /  6  88.17
+
+
+</pre></div><div id='p_rundy' class='page'><pre></pre></div><div id='p_ranking' class='page'><pre></pre></div><div id='p_przebieg' class='page'>
+
+    </div><div style="clear:both;width:100%;" class="alignright">
+
+<script>
+<!--
+if ((document.getElementById("content").offsetHeight + document.getElementById("top").offsetHeight) > screen.height)
+    document.write("<br /><br /><a href='#top'>do góry</a>");
+-->
+</script>
+
+</div>
+</div>
+
+<div id="bottom">
+<ul id="bottomlinks">
+<div class='onleft'>
+ Osób on-line: 54</div>
+    <li><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+    <li><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+    <li><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+    <li><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+    <li><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+    <li><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+</ul>
+    SCRABBLE® jest zastrzeżonym znakiem towarowym J.W. Spears &amp; Sons&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://www.pfs.org.pl/prawaautorskie.php">© Prawa autorskie</a>
+</div>
+</body>
+</html>

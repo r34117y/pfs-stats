@@ -1,0 +1,694 @@
+
+<html>
+<head>
+    <title>Polska Federacja Scrabble :: I Otwarte Mistrzostwa Ziemi Lubuskiej</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="files/img/favicon.ico" />
+    <link rel="stylesheet" href="files/css/style.css" type="text/css" />
+	<link rel="stylesheet" href="files/css/style-index.css" type="text/css" />
+    <!--[if IE]><link rel="stylesheet" type="text/css" href="files/css/styleie.css" /><![endif]-->
+    <!--[if lt IE 7.]><script defer type="text/javascript" src="files/js/pngfix.js"></script><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="files/js/minmax.js"></script><![endif]-->
+    <script type="text/javascript" src="files/js/jquery.js"></script>
+    <script type="text/javascript" src="files/js/jquery-bp.js"></script>
+    <script type="text/javascript" src="files/js/java.js"></script>
+    <script>jSubmenu ("turnieje","kalendarz");jKalendarz();</script>
+    <script>
+    var url, page;
+
+    page = 'info';
+    url  = document.location.toString();
+
+    if (url.match ('#')) {
+      page = url.split ('#')[1];
+      if ($.inArray (page, [ 'info', 'relacja', 'klasyfikacja', 'hh', 'rundy', 'ranking', 'przebieg' ]) == -1)
+        page = 'info';
+    }
+
+    $(document).ready(function(){
+        $('a#listaucz').bind('click', function(event){
+            $('div#lista').toggle();
+            event.preventDefault();
+        }).toggle(function() { $(this).text('schowaj listę uczestników'); }, function() { $(this).text("pokaż listę uczestników"); });
+        $('div#lista table tr:last td').css({"border-bottom" : "none"});
+
+        $("a.przycisk").click (function (e) {
+            if ($(this).attr ('href') !== '#')
+                return true;
+
+            e.preventDefault ();
+
+            id       = this.id;
+            this.id += 'tmp';
+            window.location.hash = id;
+            this.id  = id;
+
+            $(".page").hide ();
+            $(".page#p_" + id).show ();
+
+            $("a.przycisk").removeClass ('active');
+            $(this).addClass ('active');
+
+            return false;
+        });
+
+        $("a.przycisk#" + page).click ();
+        $('html, body').animate ({ scrollTop: 0 }, 0);
+    });
+    </script>
+  <style type="text/css">
+    .page {
+        display: none;
+    }
+    #szczegoly{
+        width: 100%;
+        border-spacing: 0;
+        margin-top: 30px;
+        text-align: left;
+        font-size: inherit;
+    }
+    #szczegoly td{
+        padding: 10px 20px 10px 0;
+        vertical-align: top;
+    }
+    #szczegoly td:first-child{
+        font-weight: bold;
+        width: 160px;
+    }
+    div#lista{
+        display:none;
+        margin-top: 15px;
+    }
+    div#lista table{
+        margin-top: 10px;
+        text-align: left;
+        font-size: inherit;
+    }
+    div#lista table td{
+        padding: 3px 8px;
+        border-bottom: 1px dashed #1576AE;
+    }
+    div#lista table th{
+        padding: 0px 5px 10px 5px;
+    }
+    div#lista table td.ptaszek{
+        text-align: center;
+        background: url('files/img/tick.png') no-repeat center center;
+    }
+    div#lista table th{
+        white-space: nowrap;
+        width: auto;
+    }
+    div#lista table td:first-child, div#lista table th:first-child{
+        text-align:right;
+        width: auto;
+    }
+    </style>
+</head>
+
+<body>
+
+<script type="text/javascript">setMenu();</script>
+
+<div id="top" onclick="location.href='https://www.pfs.org.pl'">
+</div>
+<div id="menu">
+
+    <div id="m_glowna">
+        <div class="tab"><a href="https://www.pfs.org.pl/index.php"></a></div>
+
+        <ul>
+            <li class="sublink" id="aktualnosci"><a href="https://www.pfs.org.pl">Aktualności</a></li>
+            <li class="sublink" id="nowy"><a href="https://www.pfs.org.pl/dlanowych.php">Jestem tu nowy</a></li>
+            <li class="sublink" id="anagramator"><a href="https://www.pfs.org.pl/osps_online.php?main=1">Słownik online</a></li>
+            <li class="sublink" id="siodemka"><a href="https://www.pfs.org.pl/siodemka.php?main=1">Siódemka tygodnia</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+            <li class="sublink" id="dlasponsorow"><a href="https://www.pfs.org.pl/dlasponsorow.php">Dla sponsorów</a></li>
+            <li class="sublink" id="kontakt"><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+        </ul>
+    </div>
+    <div id="m_turnieje">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kalendarz.php"></a></div>
+        <ul>
+            <li class="sublink" id="kalendarz"><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+            <li class="sublink" id="regulaminy"><a href="https://www.pfs.org.pl/regulaminy.php">Regulaminy</a></li>
+            <li class="sublink" id="sedziowie"><a href="https://www.pfs.org.pl/sedziowie.php">Sędziowie</a></li>
+            <li class="sublink" id="gp"><a href="https://www.pfs.org.pl/gp2026.php">Grand Prix</a></li>
+<!--            <li class="sublink" id="mr"><a href="https://www.pfs.org.pl/mr2020.php">Mistrzostwa Regionów</a></li>-->
+            <li class="sublink" id="archiwum"><a href="https://www.pfs.org.pl/archiwum.php">Historia</a></li>
+            <li class="sublink" id="galeria"><a href="https://www.pfs.org.pl/galeria.php">Zdjęcia</a></li>
+            <li class="sublink" id="rekordy"><a href="https://www.pfs.org.pl/rekordy.php">Rekordy</a></li>
+        </ul>
+    </div>
+    <div id="m_pfs">
+        <div  class="tab"><a href="https://www.pfs.org.pl/opfs.php"></a></div>
+        <ul>
+            <li class="sublink" id="opfs"><a href="https://www.pfs.org.pl/opfs.php">O PFS</a></li>
+            <li class="sublink" id="jakprzystapic"><a href="https://www.pfs.org.pl/jakprzystapic.php">Jak przystąpić</a></li>
+            <li class="sublink" id="dlaczlonkow"><a href="https://www.pfs.org.pl/dlaczlonkow.php">Dla członków</a></li>
+            <li class="sublink" id="wladze"><a href="https://www.pfs.org.pl/wladze.php">Władze</a></li>
+            <li class="sublink" id="komisje"><a href="https://www.pfs.org.pl/komisje.php">Komisje</a></li>
+            <li class="sublink" id="statut"><a href="https://www.pfs.org.pl/statut.php">Statut</a></li>
+            <li class="sublink" id="uchwaly"><a href="https://www.pfs.org.pl/uchwaly.php">Uchwały</a></li>
+            <li class="sublink" id="honorowi"><a href="https://www.pfs.org.pl/honorowi.php">Honorowi członkowie</a></li>
+            <li class="sublink" id="finanse"><a href="https://www.pfs.org.pl/finanse.php">Finanse</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabble">
+        <div  class="tab"><a href="https://www.pfs.org.pl/osps_online.php?desktop=1"></a></div>
+        <ul>
+            <li class="sublink" id="osps_online"><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+            <li class="sublink" id="zds"><a href="https://www.pfs.org.pl/zds2.php">ZDS</a></li>
+            <li class="sublink" id="osps"><a href="https://www.pfs.org.pl/osps.php">OSPS</a></li>
+            <li class="sublink" id="aktualizacje"><a href="https://www.pfs.org.pl/osps_aktualizacje.php">Aktualizacje</a></li>
+            <li class="sublink" id="dwojki"><a href="https://www.pfs.org.pl/dwojki.php">2-literówki</a></li>
+            <li class="sublink" id="trojki"><a href="https://www.pfs.org.pl/trojki.php">3-literówki</a></li>
+            <li class="sublink" id="siodemkat"><a href="https://www.pfs.org.pl/siodemka.php">Siódemka tygodnia</a></li>
+            <li class="sublink" id="slowneroznosci"><a href="https://www.pfs.org.pl/slowneroznosci.php">Słowne różności</a></li>
+        </ul>
+    </div>
+    <div id="m_ranking">
+        <div  class="tab"><a href="https://www.pfs.org.pl/ranking.php"></a></div>
+        <ul>
+            <li class="sublink" id="aktranking"><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+            <li class="sublink" id="medale"><a href="https://www.pfs.org.pl/medale.php">Klasyfikacja medalowa</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabblisci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/mistrzowiepolski.php"></a></div>
+        <ul>
+            <li class="sublink" id="mistrzowiepolski"><a href="https://www.pfs.org.pl/mistrzowiepolski.php">Mistrzowie Polski</a></li>
+            <li class="sublink" id="zdobywcypp"><a href="https://www.pfs.org.pl/zdobywcypp.php">Zdobywcy Pucharu Polski</a></li>
+            <li class="sublink" id="zwyciezcygp"><a href="https://www.pfs.org.pl/zwyciezcygp.php">Zwycięzcy Grand Prix</a></li>
+            <li class="sublink" id="liderzyrankingu"><a href="https://www.pfs.org.pl/liderzyrankingu.php">Liderzy rankingu</a></li>
+            <li class="sublink" id="zwyciezcylemans"><a href="https://www.pfs.org.pl/zwyciezcylemans.php">Zwycięzcy 24h Le Mans</a></li>
+            <li class="sublink" id="zwyciezcykmp"><a href="https://www.pfs.org.pl/zwyciezcykmp.php">KMP</a>
+        </ul>
+    </div>
+    <div id="m_kluby">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kluby.php"></a></div>
+        <ul>
+            <li class="sublink" id="rejestrklubow"><a href="https://www.pfs.org.pl/kluby.php">Rejestr klubów</a></li>
+            <li class="sublink" id="kmp"><a href="https://www.pfs.org.pl/kmp.php">KMP</a></li>
+            <li class="sublink" id="wiescizklubow"><a href="https://www.pfs.org.pl/wiescizklubow.php">Wieści z klubów</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/about.php">Statystyki klubowe</a></li>
+        </ul>
+    </div>
+    <div id="m_roznosci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/historia.php"></a></div>
+        <ul>
+            <li class="sublink" id="historia"><a href="https://www.pfs.org.pl/historia.php">Historia</a></li>
+            <li class="sublink" id="odmiany"><a href="https://www.pfs.org.pl/odmiany.php">Odmiany</a></li>
+            <li class="sublink" id="anegdoty"><a href="https://www.pfs.org.pl/anegdoty.php">Anegdoty</a></li>
+            <li class="sublink" id="scrabblealia"><a href="https://www.pfs.org.pl/scrabblealia.php">Scrabblealia</a></li>
+            <li class="sublink" id="scrabblenet"><a href="https://www.pfs.org.pl/scrabblenet.php">Scrabble w internecie</a></li>
+            <li class="sublink" id="programy"><a href="https://www.pfs.org.pl/programy.php">Programy</a></li>
+            <li class="sublink" id="download"><a href="https://www.pfs.org.pl/download.php">Do pobrania</a></li>
+            <li class="sublink" id="ksiazki"><a href="https://www.pfs.org.pl/ksiazki.php">Książki</a></li>
+            <li class="sublink" id="slowniczek"><a href="https://www.pfs.org.pl/slowniczek.php">Słowniczek</a></li>
+        </ul>
+    </div>
+    <div id="m_english">
+        <div  class="tab"><a href="https://www.pfs.org.pl/english.php"></a></div>
+        <ul>
+            <li class="sublink" id="about"><a href="https://www.pfs.org.pl/english.php">About Polish Scrabble</a></li>
+            <li class="sublink" id="news"><a href="https://www.pfs.org.pl/en_news.php">News</a></li>
+            <li class="sublink" id="bartek"><a href="https://www.pfs.org.pl/bartek.php">Bartek w Johor Bahru</a></li>
+            <li class="sublink" id="franko"><a href="https://www.pfs.org.pl/franko.php">Scrabble frankofońskie</a></li>
+        </ul>
+    </div>
+</div>
+
+<div id="submenu"></div>
+<div id="content">
+<div id='nextTours'>
+		<div class='nextTour' onclick='location.href="turniej.php?id=411"'>
+			<div class='karteczka small1'>
+				<span class='miasto'>Kielce</span><span class='dzien'><span class='big'>23</span><br />lutego</span></div>
+			<div class='kartka big1'>
+				<span class='miasto'>Kielce</span>
+				<span class='dzien'><b>23 lutego</b></span>
+				<span class='nazwaturnieju'>I Otwarte Mistrzostwa Kielc</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=410"'>
+			<div class='karteczka small2'>
+				<span class='miasto'>Gorzów Wielkopolski</span><span class='dzien'><span class='big'> 2</span><br />marca</span></div>
+			<div class='kartka big2'>
+				<span class='miasto'>Gorzów Wielkopolski</span>
+				<span class='dzien'><b> 2 marca</b></span>
+				<span class='nazwaturnieju'>I Otwarte Mistrzostwa Ziemi Lubuskiej</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=409"'>
+			<div class='karteczka small3'>
+				<span class='miasto'>Płock</span><span class='dzien'><span class='big'> 9</span><br />marca</span></div>
+			<div class='kartka big3'>
+				<span class='miasto'>Płock</span>
+				<span class='dzien'><b> 9 marca</b></span>
+				<span class='nazwaturnieju'>I Otwarte Mistrzostwa Mazowsza</span></div>
+		</div></div><div class='naglowekrelacji'><span class='tytul'>I Otwarte Mistrzostwa Ziemi Lubuskiej<span class='nazwa'>02 marca 1997 —  I Otwarte Mistrzostwa Ziemi Lubuskiej</span></span><a href='#' id='info' class='przycisk'>Informacje</a><a href='#' id='relacja' class='przycisk'>Relacja</a><a href='#' id='klasyfikacja' class='przycisk'>Wyniki</a><a href='#' id='hh' class='przycisk'>HH</a><div class='galleries'><img src='files/img/gallery.png' style='visibility:hidden;' alt='galeria' /></div></div><h1 style='color:black; margin-top:0px; margin-bottom:30px; padding: 0px'>I Otwarte Mistrzostwa Ziemi Lubuskiej<span>Gorzów Wielkopolski, 02 marca 1997</span></h1><div id='p_relacja' class='page'><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><div class='relacja' style='clear:both;'><div><pre>
+ 1. Jacek Gigoła (Gorzów Wielkopolski)
+ 2. Paweł Stanosz (Warszawa)
+ 3. Tomasz Szymański (Gorzów Wielkopolski)
+ 4. Tomasz Zwoliński (Warszawa)
+ 5. Robert Duczemiński (Gorzów Wielkopolski)
+ 6. Paweł Subocz (Szczecin)
+ 7. Zdzisław Szota (Warszawa)
+ 8. Damian Korsak (Gorzów Wielkopolski)
+ 9. Maciek Czupryniak (Milanówek)
+ 10. Stenia Zwolińska (Warszawa) 
+
+23 uczestników, 5 rund
+</pre></div><div class='autor'></div></div><div style='clear:both;'></div></div><div id='p_info' class='page'><br><p align='center'></p><br><br><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><table id='szczegoly' class='ramkadolna'></table><br /><br /></div><div id='p_klasyfikacja' class='page'><pre>Wyniki turnieju I Otwarte Mistrzostwa Ziemi Lubuskiej
+
+Lp. Imię            Nazwisko             Miasto               Ranking  Duże pkt Małe pkt Skalpy   Różn. MP
+--- --------------- -------------------- -------------------- -------- -------- -------- -------- --------
+  1 Jacek           Gigoła               Gorzów Wielkopolski    112.00      5.0     1850      816      268
+  2 Paweł           Stanosz              Warszawa               133.00      4.0     2117      695      660
+  3 Tomasz          Szymański            Gorzów Wielkopolski    115.00      4.0     1908      718      475
+  4 Tomasz          Zwoliński            Skierdy                134.00      4.0     1797      733      209
+  5 Walenty         Siemaszko            Lipiany                101.00      3.5     1387      535      370
+  6 Paweł           Subocz               Szczecin                99.00      3.0     1888      558      535
+  7 Zdzisław        Szota                Warszawa               128.00      3.0     1754      593      281
+  8 Damian          Korsak               Gorzów Wlielkopolski   100.00      3.0     1683      584      448
+  9 Maciej          Czupryniak           Milanówek              106.00      3.0     1679      598      211
+ 10 Stenia          Zwolińska            Warszawa                93.00      3.0     1623      637      -33
+ 11 Kazimierz       Merklejn             Szczecin               100.00      3.0     1617      568      343
+ 12 Robert          Duczemiński          Gorzów Wielkopolski    127.00      2.5     1512      408      280
+ 13 Leszek          Nowak                Myślibórz              107.00      2.0     1728      497      324
+ 14 Małgorzata      Kania                Milanówek              103.00      2.0     1514      483      -83
+ 15 Anna            Kołaska              Gorzów Wielkopolski    100.00      2.0     1277      457     -202
+ 16 Zbigniew        Wietecki             Gorzów Wielkopolski    100.00      2.0     1223      454     -147
+ 17 Edmund          Łagutko              Ośno Lubuskie          100.00      2.0     1177      468     -338
+ 18 Marcin          Smola                ?                      100.00      2.0     1096      471     -439
+ 19 Adam            Nowak                ?                      100.00      2.0     1011      483     -337
+ 20 Andrzej         Lożyński             Piastów                107.00      2.0      754      303      322
+ 21 Bogusław        Nowak                Gorzów Wielkopolski    100.00      1.0     1122      356     -241
+ 22 Tomasz          Łagutko              Ośno Lubuskie          100.00      1.0      928      343     -569
+ 23 Michał          Łagutko              Ośno Lubuskie          100.00      1.0      791      385     -869
+ 24 Małgorzata      Kocik                Gorzów Wielkopolski    100.00      0.0      667      277     -929
+ 25 Tomasz          Kocik                Gorzów Wielkopolski    100.00      0.0      554      156     -539
+</pre></div><div id='p_hh' class='page'><pre>Wyniki poszczególnych graczy w turnieju I Otwarte Mistrzostwa Ziemi Lubuskiej
+
+
+
+	Tomasz Zwoliński 134.00 Skierdy         
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Damian         Korsak                100.00 +  395: 314  150
+    2     1 Tomasz         Szymański             115.00 +  387: 290  165
+    3     1 Paweł          Stanosz               133.00 -  274: 384   83
+    4     4 Leszek         Nowak                 107.00 +  354: 339  157
+    5     3 Zdzisław       Szota                 128.00 +  387: 261  178
+                                                          --------------- ---- ------
+                                                                     733  /  5 146.60
+
+
+
+
+	Paweł Stanosz 133.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Adam           Nowak                 100.00 +  508: 137  150
+    2     2 Maciej         Czupryniak            106.00 +  499: 372  156
+    3     1 Tomasz         Zwoliński             134.00 +  384: 274  184
+    4     1 Jacek          Gigoła                112.00 -  332: 362   62
+    5     2 Stenia         Zwolińska              93.00 +  394: 312  143
+                                                          --------------- ---- ------
+                                                                     695  /  5 139.00
+
+
+
+
+	Zdzisław Szota 128.00 Warszawa               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Michał         Łagutko               100.00 +  447: 154  150
+    2     3 Walenty        Siemaszko             101.00 +  359: 326  151
+    3     3 Stenia         Zwolińska              93.00 +  396: 270  143
+    4     2 Tomasz         Szymański             115.00 -  291: 336   65
+    5     3 Tomasz         Zwoliński             134.00 -  261: 387   84
+                                                          --------------- ---- ------
+                                                                     593  /  5 118.60
+
+
+
+
+	Robert Duczemiński 127.00 Gorzów Wielkopolski          
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Małgorzata     Kocik                 100.00 +  409: 169  150
+    2     6 Stenia         Zwolińska              93.00 -  365: 381   43
+    3     5 Małgorzata     Kania                 103.00 +  400: 281  153
+    4     3 Walenty        Siemaszko             101.00 =    0:   0  101
+    5     6 Jacek          Gigoła                112.00 -  338: 401   62
+                                                          --------------- ---- ------
+                                                                     509  /  5 101.80
+
+
+
+
+	Tomasz Szymański 115.00 Gorzów Wielkopolski      
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Marcin         Smola                 100.00 +  528: 131  150
+    2     1 Tomasz         Zwoliński             134.00 -  290: 387   84
+    3     4 Kazimierz      Merklejn              100.00 +  389: 369  150
+    4     2 Zdzisław       Szota                 128.00 +  336: 291  178
+    5     1 Maciej         Czupryniak            106.00 +  365: 255  156
+                                                          --------------- ---- ------
+                                                                     718  /  5 143.60
+
+
+
+
+	Jacek Gigoła 112.00 Gorzów Wielkopolski        
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Edmund         Łagutko               100.00 +  376: 294  150
+    2     4 Leszek         Nowak                 107.00 +  377: 298  157
+    3     2 Paweł          Subocz                 99.00 +  334: 320  149
+    4     1 Paweł          Stanosz               133.00 +  362: 332  183
+    5     6 Robert         Duczemiński           127.00 +  401: 338  177
+                                                          --------------- ---- ------
+                                                                     816  /  5 163.20
+
+
+
+
+	Andrzej Lożyński 107.00 Piastów                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    4    12 Michał         Łagutko               100.00 +  431: 157  150
+    5     7 Małgorzata     Kania                 103.00 +  323: 275  153
+                                                          --------------- ---- ------
+                                                                     303  /  2 151.50
+
+
+
+
+	Leszek Nowak 107.00 Myślibórz                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Anna           Kołaska               100.00 +  441: 189  150
+    2     4 Jacek          Gigoła                112.00 -  298: 377   62
+    3     7 Tomasz         Kocik                 100.00 +  417: 186  150
+    4     4 Tomasz         Zwoliński             134.00 -  339: 354   84
+    5     4 Walenty        Siemaszko             101.00 -  233: 298   51
+                                                          --------------- ---- ------
+                                                                     497  /  5  99.40
+
+
+
+
+	Maciej Czupryniak 106.00 Milanówek                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Bogusław       Nowak                 100.00 +  392: 182  150
+    2     2 Paweł          Stanosz               133.00 -  372: 499   83
+    3     6 Edmund         Łagutko               100.00 +  353: 201  150
+    4     6 Marcin         Smola                 100.00 +  307: 221  150
+    5     1 Tomasz         Szymański             115.00 -  255: 365   65
+                                                          --------------- ---- ------
+                                                                     598  /  5 119.60
+
+
+
+
+	Małgorzata Kania 103.00 Milanówek                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Kazimierz      Merklejn              100.00 +  333: 270  150
+    2     5 Paweł          Subocz                 99.00 -  270: 406   49
+    3     5 Robert         Duczemiński           127.00 -  281: 400   77
+    4     8 Zbigniew       Wietecki              100.00 +  355: 198  150
+    5     7 Andrzej        Lożyński              107.00 -  275: 323   57
+                                                          --------------- ---- ------
+                                                                     483  /  5  96.60
+
+
+
+
+	Walenty Siemaszko 101.00 Lipiany                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Zbigniew       Wietecki              100.00 +  384: 181  150
+    2     3 Zdzisław       Szota                 128.00 -  326: 359   78
+    3     8 Anna           Kołaska               100.00 +  379: 244  150
+    4     3 Robert         Duczemiński           127.00 =    0:   0  127
+    5     4 Leszek         Nowak                 107.00 +  298: 233  157
+                                                          --------------- ---- ------
+                                                                     662  /  5 132.40
+
+
+
+
+	Małgorzata Kocik 100.00 Gorzów Wielkopolski
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Robert         Duczemiński           127.00 -  169: 409   77
+    2     9 Kazimierz      Merklejn              100.00 -   97: 369   50
+    3    11 Bogusław       Nowak                 100.00 -  122: 336   50
+    4    11 Adam           Nowak                 100.00 -   85: 285   50
+    5    12 Michał         Łagutko               100.00 -  194: 197   50
+                                                          --------------- ---- ------
+                                                                     277  /  5  55.40
+
+
+
+
+	Tomasz Kocik 100.00 Gorzów Wielkopolski
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Paweł          Subocz                 99.00 -  187: 429   49
+    2    12 Marcin         Smola                 100.00 -  181: 247   50
+    3     7 Leszek         Nowak                 107.00 -  186: 417   57
+                                                          --------------- ---- ------
+                                                                     156  /  3  52.00
+
+
+
+
+	Damian Korsak 100.00 Gorzów Wlielkopolski     
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Tomasz         Zwoliński             134.00 -  314: 395   84
+    2     7 Bogusław       Nowak                 100.00 +  376: 200  150
+    3     9 Tomasz         Łagutko               100.00 +  415: 169  150
+    4     7 Kazimierz      Merklejn              100.00 -  239: 269   50
+    5     8 Edmund         Łagutko               100.00 +  339: 202  150
+                                                          --------------- ---- ------
+                                                                     584  /  5 116.80
+
+
+
+
+	Anna Kołaska 100.00 Gorzów Wielkopolski
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Leszek         Nowak                 107.00 -  189: 441   57
+    2    10 Michał         Łagutko               100.00 +  307: 104  150
+    3     8 Walenty        Siemaszko             101.00 -  244: 379   51
+    4    10 Tomasz         Łagutko               100.00 +  326: 135  150
+    5     5 Paweł          Subocz                 99.00 -  211: 420   49
+                                                          --------------- ---- ------
+                                                                     457  /  5  91.40
+
+
+
+
+	Kazimierz Merklejn 100.00 Szczecin                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Małgorzata     Kania                 103.00 -  270: 333   53
+    2     9 Małgorzata     Kocik                 100.00 +  369:  97  150
+    3     4 Tomasz         Szymański             115.00 -  369: 389   65
+    4     7 Damian         Korsak                100.00 +  269: 239  150
+    5     9 Marcin         Smola                 100.00 +  340: 216  150
+                                                          --------------- ---- ------
+                                                                     568  /  5 113.60
+
+
+
+
+	Adam Nowak 100.00 ?                        
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Paweł          Stanosz               133.00 -  137: 508   83
+    2    11 Tomasz         Łagutko               100.00 -  151: 250   50
+    3    10 Zbigniew       Wietecki              100.00 -  192: 309   50
+    4    11 Małgorzata     Kocik                 100.00 +  285:  85  150
+    5    10 Bogusław       Nowak                 100.00 +  246: 196  150
+                                                          --------------- ---- ------
+                                                                     483  /  5  96.60
+
+
+
+
+	Bogusław Nowak 100.00 Gorzów Wielkopolski
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Maciej         Czupryniak            106.00 -  182: 392   56
+    2     7 Damian         Korsak                100.00 -  200: 376   50
+    3    11 Małgorzata     Kocik                 100.00 +  336: 122  150
+    4     9 Edmund         Łagutko               100.00 -  208: 227   50
+    5    10 Adam           Nowak                 100.00 -  196: 246   50
+                                                          --------------- ---- ------
+                                                                     356  /  5  71.20
+
+
+
+
+	Marcin Smola 100.00 ?                        
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Tomasz         Szymański             115.00 -  131: 528   65
+    2    12 Tomasz         Kocik                 100.00 +  247: 181  150
+    3    12 Michał         Łagutko               100.00 +  281: 179  150
+    4     6 Maciej         Czupryniak            106.00 -  221: 307   56
+    5     9 Kazimierz      Merklejn              100.00 -  216: 340   50
+                                                          --------------- ---- ------
+                                                                     471  /  5  94.20
+
+
+
+
+	Zbigniew Wietecki 100.00 Gorzów Wielkopolski          
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Walenty        Siemaszko             101.00 -  181: 384   51
+    2     8 Edmund         Łagutko               100.00 -  239: 253   50
+    3    10 Adam           Nowak                 100.00 +  309: 192  150
+    4     8 Małgorzata     Kania                 103.00 -  198: 355   53
+    5    11 Tomasz         Łagutko               100.00 +  296: 186  150
+                                                          --------------- ---- ------
+                                                                     454  /  5  90.80
+
+
+
+
+	Edmund Łagutko 100.00 Ośno Lubuskie            
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Jacek          Gigoła                112.00 -  294: 376   62
+    2     8 Zbigniew       Wietecki              100.00 +  253: 239  150
+    3     6 Maciej         Czupryniak            106.00 -  201: 353   56
+    4     9 Bogusław       Nowak                 100.00 +  227: 208  150
+    5     8 Damian         Korsak                100.00 -  202: 339   50
+                                                          --------------- ---- ------
+                                                                     468  /  5  93.60
+
+
+
+
+	Michał Łagutko 100.00 Ośno Lubuskie            
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Zdzisław       Szota                 128.00 -  154: 447   78
+    2    10 Anna           Kołaska               100.00 -  104: 307   50
+    3    12 Marcin         Smola                 100.00 -  179: 281   50
+    4    12 Andrzej        Lożyński              107.00 -  157: 431   57
+    5    12 Małgorzata     Kocik                 100.00 +  197: 194  150
+                                                          --------------- ---- ------
+                                                                     385  /  5  77.00
+
+
+
+
+	Tomasz Łagutko 100.00 Ośno Lubuskie            
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    12 Stenia         Zwolińska              93.00 -  188: 309   43
+    2    11 Adam           Nowak                 100.00 +  250: 151  150
+    3     9 Damian         Korsak                100.00 -  169: 415   50
+    4    10 Anna           Kołaska               100.00 -  135: 326   50
+    5    11 Zbigniew       Wietecki              100.00 -  186: 296   50
+                                                          --------------- ---- ------
+                                                                     343  /  5  68.60
+
+
+
+
+	Paweł Subocz  99.00 Szczecin                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Tomasz         Kocik                 100.00 +  429: 187  150
+    2     5 Małgorzata     Kania                 103.00 +  406: 270  153
+    3     2 Jacek          Gigoła                112.00 -  320: 334   62
+    4     5 Stenia         Zwolińska              93.00 -  313: 351   43
+    5     5 Anna           Kołaska               100.00 +  420: 211  150
+                                                          --------------- ---- ------
+                                                                     558  /  5 111.60
+
+
+
+
+	Stenia Zwolińska  93.00 Warszawa
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    12 Tomasz         Łagutko               100.00 +  309: 188  150
+    2     6 Robert         Duczemiński           127.00 +  381: 365  177
+    3     3 Zdzisław       Szota                 128.00 -  270: 396   78
+    4     5 Paweł          Subocz                 99.00 +  351: 313  149
+    5     2 Paweł          Stanosz               133.00 -  312: 394   83
+                                                          --------------- ---- ------
+                                                                     637  /  5 127.40
+
+
+</pre></div><div id='p_rundy' class='page'><pre></pre></div><div id='p_ranking' class='page'><pre></pre></div><div id='p_przebieg' class='page'>
+
+    </div><div style="clear:both;width:100%;" class="alignright">
+
+<script>
+<!--
+if ((document.getElementById("content").offsetHeight + document.getElementById("top").offsetHeight) > screen.height)
+    document.write("<br /><br /><a href='#top'>do góry</a>");
+-->
+</script>
+
+</div>
+</div>
+
+<div id="bottom">
+<ul id="bottomlinks">
+<div class='onleft'>
+ Osób on-line: 53</div>
+    <li><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+    <li><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+    <li><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+    <li><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+    <li><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+    <li><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+</ul>
+    SCRABBLE® jest zastrzeżonym znakiem towarowym J.W. Spears &amp; Sons&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://www.pfs.org.pl/prawaautorskie.php">© Prawa autorskie</a>
+</div>
+</body>
+</html>

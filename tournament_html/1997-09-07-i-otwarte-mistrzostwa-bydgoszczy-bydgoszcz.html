@@ -1,0 +1,907 @@
+
+<html>
+<head>
+    <title>Polska Federacja Scrabble :: I Otwarte Mistrzostwa Bydgoszczy</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="files/img/favicon.ico" />
+    <link rel="stylesheet" href="files/css/style.css" type="text/css" />
+	<link rel="stylesheet" href="files/css/style-index.css" type="text/css" />
+    <!--[if IE]><link rel="stylesheet" type="text/css" href="files/css/styleie.css" /><![endif]-->
+    <!--[if lt IE 7.]><script defer type="text/javascript" src="files/js/pngfix.js"></script><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="files/js/minmax.js"></script><![endif]-->
+    <script type="text/javascript" src="files/js/jquery.js"></script>
+    <script type="text/javascript" src="files/js/jquery-bp.js"></script>
+    <script type="text/javascript" src="files/js/java.js"></script>
+    <script>jSubmenu ("turnieje","kalendarz");jKalendarz();</script>
+    <script>
+    var url, page;
+
+    page = 'info';
+    url  = document.location.toString();
+
+    if (url.match ('#')) {
+      page = url.split ('#')[1];
+      if ($.inArray (page, [ 'info', 'relacja', 'klasyfikacja', 'hh', 'rundy', 'ranking', 'przebieg' ]) == -1)
+        page = 'info';
+    }
+
+    $(document).ready(function(){
+        $('a#listaucz').bind('click', function(event){
+            $('div#lista').toggle();
+            event.preventDefault();
+        }).toggle(function() { $(this).text('schowaj listę uczestników'); }, function() { $(this).text("pokaż listę uczestników"); });
+        $('div#lista table tr:last td').css({"border-bottom" : "none"});
+
+        $("a.przycisk").click (function (e) {
+            if ($(this).attr ('href') !== '#')
+                return true;
+
+            e.preventDefault ();
+
+            id       = this.id;
+            this.id += 'tmp';
+            window.location.hash = id;
+            this.id  = id;
+
+            $(".page").hide ();
+            $(".page#p_" + id).show ();
+
+            $("a.przycisk").removeClass ('active');
+            $(this).addClass ('active');
+
+            return false;
+        });
+
+        $("a.przycisk#" + page).click ();
+        $('html, body').animate ({ scrollTop: 0 }, 0);
+    });
+    </script>
+  <style type="text/css">
+    .page {
+        display: none;
+    }
+    #szczegoly{
+        width: 100%;
+        border-spacing: 0;
+        margin-top: 30px;
+        text-align: left;
+        font-size: inherit;
+    }
+    #szczegoly td{
+        padding: 10px 20px 10px 0;
+        vertical-align: top;
+    }
+    #szczegoly td:first-child{
+        font-weight: bold;
+        width: 160px;
+    }
+    div#lista{
+        display:none;
+        margin-top: 15px;
+    }
+    div#lista table{
+        margin-top: 10px;
+        text-align: left;
+        font-size: inherit;
+    }
+    div#lista table td{
+        padding: 3px 8px;
+        border-bottom: 1px dashed #1576AE;
+    }
+    div#lista table th{
+        padding: 0px 5px 10px 5px;
+    }
+    div#lista table td.ptaszek{
+        text-align: center;
+        background: url('files/img/tick.png') no-repeat center center;
+    }
+    div#lista table th{
+        white-space: nowrap;
+        width: auto;
+    }
+    div#lista table td:first-child, div#lista table th:first-child{
+        text-align:right;
+        width: auto;
+    }
+    </style>
+</head>
+
+<body>
+
+<script type="text/javascript">setMenu();</script>
+
+<div id="top" onclick="location.href='https://www.pfs.org.pl'">
+</div>
+<div id="menu">
+
+    <div id="m_glowna">
+        <div class="tab"><a href="https://www.pfs.org.pl/index.php"></a></div>
+
+        <ul>
+            <li class="sublink" id="aktualnosci"><a href="https://www.pfs.org.pl">Aktualności</a></li>
+            <li class="sublink" id="nowy"><a href="https://www.pfs.org.pl/dlanowych.php">Jestem tu nowy</a></li>
+            <li class="sublink" id="anagramator"><a href="https://www.pfs.org.pl/osps_online.php?main=1">Słownik online</a></li>
+            <li class="sublink" id="siodemka"><a href="https://www.pfs.org.pl/siodemka.php?main=1">Siódemka tygodnia</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+            <li class="sublink" id="dlasponsorow"><a href="https://www.pfs.org.pl/dlasponsorow.php">Dla sponsorów</a></li>
+            <li class="sublink" id="kontakt"><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+        </ul>
+    </div>
+    <div id="m_turnieje">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kalendarz.php"></a></div>
+        <ul>
+            <li class="sublink" id="kalendarz"><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+            <li class="sublink" id="regulaminy"><a href="https://www.pfs.org.pl/regulaminy.php">Regulaminy</a></li>
+            <li class="sublink" id="sedziowie"><a href="https://www.pfs.org.pl/sedziowie.php">Sędziowie</a></li>
+            <li class="sublink" id="gp"><a href="https://www.pfs.org.pl/gp2026.php">Grand Prix</a></li>
+<!--            <li class="sublink" id="mr"><a href="https://www.pfs.org.pl/mr2020.php">Mistrzostwa Regionów</a></li>-->
+            <li class="sublink" id="archiwum"><a href="https://www.pfs.org.pl/archiwum.php">Historia</a></li>
+            <li class="sublink" id="galeria"><a href="https://www.pfs.org.pl/galeria.php">Zdjęcia</a></li>
+            <li class="sublink" id="rekordy"><a href="https://www.pfs.org.pl/rekordy.php">Rekordy</a></li>
+        </ul>
+    </div>
+    <div id="m_pfs">
+        <div  class="tab"><a href="https://www.pfs.org.pl/opfs.php"></a></div>
+        <ul>
+            <li class="sublink" id="opfs"><a href="https://www.pfs.org.pl/opfs.php">O PFS</a></li>
+            <li class="sublink" id="jakprzystapic"><a href="https://www.pfs.org.pl/jakprzystapic.php">Jak przystąpić</a></li>
+            <li class="sublink" id="dlaczlonkow"><a href="https://www.pfs.org.pl/dlaczlonkow.php">Dla członków</a></li>
+            <li class="sublink" id="wladze"><a href="https://www.pfs.org.pl/wladze.php">Władze</a></li>
+            <li class="sublink" id="komisje"><a href="https://www.pfs.org.pl/komisje.php">Komisje</a></li>
+            <li class="sublink" id="statut"><a href="https://www.pfs.org.pl/statut.php">Statut</a></li>
+            <li class="sublink" id="uchwaly"><a href="https://www.pfs.org.pl/uchwaly.php">Uchwały</a></li>
+            <li class="sublink" id="honorowi"><a href="https://www.pfs.org.pl/honorowi.php">Honorowi członkowie</a></li>
+            <li class="sublink" id="finanse"><a href="https://www.pfs.org.pl/finanse.php">Finanse</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabble">
+        <div  class="tab"><a href="https://www.pfs.org.pl/osps_online.php?desktop=1"></a></div>
+        <ul>
+            <li class="sublink" id="osps_online"><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+            <li class="sublink" id="zds"><a href="https://www.pfs.org.pl/zds2.php">ZDS</a></li>
+            <li class="sublink" id="osps"><a href="https://www.pfs.org.pl/osps.php">OSPS</a></li>
+            <li class="sublink" id="aktualizacje"><a href="https://www.pfs.org.pl/osps_aktualizacje.php">Aktualizacje</a></li>
+            <li class="sublink" id="dwojki"><a href="https://www.pfs.org.pl/dwojki.php">2-literówki</a></li>
+            <li class="sublink" id="trojki"><a href="https://www.pfs.org.pl/trojki.php">3-literówki</a></li>
+            <li class="sublink" id="siodemkat"><a href="https://www.pfs.org.pl/siodemka.php">Siódemka tygodnia</a></li>
+            <li class="sublink" id="slowneroznosci"><a href="https://www.pfs.org.pl/slowneroznosci.php">Słowne różności</a></li>
+        </ul>
+    </div>
+    <div id="m_ranking">
+        <div  class="tab"><a href="https://www.pfs.org.pl/ranking.php"></a></div>
+        <ul>
+            <li class="sublink" id="aktranking"><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+            <li class="sublink" id="medale"><a href="https://www.pfs.org.pl/medale.php">Klasyfikacja medalowa</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabblisci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/mistrzowiepolski.php"></a></div>
+        <ul>
+            <li class="sublink" id="mistrzowiepolski"><a href="https://www.pfs.org.pl/mistrzowiepolski.php">Mistrzowie Polski</a></li>
+            <li class="sublink" id="zdobywcypp"><a href="https://www.pfs.org.pl/zdobywcypp.php">Zdobywcy Pucharu Polski</a></li>
+            <li class="sublink" id="zwyciezcygp"><a href="https://www.pfs.org.pl/zwyciezcygp.php">Zwycięzcy Grand Prix</a></li>
+            <li class="sublink" id="liderzyrankingu"><a href="https://www.pfs.org.pl/liderzyrankingu.php">Liderzy rankingu</a></li>
+            <li class="sublink" id="zwyciezcylemans"><a href="https://www.pfs.org.pl/zwyciezcylemans.php">Zwycięzcy 24h Le Mans</a></li>
+            <li class="sublink" id="zwyciezcykmp"><a href="https://www.pfs.org.pl/zwyciezcykmp.php">KMP</a>
+        </ul>
+    </div>
+    <div id="m_kluby">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kluby.php"></a></div>
+        <ul>
+            <li class="sublink" id="rejestrklubow"><a href="https://www.pfs.org.pl/kluby.php">Rejestr klubów</a></li>
+            <li class="sublink" id="kmp"><a href="https://www.pfs.org.pl/kmp.php">KMP</a></li>
+            <li class="sublink" id="wiescizklubow"><a href="https://www.pfs.org.pl/wiescizklubow.php">Wieści z klubów</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/about.php">Statystyki klubowe</a></li>
+        </ul>
+    </div>
+    <div id="m_roznosci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/historia.php"></a></div>
+        <ul>
+            <li class="sublink" id="historia"><a href="https://www.pfs.org.pl/historia.php">Historia</a></li>
+            <li class="sublink" id="odmiany"><a href="https://www.pfs.org.pl/odmiany.php">Odmiany</a></li>
+            <li class="sublink" id="anegdoty"><a href="https://www.pfs.org.pl/anegdoty.php">Anegdoty</a></li>
+            <li class="sublink" id="scrabblealia"><a href="https://www.pfs.org.pl/scrabblealia.php">Scrabblealia</a></li>
+            <li class="sublink" id="scrabblenet"><a href="https://www.pfs.org.pl/scrabblenet.php">Scrabble w internecie</a></li>
+            <li class="sublink" id="programy"><a href="https://www.pfs.org.pl/programy.php">Programy</a></li>
+            <li class="sublink" id="download"><a href="https://www.pfs.org.pl/download.php">Do pobrania</a></li>
+            <li class="sublink" id="ksiazki"><a href="https://www.pfs.org.pl/ksiazki.php">Książki</a></li>
+            <li class="sublink" id="slowniczek"><a href="https://www.pfs.org.pl/slowniczek.php">Słowniczek</a></li>
+        </ul>
+    </div>
+    <div id="m_english">
+        <div  class="tab"><a href="https://www.pfs.org.pl/english.php"></a></div>
+        <ul>
+            <li class="sublink" id="about"><a href="https://www.pfs.org.pl/english.php">About Polish Scrabble</a></li>
+            <li class="sublink" id="news"><a href="https://www.pfs.org.pl/en_news.php">News</a></li>
+            <li class="sublink" id="bartek"><a href="https://www.pfs.org.pl/bartek.php">Bartek w Johor Bahru</a></li>
+            <li class="sublink" id="franko"><a href="https://www.pfs.org.pl/franko.php">Scrabble frankofońskie</a></li>
+        </ul>
+    </div>
+</div>
+
+<div id="submenu"></div>
+<div id="content">
+<div id='nextTours'>
+		<div class='nextTour' onclick='location.href="turniej.php?id=393"'>
+			<div class='karteczka small1'>
+				<span class='miasto'>Koszalin</span><span class='dzien'><span class='big'>24</span><br />sierpnia</span></div>
+			<div class='kartka big1'>
+				<span class='miasto'>Koszalin</span>
+				<span class='dzien'><b>24 sierpnia</b></span>
+				<span class='nazwaturnieju'>II Otwarte Mistrzostwa Pomorza</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=392"'>
+			<div class='karteczka small2'>
+				<span class='miasto'>Bydgoszcz</span><span class='dzien'><span class='big'> 7</span><br />września</span></div>
+			<div class='kartka big2'>
+				<span class='miasto'>Bydgoszcz</span>
+				<span class='dzien'><b> 7 września</b></span>
+				<span class='nazwaturnieju'>I Otwarte Mistrzostwa Bydgoszczy</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=391"'>
+			<div class='karteczka small3'>
+				<span class='miasto'>Rzeszów</span><span class='dzien'><span class='big'>14</span><br />września</span></div>
+			<div class='kartka big3'>
+				<span class='miasto'>Rzeszów</span>
+				<span class='dzien'><b>14 września</b></span>
+				<span class='nazwaturnieju'>I Otwarte Mistrzostwa Rzeszowa</span></div>
+		</div></div><div class='naglowekrelacji'><span class='tytul'>I Otwarte Mistrzostwa Bydgoszczy<span class='nazwa'>07 września 1997 —  I Otwarte Mistrzostwa Bydgoszczy</span></span><a href='#' id='info' class='przycisk'>Informacje</a><a href='#' id='relacja' class='przycisk'>Relacja</a><a href='#' id='klasyfikacja' class='przycisk'>Wyniki</a><a href='#' id='hh' class='przycisk'>HH</a><div class='galleries'><img src='files/img/gallery.png' style='visibility:hidden;' alt='galeria' /></div></div><h1 style='color:black; margin-top:0px; margin-bottom:30px; padding: 0px'>I Otwarte Mistrzostwa Bydgoszczy<span>Bydgoszcz, 07 września 1997</span></h1><div id='p_relacja' class='page'><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><div class='relacja' style='clear:both;'><div><pre>
+ 1. Tomasz Zwoliński (Warszawa)
+ 2. Małgorzata Kania (Milanówek)
+ 3. Michał Derlacki (Warszawa)
+ 4. Mariusz Orzeł (Nowe Miasto Lubawskie)
+ 5. Marek Antosik (Nowy Dwór Mazowiecki)
+ 6. Marek Roszak (Tczew)
+ 7. Maciek Czupryniak (Milanówek)
+ 8. Zdzisław Szota (Warszawa)
+ 9. Paweł Stanosz (Warszawa)
+ 10. Wojciech Usakiewicz (Warszawa) 
+
+37 uczestników, 5 rund 
+</pre></div><div class='autor'></div></div><div style='clear:both;'></div></div><div id='p_info' class='page'><br><p align='center'></p><br><br><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><table id='szczegoly' class='ramkadolna'></table><br /><br /></div><div id='p_klasyfikacja' class='page'><pre>Wyniki turnieju I Otwarte Mistrzostwa Bydgoszczy
+
+Lp. Imię            Nazwisko             Miasto               Ranking  Duże pkt Małe pkt Skalpy   Różn. MP
+--- --------------- -------------------- -------------------- -------- -------- -------- -------- --------
+  1 Tomasz          Zwoliński            Skierdy                135.00      5.0     2173      836      607
+  2 Małgorzata      Kania                Milanówek              113.00      4.0     2206      766      290
+  3 Michał          Derlacki             Warszawa               136.00      4.0     1989      688      336
+  4 Mariusz         Orzeł                Nowe Miasto Lubawskie   123.00      4.0     1914      710      140
+  5 Marek           Antosik              Nowy Dwór Mazowiecki   106.00      4.0     1819      700      185
+  6 Marek           Roszak               Poznań                 119.00      4.0     1760      698      -50
+  7 Maciej          Czupryniak           Milanówek              117.00      3.0     2131      617      569
+  8 Zdzisław        Szota                Warszawa               128.00      3.0     2068      619      259
+  9 Paweł           Stanosz              Warszawa               138.00      3.0     2014      604      389
+ 10 Wojciech        Usakiewicz           Warszawa               118.00      3.0     1873      626      169
+ 11 Kazimierz       Merklejn             Szczecin               106.00      3.0     1813      584      191
+ 12 Mariusz         Kubicki              Inowrocław             108.00      3.0     1753      570      142
+ 13 Janusz          Grodzki              Łódź                   101.00      3.0     1738      574      155
+ 14 Kazimierz.J     Merklejn             Szczecin               102.00      3.0     1661      544       77
+ 15 Walenty         Siemaszko            Lipiany                106.00      3.0     1647      545      186
+ 16 Jolanta         Hoffmann             Kraków                 100.00      3.0     1593      545      182
+ 17 Witold          Kurowski             Łódź                    96.00      3.0     1504      588       46
+ 18 Wojciech        Gołęcki              Inowrocław             100.00      3.0     1490      556      194
+ 19 Jacek           Nowakowski           Bydgoszcz              100.00      3.0     1446      599     -111
+ 20 Krzysztof       Kurowski             Łódź                    94.00      3.0     1375      582      -22
+ 21 Andrzej         Kwiatkowski          Warszawa                91.00      2.0     1712      482       50
+ 22 Andrzej         Lożyński             Piastów                108.00      2.0     1639      505      -86
+ 23 Gabriela        Hofman               Łódź                    93.00      2.0     1598      488      -49
+ 24 Magdalena       Merklejn             Szczecin                95.00      2.0     1594      489     -109
+ 25 Grzegorz        Kulawiak             Warszawa               106.00      2.0     1577      480     -173
+ 26 Mirosław        Przepiórkowski       Inowrocław             100.00      2.0     1527      466      -68
+ 27 Aleksandra      Merklejn-Kaczanowska Szczecin               100.00      2.0     1511      464      -53
+ 28 Lucjan          Boroś                Gdańsk                 100.00      2.0     1438      460      -93
+ 29 Bogdan          Fiedoruk             Gdynia                 100.00      2.0     1396      478      -92
+ 30 Krzysztof       Usakiewicz           Warszawa               100.00      2.0     1317      456     -187
+ 31 Joanna          Przepiórkowska       Inowrocław             100.00      2.0     1286      488     -300
+ 32 Halina          Roszak               Poznań                 108.00      1.0     1691      401      -92
+ 33 Andrzej         Chylewski            Poznań                 100.00      1.0     1506      358     -145
+ 34 Ryszard         Prange               Poznań                 100.00      1.0     1476      361      -22
+ 35 Agnieszka       Wiśniewska           Inowrocław             100.00      1.0     1290      356     -218
+ 36 Adam            Kotwica              Gdańsk                 100.00      1.0     1282      361     -393
+ 37 Andrzej         Serafinowicz         Bydgoszcz              100.00      1.0     1147      340     -637
+ 38 Danuta          Serafinowicz         Bydgoszcz              100.00      0.0      791      251    -1267
+</pre></div><div id='p_hh' class='page'><pre>Wyniki poszczególnych graczy w turnieju I Otwarte Mistrzostwa Bydgoszczy
+
+
+
+	Paweł Stanosz 138.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Magdalena      Merklejn               95.00 +  423: 266  145
+    2     3 Tomasz         Zwoliński             135.00 -  370: 396   85
+    3     6 Zdzisław       Szota                 128.00 -  406: 445   78
+    4    10 Joanna         Przepiórkowska        100.00 +  498: 223  150
+    5     6 Witold         Kurowski               96.00 +  317: 295  146
+                                                          --------------- ---- ------
+                                                                     604  /  5 120.80
+
+
+
+
+	Michał Derlacki 136.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Krzysztof      Kurowski               94.00 +  341: 238  144
+    2     6 Halina         Roszak                108.00 +  423: 342  158
+    3     3 Marek          Antosik               106.00 +  478: 280  156
+    4     1 Małgorzata     Kania                 113.00 -  346: 415   63
+    5     2 Maciej         Czupryniak            117.00 +  401: 378  167
+                                                          --------------- ---- ------
+                                                                     688  /  5 137.60
+
+
+
+
+	Tomasz Zwoliński 135.00 Skierdy         
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Gabriela       Hofman                 93.00 +  425: 277  143
+    2     3 Paweł          Stanosz               138.00 +  396: 370  188
+    3     2 Mariusz        Orzeł                 123.00 +  417: 337  173
+    4     2 Marek          Roszak                119.00 +  470: 312  169
+    5     1 Małgorzata     Kania                 113.00 +  465: 270  163
+                                                          --------------- ---- ------
+                                                                     836  /  5 167.20
+
+
+
+
+	Zdzisław Szota 128.00 Warszawa               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Bogdan         Fiedoruk              100.00 +  469: 215  150
+    2     1 Małgorzata     Kania                 113.00 -  421: 545   63
+    3     6 Paweł          Stanosz               138.00 +  445: 406  188
+    4     4 Wojciech       Usakiewicz            118.00 -  258: 356   68
+    5     7 Jacek          Nowakowski            100.00 +  475: 287  150
+                                                          --------------- ---- ------
+                                                                     619  /  5 123.80
+
+
+
+
+	Mariusz Orzeł 123.00 Nowe Miasto Lubawskie       
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Andrzej        Kwiatkowski            91.00 +  390: 299  141
+    2     4 Andrzej        Lożyński              108.00 +  376: 345  158
+    3     2 Tomasz         Zwoliński             135.00 -  337: 417   85
+    4     6 Mariusz        Kubicki               108.00 +  413: 323  158
+    5     3 Wojciech       Usakiewicz            118.00 +  398: 390  168
+                                                          --------------- ---- ------
+                                                                     710  /  5 142.00
+
+
+
+
+	Marek Roszak 119.00 Poznań                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Lucjan         Boroś                 100.00 +  316: 306  150
+    2     9 Grzegorz       Kulawiak              106.00 +  387: 369  156
+    3     4 Kazimierz      Merklejn              106.00 +  407: 364  156
+    4     2 Tomasz         Zwoliński             135.00 -  312: 470   85
+    5     4 Janusz         Grodzki               101.00 +  338: 301  151
+                                                          --------------- ---- ------
+                                                                     698  /  5 139.60
+
+
+
+
+	Wojciech Usakiewicz 118.00 Warszawa               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Ryszard        Prange                100.00 +  428: 198  150
+    2     2 Maciej         Czupryniak            117.00 -  330: 561   67
+    3     7 Andrzej        Lożyński              108.00 +  369: 289  158
+    4     4 Zdzisław       Szota                 128.00 +  356: 258  178
+    5     3 Mariusz        Orzeł                 123.00 -  390: 398   73
+                                                          --------------- ---- ------
+                                                                     626  /  5 125.20
+
+
+
+
+	Maciej Czupryniak 117.00 Milanówek                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Adam           Kotwica               100.00 +  460: 233  150
+    2     2 Wojciech       Usakiewicz            118.00 +  561: 330  168
+    3     1 Małgorzata     Kania                 113.00 -  358: 402   63
+    4     3 Jacek          Nowakowski            100.00 +  374: 196  150
+    5     2 Michał         Derlacki              136.00 -  378: 401   86
+                                                          --------------- ---- ------
+                                                                     617  /  5 123.40
+
+
+
+
+	Małgorzata Kania 113.00 Milanówek                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Andrzej        Chylewski             100.00 +  574: 326  150
+    2     1 Zdzisław       Szota                 128.00 +  545: 421  178
+    3     1 Maciej         Czupryniak            117.00 +  402: 358  167
+    4     1 Michał         Derlacki              136.00 +  415: 346  186
+    5     1 Tomasz         Zwoliński             135.00 -  270: 465   85
+                                                          --------------- ---- ------
+                                                                     766  /  5 153.20
+
+
+
+
+	Mariusz Kubicki 108.00 Inowrocław               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Jacek          Nowakowski            100.00 -  260: 280   50
+    2    13 Mirosław       Przepiórkowski        100.00 +  415: 349  150
+    3    10 Grzegorz       Kulawiak              106.00 +  395: 262  156
+    4     6 Mariusz        Orzeł                 123.00 -  323: 413   73
+    5     8 Andrzej        Kwiatkowski            91.00 +  360: 307  141
+                                                          --------------- ---- ------
+                                                                     570  /  5 114.00
+
+
+
+
+	Andrzej Lożyński 108.00 Piastów                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Aleksandra     Merklejn-Kaczanowska  100.00 +  402: 234  150
+    2     4 Mariusz        Orzeł                 123.00 -  345: 376   73
+    3     7 Wojciech       Usakiewicz            118.00 -  289: 369   68
+    4    11 Halina         Roszak                108.00 +  346: 315  158
+    5     9 Kazimierz      Merklejn              106.00 -  257: 431   56
+                                                          --------------- ---- ------
+                                                                     505  /  5 101.00
+
+
+
+
+	Halina Roszak 108.00 Poznań                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    12 Mirosław       Przepiórkowski        100.00 +  339: 264  150
+    2     6 Michał         Derlacki              136.00 -  342: 423   86
+    3     9 Janusz         Grodzki               101.00 -  392: 419   51
+    4    11 Andrzej        Lożyński              108.00 -  315: 346   58
+    5    14 Grzegorz       Kulawiak              106.00 -  303: 331   56
+                                                          --------------- ---- ------
+                                                                     401  /  5  80.20
+
+
+
+
+	Marek Antosik 106.00 Nowy Dwór Mazowiecki          
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    15 Agnieszka      Wiśniewska            100.00 +  336: 236  150
+    2     7 Kazimierz.J    Merklejn              102.00 +  423: 319  152
+    3     3 Michał         Derlacki              136.00 -  280: 478   86
+    4     7 Kazimierz      Merklejn              106.00 +  373: 317  156
+    5     5 Walenty        Siemaszko             106.00 +  407: 284  156
+                                                          --------------- ---- ------
+                                                                     700  /  5 140.00
+
+
+
+
+	Grzegorz Kulawiak 106.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    13 Wojciech       Gołęcki               100.00 +  291: 254  150
+    2     9 Marek          Roszak                119.00 -  369: 387   69
+    3    10 Mariusz        Kubicki               108.00 -  262: 395   58
+    4    14 Magdalena      Merklejn               95.00 -  324: 411   45
+    5    14 Halina         Roszak                108.00 +  331: 303  158
+                                                          --------------- ---- ------
+                                                                     480  /  5  96.00
+
+
+
+
+	Kazimierz Merklejn 106.00 Szczecin                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    14 Joanna         Przepiórkowska        100.00 +  345: 257  150
+    2     5 Janusz         Grodzki               101.00 +  356: 328  151
+    3     4 Marek          Roszak                119.00 -  364: 407   69
+    4     7 Marek          Antosik               106.00 -  317: 373   56
+    5     9 Andrzej        Lożyński              108.00 +  431: 257  158
+                                                          --------------- ---- ------
+                                                                     584  /  5 116.80
+
+
+
+
+	Walenty Siemaszko 106.00 Lipiany                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    16 Krzysztof      Usakiewicz            100.00 +  324: 224  150
+    2     8 Witold         Kurowski               96.00 -  252: 303   46
+    3    12 Aleksandra     Merklejn-Kaczanowska  100.00 +  439: 242  150
+    4     8 Gabriela       Hofman                 93.00 +  348: 285  143
+    5     5 Marek          Antosik               106.00 -  284: 407   56
+                                                          --------------- ---- ------
+                                                                     545  /  5 109.00
+
+
+
+
+	Kazimierz.J Merklejn 102.00 Szczecin               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    17 Jolanta        Hoffmann              100.00 +  332: 214  150
+    2     7 Marek          Antosik               106.00 -  319: 423   56
+    3    11 Gabriela       Hofman                 93.00 -  331: 381   43
+    4    12 Ryszard        Prange                100.00 +  320: 240  150
+    5    11 Magdalena      Merklejn               95.00 +  359: 326  145
+                                                          --------------- ---- ------
+                                                                     544  /  5 108.80
+
+
+
+
+	Janusz Grodzki 101.00 Łódź                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    18 Danuta         Serafinowicz          100.00 +  348: 205  150
+    2     5 Kazimierz      Merklejn              106.00 -  328: 356   56
+    3     9 Halina         Roszak                108.00 +  419: 392  158
+    4     5 Andrzej        Kwiatkowski            91.00 +  342: 292  141
+    5     4 Marek          Roszak                119.00 -  301: 338   69
+                                                          --------------- ---- ------
+                                                                     574  /  5 114.80
+
+
+
+
+	Lucjan Boroś 100.00 Gdańsk                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Marek          Roszak                119.00 -  306: 316   69
+    2    11 Andrzej        Kwiatkowski            91.00 -  293: 407   41
+    3    15 Mirosław       Przepiórkowski        100.00 -  213: 351   50
+    4    17 Bogdan         Fiedoruk              100.00 +  304: 233  150
+    5    16 Adam           Kotwica               100.00 +  322: 224  150
+                                                          --------------- ---- ------
+                                                                     460  /  5  92.00
+
+
+
+
+	Andrzej Chylewski 100.00 Poznań                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Małgorzata     Kania                 113.00 -  326: 574   63
+    2    10 Jacek          Nowakowski            100.00 -  210: 334   50
+    3    16 Magdalena      Merklejn               95.00 -  230: 351   45
+    4    18 Agnieszka      Wiśniewska            100.00 -  238: 308   50
+    5    19 Danuta         Serafinowicz          100.00 +  502:  84  150
+                                                          --------------- ---- ------
+                                                                     358  /  5  71.60
+
+
+
+
+	Bogdan Fiedoruk 100.00 Gdynia                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Zdzisław       Szota                 128.00 -  215: 469   78
+    2    18 Jolanta        Hoffmann              100.00 +  316: 259  150
+    3    14 Joanna         Przepiórkowska        100.00 -  229: 290   50
+    4    17 Lucjan         Boroś                 100.00 -  233: 304   50
+    5    18 Andrzej        Serafinowicz          100.00 +  403: 166  150
+                                                          --------------- ---- ------
+                                                                     478  /  5  95.60
+
+
+
+
+	Wojciech Gołęcki 100.00 Inowrocław               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    13 Grzegorz       Kulawiak              106.00 -  254: 291   56
+    2    14 Joanna         Przepiórkowska        100.00 -  249: 253   50
+    3    17 Agnieszka      Wiśniewska            100.00 +  279: 247  150
+    4    16 Adam           Kotwica               100.00 +  391: 260  150
+    5    12 Aleksandra     Merklejn-Kaczanowska  100.00 +  317: 245  150
+                                                          --------------- ---- ------
+                                                                     556  /  5 111.20
+
+
+
+
+	Jolanta Hoffmann 100.00 Kraków                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    17 Kazimierz.J    Merklejn              102.00 -  214: 332   52
+    2    18 Bogdan         Fiedoruk              100.00 -  259: 316   50
+    3    18 Krzysztof      Usakiewicz            100.00 +  452: 203  150
+    4    13 Mirosław       Przepiórkowski        100.00 +  365: 272  150
+    5    10 Gabriela       Hofman                 93.00 +  303: 288  143
+                                                          --------------- ---- ------
+                                                                     545  /  5 109.00
+
+
+
+
+	Adam Kotwica 100.00 Gdańsk                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Maciej         Czupryniak            117.00 -  233: 460   67
+    2    17 Krzysztof      Usakiewicz            100.00 +  325: 245  150
+    3    13 Krzysztof      Kurowski               94.00 -  240: 257   44
+    4    16 Wojciech       Gołęcki               100.00 -  260: 391   50
+    5    16 Lucjan         Boroś                 100.00 -  224: 322   50
+                                                          --------------- ---- ------
+                                                                     361  /  5  72.20
+
+
+
+
+	Aleksandra Merklejn-Kaczanowska 100.00 Szczecin                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Andrzej        Lożyński              108.00 -  234: 402   58
+    2    16 Agnieszka      Wiśniewska            100.00 +  353: 252  150
+    3    12 Walenty        Siemaszko             106.00 -  242: 439   56
+    4    15 Andrzej        Serafinowicz          100.00 +  437: 154  150
+    5    12 Wojciech       Gołęcki               100.00 -  245: 317   50
+                                                          --------------- ---- ------
+                                                                     464  /  5  92.80
+
+
+
+
+	Jacek Nowakowski 100.00 Bydgoszcz                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Mariusz        Kubicki               108.00 +  280: 260  158
+    2    10 Andrzej        Chylewski             100.00 +  334: 210  150
+    3     5 Witold         Kurowski               96.00 +  349: 238  146
+    4     3 Maciej         Czupryniak            117.00 -  196: 374   67
+    5     7 Zdzisław       Szota                 128.00 -  287: 475   78
+                                                          --------------- ---- ------
+                                                                     599  /  5 119.80
+
+
+
+
+	Ryszard Prange 100.00 Poznań                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Wojciech       Usakiewicz            118.00 -  198: 428   68
+    2    19 Danuta         Serafinowicz          100.00 +  498:  52  150
+    3     8 Andrzej        Kwiatkowski            91.00 -  277: 407   41
+    4    12 Kazimierz.J    Merklejn              102.00 -  240: 320   52
+    5    15 Mirosław       Przepiórkowski        100.00 -  263: 291   50
+                                                          --------------- ---- ------
+                                                                     361  /  5  72.20
+
+
+
+
+	Joanna Przepiórkowska 100.00 Inowrocław               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    14 Kazimierz      Merklejn              106.00 -  257: 345   56
+    2    14 Wojciech       Gołęcki               100.00 +  253: 249  150
+    3    14 Bogdan         Fiedoruk              100.00 +  290: 229  150
+    4    10 Paweł          Stanosz               138.00 -  223: 498   88
+    5    13 Krzysztof      Kurowski               94.00 -  263: 265   44
+                                                          --------------- ---- ------
+                                                                     488  /  5  97.60
+
+
+
+
+	Mirosław Przepiórkowski 100.00 Inowrocław               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    12 Halina         Roszak                108.00 -  264: 339   58
+    2    13 Mariusz        Kubicki               108.00 -  349: 415   58
+    3    15 Lucjan         Boroś                 100.00 +  351: 213  150
+    4    13 Jolanta        Hoffmann              100.00 -  272: 365   50
+    5    15 Ryszard        Prange                100.00 +  291: 263  150
+                                                          --------------- ---- ------
+                                                                     466  /  5  93.20
+
+
+
+
+	Andrzej Serafinowicz 100.00 Bydgoszcz                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    19 Witold         Kurowski               96.00 -  243: 332   46
+    2    15 Krzysztof      Kurowski               94.00 -  217: 318   44
+    3    19 Danuta         Serafinowicz          100.00 +  367: 294  150
+    4    15 Aleksandra     Merklejn-Kaczanowska  100.00 -  154: 437   50
+    5    18 Bogdan         Fiedoruk              100.00 -  166: 403   50
+                                                          --------------- ---- ------
+                                                                     340  /  5  68.00
+
+
+
+
+	Danuta Serafinowicz 100.00 Bydgoszcz                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    18 Janusz         Grodzki               101.00 -  205: 348   51
+    2    19 Ryszard        Prange                100.00 -   52: 498   50
+    3    19 Andrzej        Serafinowicz          100.00 -  294: 367   50
+    4    19 Krzysztof      Usakiewicz            100.00 -  156: 343   50
+    5    19 Andrzej        Chylewski             100.00 -   84: 502   50
+                                                          --------------- ---- ------
+                                                                     251  /  5  50.20
+
+
+
+
+	Krzysztof Usakiewicz 100.00 Warszawa               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    16 Walenty        Siemaszko             106.00 -  224: 324   56
+    2    17 Adam           Kotwica               100.00 -  245: 325   50
+    3    18 Jolanta        Hoffmann              100.00 -  203: 452   50
+    4    19 Danuta         Serafinowicz          100.00 +  343: 156  150
+    5    17 Agnieszka      Wiśniewska            100.00 +  302: 247  150
+                                                          --------------- ---- ------
+                                                                     456  /  5  91.20
+
+
+
+
+	Agnieszka Wiśniewska 100.00 Inowrocław               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    15 Marek          Antosik               106.00 -  236: 336   56
+    2    16 Aleksandra     Merklejn-Kaczanowska  100.00 -  252: 353   50
+    3    17 Wojciech       Gołęcki               100.00 -  247: 279   50
+    4    18 Andrzej        Chylewski             100.00 +  308: 238  150
+    5    17 Krzysztof      Usakiewicz            100.00 -  247: 302   50
+                                                          --------------- ---- ------
+                                                                     356  /  5  71.20
+
+
+
+
+	Witold Kurowski  96.00 Łódź                     
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    19 Andrzej        Serafinowicz          100.00 +  332: 243  150
+    2     8 Walenty        Siemaszko             106.00 +  303: 252  156
+    3     5 Jacek          Nowakowski            100.00 -  238: 349   50
+    4     9 Krzysztof      Kurowski               94.00 +  336: 297  144
+    5     6 Paweł          Stanosz               138.00 -  295: 317   88
+                                                          --------------- ---- ------
+                                                                     588  /  5 117.60
+
+
+
+
+	Magdalena Merklejn  95.00 Szczecin               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Paweł          Stanosz               138.00 -  266: 423   88
+    2    12 Gabriela       Hofman                 93.00 -  240: 367   43
+    3    16 Andrzej        Chylewski             100.00 +  351: 230  150
+    4    14 Grzegorz       Kulawiak              106.00 +  411: 324  156
+    5    11 Kazimierz.J    Merklejn              102.00 -  326: 359   52
+                                                          --------------- ---- ------
+                                                                     489  /  5  97.80
+
+
+
+
+	Krzysztof Kurowski  94.00 Łódź                     
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Michał         Derlacki              136.00 -  238: 341   86
+    2    15 Andrzej        Serafinowicz          100.00 +  318: 217  150
+    3    13 Adam           Kotwica               100.00 +  257: 240  150
+    4     9 Witold         Kurowski               96.00 -  297: 336   46
+    5    13 Joanna         Przepiórkowska        100.00 +  265: 263  150
+                                                          --------------- ---- ------
+                                                                     582  /  5 116.40
+
+
+
+
+	Gabriela Hofman  93.00 Łódź                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Tomasz         Zwoliński             135.00 -  277: 425   85
+    2    12 Magdalena      Merklejn               95.00 +  367: 240  145
+    3    11 Kazimierz.J    Merklejn              102.00 +  381: 331  152
+    4     8 Walenty        Siemaszko             106.00 -  285: 348   56
+    5    10 Jolanta        Hoffmann              100.00 -  288: 303   50
+                                                          --------------- ---- ------
+                                                                     488  /  5  97.60
+
+
+
+
+	Andrzej Kwiatkowski  91.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Mariusz        Orzeł                 123.00 -  299: 390   73
+    2    11 Lucjan         Boroś                 100.00 +  407: 293  150
+    3     8 Ryszard        Prange                100.00 +  407: 277  150
+    4     5 Janusz         Grodzki               101.00 -  292: 342   51
+    5     8 Mariusz        Kubicki               108.00 -  307: 360   58
+                                                          --------------- ---- ------
+                                                                     482  /  5  96.40
+
+
+</pre></div><div id='p_rundy' class='page'><pre></pre></div><div id='p_ranking' class='page'><pre></pre></div><div id='p_przebieg' class='page'>
+
+    </div><div style="clear:both;width:100%;" class="alignright">
+
+<script>
+<!--
+if ((document.getElementById("content").offsetHeight + document.getElementById("top").offsetHeight) > screen.height)
+    document.write("<br /><br /><a href='#top'>do góry</a>");
+-->
+</script>
+
+</div>
+</div>
+
+<div id="bottom">
+<ul id="bottomlinks">
+<div class='onleft'>
+ Osób on-line: 53</div>
+    <li><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+    <li><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+    <li><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+    <li><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+    <li><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+    <li><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+</ul>
+    SCRABBLE® jest zastrzeżonym znakiem towarowym J.W. Spears &amp; Sons&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://www.pfs.org.pl/prawaautorskie.php">© Prawa autorskie</a>
+</div>
+</body>
+</html>

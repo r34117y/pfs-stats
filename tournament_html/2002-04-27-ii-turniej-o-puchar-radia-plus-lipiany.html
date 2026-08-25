@@ -1,0 +1,953 @@
+
+<html>
+<head>
+    <title>Polska Federacja Scrabble :: II Turniej o Puchar Radia Plus</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="files/img/favicon.ico" />
+    <link rel="stylesheet" href="files/css/style.css" type="text/css" />
+	<link rel="stylesheet" href="files/css/style-index.css" type="text/css" />
+    <!--[if IE]><link rel="stylesheet" type="text/css" href="files/css/styleie.css" /><![endif]-->
+    <!--[if lt IE 7.]><script defer type="text/javascript" src="files/js/pngfix.js"></script><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="files/js/minmax.js"></script><![endif]-->
+    <script type="text/javascript" src="files/js/jquery.js"></script>
+    <script type="text/javascript" src="files/js/jquery-bp.js"></script>
+    <script type="text/javascript" src="files/js/java.js"></script>
+    <script>jSubmenu ("turnieje","kalendarz");jKalendarz();</script>
+    <script>
+    var url, page;
+
+    page = 'info';
+    url  = document.location.toString();
+
+    if (url.match ('#')) {
+      page = url.split ('#')[1];
+      if ($.inArray (page, [ 'info', 'relacja', 'klasyfikacja', 'hh', 'rundy', 'ranking', 'przebieg' ]) == -1)
+        page = 'info';
+    }
+
+    $(document).ready(function(){
+        $('a#listaucz').bind('click', function(event){
+            $('div#lista').toggle();
+            event.preventDefault();
+        }).toggle(function() { $(this).text('schowaj listę uczestników'); }, function() { $(this).text("pokaż listę uczestników"); });
+        $('div#lista table tr:last td').css({"border-bottom" : "none"});
+
+        $("a.przycisk").click (function (e) {
+            if ($(this).attr ('href') !== '#')
+                return true;
+
+            e.preventDefault ();
+
+            id       = this.id;
+            this.id += 'tmp';
+            window.location.hash = id;
+            this.id  = id;
+
+            $(".page").hide ();
+            $(".page#p_" + id).show ();
+
+            $("a.przycisk").removeClass ('active');
+            $(this).addClass ('active');
+
+            return false;
+        });
+
+        $("a.przycisk#" + page).click ();
+        $('html, body').animate ({ scrollTop: 0 }, 0);
+    });
+    </script>
+  <style type="text/css">
+    .page {
+        display: none;
+    }
+    #szczegoly{
+        width: 100%;
+        border-spacing: 0;
+        margin-top: 30px;
+        text-align: left;
+        font-size: inherit;
+    }
+    #szczegoly td{
+        padding: 10px 20px 10px 0;
+        vertical-align: top;
+    }
+    #szczegoly td:first-child{
+        font-weight: bold;
+        width: 160px;
+    }
+    div#lista{
+        display:none;
+        margin-top: 15px;
+    }
+    div#lista table{
+        margin-top: 10px;
+        text-align: left;
+        font-size: inherit;
+    }
+    div#lista table td{
+        padding: 3px 8px;
+        border-bottom: 1px dashed #1576AE;
+    }
+    div#lista table th{
+        padding: 0px 5px 10px 5px;
+    }
+    div#lista table td.ptaszek{
+        text-align: center;
+        background: url('files/img/tick.png') no-repeat center center;
+    }
+    div#lista table th{
+        white-space: nowrap;
+        width: auto;
+    }
+    div#lista table td:first-child, div#lista table th:first-child{
+        text-align:right;
+        width: auto;
+    }
+    </style>
+</head>
+
+<body>
+
+<script type="text/javascript">setMenu();</script>
+
+<div id="top" onclick="location.href='https://www.pfs.org.pl'">
+</div>
+<div id="menu">
+
+    <div id="m_glowna">
+        <div class="tab"><a href="https://www.pfs.org.pl/index.php"></a></div>
+
+        <ul>
+            <li class="sublink" id="aktualnosci"><a href="https://www.pfs.org.pl">Aktualności</a></li>
+            <li class="sublink" id="nowy"><a href="https://www.pfs.org.pl/dlanowych.php">Jestem tu nowy</a></li>
+            <li class="sublink" id="anagramator"><a href="https://www.pfs.org.pl/osps_online.php?main=1">Słownik online</a></li>
+            <li class="sublink" id="siodemka"><a href="https://www.pfs.org.pl/siodemka.php?main=1">Siódemka tygodnia</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+            <li class="sublink" id="dlasponsorow"><a href="https://www.pfs.org.pl/dlasponsorow.php">Dla sponsorów</a></li>
+            <li class="sublink" id="kontakt"><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+        </ul>
+    </div>
+    <div id="m_turnieje">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kalendarz.php"></a></div>
+        <ul>
+            <li class="sublink" id="kalendarz"><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+            <li class="sublink" id="regulaminy"><a href="https://www.pfs.org.pl/regulaminy.php">Regulaminy</a></li>
+            <li class="sublink" id="sedziowie"><a href="https://www.pfs.org.pl/sedziowie.php">Sędziowie</a></li>
+            <li class="sublink" id="gp"><a href="https://www.pfs.org.pl/gp2026.php">Grand Prix</a></li>
+<!--            <li class="sublink" id="mr"><a href="https://www.pfs.org.pl/mr2020.php">Mistrzostwa Regionów</a></li>-->
+            <li class="sublink" id="archiwum"><a href="https://www.pfs.org.pl/archiwum.php">Historia</a></li>
+            <li class="sublink" id="galeria"><a href="https://www.pfs.org.pl/galeria.php">Zdjęcia</a></li>
+            <li class="sublink" id="rekordy"><a href="https://www.pfs.org.pl/rekordy.php">Rekordy</a></li>
+        </ul>
+    </div>
+    <div id="m_pfs">
+        <div  class="tab"><a href="https://www.pfs.org.pl/opfs.php"></a></div>
+        <ul>
+            <li class="sublink" id="opfs"><a href="https://www.pfs.org.pl/opfs.php">O PFS</a></li>
+            <li class="sublink" id="jakprzystapic"><a href="https://www.pfs.org.pl/jakprzystapic.php">Jak przystąpić</a></li>
+            <li class="sublink" id="dlaczlonkow"><a href="https://www.pfs.org.pl/dlaczlonkow.php">Dla członków</a></li>
+            <li class="sublink" id="wladze"><a href="https://www.pfs.org.pl/wladze.php">Władze</a></li>
+            <li class="sublink" id="komisje"><a href="https://www.pfs.org.pl/komisje.php">Komisje</a></li>
+            <li class="sublink" id="statut"><a href="https://www.pfs.org.pl/statut.php">Statut</a></li>
+            <li class="sublink" id="uchwaly"><a href="https://www.pfs.org.pl/uchwaly.php">Uchwały</a></li>
+            <li class="sublink" id="honorowi"><a href="https://www.pfs.org.pl/honorowi.php">Honorowi członkowie</a></li>
+            <li class="sublink" id="finanse"><a href="https://www.pfs.org.pl/finanse.php">Finanse</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabble">
+        <div  class="tab"><a href="https://www.pfs.org.pl/osps_online.php?desktop=1"></a></div>
+        <ul>
+            <li class="sublink" id="osps_online"><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+            <li class="sublink" id="zds"><a href="https://www.pfs.org.pl/zds2.php">ZDS</a></li>
+            <li class="sublink" id="osps"><a href="https://www.pfs.org.pl/osps.php">OSPS</a></li>
+            <li class="sublink" id="aktualizacje"><a href="https://www.pfs.org.pl/osps_aktualizacje.php">Aktualizacje</a></li>
+            <li class="sublink" id="dwojki"><a href="https://www.pfs.org.pl/dwojki.php">2-literówki</a></li>
+            <li class="sublink" id="trojki"><a href="https://www.pfs.org.pl/trojki.php">3-literówki</a></li>
+            <li class="sublink" id="siodemkat"><a href="https://www.pfs.org.pl/siodemka.php">Siódemka tygodnia</a></li>
+            <li class="sublink" id="slowneroznosci"><a href="https://www.pfs.org.pl/slowneroznosci.php">Słowne różności</a></li>
+        </ul>
+    </div>
+    <div id="m_ranking">
+        <div  class="tab"><a href="https://www.pfs.org.pl/ranking.php"></a></div>
+        <ul>
+            <li class="sublink" id="aktranking"><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+            <li class="sublink" id="medale"><a href="https://www.pfs.org.pl/medale.php">Klasyfikacja medalowa</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabblisci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/mistrzowiepolski.php"></a></div>
+        <ul>
+            <li class="sublink" id="mistrzowiepolski"><a href="https://www.pfs.org.pl/mistrzowiepolski.php">Mistrzowie Polski</a></li>
+            <li class="sublink" id="zdobywcypp"><a href="https://www.pfs.org.pl/zdobywcypp.php">Zdobywcy Pucharu Polski</a></li>
+            <li class="sublink" id="zwyciezcygp"><a href="https://www.pfs.org.pl/zwyciezcygp.php">Zwycięzcy Grand Prix</a></li>
+            <li class="sublink" id="liderzyrankingu"><a href="https://www.pfs.org.pl/liderzyrankingu.php">Liderzy rankingu</a></li>
+            <li class="sublink" id="zwyciezcylemans"><a href="https://www.pfs.org.pl/zwyciezcylemans.php">Zwycięzcy 24h Le Mans</a></li>
+            <li class="sublink" id="zwyciezcykmp"><a href="https://www.pfs.org.pl/zwyciezcykmp.php">KMP</a>
+        </ul>
+    </div>
+    <div id="m_kluby">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kluby.php"></a></div>
+        <ul>
+            <li class="sublink" id="rejestrklubow"><a href="https://www.pfs.org.pl/kluby.php">Rejestr klubów</a></li>
+            <li class="sublink" id="kmp"><a href="https://www.pfs.org.pl/kmp.php">KMP</a></li>
+            <li class="sublink" id="wiescizklubow"><a href="https://www.pfs.org.pl/wiescizklubow.php">Wieści z klubów</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/about.php">Statystyki klubowe</a></li>
+        </ul>
+    </div>
+    <div id="m_roznosci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/historia.php"></a></div>
+        <ul>
+            <li class="sublink" id="historia"><a href="https://www.pfs.org.pl/historia.php">Historia</a></li>
+            <li class="sublink" id="odmiany"><a href="https://www.pfs.org.pl/odmiany.php">Odmiany</a></li>
+            <li class="sublink" id="anegdoty"><a href="https://www.pfs.org.pl/anegdoty.php">Anegdoty</a></li>
+            <li class="sublink" id="scrabblealia"><a href="https://www.pfs.org.pl/scrabblealia.php">Scrabblealia</a></li>
+            <li class="sublink" id="scrabblenet"><a href="https://www.pfs.org.pl/scrabblenet.php">Scrabble w internecie</a></li>
+            <li class="sublink" id="programy"><a href="https://www.pfs.org.pl/programy.php">Programy</a></li>
+            <li class="sublink" id="download"><a href="https://www.pfs.org.pl/download.php">Do pobrania</a></li>
+            <li class="sublink" id="ksiazki"><a href="https://www.pfs.org.pl/ksiazki.php">Książki</a></li>
+            <li class="sublink" id="slowniczek"><a href="https://www.pfs.org.pl/slowniczek.php">Słowniczek</a></li>
+        </ul>
+    </div>
+    <div id="m_english">
+        <div  class="tab"><a href="https://www.pfs.org.pl/english.php"></a></div>
+        <ul>
+            <li class="sublink" id="about"><a href="https://www.pfs.org.pl/english.php">About Polish Scrabble</a></li>
+            <li class="sublink" id="news"><a href="https://www.pfs.org.pl/en_news.php">News</a></li>
+            <li class="sublink" id="bartek"><a href="https://www.pfs.org.pl/bartek.php">Bartek w Johor Bahru</a></li>
+            <li class="sublink" id="franko"><a href="https://www.pfs.org.pl/franko.php">Scrabble frankofońskie</a></li>
+        </ul>
+    </div>
+</div>
+
+<div id="submenu"></div>
+<div id="content">
+<div id='nextTours'>
+		<div class='nextTour' onclick='location.href="turniej.php?id=269"'>
+			<div class='karteczka small1'>
+				<span class='miasto'>Kraków</span><span class='dzien'><span class='big'>13</span><br />kwietnia</span></div>
+			<div class='kartka big1'>
+				<span class='miasto'>Kraków</span>
+				<span class='dzien'><b>13-14 kwietnia</b></span>
+				<span class='nazwaturnieju'>VI Mistrzostwa Krakowa</span><span class='gp'>Grand&nbsp;Prix&nbsp;2002</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=268"'>
+			<div class='karteczka small2'>
+				<span class='miasto'>Lipiany</span><span class='dzien'><span class='big'>27</span><br />kwietnia</span></div>
+			<div class='kartka big2'>
+				<span class='miasto'>Lipiany</span>
+				<span class='dzien'><b>27-28 kwietnia</b></span>
+				<span class='nazwaturnieju'>II Turniej o Puchar Radia Plus</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=267"'>
+			<div class='karteczka small3'>
+				<span class='miasto'>Piastów</span><span class='dzien'><span class='big'> 4</span><br />maja</span></div>
+			<div class='kartka big3'>
+				<span class='miasto'>Piastów</span>
+				<span class='dzien'><b> 4- 5 maja</b></span>
+				<span class='nazwaturnieju'>VI Mistrzostwa Piastowa</span><span class='gp'>Grand&nbsp;Prix&nbsp;2002</span></div>
+		</div></div><div class='naglowekrelacji'><span class='tytul'>II Turniej o&nbsp;Puchar Radia Plus<span class='nazwa'>27 - 28 kwietnia 2002 —  II Turniej o Puchar Radia Plus</span></span><a href='#' id='info' class='przycisk'>Informacje</a><a href='#' id='relacja' class='przycisk'>Relacja</a><a href='#' id='klasyfikacja' class='przycisk'>Wyniki</a><a href='#' id='hh' class='przycisk'>HH</a><div class='galleries'><img src='files/img/gallery.png' style='visibility:hidden;' alt='galeria' /></div></div><h1 style='color:black; margin-top:0px; margin-bottom:30px; padding: 0px'>II Turniej o Puchar Radia Plus<span>Lipiany, 27 - 28 kwietnia 2002</span></h1><div id='p_relacja' class='page'><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><div class='relacja' style='clear:both;'><div><pre>
+ 1. Tomasz Zwoliński (Warszawa) 10,0 5073
+ 2. Wojciech Usakiewicz (Warszawa) 8,0 4821
+ 3. Leszek Nowak (Myślibórz) 8,0 4748
+ 4. Krzysztof Usakiewicz (Warszawa) 8,0 4712
+ 5. Kazimierz Merklejn (Szczecin) 8,0 4381
+ 6. Robert Duczemiński (Gorzów Wlkp.) 7,0 4768
+ 7. Marcin Mroziuk (Warszawa) 7,0 4657
+ 8. Aleksandra Merklejn (Szczecin) 7,0 4413
+ 9. Walenty Siemaszko (Lipiany) 7,0 4398
+ 10. Jerzy Luter (Bytom) 7,0 4379
+
+ 30 uczestników, 12 rund 
+</pre></div><div class='autor'></div></div><div style='clear:both;'></div></div><div id='p_info' class='page'><br><p align='center'></p><br><br><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br>Zobacz, jak było na poprzednich turniejach:<br><a href='turniej.php?id=293'>I Turniej o Puchar Radia Plus</a><br><table id='szczegoly' class='ramkadolna'></table><br /><br /></div><div id='p_klasyfikacja' class='page'><pre>                                                                          
+
+II Turniej o Puchar Radia Plus
+
+                                                                VP
+MIEJSCE                                          p-ty    +/-  RAZEM
+--------------------------------------------------------------------
+  1 Tomasz Zwoliński      141 Warszawa           5073          10.0
+  2 Wojciech Usakiewicz   136 Warszawa           4821           8.0
+  3 Leszek Nowak          139 Myślibórz          4748           8.0
+  4 Krzysztof Usakiewicz  118 Warszawa           4712           8.0
+  5 Kazimierz Merklejn    105 Szczecin           4381           8.0
+  6 Robert Duczemiński    126 Gorzów Wielkop.    4768           7.0
+  7 Marcin Mroziuk        137 Warszawa           4657           7.0
+  8 Aleksandra Merklejn   119 Szczecin           4413           7.0
+  9 Walenty Siemaszko     111 Lipiany            4398           7.0
+ 10 Jerzy Luter           111 Bytom              4379           7.0
+ 11 Piotr Rosół           108 Warszawa           4241           7.0
+ 12 Jarosław Żuliński     105 Szczecin           4058           6.5
+ 13 Marek Roszak          120 Poznań             4562           6.0
+ 14 Kazio Merklejn        131 Szczecin           4421           6.0
+ 15 Andrzej Rechowicz     122 Katowice           4419           6.0
+ 16 Zbigniew Wietecki     119 Gorzów Wielkop.    4372           6.0
+ 17 Magdalena Merklejn    120 Szczecin           4279           6.0
+ 18 Halina Roszak         111 Poznań             4169           6.0
+ 19 Monika Siemaszko      100 Lipiany            3930           5.5
+ 20 Maurycy Machnio       104 Lipiany            3813           5.5
+ 21 Paweł Szulc           100 Szczecin           4228           5.0
+ 22 Lucyna Korga          108 Zabrze             4214           5.0
+ 23 Piotr Wojciekiewicz   100 Katowice           3982           5.0
+ 24 Renata Rosół          100 Warszawa           3790           4.5
+ 25 Józef Wietecki        100 Gorzów Wlkp.       4251           4.0
+ 26 Dawid Pikul           100 Poznań             4034           4.0
+ 27 Waldemar Bulkowski    100 Chojnów            3532           3.5
+ 28 Adam Machnio          100 Lipiany            3272           2.5
+ 29 Andrzej Lożyński      114 Piastów             503           1.0
+ 30 Patryk Pajdzik        100 Lipiany            1377           0.5
+
+</pre></div><div id='p_hh' class='page'><pre>                                                                      
+
+   1  Tomasz Zwoliński      141 Warszawa        
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1    1   16  Walenty Siemaszko     111   +  482:288   161
+   2    2    6  Robert Duczemiński    126   -  343:535    76
+   3    5   29  Paweł Szulc           100   +  418:400   150
+   4    3    4  Wojciech Usakiewicz   136   +  382:321   186
+   5    1   12  Krzysztof Usakiewicz  118   +  310:306   168
+   6    3    7  Andrzej Rechowicz     122   +  473:384   172
+   7    2    2  Leszek Nowak          139   -  378:457    89
+   8    3   18  Piotr Rosół           108   +  498:212   158
+   9    2   15  Jerzy Luter           111   +  471:298   161
+  10    2    5  Kazio Merklejn        131   +  434:278   181
+  11    1    6  Robert Duczemiński    126   +  429:405   176
+  12    1    2  Leszek Nowak          139   +  455:316   189
+                                               --------------
+                                                SUMA =  1867 / 12 partii
+
+
+   2  Leszek Nowak          139 Myślibórz       
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1    2   17  Lucyna Korga          108   +  378:295   158
+   2    6   20  Jarosław Żuliński     105   +  360:340   155
+   3    4    4  Wojciech Usakiewicz   136   -  375:389    86
+   4    6   10  Zbigniew Wietecki     119   +  427:327   169
+   5    2    6  Robert Duczemiński    126   -  384:389    76
+   6    5    9  Marek Roszak          120   +  440:400   170
+   7    2    1  Tomasz Zwoliński      141   +  457:378   191
+   8    2   12  Krzysztof Usakiewicz  118   +  379:331   168
+   9    3    5  Kazio Merklejn        131   +  403:302   181
+  10    3   15  Jerzy Luter           111   -  345:389    61
+  11    2   15  Jerzy Luter           111   +  484:283   161
+  12    1    1  Tomasz Zwoliński      141   -  316:455    91
+                                               --------------
+                                                SUMA =  1667 / 12 partii
+
+
+   3  Marcin Mroziuk        137 Warszawa        
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1    3   18  Piotr Rosół           108   +  351:313   158
+   2    7    9  Marek Roszak          120   -  376:411    70
+   3    8   20  Jarosław Żuliński     105   +  403:401   155
+   4    5   11  Aleksandra Merklejn   119   -  362:378    69
+   5    7    5  Kazio Merklejn        131   -  343:428    81
+   6    9   16  Walenty Siemaszko     111   +  451:342   161
+   7    6    4  Wojciech Usakiewicz   136   -  368:398    86
+   8    8   24  Renata Rosół          100   +  542:286   150
+   9    7    8  Magdalena Merklejn    120   -  330:368    70
+  10    9   23  Monika Siemaszko      100   +  400:331   150
+  11    6    5  Kazio Merklejn        131   +  365:346   181
+  12    5    9  Marek Roszak          120   +  366:350   170
+                                               --------------
+                                                SUMA =  1501 / 12 partii
+
+
+   4  Wojciech Usakiewicz   136 Warszawa        
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1    4   19  Kazimierz Merklejn    105   +  525:322   155
+   2    1   12  Krzysztof Usakiewicz  118   -  346:377    68
+   3    4    2  Leszek Nowak          139   +  389:375   189
+   4    3    1  Tomasz Zwoliński      141   -  321:382    91
+   5    6   25  Józef Wietecki        100   +  462:374   150
+   6    4    5  Kazio Merklejn        131   -  311:426    81
+   7    6    3  Marcin Mroziuk        137   +  398:368   187
+   8    4   11  Aleksandra Merklejn   119   +  425:338   169
+   9    1    6  Robert Duczemiński    126   -  403:434    76
+  10    5    7  Andrzej Rechowicz     122   +  370:359   172
+  11    3   18  Piotr Rosół           108   +  448:307   158
+  12    2    6  Robert Duczemiński    126   +  423:326   176
+                                               --------------
+                                                SUMA =  1672 / 12 partii
+
+
+   5  Kazio Merklejn        131 Szczecin        
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1    5   20  Jarosław Żuliński     105   -  352:385    55
+   2    9   19  Kazimierz Merklejn    105   +  401:343   155
+   3    7   25  Józef Wietecki        100   +  414:389   150
+   4    4   18  Piotr Rosół           108   -  352:384    58
+   5    7    3  Marcin Mroziuk        137   +  428:343   187
+   6    4    4  Wojciech Usakiewicz   136   +  426:311   186
+   7    1    6  Robert Duczemiński    126   -  304:399    76
+   8    5   10  Zbigniew Wietecki     119   +  467:326   169
+   9    3    2  Leszek Nowak          139   -  302:403    89
+  10    2    1  Tomasz Zwoliński      141   -  278:434    91
+  11    6    3  Marcin Mroziuk        137   -  346:365    87
+  12    9   21  Maurycy Machnio       104   +  351:236   154
+                                               --------------
+                                                SUMA =  1457 / 12 partii
+
+
+   6  Robert Duczemiński    126 Gorzów Wielkop. 
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1    6   21  Maurycy Machnio       104   +  486:272   154
+   2    2    1  Tomasz Zwoliński      141   +  535:343   191
+   3    1   12  Krzysztof Usakiewicz  118   -  386:403    68
+   4    2    8  Magdalena Merklejn    120   +  355:340   170
+   5    2    2  Leszek Nowak          139   +  389:384   189
+   6    1   18  Piotr Rosół           108   +  404:292   158
+   7    1    5  Kazio Merklejn        131   +  399:304   181
+   8    1   15  Jerzy Luter           111   -  380:420    61
+   9    1    4  Wojciech Usakiewicz   136   +  434:403   186
+  10    1    9  Marek Roszak          120   -  269:499    70
+  11    1    1  Tomasz Zwoliński      141   -  405:429    91
+  12    2    4  Wojciech Usakiewicz   136   -  326:423    86
+                                               --------------
+                                                SUMA =  1605 / 12 partii
+
+
+   7  Andrzej Rechowicz     122 Katowice        
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1    7   22  Piotr Wojciekiewicz   100   +  395:359   150
+   2    4   11  Aleksandra Merklejn   119   +  383:363   169
+   3    3    9  Marek Roszak          120   -  272:445    70
+   4    7   15  Jerzy Luter           111   +  365:304   161
+   5    5   29  Paweł Szulc           100   +  333:280   150
+   6    3    1  Tomasz Zwoliński      141   -  384:473    91
+   7    5   18  Piotr Rosół           108   -  353:414    58
+   8    7   19  Kazimierz Merklejn    105   -  369:425    55
+   9    8   16  Walenty Siemaszko     111   +  448:265   161
+  10    5    4  Wojciech Usakiewicz   136   -  359:370    86
+  11    7   10  Zbigniew Wietecki     119   -  331:368    69
+  12   10   17  Lucyna Korga          108   +  427:352   158
+                                               --------------
+                                                SUMA =  1378 / 12 partii
+
+
+   8  Magdalena Merklejn    120 Szczecin        
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1    8   23  Monika Siemaszko      100   +  395:355   150
+   2    5   15  Jerzy Luter           111   +  421:277   161
+   3    2   10  Zbigniew Wietecki     119   +  358:341   169
+   4    2    6  Robert Duczemiński    126   -  340:355    76
+   5    3   18  Piotr Rosół           108   -  298:375    58
+   6    6   14  Halina Roszak         111   +  402:330   161
+   7    4   11  Aleksandra Merklejn   119   -  346:364    69
+   8    6    9  Marek Roszak          120   -  296:442    70
+   9    7    3  Marcin Mroziuk        137   +  368:330   187
+  10    8   17  Lucyna Korga          108   -  287:442    58
+  11    9   11  Aleksandra Merklejn   119   -  323:455    69
+  12   11   22  Piotr Wojciekiewicz   100   +  445:228   150
+                                               --------------
+                                                SUMA =  1378 / 12 partii
+
+
+   9  Marek Roszak          120 Poznań          
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1    9   24  Renata Rosół          100   +  351:266   150
+   2    7    3  Marcin Mroziuk        137   +  411:376   187
+   3    3    7  Andrzej Rechowicz     122   +  445:272   172
+   4    1   12  Krzysztof Usakiewicz  118   -  300:414    68
+   5    4   11  Aleksandra Merklejn   119   -  363:376    69
+   6    5    2  Leszek Nowak          139   -  400:440    89
+   7    7   29  Paweł Szulc           100   +  320:314   150
+   8    6    8  Magdalena Merklejn    120   +  442:296   170
+   9    5   18  Piotr Rosół           108   -  326:393    58
+  10    1    6  Robert Duczemiński    126   +  499:269   176
+  11    4   12  Krzysztof Usakiewicz  118   -  355:381    68
+  12    5    3  Marcin Mroziuk        137   -  350:366    87
+                                               --------------
+                                                SUMA =  1444 / 12 partii
+
+
+  10  Zbigniew Wietecki     119 Gorzów Wielkop. 
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1   10   25  Józef Wietecki        100   +  413:236   150
+   2    3   29  Paweł Szulc           100   +  367:365   150
+   3    2    8  Magdalena Merklejn    120   -  341:358    70
+   4    6    2  Leszek Nowak          139   -  327:427    89
+   5    9   15  Jerzy Luter           111   -  349:408    61
+   6   10   20  Jarosław Żuliński     105   +  382:246   155
+   7    8   14  Halina Roszak         111   +  464:313   161
+   8    5    5  Kazio Merklejn        131   -  326:467    81
+   9    6   11  Aleksandra Merklejn   119   +  322:302   169
+  10    6   19  Kazimierz Merklejn    105   -  362:375    55
+  11    7    7  Andrzej Rechowicz     122   +  368:331   172
+  12    6   16  Walenty Siemaszko     111   -  351:422    61
+                                               --------------
+                                                SUMA =  1374 / 12 partii
+
+
+  11  Aleksandra Merklejn   119 Szczecin        
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1   11   26  Dawid Pikul           100   +  403:310   150
+   2    4    7  Andrzej Rechowicz     122   -  363:383    72
+   3    6   22  Piotr Wojciekiewicz   100   +  361:356   150
+   4    5    3  Marcin Mroziuk        137   +  378:362   187
+   5    4    9  Marek Roszak          120   +  376:363   170
+   6    2   12  Krzysztof Usakiewicz  118   -  292:359    68
+   7    4    8  Magdalena Merklejn    120   +  364:346   170
+   8    4    4  Wojciech Usakiewicz   136   -  338:425    86
+   9    6   10  Zbigniew Wietecki     119   -  302:322    69
+  10    7   14  Halina Roszak         111   -  287:385    61
+  11    9    8  Magdalena Merklejn    120   +  455:323   170
+  12    7   14  Halina Roszak         111   +  494:234   161
+                                               --------------
+                                                SUMA =  1514 / 12 partii
+
+
+  12  Krzysztof Usakiewicz  118 Warszawa        
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1   12   27  Adam Machnio          100   +  497:205   150
+   2    1    4  Wojciech Usakiewicz   136   +  377:346   186
+   3    1    6  Robert Duczemiński    126   +  403:386   176
+   4    1    9  Marek Roszak          120   +  414:300   170
+   5    1    1  Tomasz Zwoliński      141   -  306:310    91
+   6    2   11  Aleksandra Merklejn   119   +  359:292   169
+   7    3   15  Jerzy Luter           111   -  356:383    61
+   8    2    2  Leszek Nowak          139   -  331:379    89
+   9    4   19  Kazimierz Merklejn    105   +  539:282   155
+  10    4   18  Piotr Rosół           108   -  333:359    58
+  11    4    9  Marek Roszak          120   +  381:355   170
+  12    3   15  Jerzy Luter           111   +  416:352   161
+                                               --------------
+                                                SUMA =  1636 / 12 partii
+
+
+  13  Andrzej Lożyński      114 Piastów         
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1   13   28  Patryk Pajdzik        100   +  503:161   150
+   2            PAUZA
+   3            PAUZA
+   4            PAUZA
+   5            PAUZA
+   6            PAUZA
+   7            PAUZA
+   8            PAUZA
+   9            PAUZA
+  10            PAUZA
+  11            PAUZA
+  12            PAUZA
+                                               --------------
+                                                SUMA =   150 /  1 partia
+
+
+  14  Halina Roszak         111 Poznań          
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1   14   29  Paweł Szulc           100   -  320:448    50
+   2   10   18  Piotr Rosół           108   -  315:337    58
+   3   13   23  Monika Siemaszko      100   +  473:280   150
+   4   11   19  Kazimierz Merklejn    105   +  356:310   155
+   5    8   22  Piotr Wojciekiewicz   100   +  371:218   150
+   6    6    8  Magdalena Merklejn    120   -  330:402    70
+   7    8   10  Zbigniew Wietecki     119   -  313:464    69
+   8   10   17  Lucyna Korga          108   +  368:314   158
+   9    9   26  Dawid Pikul           100   +  428:336   150
+  10    7   11  Aleksandra Merklejn   119   +  385:287   169
+  11    5   19  Kazimierz Merklejn    105   -  276:305    55
+  12    7   11  Aleksandra Merklejn   119   -  234:494    69
+                                               --------------
+                                                SUMA =  1303 / 12 partii
+
+
+  15  Jerzy Luter           111 Bytom           
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1   15   30  Waldemar Bulkowski    100   +  392:262   150
+   2    5    8  Magdalena Merklejn    120   -  277:421    70
+   3    9   26  Dawid Pikul           100   +  391:336   150
+   4    7    7  Andrzej Rechowicz     122   -  304:365    72
+   5    9   10  Zbigniew Wietecki     119   +  408:349   169
+   6    7   24  Renata Rosół          100   +  482:303   150
+   7    3   12  Krzysztof Usakiewicz  118   +  383:356   168
+   8    1    6  Robert Duczemiński    126   +  420:380   176
+   9    2    1  Tomasz Zwoliński      141   -  298:471    91
+  10    3    2  Leszek Nowak          139   +  389:345   189
+  11    2    2  Leszek Nowak          139   -  283:484    89
+  12    3   12  Krzysztof Usakiewicz  118   -  352:416    68
+                                               --------------
+                                                SUMA =  1542 / 12 partii
+
+
+  16  Walenty Siemaszko     111 Lipiany         
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1    1    1  Tomasz Zwoliński      141   -  288:482    91
+   2   12   21  Maurycy Machnio       104   -  307:351    54
+   3   14   28  Patryk Pajdzik        100   +  550:155   150
+   4    9   22  Piotr Wojciekiewicz   100   -  289:343    50
+   5   12   17  Lucyna Korga          108   +  394:234   158
+   6    9    3  Marcin Mroziuk        137   -  342:451    87
+   7   11   25  Józef Wietecki        100   +  338:328   150
+   8    9   29  Paweł Szulc           100   +  356:291   150
+   9    8    7  Andrzej Rechowicz     122   -  265:448    72
+  10   10   26  Dawid Pikul           100   +  490:332   150
+  11    8   17  Lucyna Korga          108   +  357:271   158
+  12    6   10  Zbigniew Wietecki     119   +  422:351   169
+                                               --------------
+                                                SUMA =  1439 / 12 partii
+
+
+  17  Lucyna Korga          108 Zabrze          
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1    2    2  Leszek Nowak          139   -  295:378    89
+   2   11   26  Dawid Pikul           100   -  355:357    50
+   3   12   19  Kazimierz Merklejn    105   -  352:376    55
+   4   13   30  Waldemar Bulkowski    100   +  390:246   150
+   5   12   16  Walenty Siemaszko     111   -  234:394    61
+   6   14   28  Patryk Pajdzik        100   +  382:207   150
+   7   12   20  Jarosław Żuliński     105   +  403:256   155
+   8   10   14  Halina Roszak         111   -  314:368    61
+   9   11   29  Paweł Szulc           100   +  424:286   150
+  10    8    8  Magdalena Merklejn    120   +  442:287   170
+  11    8   16  Walenty Siemaszko     111   -  271:357    61
+  12   10    7  Andrzej Rechowicz     122   -  352:427    72
+                                               --------------
+                                                SUMA =  1224 / 12 partii
+
+
+  18  Piotr Rosół           108 Warszawa        
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1    3    3  Marcin Mroziuk        137   -  313:351    87
+   2   10   14  Halina Roszak         111   +  337:315   161
+   3   10   30  Waldemar Bulkowski    100   +  505:198   150
+   4    4    5  Kazio Merklejn        131   +  384:352   181
+   5    3    8  Magdalena Merklejn    120   +  375:298   170
+   6    1    6  Robert Duczemiński    126   -  292:404    76
+   7    5    7  Andrzej Rechowicz     122   +  414:353   172
+   8    3    1  Tomasz Zwoliński      141   -  212:498    91
+   9    5    9  Marek Roszak          120   +  393:326   170
+  10    4   12  Krzysztof Usakiewicz  118   +  359:333   168
+  11    3    4  Wojciech Usakiewicz   136   -  307:448    86
+  12    4   19  Kazimierz Merklejn    105   -  350:444    55
+                                               --------------
+                                                SUMA =  1567 / 12 partii
+
+
+  19  Kazimierz Merklejn    105 Szczecin        
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1    4    4  Wojciech Usakiewicz   136   -  322:525    86
+   2    9    5  Kazio Merklejn        131   -  343:401    81
+   3   12   17  Lucyna Korga          108   +  376:352   158
+   4   11   14  Halina Roszak         111   -  310:356    61
+   5   13   21  Maurycy Machnio       104   +  391:271   154
+   6   11   22  Piotr Wojciekiewicz   100   +  384:287   150
+   7    9   23  Monika Siemaszko      100   +  424:315   150
+   8    7    7  Andrzej Rechowicz     122   +  425:369   172
+   9    4   12  Krzysztof Usakiewicz  118   -  282:539    68
+  10    6   10  Zbigniew Wietecki     119   +  375:362   169
+  11    5   14  Halina Roszak         111   +  305:276   161
+  12    4   18  Piotr Rosół           108   +  444:350   158
+                                               --------------
+                                                SUMA =  1568 / 12 partii
+
+
+  20  Jarosław Żuliński     105 Szczecin        
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1    5    5  Kazio Merklejn        131   +  385:352   181
+   2    6    2  Leszek Nowak          139   -  340:360    89
+   3    8    3  Marcin Mroziuk        137   -  401:403    87
+   4   10   25  Józef Wietecki        100   -  349:429    50
+   5   11   27  Adam Machnio          100   +  321:251   150
+   6   10   10  Zbigniew Wietecki     119   -  246:382    69
+   7   12   17  Lucyna Korga          108   -  256:403    58
+   8            PAUZA
+   9   13   30  Waldemar Bulkowski    100   +  344:264   150
+  10   11   24  Renata Rosół          100   +  352:285   150
+  11   13   25  Józef Wietecki        100   +  374:356   150
+  12    8   23  Monika Siemaszko      100   +  390:282   150
+                                               --------------
+                                                SUMA =  1284 / 11 partii
+
+
+  21  Maurycy Machnio       104 Lipiany         
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1    6    6  Robert Duczemiński    126   -  272:486    76
+   2   12   16  Walenty Siemaszko     111   +  351:307   161
+   3   11   27  Adam Machnio          100   -  305:372    50
+   4   12   26  Dawid Pikul           100   -  298:336    50
+   5   13   19  Kazimierz Merklejn    105   -  271:391    55
+   6            PAUZA
+   7   14   30  Waldemar Bulkowski    100   +  381:334   150
+   8   12   23  Monika Siemaszko      100   -  310:345    50
+   9   12   22  Piotr Wojciekiewicz   100   +  360:327   150
+  10   12   25  Józef Wietecki        100   +  376:271   150
+  11   11   29  Paweł Szulc           100   +  353:316   150
+  12    9    5  Kazio Merklejn        131   -  236:351    81
+                                               --------------
+                                                SUMA =  1123 / 11 partii
+
+
+  22  Piotr Wojciekiewicz   100 Katowice        
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1    7    7  Andrzej Rechowicz     122   -  359:395    72
+   2    8   23  Monika Siemaszko      100   +  432:254   150
+   3    6   11  Aleksandra Merklejn   119   -  356:361    69
+   4    9   16  Walenty Siemaszko     111   +  343:289   161
+   5    8   14  Halina Roszak         111   -  218:371    61
+   6   11   19  Kazimierz Merklejn    105   -  287:384    55
+   7   13   26  Dawid Pikul           100   -  334:391    50
+   8   13   25  Józef Wietecki        100   +  327:302   150
+   9   12   21  Maurycy Machnio       104   -  327:360    54
+  10   14   27  Adam Machnio          100   +  434:256   150
+  11   12   26  Dawid Pikul           100   +  337:307   150
+  12   11    8  Magdalena Merklejn    120   -  228:445    70
+                                               --------------
+                                                SUMA =  1192 / 12 partii
+
+
+  23  Monika Siemaszko      100 Lipiany         
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1    8    8  Magdalena Merklejn    120   -  355:395    70
+   2    8   22  Piotr Wojciekiewicz   100   -  254:432    50
+   3   13   14  Halina Roszak         111   -  280:473    61
+   4            PAUZA
+   5   14   28  Patryk Pajdzik        100   +  403:203   150
+   6   12   26  Dawid Pikul           100   +  349:320   150
+   7    9   19  Kazimierz Merklejn    105   -  315:424    55
+   8   12   21  Maurycy Machnio       104   +  345:310   154
+   9   10   24  Renata Rosół          100   +  349:334   150
+  10    9    3  Marcin Mroziuk        137   -  331:400    87
+  11   10   24  Renata Rosół          100   +  367:301   150
+  12    8   20  Jarosław Żuliński     105   -  282:390    55
+                                               --------------
+                                                SUMA =  1132 / 11 partii
+
+
+  24  Renata Rosół          100 Warszawa        
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1    9    9  Marek Roszak          120   -  266:351    70
+   2   13   30  Waldemar Bulkowski    100   -  305:362    50
+   3            PAUZA
+   4   14   28  Patryk Pajdzik        100   +  403:201   150
+   5   10   26  Dawid Pikul           100   +  340:328   150
+   6    7   15  Jerzy Luter           111   -  303:482    61
+   7   10   27  Adam Machnio          100   +  343:204   150
+   8    8    3  Marcin Mroziuk        137   -  286:542    87
+   9   10   23  Monika Siemaszko      100   -  334:349    50
+  10   11   20  Jarosław Żuliński     105   -  285:352    55
+  11   10   23  Monika Siemaszko      100   -  301:367    50
+  12   13   30  Waldemar Bulkowski    100   +  324:312   150
+                                               --------------
+                                                SUMA =  1023 / 11 partii
+
+
+  25  Józef Wietecki        100 Gorzów Wlkp.    
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1   10   10  Zbigniew Wietecki     119   -  236:413    69
+   2   14   28  Patryk Pajdzik        100   +  499:150   150
+   3    7    5  Kazio Merklejn        131   -  389:414    81
+   4   10   20  Jarosław Żuliński     105   +  429:349   155
+   5    6    4  Wojciech Usakiewicz   136   -  374:462    86
+   6    8   29  Paweł Szulc           100   -  301:318    50
+   7   11   16  Walenty Siemaszko     111   -  328:338    61
+   8   13   22  Piotr Wojciekiewicz   100   -  302:327    50
+   9   14   27  Adam Machnio          100   +  406:241   150
+  10   12   21  Maurycy Machnio       104   -  271:376    54
+  11   13   20  Jarosław Żuliński     105   -  356:374    55
+  12   14   27  Adam Machnio          100   +  360:300   150
+                                               --------------
+                                                SUMA =  1111 / 12 partii
+
+
+  26  Dawid Pikul           100 Poznań          
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1   11   11  Aleksandra Merklejn   119   -  310:403    69
+   2   11   17  Lucyna Korga          108   +  357:355   158
+   3    9   15  Jerzy Luter           111   -  336:391    61
+   4   12   21  Maurycy Machnio       104   +  336:298   154
+   5   10   24  Renata Rosół          100   -  328:340    50
+   6   12   23  Monika Siemaszko      100   -  320:349    50
+   7   13   22  Piotr Wojciekiewicz   100   +  391:334   150
+   8   11   27  Adam Machnio          100   +  411:228   150
+   9    9   14  Halina Roszak         111   -  336:428    61
+  10   10   16  Walenty Siemaszko     111   -  332:490    61
+  11   12   22  Piotr Wojciekiewicz   100   -  307:337    50
+  12   12   29  Paweł Szulc           100   -  270:427    50
+                                               --------------
+                                                SUMA =  1064 / 12 partii
+
+
+  27  Adam Machnio          100 Lipiany         
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1   12   12  Krzysztof Usakiewicz  118   -  205:497    68
+   2            PAUZA
+   3   11   21  Maurycy Machnio       104   +  372:305   154
+   4    8   29  Paweł Szulc           100   -  250:382    50
+   5   11   20  Jarosław Żuliński     105   -  251:321    55
+   6   13   30  Waldemar Bulkowski    100   +  364:273   150
+   7   10   24  Renata Rosół          100   -  204:343    50
+   8   11   26  Dawid Pikul           100   -  228:411    50
+   9   14   25  Józef Wietecki        100   -  241:406    50
+  10   14   22  Piotr Wojciekiewicz   100   -  256:434    50
+  11   14   30  Waldemar Bulkowski    100   -  301:309    50
+  12   14   25  Józef Wietecki        100   -  300:360    50
+                                               --------------
+                                                SUMA =   777 / 11 partii
+
+
+  28  Patryk Pajdzik        100 Lipiany         
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1   13   13  Andrzej Lożyński      114   -  161:503    64
+   2   14   25  Józef Wietecki        100   -  150:499    50
+   3   14   16  Walenty Siemaszko     111   -  155:550    61
+   4   14   24  Renata Rosół          100   -  201:403    50
+   5   14   23  Monika Siemaszko      100   -  203:403    50
+   6   14   17  Lucyna Korga          108   -  207:382    58
+   7            PAUZA
+   8            PAUZA
+   9            PAUZA
+  10            PAUZA
+  11            PAUZA
+  12            PAUZA
+                                               --------------
+                                                SUMA =   333 /  6 partii
+
+
+  29  Paweł Szulc           100 Szczecin        
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1   14   14  Halina Roszak         111   +  448:320   161
+   2    3   10  Zbigniew Wietecki     119   -  365:367    69
+   3    5    1  Tomasz Zwoliński      141   -  400:418    91
+   4    8   27  Adam Machnio          100   +  382:250   150
+   5    5    7  Andrzej Rechowicz     122   -  280:333    72
+   6    8   25  Józef Wietecki        100   +  318:301   150
+   7    7    9  Marek Roszak          120   -  314:320    70
+   8    9   16  Walenty Siemaszko     111   -  291:356    61
+   9   11   17  Lucyna Korga          108   -  286:424    58
+  10   13   30  Waldemar Bulkowski    100   +  401:272   150
+  11   11   21  Maurycy Machnio       104   -  316:353    54
+  12   12   26  Dawid Pikul           100   +  427:270   150
+                                               --------------
+                                                SUMA =  1236 / 12 partii
+
+
+  30  Waldemar Bulkowski    100 Chojnów         
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1   15   15  Jerzy Luter           111   -  262:392    61
+   2   13   24  Renata Rosół          100   +  362:305   150
+   3   10   18  Piotr Rosół           108   -  198:505    58
+   4   13   17  Lucyna Korga          108   -  246:390    58
+   5            PAUZA
+   6   13   27  Adam Machnio          100   -  273:364    50
+   7   14   21  Maurycy Machnio       104   -  334:381    54
+   8            PAUZA
+   9   13   20  Jarosław Żuliński     105   -  264:344    55
+  10   13   29  Paweł Szulc           100   -  272:401    50
+  11   14   27  Adam Machnio          100   +  309:301   150
+  12   13   24  Renata Rosół          100   -  312:324    50
+                                               --------------
+                                                SUMA =   736 / 10 partii
+
+
+   1  Tomasz Zwoliński      141 Warszawa        
+
+RUNDA STÓŁ      PRZECIWNIK            RNK       WYNIK   SKALP
+-------------------------------------------------------------
+   1    1   16  Walenty Siemaszko     111   +  482:288   161
+   2    2    6  Robert Duczemiński    126   -  343:535    76
+   3    5   29  Paweł Szulc           100   +  418:400   150
+   4    3    4  Wojciech Usakiewicz   136   +  382:321   186
+   5    1   12  Krzysztof Usakiewicz  118   +  310:306   168
+   6    3    7  Andrzej Rechowicz     122   +  473:384   172
+   7    2    2  Leszek Nowak          139   -  378:457    89
+   8    3   18  Piotr Rosół           108   +  498:212   158
+   9    2   15  Jerzy Luter           111   +  471:298   161
+  10    2    5  Kazio Merklejn        131   +  434:278   181
+  11    1    6  Robert Duczemiński    126   +  429:405   176
+  12    1    2  Leszek Nowak          139   +  455:316   189
+                                               --------------
+                                                SUMA =  1867 / 12 partii
+
+
+</pre></div><div id='p_rundy' class='page'><pre></pre></div><div id='p_ranking' class='page'><pre></pre></div><div id='p_przebieg' class='page'>
+
+    </div><div style="clear:both;width:100%;" class="alignright">
+
+<script>
+<!--
+if ((document.getElementById("content").offsetHeight + document.getElementById("top").offsetHeight) > screen.height)
+    document.write("<br /><br /><a href='#top'>do góry</a>");
+-->
+</script>
+
+</div>
+</div>
+
+<div id="bottom">
+<ul id="bottomlinks">
+<div class='onleft'>
+ Osób on-line: 54</div>
+    <li><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+    <li><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+    <li><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+    <li><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+    <li><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+    <li><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+</ul>
+    SCRABBLE® jest zastrzeżonym znakiem towarowym J.W. Spears &amp; Sons&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://www.pfs.org.pl/prawaautorskie.php">© Prawa autorskie</a>
+</div>
+</body>
+</html>

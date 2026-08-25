@@ -1,0 +1,907 @@
+
+<html>
+<head>
+    <title>Polska Federacja Scrabble :: I Otwarte Mistrzostwa Katowic</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="files/img/favicon.ico" />
+    <link rel="stylesheet" href="files/css/style.css" type="text/css" />
+	<link rel="stylesheet" href="files/css/style-index.css" type="text/css" />
+    <!--[if IE]><link rel="stylesheet" type="text/css" href="files/css/styleie.css" /><![endif]-->
+    <!--[if lt IE 7.]><script defer type="text/javascript" src="files/js/pngfix.js"></script><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="files/js/minmax.js"></script><![endif]-->
+    <script type="text/javascript" src="files/js/jquery.js"></script>
+    <script type="text/javascript" src="files/js/jquery-bp.js"></script>
+    <script type="text/javascript" src="files/js/java.js"></script>
+    <script>jSubmenu ("turnieje","kalendarz");jKalendarz();</script>
+    <script>
+    var url, page;
+
+    page = 'info';
+    url  = document.location.toString();
+
+    if (url.match ('#')) {
+      page = url.split ('#')[1];
+      if ($.inArray (page, [ 'info', 'relacja', 'klasyfikacja', 'hh', 'rundy', 'ranking', 'przebieg' ]) == -1)
+        page = 'info';
+    }
+
+    $(document).ready(function(){
+        $('a#listaucz').bind('click', function(event){
+            $('div#lista').toggle();
+            event.preventDefault();
+        }).toggle(function() { $(this).text('schowaj listę uczestników'); }, function() { $(this).text("pokaż listę uczestników"); });
+        $('div#lista table tr:last td').css({"border-bottom" : "none"});
+
+        $("a.przycisk").click (function (e) {
+            if ($(this).attr ('href') !== '#')
+                return true;
+
+            e.preventDefault ();
+
+            id       = this.id;
+            this.id += 'tmp';
+            window.location.hash = id;
+            this.id  = id;
+
+            $(".page").hide ();
+            $(".page#p_" + id).show ();
+
+            $("a.przycisk").removeClass ('active');
+            $(this).addClass ('active');
+
+            return false;
+        });
+
+        $("a.przycisk#" + page).click ();
+        $('html, body').animate ({ scrollTop: 0 }, 0);
+    });
+    </script>
+  <style type="text/css">
+    .page {
+        display: none;
+    }
+    #szczegoly{
+        width: 100%;
+        border-spacing: 0;
+        margin-top: 30px;
+        text-align: left;
+        font-size: inherit;
+    }
+    #szczegoly td{
+        padding: 10px 20px 10px 0;
+        vertical-align: top;
+    }
+    #szczegoly td:first-child{
+        font-weight: bold;
+        width: 160px;
+    }
+    div#lista{
+        display:none;
+        margin-top: 15px;
+    }
+    div#lista table{
+        margin-top: 10px;
+        text-align: left;
+        font-size: inherit;
+    }
+    div#lista table td{
+        padding: 3px 8px;
+        border-bottom: 1px dashed #1576AE;
+    }
+    div#lista table th{
+        padding: 0px 5px 10px 5px;
+    }
+    div#lista table td.ptaszek{
+        text-align: center;
+        background: url('files/img/tick.png') no-repeat center center;
+    }
+    div#lista table th{
+        white-space: nowrap;
+        width: auto;
+    }
+    div#lista table td:first-child, div#lista table th:first-child{
+        text-align:right;
+        width: auto;
+    }
+    </style>
+</head>
+
+<body>
+
+<script type="text/javascript">setMenu();</script>
+
+<div id="top" onclick="location.href='https://www.pfs.org.pl'">
+</div>
+<div id="menu">
+
+    <div id="m_glowna">
+        <div class="tab"><a href="https://www.pfs.org.pl/index.php"></a></div>
+
+        <ul>
+            <li class="sublink" id="aktualnosci"><a href="https://www.pfs.org.pl">Aktualności</a></li>
+            <li class="sublink" id="nowy"><a href="https://www.pfs.org.pl/dlanowych.php">Jestem tu nowy</a></li>
+            <li class="sublink" id="anagramator"><a href="https://www.pfs.org.pl/osps_online.php?main=1">Słownik online</a></li>
+            <li class="sublink" id="siodemka"><a href="https://www.pfs.org.pl/siodemka.php?main=1">Siódemka tygodnia</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+            <li class="sublink" id="dlasponsorow"><a href="https://www.pfs.org.pl/dlasponsorow.php">Dla sponsorów</a></li>
+            <li class="sublink" id="kontakt"><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+        </ul>
+    </div>
+    <div id="m_turnieje">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kalendarz.php"></a></div>
+        <ul>
+            <li class="sublink" id="kalendarz"><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+            <li class="sublink" id="regulaminy"><a href="https://www.pfs.org.pl/regulaminy.php">Regulaminy</a></li>
+            <li class="sublink" id="sedziowie"><a href="https://www.pfs.org.pl/sedziowie.php">Sędziowie</a></li>
+            <li class="sublink" id="gp"><a href="https://www.pfs.org.pl/gp2026.php">Grand Prix</a></li>
+<!--            <li class="sublink" id="mr"><a href="https://www.pfs.org.pl/mr2020.php">Mistrzostwa Regionów</a></li>-->
+            <li class="sublink" id="archiwum"><a href="https://www.pfs.org.pl/archiwum.php">Historia</a></li>
+            <li class="sublink" id="galeria"><a href="https://www.pfs.org.pl/galeria.php">Zdjęcia</a></li>
+            <li class="sublink" id="rekordy"><a href="https://www.pfs.org.pl/rekordy.php">Rekordy</a></li>
+        </ul>
+    </div>
+    <div id="m_pfs">
+        <div  class="tab"><a href="https://www.pfs.org.pl/opfs.php"></a></div>
+        <ul>
+            <li class="sublink" id="opfs"><a href="https://www.pfs.org.pl/opfs.php">O PFS</a></li>
+            <li class="sublink" id="jakprzystapic"><a href="https://www.pfs.org.pl/jakprzystapic.php">Jak przystąpić</a></li>
+            <li class="sublink" id="dlaczlonkow"><a href="https://www.pfs.org.pl/dlaczlonkow.php">Dla członków</a></li>
+            <li class="sublink" id="wladze"><a href="https://www.pfs.org.pl/wladze.php">Władze</a></li>
+            <li class="sublink" id="komisje"><a href="https://www.pfs.org.pl/komisje.php">Komisje</a></li>
+            <li class="sublink" id="statut"><a href="https://www.pfs.org.pl/statut.php">Statut</a></li>
+            <li class="sublink" id="uchwaly"><a href="https://www.pfs.org.pl/uchwaly.php">Uchwały</a></li>
+            <li class="sublink" id="honorowi"><a href="https://www.pfs.org.pl/honorowi.php">Honorowi członkowie</a></li>
+            <li class="sublink" id="finanse"><a href="https://www.pfs.org.pl/finanse.php">Finanse</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabble">
+        <div  class="tab"><a href="https://www.pfs.org.pl/osps_online.php?desktop=1"></a></div>
+        <ul>
+            <li class="sublink" id="osps_online"><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+            <li class="sublink" id="zds"><a href="https://www.pfs.org.pl/zds2.php">ZDS</a></li>
+            <li class="sublink" id="osps"><a href="https://www.pfs.org.pl/osps.php">OSPS</a></li>
+            <li class="sublink" id="aktualizacje"><a href="https://www.pfs.org.pl/osps_aktualizacje.php">Aktualizacje</a></li>
+            <li class="sublink" id="dwojki"><a href="https://www.pfs.org.pl/dwojki.php">2-literówki</a></li>
+            <li class="sublink" id="trojki"><a href="https://www.pfs.org.pl/trojki.php">3-literówki</a></li>
+            <li class="sublink" id="siodemkat"><a href="https://www.pfs.org.pl/siodemka.php">Siódemka tygodnia</a></li>
+            <li class="sublink" id="slowneroznosci"><a href="https://www.pfs.org.pl/slowneroznosci.php">Słowne różności</a></li>
+        </ul>
+    </div>
+    <div id="m_ranking">
+        <div  class="tab"><a href="https://www.pfs.org.pl/ranking.php"></a></div>
+        <ul>
+            <li class="sublink" id="aktranking"><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+            <li class="sublink" id="medale"><a href="https://www.pfs.org.pl/medale.php">Klasyfikacja medalowa</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabblisci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/mistrzowiepolski.php"></a></div>
+        <ul>
+            <li class="sublink" id="mistrzowiepolski"><a href="https://www.pfs.org.pl/mistrzowiepolski.php">Mistrzowie Polski</a></li>
+            <li class="sublink" id="zdobywcypp"><a href="https://www.pfs.org.pl/zdobywcypp.php">Zdobywcy Pucharu Polski</a></li>
+            <li class="sublink" id="zwyciezcygp"><a href="https://www.pfs.org.pl/zwyciezcygp.php">Zwycięzcy Grand Prix</a></li>
+            <li class="sublink" id="liderzyrankingu"><a href="https://www.pfs.org.pl/liderzyrankingu.php">Liderzy rankingu</a></li>
+            <li class="sublink" id="zwyciezcylemans"><a href="https://www.pfs.org.pl/zwyciezcylemans.php">Zwycięzcy 24h Le Mans</a></li>
+            <li class="sublink" id="zwyciezcykmp"><a href="https://www.pfs.org.pl/zwyciezcykmp.php">KMP</a>
+        </ul>
+    </div>
+    <div id="m_kluby">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kluby.php"></a></div>
+        <ul>
+            <li class="sublink" id="rejestrklubow"><a href="https://www.pfs.org.pl/kluby.php">Rejestr klubów</a></li>
+            <li class="sublink" id="kmp"><a href="https://www.pfs.org.pl/kmp.php">KMP</a></li>
+            <li class="sublink" id="wiescizklubow"><a href="https://www.pfs.org.pl/wiescizklubow.php">Wieści z klubów</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/about.php">Statystyki klubowe</a></li>
+        </ul>
+    </div>
+    <div id="m_roznosci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/historia.php"></a></div>
+        <ul>
+            <li class="sublink" id="historia"><a href="https://www.pfs.org.pl/historia.php">Historia</a></li>
+            <li class="sublink" id="odmiany"><a href="https://www.pfs.org.pl/odmiany.php">Odmiany</a></li>
+            <li class="sublink" id="anegdoty"><a href="https://www.pfs.org.pl/anegdoty.php">Anegdoty</a></li>
+            <li class="sublink" id="scrabblealia"><a href="https://www.pfs.org.pl/scrabblealia.php">Scrabblealia</a></li>
+            <li class="sublink" id="scrabblenet"><a href="https://www.pfs.org.pl/scrabblenet.php">Scrabble w internecie</a></li>
+            <li class="sublink" id="programy"><a href="https://www.pfs.org.pl/programy.php">Programy</a></li>
+            <li class="sublink" id="download"><a href="https://www.pfs.org.pl/download.php">Do pobrania</a></li>
+            <li class="sublink" id="ksiazki"><a href="https://www.pfs.org.pl/ksiazki.php">Książki</a></li>
+            <li class="sublink" id="slowniczek"><a href="https://www.pfs.org.pl/slowniczek.php">Słowniczek</a></li>
+        </ul>
+    </div>
+    <div id="m_english">
+        <div  class="tab"><a href="https://www.pfs.org.pl/english.php"></a></div>
+        <ul>
+            <li class="sublink" id="about"><a href="https://www.pfs.org.pl/english.php">About Polish Scrabble</a></li>
+            <li class="sublink" id="news"><a href="https://www.pfs.org.pl/en_news.php">News</a></li>
+            <li class="sublink" id="bartek"><a href="https://www.pfs.org.pl/bartek.php">Bartek w Johor Bahru</a></li>
+            <li class="sublink" id="franko"><a href="https://www.pfs.org.pl/franko.php">Scrabble frankofońskie</a></li>
+        </ul>
+    </div>
+</div>
+
+<div id="submenu"></div>
+<div id="content">
+<div id='nextTours'>
+		<div class='nextTour' onclick='location.href="turniej.php?id=418"'>
+			<div class='karteczka small1'>
+				<span class='miasto'>Wałbrzych</span><span class='dzien'><span class='big'>19</span><br />stycznia</span></div>
+			<div class='kartka big1'>
+				<span class='miasto'>Wałbrzych</span>
+				<span class='dzien'><b>19 stycznia</b></span>
+				<span class='nazwaturnieju'>II Ogólnopolski Turniej Scrabble na Zamku Książ</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=417"'>
+			<div class='karteczka small2'>
+				<span class='miasto'>Katowice</span><span class='dzien'><span class='big'>25</span><br />stycznia</span></div>
+			<div class='kartka big2'>
+				<span class='miasto'>Katowice</span>
+				<span class='dzien'><b>25 stycznia</b></span>
+				<span class='nazwaturnieju'>I Otwarte Mistrzostwa Katowic</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=416"'>
+			<div class='karteczka small3'>
+				<span class='miasto'>Bielsko-Biała</span><span class='dzien'><span class='big'>26</span><br />stycznia</span></div>
+			<div class='kartka big3'>
+				<span class='miasto'>Bielsko-Biała</span>
+				<span class='dzien'><b>26 stycznia</b></span>
+				<span class='nazwaturnieju'>I Otwarte Mistrzostwa Podbeskidzia</span></div>
+		</div></div><div class='naglowekrelacji'><span class='tytul'>I Otwarte Mistrzostwa Katowic<span class='nazwa'>25 stycznia 1997 —  I Otwarte Mistrzostwa Katowic</span></span><a href='#' id='info' class='przycisk'>Informacje</a><a href='#' id='relacja' class='przycisk'>Relacja</a><a href='#' id='klasyfikacja' class='przycisk'>Wyniki</a><a href='#' id='hh' class='przycisk'>HH</a><div class='galleries'><img src='files/img/gallery.png' style='visibility:hidden;' alt='galeria' /></div></div><h1 style='color:black; margin-top:0px; margin-bottom:30px; padding: 0px'>I Otwarte Mistrzostwa Katowic<span>Katowice, 25 stycznia 1997</span></h1><div id='p_relacja' class='page'><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><div class='relacja' style='clear:both;'><div><pre>
+ 1. Paweł Dawidson (Częstochowa)
+ 2. Robert Kaciński (Kazimierza Wielka)
+ 3. Dariusz Banaszek (Sokołów Podlaski)
+ 4. Jacek Pietruszka (Kraków)
+ 5. Sławomir Nosek (Mielec)
+ 6. Robert Duczemiński (Gorzów Wielkopolski)
+ 7. Witold Jasiczak (Katowice)
+ 8. Stefan Dawidson (Częstochowa)
+ 9. Jolanta Hoffmann (Kraków)
+ 10. Waldemar Czerwoniec (Warszawa) 
+
+38 uczestników, 5 rund 
+</pre></div><div class='autor'></div></div><div style='clear:both;'></div></div><div id='p_info' class='page'><br><p align='center'></p><br><br><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><table id='szczegoly' class='ramkadolna'></table><br /><br /></div><div id='p_klasyfikacja' class='page'><pre>Wyniki turnieju I Otwarte Mistrzostwa Katowic
+
+Lp. Imię            Nazwisko             Miasto               Ranking  Duże pkt Małe pkt Skalpy   Różn. MP
+--- --------------- -------------------- -------------------- -------- -------- -------- -------- --------
+  1 Paweł           Dawidson             Częstochowa            123.00      5.0     1952      821      324
+  2 Robert          Kaciński             Kazimierza Wielka      104.00      4.0     1950      743      389
+  3 Dariusz         Banaszek             Warszawa               132.00      4.0     1937      701      323
+  4 Jacek           Pietruszka           Kraków                 113.00      4.0     1900      731      321
+  5 Sławomir        Nosek                Mielec                 116.00      4.0     1816      680      394
+  6 Robert          Duczemiński          Gorzów Wielkopolski    123.00      4.0     1761      705      244
+  7 Witold          Jasiczak             Katowice               100.00      4.0     1445      680      146
+  8 Stefan          Dawidson             Częstochowa            112.00      3.0     1912      579      327
+  9 Jolanta         Hoffmann             Kraków                 100.00      3.0     1879      632      193
+ 10 Waldemar        Czerwoniec           Warszawa               118.00      3.0     1818      614      168
+ 11 Dariusz         Puton                Ruda Śląska            137.00      3.0     1743      582      118
+ 12 Wojciech        Usakiewicz           Warszawa               104.00      3.0     1672      607       -1
+ 13 Tomasz          Szymański            Gorzów Wielkopolski    100.00      3.0     1665      618      129
+ 14 Roman           Dzierża              Kraków                 112.00      3.0     1646      572       41
+ 15 Mariusz         Kubicki              Inowrocław             114.00      3.0     1592      594       22
+ 16 Mariusz         Makuch               Zator                  100.00      3.0     1405      555      -85
+ 17 Stanisław       Stanek               Olkusz                 100.00      3.0     1382      583       62
+ 18 Ireneusz        Kurzok               Mikołów                100.00      3.0     1366      602     -175
+ 19 Ewa             Czerwoniec           Warszawa               119.00      3.0     1356      567       80
+ 20 Tomasz          Zwoliński            Skierdy                131.00      2.0     1817      465      111
+ 21 Jerzy           Płatek               Sosnowiec              111.00      2.0     1727      513       94
+ 22 Jerzy           Matyasik             Kraków                  97.00      2.0     1641      518      114
+ 23 Waldemar        Wypchał              Kraków                 100.00      2.0     1518      474     -232
+ 24 Marcin          Mroziuk              Warszawa                83.00      2.0     1450      450       16
+ 25 Wiesław         Chilicki             Katowice                96.00      2.0     1434      475     -112
+ 26 Adam            Czerwoniec           Warszawa                93.00      2.0     1408      464      -67
+ 27 Maciej          Żłobiński            Katowice               100.00      2.0     1400      461      -36
+ 28 Leszek          Stecuła              Bytom                  120.00      2.0     1343      473       28
+ 29 Witold          Sawicki              ?                      100.00      2.0     1238      483     -328
+ 30 Jerzy           Luter                Bytom                  100.00      2.0     1184      481     -332
+ 31 Michał          Ściubidło            ?                      100.00      2.0     1083      450     -401
+ 32 Maurycy         Piasecki             Tychy                  100.00      1.0     1539      391      -48
+ 33 Tomasz          Drąszkowski          Katowice               100.00      1.0     1336      356      -76
+ 34 Andrzej         Rechowicz            Katowice               100.00      1.0     1327      374      -62
+ 35 Elżbieta        Kowalska             Ruda Śląska            100.00      1.0     1212      347     -610
+ 36 Alicja          Matuszczak           ?                      100.00      1.0     1171      346     -225
+ 37 Stanisław       Ściubidło            ?                      100.00      1.0     1116      361     -318
+ 38 Zygmunt         Skwarek              Katowice               100.00      0.0     1054      242     -536
+</pre></div><div id='p_hh' class='page'><pre>Wyniki poszczególnych graczy w turnieju I Otwarte Mistrzostwa Katowic
+
+
+
+	Dariusz Puton 137.00 Ruda Śląska            
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Witold         Jasiczak              100.00 +  321: 214  150
+    2     8 Jacek          Pietruszka            113.00 -  302: 440   63
+    3     9 Wojciech       Usakiewicz            104.00 +  454: 269  154
+    4     5 Waldemar       Czerwoniec            118.00 -  304: 402   68
+    5     8 Jerzy          Matyasik               97.00 +  362: 300  147
+                                                          --------------- ---- ------
+                                                                     582  /  5 116.40
+
+
+
+
+	Dariusz Banaszek 132.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Ireneusz       Kurzok                100.00 +  466: 217  150
+    2     2 Jerzy          Płatek                111.00 +  385: 286  161
+    3     2 Jacek          Pietruszka            113.00 +  355: 342  163
+    4     1 Robert         Kaciński              104.00 +  336: 319  154
+    5     1 Paweł          Dawidson              123.00 -  395: 450   73
+                                                          --------------- ---- ------
+                                                                     701  /  5 140.20
+
+
+
+
+	Tomasz Zwoliński 131.00 Skierdy         
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Witold         Sawicki               100.00 +  481: 222  150
+    2     1 Robert         Kaciński              104.00 -  313: 359   54
+    3     5 Tomasz         Szymański             100.00 -  318: 404   50
+    4    10 Jerzy          Płatek                111.00 +  385: 342  161
+    5     7 Jolanta        Hoffmann              100.00 -  320: 379   50
+                                                          --------------- ---- ------
+                                                                     465  /  5  93.00
+
+
+
+
+	Paweł Dawidson 123.00 Częstochowa              
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Waldemar       Wypchał               100.00 +  399: 295  150
+    2     3 Jolanta        Hoffmann              100.00 +  361: 326  150
+    3     3 Sławomir       Nosek                 116.00 +  346: 308  166
+    4     2 Robert         Duczemiński           123.00 +  396: 304  173
+    5     1 Dariusz        Banaszek              132.00 +  450: 395  182
+                                                          --------------- ---- ------
+                                                                     821  /  5 164.20
+
+
+
+
+	Robert Duczemiński 123.00 Gorzów Wielkopolski          
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Tomasz         Drąszkowski           100.00 +  381: 254  150
+    2     5 Mariusz        Kubicki               114.00 +  308: 230  164
+    3     4 Waldemar       Czerwoniec            118.00 +  440: 345  168
+    4     2 Paweł          Dawidson              123.00 -  304: 396   73
+    5     4 Tomasz         Szymański             100.00 +  328: 292  150
+                                                          --------------- ---- ------
+                                                                     705  /  5 141.00
+
+
+
+
+	Leszek Stecuła 120.00 Bytom                    
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Andrzej        Rechowicz             100.00 +  292: 281  150
+    2    10 Wojciech       Usakiewicz            104.00 -  281: 313   54
+    3    11 Ewa            Czerwoniec            119.00 +  193:  85  169
+    4     9 Stanisław      Stanek                100.00 -  286: 333   50
+    5    12 Ireneusz       Kurzok                100.00 -  291: 303   50
+                                                          --------------- ---- ------
+                                                                     473  /  5  94.60
+
+
+
+
+	Ewa Czerwoniec 119.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    16 Jerzy          Matyasik               97.00 +  297: 291  147
+    2     9 Tomasz         Szymański             100.00 -  301: 361   50
+    3    11 Leszek         Stecuła               120.00 -   85: 193   70
+    4    16 Witold         Sawicki               100.00 +  290: 210  150
+    5    13 Jerzy          Luter                 100.00 +  383: 221  150
+                                                          --------------- ---- ------
+                                                                     567  /  5 113.40
+
+
+
+
+	Waldemar Czerwoniec 118.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Maciej         Żłobiński             100.00 +  356: 232  150
+    2     7 Maurycy        Piasecki              100.00 +  360: 304  150
+    3     4 Robert         Duczemiński           123.00 -  345: 440   73
+    4     5 Dariusz        Puton                 137.00 +  402: 304  187
+    5     3 Robert         Kaciński              104.00 -  355: 370   54
+                                                          --------------- ---- ------
+                                                                     614  /  5 122.80
+
+
+
+
+	Sławomir Nosek 116.00 Mielec                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Zygmunt        Skwarek               100.00 +  363: 203  150
+    2     6 Wiesław        Chilicki               96.00 +  378: 317  146
+    3     3 Paweł          Dawidson              123.00 -  308: 346   73
+    4     6 Jerzy          Matyasik               97.00 +  321: 298  147
+    5     5 Mariusz        Kubicki               114.00 +  446: 258  164
+                                                          --------------- ---- ------
+                                                                     680  /  5 136.00
+
+
+
+
+	Mariusz Kubicki 114.00 Inowrocław               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Adam           Czerwoniec             93.00 +  383: 200  143
+    2     5 Robert         Duczemiński           123.00 -  230: 308   73
+    3    10 Maciej         Żłobiński             100.00 +  338: 322  150
+    4     7 Roman          Dzierża               112.00 +  383: 294  162
+    5     5 Sławomir       Nosek                 116.00 -  258: 446   66
+                                                          --------------- ---- ------
+                                                                     594  /  5 118.80
+
+
+
+
+	Jacek Pietruszka 113.00 Kraków                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Stanisław      Stanek                100.00 +  322: 288  150
+    2     8 Dariusz        Puton                 137.00 +  440: 302  187
+    3     2 Dariusz        Banaszek              132.00 -  342: 355   82
+    4     4 Jolanta        Hoffmann              100.00 +  374: 356  150
+    5     2 Stefan         Dawidson              112.00 +  422: 278  162
+                                                          --------------- ---- ------
+                                                                     731  /  5 146.20
+
+
+
+
+	Stefan Dawidson 112.00 Częstochowa            
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    12 Jerzy          Luter                 100.00 +  385: 218  150
+    2     4 Roman          Dzierża               112.00 +  525: 238  162
+    3     1 Robert         Kaciński              104.00 -  357: 410   54
+    4     3 Tomasz         Szymański             100.00 +  367: 297  150
+    5     2 Jacek          Pietruszka            113.00 -  278: 422   63
+                                                          --------------- ---- ------
+                                                                     579  /  5 115.80
+
+
+
+
+	Roman Dzierża 112.00 Kraków                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Mariusz        Makuch                100.00 +  389: 187  150
+    2     4 Stefan         Dawidson              112.00 -  238: 525   62
+    3     8 Maurycy        Piasecki              100.00 +  333: 294  150
+    4     7 Mariusz        Kubicki               114.00 -  294: 383   64
+    5    10 Wiesław        Chilicki               96.00 +  392: 216  146
+                                                          --------------- ---- ------
+                                                                     572  /  5 114.40
+
+
+
+
+	Jerzy Płatek 111.00 Sosnowiec                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    13 Stanisław      Ściubidło             100.00 +  458: 152  150
+    2     2 Dariusz        Banaszek              132.00 -  286: 385   82
+    3     6 Jolanta        Hoffmann              100.00 -  330: 401   50
+    4    10 Tomasz         Zwoliński             131.00 -  342: 385   81
+    5    14 Maurycy        Piasecki              100.00 +  311: 310  150
+                                                          --------------- ---- ------
+                                                                     513  /  5 102.60
+
+
+
+
+	Robert Kaciński 104.00 Kazimierza Wielka        
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    14 Elżbieta       Kowalska              100.00 +  492: 200  150
+    2     1 Tomasz         Zwoliński             131.00 +  359: 313  181
+    3     1 Stefan         Dawidson              112.00 +  410: 357  162
+    4     1 Dariusz        Banaszek              132.00 -  319: 336   82
+    5     3 Waldemar       Czerwoniec            118.00 +  370: 355  168
+                                                          --------------- ---- ------
+                                                                     743  /  5 148.60
+
+
+
+
+	Wojciech Usakiewicz 104.00 Warszawa               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    15 Jolanta        Hoffmann              100.00 -  301: 417   50
+    2    10 Leszek         Stecuła               120.00 +  313: 281  170
+    3     9 Dariusz        Puton                 137.00 -  269: 454   87
+    4    13 Andrzej        Rechowicz             100.00 +  407: 287  150
+    5     9 Waldemar       Wypchał               100.00 +  382: 234  150
+                                                          --------------- ---- ------
+                                                                     607  /  5 121.40
+
+
+
+
+	Tomasz Drąszkowski 100.00 Katowice                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Robert         Duczemiński           123.00 -  254: 381   73
+    2    13 Michał         Ściubidło             100.00 +  260:  74  150
+    3    12 Witold         Jasiczak              100.00 -  272: 274   50
+    4    14 Ireneusz       Kurzok                100.00 -  270: 295   50
+    5    16 Marcin         Mroziuk                83.00 -  280: 388   33
+                                                          --------------- ---- ------
+                                                                     356  /  5  71.20
+
+
+
+
+	Jolanta Hoffmann 100.00 Kraków                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    15 Wojciech       Usakiewicz            104.00 +  417: 301  154
+    2     3 Paweł          Dawidson              123.00 -  326: 361   73
+    3     6 Jerzy          Płatek                111.00 +  401: 330  161
+    4     4 Jacek          Pietruszka            113.00 -  356: 374   63
+    5     7 Tomasz         Zwoliński             131.00 +  379: 320  181
+                                                          --------------- ---- ------
+                                                                     632  /  5 126.40
+
+
+
+
+	Witold Jasiczak 100.00 Katowice                      
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Dariusz        Puton                 137.00 -  214: 321   87
+    2    16 Ireneusz       Kurzok                100.00 +  333: 178  150
+    3    12 Tomasz         Drąszkowski           100.00 +  274: 272  150
+    4     8 Adam           Czerwoniec             93.00 +  314: 269  143
+    5     6 Stanisław      Stanek                100.00 +  310: 259  150
+                                                          --------------- ---- ------
+                                                                     680  /  5 136.00
+
+
+
+
+	Elżbieta Kowalska 100.00 Ruda Śląska              
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    14 Robert         Kaciński              104.00 -  200: 492   54
+    2    17 Alicja         Matuszczak            100.00 +  270: 234  150
+    3    14 Adam           Czerwoniec             93.00 -  258: 402   43
+    4    15 Mariusz        Makuch                100.00 -  244: 391   50
+    5    17 Witold         Sawicki               100.00 -  240: 303   50
+                                                          --------------- ---- ------
+                                                                     347  /  5  69.40
+
+
+
+
+	Ireneusz Kurzok 100.00 Mikołów                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Dariusz        Banaszek              132.00 -  217: 466   82
+    2    16 Witold         Jasiczak              100.00 -  178: 333   50
+    3    19 Michał         Ściubidło             100.00 +  373: 181  150
+    4    14 Tomasz         Drąszkowski           100.00 +  295: 270  150
+    5    12 Leszek         Stecuła               120.00 +  303: 291  170
+                                                          --------------- ---- ------
+                                                                     602  /  5 120.40
+
+
+
+
+	Jerzy Luter 100.00 Bytom                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    12 Stefan         Dawidson              112.00 -  218: 385   62
+    2    14 Witold         Sawicki               100.00 +  283: 208  150
+    3    13 Stanisław      Stanek                100.00 -  189: 283   50
+    4    17 Stanisław      Ściubidło             100.00 +  273: 257  150
+    5    13 Ewa            Czerwoniec            119.00 -  221: 383   69
+                                                          --------------- ---- ------
+                                                                     481  /  5  96.20
+
+
+
+
+	Mariusz Makuch 100.00 Zator                    
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Roman          Dzierża               112.00 -  187: 389   62
+    2    19 Stanisław      Ściubidło             100.00 +  258: 246  150
+    3    15 Waldemar       Wypchał               100.00 -  287: 360   50
+    4    15 Elżbieta       Kowalska              100.00 +  391: 244  150
+    5    11 Adam           Czerwoniec             93.00 +  282: 251  143
+                                                          --------------- ---- ------
+                                                                     555  /  5 111.00
+
+
+
+
+	Alicja Matuszczak 100.00 ?                        
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    17 Wiesław        Chilicki               96.00 -  191: 367   46
+    2    17 Elżbieta       Kowalska              100.00 -  234: 270   50
+    3    18 Stanisław      Ściubidło             100.00 -  198: 235   50
+    4    19 Michał         Ściubidło             100.00 -  279: 314   50
+    5    19 Zygmunt        Skwarek               100.00 +  269: 210  150
+                                                          --------------- ---- ------
+                                                                     346  /  5  69.20
+
+
+
+
+	Maurycy Piasecki 100.00 Tychy                    
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    19 Michał         Ściubidło             100.00 +  346: 267  150
+    2     7 Waldemar       Czerwoniec            118.00 -  304: 360   68
+    3     8 Roman          Dzierża               112.00 -  294: 333   62
+    4    11 Waldemar       Wypchał               100.00 -  285: 316   50
+    5    14 Jerzy          Płatek                111.00 -  310: 311   61
+                                                          --------------- ---- ------
+                                                                     391  /  5  78.20
+
+
+
+
+	Andrzej Rechowicz 100.00 Katowice               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Leszek         Stecuła               120.00 -  281: 292   70
+    2    12 Stanisław      Stanek                100.00 -  213: 219   50
+    3    16 Zygmunt        Skwarek               100.00 +  308: 227  150
+    4    13 Wojciech       Usakiewicz            104.00 -  287: 407   54
+    5    15 Maciej         Żłobiński             100.00 -  238: 244   50
+                                                          --------------- ---- ------
+                                                                     374  /  5  74.80
+
+
+
+
+	Witold Sawicki 100.00 ?                        
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Tomasz         Zwoliński             131.00 -  222: 481   81
+    2    14 Jerzy          Luter                 100.00 -  208: 283   50
+    3    17 Marcin         Mroziuk                83.00 +  295: 272  133
+    4    16 Ewa            Czerwoniec            119.00 -  210: 290   69
+    5    17 Elżbieta       Kowalska              100.00 +  303: 240  150
+                                                          --------------- ---- ------
+                                                                     483  /  5  96.60
+
+
+
+
+	Zygmunt Skwarek 100.00 Katowice                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Sławomir       Nosek                 116.00 -  203: 363   66
+    2    18 Adam           Czerwoniec             93.00 -  238: 286   43
+    3    16 Andrzej        Rechowicz             100.00 -  227: 308   50
+    4    18 Marcin         Mroziuk                83.00 -  176: 364   33
+    5    19 Alicja         Matuszczak            100.00 -  210: 269   50
+                                                          --------------- ---- ------
+                                                                     242  /  5  48.40
+
+
+
+
+	Stanisław Stanek 100.00 Olkusz                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Jacek          Pietruszka            113.00 -  288: 322   63
+    2    12 Andrzej        Rechowicz             100.00 +  219: 213  150
+    3    13 Jerzy          Luter                 100.00 +  283: 189  150
+    4     9 Leszek         Stecuła               120.00 +  333: 286  170
+    5     6 Witold         Jasiczak              100.00 -  259: 310   50
+                                                          --------------- ---- ------
+                                                                     583  /  5 116.60
+
+
+
+
+	Tomasz Szymański 100.00 Gorzów Wielkopolski      
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    18 Marcin         Mroziuk                83.00 +  311: 222  133
+    2     9 Ewa            Czerwoniec            119.00 +  361: 301  169
+    3     5 Tomasz         Zwoliński             131.00 +  404: 318  181
+    4     3 Stefan         Dawidson              112.00 -  297: 367   62
+    5     4 Robert         Duczemiński           123.00 -  292: 328   73
+                                                          --------------- ---- ------
+                                                                     618  /  5 123.60
+
+
+
+
+	Waldemar Wypchał 100.00 Kraków
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Paweł          Dawidson              123.00 -  295: 399   73
+    2    11 Jerzy          Matyasik               97.00 -  313: 397   47
+    3    15 Mariusz        Makuch                100.00 +  360: 287  150
+    4    11 Maurycy        Piasecki              100.00 +  316: 285  150
+    5     9 Wojciech       Usakiewicz            104.00 -  234: 382   54
+                                                          --------------- ---- ------
+                                                                     474  /  5  94.80
+
+
+
+
+	Michał Ściubidło 100.00 ?                        
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    19 Maurycy        Piasecki              100.00 -  267: 346   50
+    2    13 Tomasz         Drąszkowski           100.00 -   74: 260   50
+    3    19 Ireneusz       Kurzok                100.00 -  181: 373   50
+    4    19 Alicja         Matuszczak            100.00 +  314: 279  150
+    5    18 Stanisław      Ściubidło             100.00 +  247: 226  150
+                                                          --------------- ---- ------
+                                                                     450  /  5  90.00
+
+
+
+
+	Stanisław Ściubidło 100.00 ?                        
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    13 Jerzy          Płatek                111.00 -  152: 458   61
+    2    19 Mariusz        Makuch                100.00 -  246: 258   50
+    3    18 Alicja         Matuszczak            100.00 +  235: 198  150
+    4    17 Jerzy          Luter                 100.00 -  257: 273   50
+    5    18 Michał         Ściubidło             100.00 -  226: 247   50
+                                                          --------------- ---- ------
+                                                                     361  /  5  72.20
+
+
+
+
+	Maciej Żłobiński 100.00 Katowice                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Waldemar       Czerwoniec            118.00 -  232: 356   68
+    2    15 Marcin         Mroziuk                83.00 +  372: 204  133
+    3    10 Mariusz        Kubicki               114.00 -  322: 338   64
+    4    12 Wiesław        Chilicki               96.00 -  230: 300   46
+    5    15 Andrzej        Rechowicz             100.00 +  244: 238  150
+                                                          --------------- ---- ------
+                                                                     461  /  5  92.20
+
+
+
+
+	Jerzy Matyasik  97.00 Kraków                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    16 Ewa            Czerwoniec            119.00 -  291: 297   69
+    2    11 Waldemar       Wypchał               100.00 +  397: 313  150
+    3     7 Wiesław        Chilicki               96.00 +  355: 234  146
+    4     6 Sławomir       Nosek                 116.00 -  298: 321   66
+    5     8 Dariusz        Puton                 137.00 -  300: 362   87
+                                                          --------------- ---- ------
+                                                                     518  /  5 103.60
+
+
+
+
+	Wiesław Chilicki  96.00 Katowice
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    17 Alicja         Matuszczak            100.00 +  367: 191  150
+    2     6 Sławomir       Nosek                 116.00 -  317: 378   66
+    3     7 Jerzy          Matyasik               97.00 -  234: 355   47
+    4    12 Maciej         Żłobiński             100.00 +  300: 230  150
+    5    10 Roman          Dzierża               112.00 -  216: 392   62
+                                                          --------------- ---- ------
+                                                                     475  /  5  95.00
+
+
+
+
+	Adam Czerwoniec  93.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Mariusz        Kubicki               114.00 -  200: 383   64
+    2    18 Zygmunt        Skwarek               100.00 +  286: 238  150
+    3    14 Elżbieta       Kowalska              100.00 +  402: 258  150
+    4     8 Witold         Jasiczak              100.00 -  269: 314   50
+    5    11 Mariusz        Makuch                100.00 -  251: 282   50
+                                                          --------------- ---- ------
+                                                                     464  /  5  92.80
+
+
+
+
+	Marcin Mroziuk  83.00 Warszawa
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    18 Tomasz         Szymański             100.00 -  222: 311   50
+    2    15 Maciej         Żłobiński             100.00 -  204: 372   50
+    3    17 Witold         Sawicki               100.00 -  272: 295   50
+    4    18 Zygmunt        Skwarek               100.00 +  364: 176  150
+    5    16 Tomasz         Drąszkowski           100.00 +  388: 280  150
+                                                          --------------- ---- ------
+                                                                     450  /  5  90.00
+
+
+</pre></div><div id='p_rundy' class='page'><pre></pre></div><div id='p_ranking' class='page'><pre></pre></div><div id='p_przebieg' class='page'>
+
+    </div><div style="clear:both;width:100%;" class="alignright">
+
+<script>
+<!--
+if ((document.getElementById("content").offsetHeight + document.getElementById("top").offsetHeight) > screen.height)
+    document.write("<br /><br /><a href='#top'>do góry</a>");
+-->
+</script>
+
+</div>
+</div>
+
+<div id="bottom">
+<ul id="bottomlinks">
+<div class='onleft'>
+ Osób on-line: 52</div>
+    <li><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+    <li><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+    <li><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+    <li><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+    <li><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+    <li><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+</ul>
+    SCRABBLE® jest zastrzeżonym znakiem towarowym J.W. Spears &amp; Sons&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://www.pfs.org.pl/prawaautorskie.php">© Prawa autorskie</a>
+</div>
+</body>
+</html>

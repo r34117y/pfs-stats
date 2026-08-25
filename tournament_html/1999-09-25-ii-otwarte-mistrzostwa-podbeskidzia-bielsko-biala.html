@@ -1,0 +1,955 @@
+
+<html>
+<head>
+    <title>Polska Federacja Scrabble :: II Otwarte Mistrzostwa Podbeskidzia</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="files/img/favicon.ico" />
+    <link rel="stylesheet" href="files/css/style.css" type="text/css" />
+	<link rel="stylesheet" href="files/css/style-index.css" type="text/css" />
+    <!--[if IE]><link rel="stylesheet" type="text/css" href="files/css/styleie.css" /><![endif]-->
+    <!--[if lt IE 7.]><script defer type="text/javascript" src="files/js/pngfix.js"></script><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="files/js/minmax.js"></script><![endif]-->
+    <script type="text/javascript" src="files/js/jquery.js"></script>
+    <script type="text/javascript" src="files/js/jquery-bp.js"></script>
+    <script type="text/javascript" src="files/js/java.js"></script>
+    <script>jSubmenu ("turnieje","kalendarz");jKalendarz();</script>
+    <script>
+    var url, page;
+
+    page = 'info';
+    url  = document.location.toString();
+
+    if (url.match ('#')) {
+      page = url.split ('#')[1];
+      if ($.inArray (page, [ 'info', 'relacja', 'klasyfikacja', 'hh', 'rundy', 'ranking', 'przebieg' ]) == -1)
+        page = 'info';
+    }
+
+    $(document).ready(function(){
+        $('a#listaucz').bind('click', function(event){
+            $('div#lista').toggle();
+            event.preventDefault();
+        }).toggle(function() { $(this).text('schowaj listę uczestników'); }, function() { $(this).text("pokaż listę uczestników"); });
+        $('div#lista table tr:last td').css({"border-bottom" : "none"});
+
+        $("a.przycisk").click (function (e) {
+            if ($(this).attr ('href') !== '#')
+                return true;
+
+            e.preventDefault ();
+
+            id       = this.id;
+            this.id += 'tmp';
+            window.location.hash = id;
+            this.id  = id;
+
+            $(".page").hide ();
+            $(".page#p_" + id).show ();
+
+            $("a.przycisk").removeClass ('active');
+            $(this).addClass ('active');
+
+            return false;
+        });
+
+        $("a.przycisk#" + page).click ();
+        $('html, body').animate ({ scrollTop: 0 }, 0);
+    });
+    </script>
+  <style type="text/css">
+    .page {
+        display: none;
+    }
+    #szczegoly{
+        width: 100%;
+        border-spacing: 0;
+        margin-top: 30px;
+        text-align: left;
+        font-size: inherit;
+    }
+    #szczegoly td{
+        padding: 10px 20px 10px 0;
+        vertical-align: top;
+    }
+    #szczegoly td:first-child{
+        font-weight: bold;
+        width: 160px;
+    }
+    div#lista{
+        display:none;
+        margin-top: 15px;
+    }
+    div#lista table{
+        margin-top: 10px;
+        text-align: left;
+        font-size: inherit;
+    }
+    div#lista table td{
+        padding: 3px 8px;
+        border-bottom: 1px dashed #1576AE;
+    }
+    div#lista table th{
+        padding: 0px 5px 10px 5px;
+    }
+    div#lista table td.ptaszek{
+        text-align: center;
+        background: url('files/img/tick.png') no-repeat center center;
+    }
+    div#lista table th{
+        white-space: nowrap;
+        width: auto;
+    }
+    div#lista table td:first-child, div#lista table th:first-child{
+        text-align:right;
+        width: auto;
+    }
+    </style>
+</head>
+
+<body>
+
+<script type="text/javascript">setMenu();</script>
+
+<div id="top" onclick="location.href='https://www.pfs.org.pl'">
+</div>
+<div id="menu">
+
+    <div id="m_glowna">
+        <div class="tab"><a href="https://www.pfs.org.pl/index.php"></a></div>
+
+        <ul>
+            <li class="sublink" id="aktualnosci"><a href="https://www.pfs.org.pl">Aktualności</a></li>
+            <li class="sublink" id="nowy"><a href="https://www.pfs.org.pl/dlanowych.php">Jestem tu nowy</a></li>
+            <li class="sublink" id="anagramator"><a href="https://www.pfs.org.pl/osps_online.php?main=1">Słownik online</a></li>
+            <li class="sublink" id="siodemka"><a href="https://www.pfs.org.pl/siodemka.php?main=1">Siódemka tygodnia</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+            <li class="sublink" id="dlasponsorow"><a href="https://www.pfs.org.pl/dlasponsorow.php">Dla sponsorów</a></li>
+            <li class="sublink" id="kontakt"><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+        </ul>
+    </div>
+    <div id="m_turnieje">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kalendarz.php"></a></div>
+        <ul>
+            <li class="sublink" id="kalendarz"><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+            <li class="sublink" id="regulaminy"><a href="https://www.pfs.org.pl/regulaminy.php">Regulaminy</a></li>
+            <li class="sublink" id="sedziowie"><a href="https://www.pfs.org.pl/sedziowie.php">Sędziowie</a></li>
+            <li class="sublink" id="gp"><a href="https://www.pfs.org.pl/gp2026.php">Grand Prix</a></li>
+<!--            <li class="sublink" id="mr"><a href="https://www.pfs.org.pl/mr2020.php">Mistrzostwa Regionów</a></li>-->
+            <li class="sublink" id="archiwum"><a href="https://www.pfs.org.pl/archiwum.php">Historia</a></li>
+            <li class="sublink" id="galeria"><a href="https://www.pfs.org.pl/galeria.php">Zdjęcia</a></li>
+            <li class="sublink" id="rekordy"><a href="https://www.pfs.org.pl/rekordy.php">Rekordy</a></li>
+        </ul>
+    </div>
+    <div id="m_pfs">
+        <div  class="tab"><a href="https://www.pfs.org.pl/opfs.php"></a></div>
+        <ul>
+            <li class="sublink" id="opfs"><a href="https://www.pfs.org.pl/opfs.php">O PFS</a></li>
+            <li class="sublink" id="jakprzystapic"><a href="https://www.pfs.org.pl/jakprzystapic.php">Jak przystąpić</a></li>
+            <li class="sublink" id="dlaczlonkow"><a href="https://www.pfs.org.pl/dlaczlonkow.php">Dla członków</a></li>
+            <li class="sublink" id="wladze"><a href="https://www.pfs.org.pl/wladze.php">Władze</a></li>
+            <li class="sublink" id="komisje"><a href="https://www.pfs.org.pl/komisje.php">Komisje</a></li>
+            <li class="sublink" id="statut"><a href="https://www.pfs.org.pl/statut.php">Statut</a></li>
+            <li class="sublink" id="uchwaly"><a href="https://www.pfs.org.pl/uchwaly.php">Uchwały</a></li>
+            <li class="sublink" id="honorowi"><a href="https://www.pfs.org.pl/honorowi.php">Honorowi członkowie</a></li>
+            <li class="sublink" id="finanse"><a href="https://www.pfs.org.pl/finanse.php">Finanse</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabble">
+        <div  class="tab"><a href="https://www.pfs.org.pl/osps_online.php?desktop=1"></a></div>
+        <ul>
+            <li class="sublink" id="osps_online"><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+            <li class="sublink" id="zds"><a href="https://www.pfs.org.pl/zds2.php">ZDS</a></li>
+            <li class="sublink" id="osps"><a href="https://www.pfs.org.pl/osps.php">OSPS</a></li>
+            <li class="sublink" id="aktualizacje"><a href="https://www.pfs.org.pl/osps_aktualizacje.php">Aktualizacje</a></li>
+            <li class="sublink" id="dwojki"><a href="https://www.pfs.org.pl/dwojki.php">2-literówki</a></li>
+            <li class="sublink" id="trojki"><a href="https://www.pfs.org.pl/trojki.php">3-literówki</a></li>
+            <li class="sublink" id="siodemkat"><a href="https://www.pfs.org.pl/siodemka.php">Siódemka tygodnia</a></li>
+            <li class="sublink" id="slowneroznosci"><a href="https://www.pfs.org.pl/slowneroznosci.php">Słowne różności</a></li>
+        </ul>
+    </div>
+    <div id="m_ranking">
+        <div  class="tab"><a href="https://www.pfs.org.pl/ranking.php"></a></div>
+        <ul>
+            <li class="sublink" id="aktranking"><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+            <li class="sublink" id="medale"><a href="https://www.pfs.org.pl/medale.php">Klasyfikacja medalowa</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabblisci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/mistrzowiepolski.php"></a></div>
+        <ul>
+            <li class="sublink" id="mistrzowiepolski"><a href="https://www.pfs.org.pl/mistrzowiepolski.php">Mistrzowie Polski</a></li>
+            <li class="sublink" id="zdobywcypp"><a href="https://www.pfs.org.pl/zdobywcypp.php">Zdobywcy Pucharu Polski</a></li>
+            <li class="sublink" id="zwyciezcygp"><a href="https://www.pfs.org.pl/zwyciezcygp.php">Zwycięzcy Grand Prix</a></li>
+            <li class="sublink" id="liderzyrankingu"><a href="https://www.pfs.org.pl/liderzyrankingu.php">Liderzy rankingu</a></li>
+            <li class="sublink" id="zwyciezcylemans"><a href="https://www.pfs.org.pl/zwyciezcylemans.php">Zwycięzcy 24h Le Mans</a></li>
+            <li class="sublink" id="zwyciezcykmp"><a href="https://www.pfs.org.pl/zwyciezcykmp.php">KMP</a>
+        </ul>
+    </div>
+    <div id="m_kluby">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kluby.php"></a></div>
+        <ul>
+            <li class="sublink" id="rejestrklubow"><a href="https://www.pfs.org.pl/kluby.php">Rejestr klubów</a></li>
+            <li class="sublink" id="kmp"><a href="https://www.pfs.org.pl/kmp.php">KMP</a></li>
+            <li class="sublink" id="wiescizklubow"><a href="https://www.pfs.org.pl/wiescizklubow.php">Wieści z klubów</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/about.php">Statystyki klubowe</a></li>
+        </ul>
+    </div>
+    <div id="m_roznosci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/historia.php"></a></div>
+        <ul>
+            <li class="sublink" id="historia"><a href="https://www.pfs.org.pl/historia.php">Historia</a></li>
+            <li class="sublink" id="odmiany"><a href="https://www.pfs.org.pl/odmiany.php">Odmiany</a></li>
+            <li class="sublink" id="anegdoty"><a href="https://www.pfs.org.pl/anegdoty.php">Anegdoty</a></li>
+            <li class="sublink" id="scrabblealia"><a href="https://www.pfs.org.pl/scrabblealia.php">Scrabblealia</a></li>
+            <li class="sublink" id="scrabblenet"><a href="https://www.pfs.org.pl/scrabblenet.php">Scrabble w internecie</a></li>
+            <li class="sublink" id="programy"><a href="https://www.pfs.org.pl/programy.php">Programy</a></li>
+            <li class="sublink" id="download"><a href="https://www.pfs.org.pl/download.php">Do pobrania</a></li>
+            <li class="sublink" id="ksiazki"><a href="https://www.pfs.org.pl/ksiazki.php">Książki</a></li>
+            <li class="sublink" id="slowniczek"><a href="https://www.pfs.org.pl/slowniczek.php">Słowniczek</a></li>
+        </ul>
+    </div>
+    <div id="m_english">
+        <div  class="tab"><a href="https://www.pfs.org.pl/english.php"></a></div>
+        <ul>
+            <li class="sublink" id="about"><a href="https://www.pfs.org.pl/english.php">About Polish Scrabble</a></li>
+            <li class="sublink" id="news"><a href="https://www.pfs.org.pl/en_news.php">News</a></li>
+            <li class="sublink" id="bartek"><a href="https://www.pfs.org.pl/bartek.php">Bartek w Johor Bahru</a></li>
+            <li class="sublink" id="franko"><a href="https://www.pfs.org.pl/franko.php">Scrabble frankofońskie</a></li>
+        </ul>
+    </div>
+</div>
+
+<div id="submenu"></div>
+<div id="content">
+<div id='nextTours'>
+		<div class='nextTour' onclick='location.href="turniej.php?id=333"'>
+			<div class='karteczka small1'>
+				<span class='miasto'>Sudomie</span><span class='dzien'><span class='big'>12</span><br />września</span></div>
+			<div class='kartka big1'>
+				<span class='miasto'>Sudomie</span>
+				<span class='dzien'><b>12 września</b></span>
+				<span class='nazwaturnieju'>II Turniej Złotego Prawdziwka</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=332"'>
+			<div class='karteczka small2'>
+				<span class='miasto'>Bielsko-Biała</span><span class='dzien'><span class='big'>25</span><br />września</span></div>
+			<div class='kartka big2'>
+				<span class='miasto'>Bielsko-Biała</span>
+				<span class='dzien'><b>25-26 września</b></span>
+				<span class='nazwaturnieju'>II Otwarte Mistrzostwa Podbeskidzia</span><span class='gp'>Grand&nbsp;Prix&nbsp;1999</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=331"'>
+			<div class='karteczka small3'>
+				<span class='miasto'>Gdynia</span><span class='dzien'><span class='big'> 9</span><br />października</span></div>
+			<div class='kartka big3'>
+				<span class='miasto'>Gdynia</span>
+				<span class='dzien'><b> 9 października</b></span>
+				<span class='nazwaturnieju'>II Otwarte Mistrzostwa Trójmiasta</span></div>
+		</div></div><div class='naglowekrelacji'><span class='tytul'>II Otwarte Mistrzostwa Podbeskidzia<span class='nazwa'>25 - 26 września 1999 —  II Otwarte Mistrzostwa Podbeskidzia</span></span><a href='#' id='info' class='przycisk'>Informacje</a><a href='#' id='relacja' class='przycisk'>Relacja</a><a href='#' id='klasyfikacja' class='przycisk'>Wyniki</a><a href='#' id='hh' class='przycisk'>HH</a><div class='galleries'><img src='files/img/gallery.png' style='visibility:hidden;' alt='galeria' /></div></div><h1 style='color:black; margin-top:0px; margin-bottom:30px; padding: 0px'>II Otwarte Mistrzostwa Podbeskidzia<span><img src='files/img/map-2.png' style='vertical-align: bottom;' title='Grand Prix'> Bielsko-Biała, 25 - 26 września 1999 <br>Grand&nbsp;Prix&nbsp;1999</span></h1><div id='p_relacja' class='page'><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><div class='relacja' style='clear:both;'><div><pre>
+ 1. Zdzisław Szota (Warszawa)
+ 2. Tomasz Zwoliński (Warszawa)
+ 3. Mariusz Skrobosz (Warszawa)
+ 4. Dariusz Banaszek (Warszawa)
+ 5. Jacek Pietruszka (Kraków)
+ 6. Jerzy Paszek (Tarnowskie Góry)
+ 7. Stefan Dawidson (Częstochowa)
+ 8. Paweł Dawidson (Częstochowa)
+ 9. Andrzej Rechowicz (Katowice)
+ 10. Marcin Mroziuk (Strzegom) 
+
+30 uczestników, 12 rund 
+</pre></div><div class='autor'></div></div><div style='clear:both;'></div></div><div id='p_info' class='page'><br><p align='center'></p><br><br><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br>Zobacz, jak było na poprzednich turniejach:<br><a href='turniej.php?id=416'>I Otwarte Mistrzostwa Podbeskidzia</a><br><table id='szczegoly' class='ramkadolna'></table><br /><br /></div><div id='p_klasyfikacja' class='page'><pre>Wyniki turnieju II Mistrzostwa Podbeskidzia
+
+Lp. Imię            Nazwisko             Miasto               Ranking  Duże pkt Małe pkt Skalpy   Różn. MP
+--- --------------- -------------------- -------------------- -------- -------- -------- -------- --------
+  1 Zdzisław        Szota                Warszawa               129.31      9.0     4697     1836      643
+  2 Tomasz          Zwoliński            Warszawa               142.73      9.0     4402     1770      180
+  3 Mariusz         Skrobosz             Warszawa               124.73      8.0     4510     1576      554
+  4 Dariusz         Banaszek             Warszawa               142.69      8.0     4380     1676       22
+  5 Jacek           Pietruszka           Kraków                 137.47      8.0     4369     1635      234
+  6 Jerzy           Paszek               Tarnowskie Góry        102.84      8.0     4308     1635      422
+  7 Stefan          Dawidson             Częstochowa            110.17      8.0     4300     1694      382
+  8 Paweł           Dawidson             Częstochowa            131.01      7.0     4766     1600      650
+  9 Andrzej         Rechowicz            Katowice               122.57      7.0     4416     1552      231
+ 10 Marcin          Mroziuk              Warszawa               120.51      7.0     4310     1517      251
+ 11 Ireneusz        Kurzok               Mikołów                115.39      7.0     4105     1484      154
+ 12 Andrzej         Kwiatkowski          Warszawa               115.45      6.0     4584     1362      533
+ 13 Wojciech        Usakiewicz           Warszawa               131.90      6.0     4453     1432      -66
+ 14 Renata          Kowalska             Bielsko Biała          104.96      6.0     4360     1412      433
+ 15 Jerzy           Matyasik             Kraków                 108.75      6.0     4200     1410      -26
+ 16 Irena           Ficak                Mielec                 100.00      6.0     4008     1377      -13
+ 17 Wiktor          Stępień              Katowice               115.85      6.0     3983     1336     -154
+ 18 Krzysztof       Usakiewicz           Warszawa               108.42      5.0     4330     1229      585
+ 19 Mariusz         Gancarczyk           Mielec                 116.75      5.0     4304     1361       46
+ 20 Sławomir        Nosek                Mielec                 123.89      5.0     4190     1368     -283
+ 21 Katarzyna       Stępień              Katowice               116.01      5.0     4181     1236       81
+ 22 Joanna          Stępień              Katowice               111.62      4.0     4012     1250     -469
+ 23 Anna            Kowalska-Demczyszyn  Bielsko Biała          109.97      3.0     3775     1004     -533
+ 24 Beata           Próchniak            Bielsko Biała          100.00      3.0     2895      989    -1208
+ 25 Grażyna         Puton                Ruda Śląska            100.00      3.0     1794      584      184
+ 26 Dariusz         Próchniak            Bielsko Biała          100.00      3.0     1604      674     -542
+ 27 Andrzej         Lożyński             Piastów                104.41      2.0     2164      634     -286
+ 28 Dariusz         Puton                Ruda Śląska            133.35      2.0     1941      598       18
+ 29 Krzysztof       Kokot                Nowy Targ              100.00      1.0     2917      775    -1588
+ 30 Jacek           Michalski            Bielsko Biała          100.00      0.0      215      115     -435
+</pre></div><div id='p_hh' class='page'><pre>Wyniki poszczególnych graczy w turnieju II Mistrzostwa Podbeskidzia
+
+
+
+	Tomasz Zwoliński 142.73 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Ireneusz       Kurzok                115.39 +  329: 291  165
+    2     7 Paweł          Dawidson              131.01 +  349: 348  181
+    3     4 Andrzej        Kwiatkowski           115.45 +  401: 333  165
+    4     2 Dariusz        Banaszek              142.69 +  399: 380  193
+    5     1 Zdzisław       Szota                 129.31 +  425: 384  179
+    6     1 Sławomir       Nosek                 123.89 +  356: 349  174
+    7     1 Mariusz        Gancarczyk            116.75 +  442: 297  167
+    8     1 Marcin         Mroziuk               120.51 -  314: 363   71
+    9     1 Dariusz        Puton                 133.35 +  404: 350  183
+   10     1 Jerzy          Paszek                102.84 -  333: 419   53
+   11     1 Zdzisław       Szota                 129.31 -  289: 349   79
+   12     2 Stefan         Dawidson              110.17 +  361: 359  160
+                                                          --------------- ---- ------
+                                                                    1770  / 12 147.50
+
+
+
+
+	Dariusz Banaszek 142.69 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Joanna         Stępień               111.62 +  369: 357  162
+    2     5 Andrzej        Rechowicz             122.57 +  341: 332  173
+    3     3 Stefan         Dawidson              110.17 +  386: 276  160
+    4     2 Tomasz         Zwoliński             142.73 -  380: 399   93
+    5     3 Mariusz        Gancarczyk            116.75 +  443: 368  167
+    6     2 Zdzisław       Szota                 129.31 +  352: 340  179
+    7     2 Sławomir       Nosek                 123.89 +  367: 318  174
+    8     2 Dariusz        Puton                 133.35 -  359: 466   83
+    9     3 Wojciech       Usakiewicz            131.90 +  436: 354  182
+   10     3 Marcin         Mroziuk               120.51 -  341: 411   71
+   11     2 Jerzy          Paszek                102.84 +  334: 300  153
+   12     1 Zdzisław       Szota                 129.31 -  272: 437   79
+                                                          --------------- ---- ------
+                                                                    1676  / 12 139.67
+
+
+
+
+	Jacek Pietruszka 137.47 Kraków                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Stefan         Dawidson              110.17 -  322: 382   60
+    2    10 Renata         Kowalska              104.96 +  354: 327  155
+    3     8 Wojciech       Usakiewicz            131.90 +  333: 315  182
+    4     6 Irena          Ficak                 100.00 +  350: 288  150
+    5     5 Andrzej        Rechowicz             122.57 +  350: 336  173
+    6     4 Paweł          Dawidson              131.01 -  314: 359   81
+    7     6 Jerzy          Matyasik              108.75 -  347: 401   59
+    8     8 Krzysztof      Usakiewicz            108.42 +  420: 349  158
+    9     5 Sławomir       Nosek                 123.89 +  414: 296  174
+   10     2 Zdzisław       Szota                 129.31 +  367: 351  179
+   11     4 Paweł          Dawidson              131.01 -  379: 399   81
+   12     5 Dariusz        Puton                 133.35 +  419: 332  183
+                                                          --------------- ---- ------
+                                                                    1635  / 12 136.25
+
+
+
+
+	Dariusz Puton 133.35 Ruda Śląska            
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    8     2 Dariusz        Banaszek              142.69 +  466: 359  193
+    9     1 Tomasz         Zwoliński             142.73 -  350: 404   93
+   10     4 Stefan         Dawidson              110.17 -  373: 402   60
+   11     6 Andrzej        Kwiatkowski           115.45 +  420: 339  165
+   12     5 Jacek          Pietruszka            137.47 -  332: 419   87
+                                                          --------------- ---- ------
+                                                                     598  /  5 119.60
+
+
+
+
+	Wojciech Usakiewicz 131.90 Warszawa               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Anna           Kowalska-Demczyszyn   109.97 +  393: 344  160
+    2     4 Stefan         Dawidson              110.17 -  296: 340   60
+    3     8 Jacek          Pietruszka            137.47 -  315: 333   87
+    4    10 Wiktor         Stępień               115.85 -  378: 396   66
+    5    11 Andrzej        Lożyński              104.41 +  437: 369  154
+    6     9 Joanna         Stępień               111.62 +  530: 331  162
+    7     7 Renata         Kowalska              104.96 +  395: 352  155
+    8     4 Sławomir       Nosek                 123.89 +  445: 351  174
+    9     3 Dariusz        Banaszek              142.69 -  354: 436   93
+   10     5 Paweł          Dawidson              131.01 -  272: 579   81
+   11     7 Mariusz        Gancarczyk            116.75 +  351: 347  167
+   12     6 Andrzej        Rechowicz             122.57 -  287: 341   73
+                                                          --------------- ---- ------
+                                                                    1432  / 12 119.33
+
+
+
+
+	Paweł Dawidson 131.01 Częstochowa              
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Jerzy          Matyasik              108.75 +  321: 304  159
+    2     7 Tomasz         Zwoliński             142.73 -  348: 349   93
+    3     9 Ireneusz       Kurzok                115.39 +  446: 322  165
+    4     4 Marcin         Mroziuk               120.51 -  324: 392   71
+    5     6 Joanna         Stępień               111.62 +  409: 257  162
+    6     4 Jacek          Pietruszka            137.47 +  359: 314  187
+    7     3 Zdzisław       Szota                 129.31 -  401: 494   79
+    8     5 Mariusz        Gancarczyk            116.75 -  363: 422   67
+    9     7 Andrzej        Rechowicz             122.57 +  457: 243  173
+   10     5 Wojciech       Usakiewicz            131.90 +  579: 272  182
+   11     4 Jacek          Pietruszka            137.47 +  399: 379  187
+   12     3 Mariusz        Skrobosz              124.73 -  360: 368   75
+                                                          --------------- ---- ------
+                                                                    1600  / 12 133.33
+
+
+
+
+	Zdzisław Szota 129.31 Warszawa               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Krzysztof      Usakiewicz            108.42 +  412: 304  158
+    2     2 Andrzej        Kwiatkowski           115.45 +  407: 405  165
+    3     2 Mariusz        Skrobosz              124.73 +  300: 275  175
+    4     1 Mariusz        Gancarczyk            116.75 +  432: 352  167
+    5     1 Tomasz         Zwoliński             142.73 -  384: 425   93
+    6     2 Dariusz        Banaszek              142.69 -  340: 352   93
+    7     3 Paweł          Dawidson              131.01 +  494: 401  181
+    8     3 Stefan         Dawidson              110.17 +  377: 332  160
+    9     2 Marcin         Mroziuk               120.51 +  414: 280  171
+   10     2 Jacek          Pietruszka            137.47 -  351: 367   87
+   11     1 Tomasz         Zwoliński             142.73 +  349: 289  193
+   12     1 Dariusz        Banaszek              142.69 +  437: 272  193
+                                                          --------------- ---- ------
+                                                                    1836  / 12 153.00
+
+
+
+
+	Mariusz Skrobosz 124.73 Warszawa               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Renata         Kowalska              104.96 +  359: 326  155
+    2     6 Irena          Ficak                 100.00 +  395: 237  150
+    3     2 Zdzisław       Szota                 129.31 -  275: 300   79
+    4     5 Jerzy          Matyasik              108.75 -  355: 358   59
+    5     7 Wiktor         Stępień               115.85 +  333: 270  166
+    6     6 Jerzy          Paszek                102.84 -  317: 433   53
+    7     8 Andrzej        Rechowicz             122.57 -  352: 370   73
+    8    10 Katarzyna      Stępień               116.01 +  488: 300  166
+    9     8 Joanna         Stępień               111.62 +  479: 297  162
+   10     6 Mariusz        Gancarczyk            116.75 +  412: 350  167
+   11     5 Ireneusz       Kurzok                115.39 +  377: 355  165
+   12     3 Paweł          Dawidson              131.01 +  368: 360  181
+                                                          --------------- ---- ------
+                                                                    1576  / 12 131.33
+
+
+
+
+	Sławomir Nosek 123.89 Mielec                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Andrzej        Lożyński              104.41 +  410: 348  154
+    2     3 Wiktor         Stępień               115.85 +  452: 310  166
+    3     1 Mariusz        Gancarczyk            116.75 -  325: 375   67
+    4     3 Andrzej        Rechowicz             122.57 +  423: 333  173
+    5     2 Marcin         Mroziuk               120.51 +  355: 301  171
+    6     1 Tomasz         Zwoliński             142.73 -  349: 356   93
+    7     2 Dariusz        Banaszek              142.69 -  318: 367   93
+    8     4 Wojciech       Usakiewicz            131.90 -  351: 445   82
+    9     5 Jacek          Pietruszka            137.47 -  296: 414   87
+   10     8 Ireneusz       Kurzok                115.39 -  214: 439   65
+   11    11 Renata         Kowalska              104.96 -  305: 423   55
+   12    12 Joanna         Stępień               111.62 +  392: 362  162
+                                                          --------------- ---- ------
+                                                                    1368  / 12 114.00
+
+
+
+
+	Andrzej Rechowicz 122.57 Katowice               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Jerzy          Paszek                102.84 +  379: 278  153
+    2     5 Dariusz        Banaszek              142.69 -  332: 341   93
+    3     6 Katarzyna      Stępień               116.01 +  497: 320  166
+    4     3 Sławomir       Nosek                 123.89 -  333: 423   74
+    5     5 Jacek          Pietruszka            137.47 -  336: 350   87
+    6     7 Ireneusz       Kurzok                115.39 -  351: 382   65
+    7     8 Mariusz        Skrobosz              124.73 +  370: 352  175
+    8     9 Renata         Kowalska              104.96 +  391: 325  155
+    9     7 Paweł          Dawidson              131.01 -  243: 457   81
+   10    10 Joanna         Stępień               111.62 +  386: 304  162
+   11     8 Jerzy          Matyasik              108.75 +  457: 366  159
+   12     6 Wojciech       Usakiewicz            131.90 +  341: 287  182
+                                                          --------------- ---- ------
+                                                                    1552  / 12 129.33
+
+
+
+
+	Marcin Mroziuk 120.51 Warszawa
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Irena          Ficak                 100.00 -  342: 364   50
+    2     9 Anna           Kowalska-Demczyszyn   109.97 +  393: 281  160
+    3     5 Joanna         Stępień               111.62 +  371: 307  162
+    4     4 Paweł          Dawidson              131.01 +  392: 324  181
+    5     2 Sławomir       Nosek                 123.89 -  301: 355   74
+    6     5 Jerzy          Matyasik              108.75 +  407: 301  159
+    7     4 Jerzy          Paszek                102.84 +  405: 355  153
+    8     1 Tomasz         Zwoliński             142.73 +  363: 314  193
+    9     2 Zdzisław       Szota                 129.31 -  280: 414   79
+   10     3 Dariusz        Banaszek              142.69 +  411: 341  193
+   11     3 Stefan         Dawidson              110.17 -  306: 361   60
+   12     4 Jerzy          Paszek                102.84 -  339: 342   53
+                                                          --------------- ---- ------
+                                                                    1517  / 12 126.42
+
+
+
+
+	Mariusz Gancarczyk 116.75 Mielec                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Krzysztof      Kokot                 100.00 +  503: 198  150
+    2     1 Katarzyna      Stępień               116.01 +  372: 281  166
+    3     1 Sławomir       Nosek                 123.89 +  375: 325  174
+    4     1 Zdzisław       Szota                 129.31 -  352: 432   79
+    5     3 Dariusz        Banaszek              142.69 -  368: 443   93
+    6     3 Stefan         Dawidson              110.17 +  349: 289  160
+    7     1 Tomasz         Zwoliński             142.73 -  297: 442   93
+    8     5 Paweł          Dawidson              131.01 +  422: 363  181
+    9     4 Jerzy          Paszek                102.84 -  273: 337   53
+   10     6 Mariusz        Skrobosz              124.73 -  350: 412   75
+   11     7 Wojciech       Usakiewicz            131.90 -  347: 351   82
+   12     9 Renata         Kowalska              104.96 -  296: 385   55
+                                                          --------------- ---- ------
+                                                                    1361  / 12 113.42
+
+
+
+
+	Katarzyna Stępień 116.01 Katowice               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    12 Dariusz        Próchniak             100.00 +  430: 163  150
+    2     1 Mariusz        Gancarczyk            116.75 -  281: 372   67
+    3     6 Andrzej        Rechowicz             122.57 -  320: 497   73
+    4     9 Andrzej        Lożyński              104.41 +  339: 248  154
+    5     8 Ireneusz       Kurzok                115.39 -  277: 336   65
+    6    10 Wiktor         Stępień               115.85 -  310: 319   66
+    7    12 Krzysztof      Kokot                 100.00 +  414: 230  150
+    8    10 Mariusz        Skrobosz              124.73 -  300: 488   75
+    9    10 Andrzej        Kwiatkowski           115.45 -  291: 496   65
+   10    14 Beata          Próchniak             100.00 +  435: 235  150
+   11    12 Joanna         Stępień               111.62 +  430: 356  162
+   12    10 Jerzy          Matyasik              108.75 -  354: 360   59
+                                                          --------------- ---- ------
+                                                                    1236  / 12 103.00
+
+
+
+
+	Wiktor Stępień 115.85 Katowice               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    13 Beata          Próchniak             100.00 +  395: 197  150
+    2     3 Sławomir       Nosek                 123.89 -  310: 452   74
+    3     7 Jerzy          Matyasik              108.75 -  278: 386   59
+    4    10 Wojciech       Usakiewicz            131.90 +  396: 378  182
+    5     7 Mariusz        Skrobosz              124.73 -  270: 333   75
+    6    10 Katarzyna      Stępień               116.01 +  319: 310  166
+    7     9 Irena          Ficak                 100.00 -  293: 422   50
+    8    11 Joanna         Stępień               111.62 -  300: 338   62
+    9    11 Krzysztof      Usakiewicz            108.42 +  319: 304  158
+   10    11 Anna           Kowalska-Demczyszyn   109.97 +  403: 297  160
+   11     9 Irena          Ficak                 100.00 -  274: 354   50
+   12    11 Grażyna        Puton                 100.00 +  426: 366  150
+                                                          --------------- ---- ------
+                                                                    1336  / 12 111.33
+
+
+
+
+	Andrzej Kwiatkowski 115.45 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    14 Jacek          Michalski             100.00 +  422: 110  150
+    2     2 Zdzisław       Szota                 129.31 -  405: 407   79
+    3     4 Tomasz         Zwoliński             142.73 -  333: 401   93
+    4     7 Stefan         Dawidson              110.17 -  364: 403   60
+    5    10 Renata         Kowalska              104.96 -  327: 387   55
+    6    12 Krzysztof      Kokot                 100.00 +  343: 267  150
+    7    10 Krzysztof      Usakiewicz            108.42 -  355: 435   58
+    8    12 Anna           Kowalska-Demczyszyn   109.97 +  463: 323  160
+    9    10 Katarzyna      Stępień               116.01 +  496: 291  166
+   10     7 Irena          Ficak                 100.00 +  371: 337  150
+   11     6 Dariusz        Puton                 133.35 -  339: 420   83
+   12     8 Krzysztof      Usakiewicz            108.42 +  366: 270  158
+                                                          --------------- ---- ------
+                                                                    1362  / 12 113.50
+
+
+
+
+	Ireneusz Kurzok 115.39 Mikołów                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Tomasz         Zwoliński             142.73 -  291: 329   93
+    2    12 Jerzy          Paszek                102.84 +  365: 273  153
+    3     9 Paweł          Dawidson              131.01 -  322: 446   81
+    4    11 Beata          Próchniak             100.00 +  369: 251  150
+    5     8 Katarzyna      Stępień               116.01 +  336: 277  166
+    6     7 Andrzej        Rechowicz             122.57 +  382: 351  173
+    7     5 Stefan         Dawidson              110.17 -  222: 397   60
+    8     7 Irena          Ficak                 100.00 -  299: 332   50
+    9     9 Jerzy          Matyasik              108.75 +  379: 363  159
+   10     8 Sławomir       Nosek                 123.89 +  439: 214  174
+   11     5 Mariusz        Skrobosz              124.73 -  355: 377   75
+   12     7 Irena          Ficak                 100.00 +  346: 341  150
+                                                          --------------- ---- ------
+                                                                    1484  / 12 123.67
+
+
+
+
+	Joanna Stępień 111.62 Katowice               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Dariusz        Banaszek              142.69 -  357: 369   93
+    2     8 Andrzej        Lożyński              104.41 +  429: 204  154
+    3     5 Marcin         Mroziuk               120.51 -  307: 371   71
+    4     8 Renata         Kowalska              104.96 +  323: 294  155
+    5     6 Paweł          Dawidson              131.01 -  257: 409   81
+    6     9 Wojciech       Usakiewicz            131.90 -  331: 530   82
+    7    11 Anna           Kowalska-Demczyszyn   109.97 +  351: 317  160
+    8    11 Wiktor         Stępień               115.85 +  338: 300  166
+    9     8 Mariusz        Skrobosz              124.73 -  297: 479   75
+   10    10 Andrzej        Rechowicz             122.57 -  304: 386   73
+   11    12 Katarzyna      Stępień               116.01 -  356: 430   66
+   12    12 Sławomir       Nosek                 123.89 -  362: 392   74
+                                                          --------------- ---- ------
+                                                                    1250  / 12 104.17
+
+
+
+
+	Stefan Dawidson 110.17 Częstochowa            
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Jacek          Pietruszka            137.47 +  382: 322  187
+    2     4 Wojciech       Usakiewicz            131.90 +  340: 296  182
+    3     3 Dariusz        Banaszek              142.69 -  276: 386   93
+    4     7 Andrzej        Kwiatkowski           115.45 +  403: 364  165
+    5     4 Jerzy          Matyasik              108.75 +  345: 312  159
+    6     3 Mariusz        Gancarczyk            116.75 -  289: 349   67
+    7     5 Ireneusz       Kurzok                115.39 +  397: 222  165
+    8     3 Zdzisław       Szota                 129.31 -  332: 377   79
+    9     6 Irena          Ficak                 100.00 +  414: 250  150
+   10     4 Dariusz        Puton                 133.35 +  402: 373  183
+   11     3 Marcin         Mroziuk               120.51 +  361: 306  171
+   12     2 Tomasz         Zwoliński             142.73 -  359: 361   93
+                                                          --------------- ---- ------
+                                                                    1694  / 12 141.17
+
+
+
+
+	Anna Kowalska-Demczyszyn 109.97 Bielsko Biała            
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Wojciech       Usakiewicz            131.90 -  344: 393   82
+    2     9 Marcin         Mroziuk               120.51 -  281: 393   71
+    3    11 Renata         Kowalska              104.96 -  277: 488   55
+    4    12 Jerzy          Paszek                102.84 -  280: 361   53
+    5    13 Krzysztof      Kokot                 100.00 +  370: 284  150
+    6    13 Beata          Próchniak             100.00 +  375: 231  150
+    7    11 Joanna         Stępień               111.62 -  317: 351   62
+    8    12 Andrzej        Kwiatkowski           115.45 -  323: 463   65
+    9    13 Grażyna        Puton                 100.00 -  316: 390   50
+   10    11 Wiktor         Stępień               115.85 -  297: 403   66
+   11    13 Beata          Próchniak             100.00 +  291: 240  150
+   12    13 Beata          Próchniak             100.00 -  304: 311   50
+                                                          --------------- ---- ------
+                                                                    1004  / 12  83.67
+
+
+
+
+	Jerzy Matyasik 108.75 Kraków                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Paweł          Dawidson              131.01 -  304: 321   81
+    2    11 Krzysztof      Usakiewicz            108.42 +  404: 305  158
+    3     7 Wiktor         Stępień               115.85 +  386: 278  166
+    4     5 Mariusz        Skrobosz              124.73 +  358: 355  175
+    5     4 Stefan         Dawidson              110.17 -  312: 345   60
+    6     5 Marcin         Mroziuk               120.51 -  301: 407   71
+    7     6 Jacek          Pietruszka            137.47 +  401: 347  187
+    8     6 Jerzy          Paszek                102.84 -  285: 405   53
+    9     9 Ireneusz       Kurzok                115.39 -  363: 379   65
+   10     9 Renata         Kowalska              104.96 +  360: 273  155
+   11     8 Andrzej        Rechowicz             122.57 -  366: 457   73
+   12    10 Katarzyna      Stępień               116.01 +  360: 354  166
+                                                          --------------- ---- ------
+                                                                    1410  / 12 117.50
+
+
+
+
+	Krzysztof Usakiewicz 108.42 Warszawa               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Zdzisław       Szota                 129.31 -  304: 412   79
+    2    11 Jerzy          Matyasik              108.75 -  305: 404   59
+    3    12 Jerzy          Paszek                102.84 -  256: 314   53
+    4    13 Krzysztof      Kokot                 100.00 +  455: 208  150
+    5    12 Beata          Próchniak             100.00 +  529: 154  150
+    6     8 Renata         Kowalska              104.96 -  306: 365   55
+    7    10 Andrzej        Kwiatkowski           115.45 +  435: 355  165
+    8     8 Jacek          Pietruszka            137.47 -  349: 420   87
+    9    11 Wiktor         Stępień               115.85 -  304: 319   66
+   10    13 Dariusz        Próchniak             100.00 +  440: 195  150
+   11    10 Grażyna        Puton                 100.00 +  377: 233  150
+   12     8 Andrzej        Kwiatkowski           115.45 -  270: 366   65
+                                                          --------------- ---- ------
+                                                                    1229  / 12 102.42
+
+
+
+
+	Renata Kowalska 104.96 Bielsko Biała          
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Mariusz        Skrobosz              124.73 -  326: 359   75
+    2    10 Jacek          Pietruszka            137.47 -  327: 354   87
+    3    11 Anna           Kowalska-Demczyszyn   109.97 +  488: 277  160
+    4     8 Joanna         Stępień               111.62 -  294: 323   62
+    5    10 Andrzej        Kwiatkowski           115.45 +  387: 327  165
+    6     8 Krzysztof      Usakiewicz            108.42 +  365: 306  158
+    7     7 Wojciech       Usakiewicz            131.90 -  352: 395   82
+    8     9 Andrzej        Rechowicz             122.57 -  325: 391   73
+    9    12 Krzysztof      Kokot                 100.00 +  415: 234  150
+   10     9 Jerzy          Matyasik              108.75 -  273: 360   59
+   11    11 Sławomir       Nosek                 123.89 +  423: 305  174
+   12     9 Mariusz        Gancarczyk            116.75 +  385: 296  167
+                                                          --------------- ---- ------
+                                                                    1412  / 12 117.67
+
+
+
+
+	Andrzej Lożyński 104.41 Piastów                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Sławomir       Nosek                 123.89 -  348: 410   74
+    2     8 Joanna         Stępień               111.62 -  204: 429   62
+    3    13 Krzysztof      Kokot                 100.00 +  528: 198  150
+    4     9 Katarzyna      Stępień               116.01 -  248: 339   66
+    5    11 Wojciech       Usakiewicz            131.90 -  369: 437   82
+    6    11 Irena          Ficak                 100.00 -  218: 417   50
+    7    13 Beata          Próchniak             100.00 +  249: 220  150
+                                                          --------------- ---- ------
+                                                                     634  /  7  90.57
+
+
+
+
+	Jerzy Paszek 102.84 Tarnowskie Góry          
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Andrzej        Rechowicz             122.57 -  278: 379   73
+    2    12 Ireneusz       Kurzok                115.39 -  273: 365   65
+    3    12 Krzysztof      Usakiewicz            108.42 +  314: 256  158
+    4    12 Anna           Kowalska-Demczyszyn   109.97 +  361: 280  160
+    5     9 Irena          Ficak                 100.00 +  491: 320  150
+    6     6 Mariusz        Skrobosz              124.73 +  433: 317  175
+    7     4 Marcin         Mroziuk               120.51 -  355: 405   71
+    8     6 Jerzy          Matyasik              108.75 +  405: 285  159
+    9     4 Mariusz        Gancarczyk            116.75 +  337: 273  167
+   10     1 Tomasz         Zwoliński             142.73 +  419: 333  193
+   11     2 Dariusz        Banaszek              142.69 -  300: 334   93
+   12     4 Marcin         Mroziuk               120.51 +  342: 339  171
+                                                          --------------- ---- ------
+                                                                    1635  / 12 136.25
+
+
+
+
+	Irena Ficak 100.00 Mielec                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Marcin         Mroziuk               120.51 +  364: 342  171
+    2     6 Mariusz        Skrobosz              124.73 -  237: 395   75
+    3    10 Beata          Próchniak             100.00 +  346: 228  150
+    4     6 Jacek          Pietruszka            137.47 -  288: 350   87
+    5     9 Jerzy          Paszek                102.84 -  320: 491   53
+    6    11 Andrzej        Lożyński              104.41 +  417: 218  154
+    7     9 Wiktor         Stępień               115.85 +  422: 293  166
+    8     7 Ireneusz       Kurzok                115.39 +  332: 299  165
+    9     6 Stefan         Dawidson              110.17 -  250: 414   60
+   10     7 Andrzej        Kwiatkowski           115.45 -  337: 371   65
+   11     9 Wiktor         Stępień               115.85 +  354: 274  166
+   12     7 Ireneusz       Kurzok                115.39 -  341: 346   65
+                                                          --------------- ---- ------
+                                                                    1377  / 12 114.75
+
+
+
+
+	Krzysztof Kokot 100.00 Nowy Targ                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Mariusz        Gancarczyk            116.75 -  198: 503   67
+    2    13 Beata          Próchniak             100.00 -  205: 259   50
+    3    13 Andrzej        Lożyński              104.41 -  198: 528   54
+    4    13 Krzysztof      Usakiewicz            108.42 -  208: 455   58
+    5    13 Anna           Kowalska-Demczyszyn   109.97 -  284: 370   60
+    6    12 Andrzej        Kwiatkowski           115.45 -  267: 343   65
+    7    12 Katarzyna      Stępień               116.01 -  230: 414   66
+    8    14 Dariusz        Próchniak             100.00 +  318: 213  150
+    9    12 Renata         Kowalska              104.96 -  234: 415   55
+   10    12 Grażyna        Puton                 100.00 -  240: 410   50
+   11    14 Dariusz        Próchniak             100.00 -  287: 298   50
+   12    14 Dariusz        Próchniak             100.00 -  248: 297   50
+                                                          --------------- ---- ------
+                                                                     775  / 12  64.58
+
+
+
+
+	Jacek Michalski 100.00 Bielsko Biała            
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    14 Andrzej        Kwiatkowski           115.45 -  110: 422   65
+    2    14 Dariusz        Próchniak             100.00 -  105: 228   50
+                                                          --------------- ---- ------
+                                                                     115  /  2  57.50
+
+
+
+
+	Beata Próchniak 100.00 Bielsko Biała            
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    13 Wiktor         Stępień               115.85 -  197: 395   66
+    2    13 Krzysztof      Kokot                 100.00 +  259: 205  150
+    3    10 Irena          Ficak                 100.00 -  228: 346   50
+    4    11 Ireneusz       Kurzok                115.39 -  251: 369   65
+    5    12 Krzysztof      Usakiewicz            108.42 -  154: 529   58
+    6    13 Anna           Kowalska-Demczyszyn   109.97 -  231: 375   60
+    7    13 Andrzej        Lożyński              104.41 -  220: 249   54
+    8    13 Grażyna        Puton                 100.00 -  251: 395   50
+    9    14 Dariusz        Próchniak             100.00 +  318: 210  150
+   10    14 Katarzyna      Stępień               116.01 -  235: 435   66
+   11    13 Anna           Kowalska-Demczyszyn   109.97 -  240: 291   60
+   12    13 Anna           Kowalska-Demczyszyn   109.97 +  311: 304  160
+                                                          --------------- ---- ------
+                                                                     989  / 12  82.42
+
+
+
+
+	Dariusz Próchniak 100.00 Bielsko Biała            
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    12 Katarzyna      Stępień               116.01 -  163: 430   66
+    2    14 Jacek          Michalski             100.00 +  228: 105  150
+    8    14 Krzysztof      Kokot                 100.00 -  213: 318   50
+    9    14 Beata          Próchniak             100.00 -  210: 318   50
+   10    13 Krzysztof      Usakiewicz            108.42 -  195: 440   58
+   11    14 Krzysztof      Kokot                 100.00 +  298: 287  150
+   12    14 Krzysztof      Kokot                 100.00 +  297: 248  150
+                                                          --------------- ---- ------
+                                                                     674  /  7  96.29
+
+
+
+
+	Grażyna Puton 100.00 Ruda Śląska              
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    8    13 Beata          Próchniak             100.00 +  395: 251  150
+    9    13 Anna           Kowalska-Demczyszyn   109.97 +  390: 316  160
+   10    12 Krzysztof      Kokot                 100.00 +  410: 240  150
+   11    10 Krzysztof      Usakiewicz            108.42 -  233: 377   58
+   12    11 Wiktor         Stępień               115.85 -  366: 426   66
+                                                          --------------- ---- ------
+                                                                     584  /  5 116.80
+
+
+</pre></div><div id='p_rundy' class='page'><pre></pre></div><div id='p_ranking' class='page'><pre></pre></div><div id='p_przebieg' class='page'>
+
+    </div><div style="clear:both;width:100%;" class="alignright">
+
+<script>
+<!--
+if ((document.getElementById("content").offsetHeight + document.getElementById("top").offsetHeight) > screen.height)
+    document.write("<br /><br /><a href='#top'>do góry</a>");
+-->
+</script>
+
+</div>
+</div>
+
+<div id="bottom">
+<ul id="bottomlinks">
+<div class='onleft'>
+ Osób on-line: 54</div>
+    <li><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+    <li><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+    <li><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+    <li><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+    <li><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+    <li><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+</ul>
+    SCRABBLE® jest zastrzeżonym znakiem towarowym J.W. Spears &amp; Sons&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://www.pfs.org.pl/prawaautorskie.php">© Prawa autorskie</a>
+</div>
+</body>
+</html>

@@ -58,6 +58,7 @@ final readonly class TournamentRoundImportService
         $dateCode = (int) $startDate->format('Ymd');
         $tournamentName = $this->trimToLength($this->requireString($tournament, 'name', 'tournament'), 80);
         $city = $this->trimToLength($this->requireString($tournament, 'city', 'tournament'), 256);
+        $pfsUrlId = isset($tournament['pfsUrlId']) ? $this->requireInt($tournament, 'pfsUrlId', 'tournament') : null;
 
         $existingTournamentId = $this->findExistingTournamentId($organization['id'], $dateCode, $tournamentName, $city);
 
@@ -74,6 +75,7 @@ final readonly class TournamentRoundImportService
             $startDate,
             $tournamentName,
             $city,
+            $pfsUrlId,
         ): TournamentRoundImportResult {
             $rankingRowsInsertedByType = [
                 RankingType::FUCKED => 0,
@@ -187,7 +189,7 @@ final readonly class TournamentRoundImportService
                     'referee' => null,
                     'place' => $city,
                     'organizer' => null,
-                    'urlid' => null,
+                    'urlid' => $pfsUrlId,
                 ],
             );
 

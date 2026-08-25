@@ -1,0 +1,2323 @@
+
+<html>
+<head>
+    <title>Polska Federacja Scrabble :: I Otwarte Mistrzostwa Łomży</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="files/img/favicon.ico" />
+    <link rel="stylesheet" href="files/css/style.css" type="text/css" />
+	<link rel="stylesheet" href="files/css/style-index.css" type="text/css" />
+    <!--[if IE]><link rel="stylesheet" type="text/css" href="files/css/styleie.css" /><![endif]-->
+    <!--[if lt IE 7.]><script defer type="text/javascript" src="files/js/pngfix.js"></script><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="files/js/minmax.js"></script><![endif]-->
+    <script type="text/javascript" src="files/js/jquery.js"></script>
+    <script type="text/javascript" src="files/js/jquery-bp.js"></script>
+    <script type="text/javascript" src="files/js/java.js"></script>
+    <script>jSubmenu ("turnieje","kalendarz");jKalendarz();</script>
+    <script>
+    var url, page;
+
+    page = 'info';
+    url  = document.location.toString();
+
+    if (url.match ('#')) {
+      page = url.split ('#')[1];
+      if ($.inArray (page, [ 'info', 'relacja', 'klasyfikacja', 'hh', 'rundy', 'ranking', 'przebieg' ]) == -1)
+        page = 'info';
+    }
+
+    $(document).ready(function(){
+        $('a#listaucz').bind('click', function(event){
+            $('div#lista').toggle();
+            event.preventDefault();
+        }).toggle(function() { $(this).text('schowaj listę uczestników'); }, function() { $(this).text("pokaż listę uczestników"); });
+        $('div#lista table tr:last td').css({"border-bottom" : "none"});
+
+        $("a.przycisk").click (function (e) {
+            if ($(this).attr ('href') !== '#')
+                return true;
+
+            e.preventDefault ();
+
+            id       = this.id;
+            this.id += 'tmp';
+            window.location.hash = id;
+            this.id  = id;
+
+            $(".page").hide ();
+            $(".page#p_" + id).show ();
+
+            $("a.przycisk").removeClass ('active');
+            $(this).addClass ('active');
+
+            return false;
+        });
+
+        $("a.przycisk#" + page).click ();
+        $('html, body').animate ({ scrollTop: 0 }, 0);
+    });
+    </script>
+  <style type="text/css">
+    .page {
+        display: none;
+    }
+    #szczegoly{
+        width: 100%;
+        border-spacing: 0;
+        margin-top: 30px;
+        text-align: left;
+        font-size: inherit;
+    }
+    #szczegoly td{
+        padding: 10px 20px 10px 0;
+        vertical-align: top;
+    }
+    #szczegoly td:first-child{
+        font-weight: bold;
+        width: 160px;
+    }
+    div#lista{
+        display:none;
+        margin-top: 15px;
+    }
+    div#lista table{
+        margin-top: 10px;
+        text-align: left;
+        font-size: inherit;
+    }
+    div#lista table td{
+        padding: 3px 8px;
+        border-bottom: 1px dashed #1576AE;
+    }
+    div#lista table th{
+        padding: 0px 5px 10px 5px;
+    }
+    div#lista table td.ptaszek{
+        text-align: center;
+        background: url('files/img/tick.png') no-repeat center center;
+    }
+    div#lista table th{
+        white-space: nowrap;
+        width: auto;
+    }
+    div#lista table td:first-child, div#lista table th:first-child{
+        text-align:right;
+        width: auto;
+    }
+    </style>
+</head>
+
+<body>
+
+<script type="text/javascript">setMenu();</script>
+
+<div id="top" onclick="location.href='https://www.pfs.org.pl'">
+</div>
+<div id="menu">
+
+    <div id="m_glowna">
+        <div class="tab"><a href="https://www.pfs.org.pl/index.php"></a></div>
+
+        <ul>
+            <li class="sublink" id="aktualnosci"><a href="https://www.pfs.org.pl">Aktualności</a></li>
+            <li class="sublink" id="nowy"><a href="https://www.pfs.org.pl/dlanowych.php">Jestem tu nowy</a></li>
+            <li class="sublink" id="anagramator"><a href="https://www.pfs.org.pl/osps_online.php?main=1">Słownik online</a></li>
+            <li class="sublink" id="siodemka"><a href="https://www.pfs.org.pl/siodemka.php?main=1">Siódemka tygodnia</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+            <li class="sublink" id="dlasponsorow"><a href="https://www.pfs.org.pl/dlasponsorow.php">Dla sponsorów</a></li>
+            <li class="sublink" id="kontakt"><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+        </ul>
+    </div>
+    <div id="m_turnieje">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kalendarz.php"></a></div>
+        <ul>
+            <li class="sublink" id="kalendarz"><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+            <li class="sublink" id="regulaminy"><a href="https://www.pfs.org.pl/regulaminy.php">Regulaminy</a></li>
+            <li class="sublink" id="sedziowie"><a href="https://www.pfs.org.pl/sedziowie.php">Sędziowie</a></li>
+            <li class="sublink" id="gp"><a href="https://www.pfs.org.pl/gp2026.php">Grand Prix</a></li>
+<!--            <li class="sublink" id="mr"><a href="https://www.pfs.org.pl/mr2020.php">Mistrzostwa Regionów</a></li>-->
+            <li class="sublink" id="archiwum"><a href="https://www.pfs.org.pl/archiwum.php">Historia</a></li>
+            <li class="sublink" id="galeria"><a href="https://www.pfs.org.pl/galeria.php">Zdjęcia</a></li>
+            <li class="sublink" id="rekordy"><a href="https://www.pfs.org.pl/rekordy.php">Rekordy</a></li>
+        </ul>
+    </div>
+    <div id="m_pfs">
+        <div  class="tab"><a href="https://www.pfs.org.pl/opfs.php"></a></div>
+        <ul>
+            <li class="sublink" id="opfs"><a href="https://www.pfs.org.pl/opfs.php">O PFS</a></li>
+            <li class="sublink" id="jakprzystapic"><a href="https://www.pfs.org.pl/jakprzystapic.php">Jak przystąpić</a></li>
+            <li class="sublink" id="dlaczlonkow"><a href="https://www.pfs.org.pl/dlaczlonkow.php">Dla członków</a></li>
+            <li class="sublink" id="wladze"><a href="https://www.pfs.org.pl/wladze.php">Władze</a></li>
+            <li class="sublink" id="komisje"><a href="https://www.pfs.org.pl/komisje.php">Komisje</a></li>
+            <li class="sublink" id="statut"><a href="https://www.pfs.org.pl/statut.php">Statut</a></li>
+            <li class="sublink" id="uchwaly"><a href="https://www.pfs.org.pl/uchwaly.php">Uchwały</a></li>
+            <li class="sublink" id="honorowi"><a href="https://www.pfs.org.pl/honorowi.php">Honorowi członkowie</a></li>
+            <li class="sublink" id="finanse"><a href="https://www.pfs.org.pl/finanse.php">Finanse</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabble">
+        <div  class="tab"><a href="https://www.pfs.org.pl/osps_online.php?desktop=1"></a></div>
+        <ul>
+            <li class="sublink" id="osps_online"><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+            <li class="sublink" id="zds"><a href="https://www.pfs.org.pl/zds2.php">ZDS</a></li>
+            <li class="sublink" id="osps"><a href="https://www.pfs.org.pl/osps.php">OSPS</a></li>
+            <li class="sublink" id="aktualizacje"><a href="https://www.pfs.org.pl/osps_aktualizacje.php">Aktualizacje</a></li>
+            <li class="sublink" id="dwojki"><a href="https://www.pfs.org.pl/dwojki.php">2-literówki</a></li>
+            <li class="sublink" id="trojki"><a href="https://www.pfs.org.pl/trojki.php">3-literówki</a></li>
+            <li class="sublink" id="siodemkat"><a href="https://www.pfs.org.pl/siodemka.php">Siódemka tygodnia</a></li>
+            <li class="sublink" id="slowneroznosci"><a href="https://www.pfs.org.pl/slowneroznosci.php">Słowne różności</a></li>
+        </ul>
+    </div>
+    <div id="m_ranking">
+        <div  class="tab"><a href="https://www.pfs.org.pl/ranking.php"></a></div>
+        <ul>
+            <li class="sublink" id="aktranking"><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+            <li class="sublink" id="medale"><a href="https://www.pfs.org.pl/medale.php">Klasyfikacja medalowa</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabblisci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/mistrzowiepolski.php"></a></div>
+        <ul>
+            <li class="sublink" id="mistrzowiepolski"><a href="https://www.pfs.org.pl/mistrzowiepolski.php">Mistrzowie Polski</a></li>
+            <li class="sublink" id="zdobywcypp"><a href="https://www.pfs.org.pl/zdobywcypp.php">Zdobywcy Pucharu Polski</a></li>
+            <li class="sublink" id="zwyciezcygp"><a href="https://www.pfs.org.pl/zwyciezcygp.php">Zwycięzcy Grand Prix</a></li>
+            <li class="sublink" id="liderzyrankingu"><a href="https://www.pfs.org.pl/liderzyrankingu.php">Liderzy rankingu</a></li>
+            <li class="sublink" id="zwyciezcylemans"><a href="https://www.pfs.org.pl/zwyciezcylemans.php">Zwycięzcy 24h Le Mans</a></li>
+            <li class="sublink" id="zwyciezcykmp"><a href="https://www.pfs.org.pl/zwyciezcykmp.php">KMP</a>
+        </ul>
+    </div>
+    <div id="m_kluby">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kluby.php"></a></div>
+        <ul>
+            <li class="sublink" id="rejestrklubow"><a href="https://www.pfs.org.pl/kluby.php">Rejestr klubów</a></li>
+            <li class="sublink" id="kmp"><a href="https://www.pfs.org.pl/kmp.php">KMP</a></li>
+            <li class="sublink" id="wiescizklubow"><a href="https://www.pfs.org.pl/wiescizklubow.php">Wieści z klubów</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/about.php">Statystyki klubowe</a></li>
+        </ul>
+    </div>
+    <div id="m_roznosci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/historia.php"></a></div>
+        <ul>
+            <li class="sublink" id="historia"><a href="https://www.pfs.org.pl/historia.php">Historia</a></li>
+            <li class="sublink" id="odmiany"><a href="https://www.pfs.org.pl/odmiany.php">Odmiany</a></li>
+            <li class="sublink" id="anegdoty"><a href="https://www.pfs.org.pl/anegdoty.php">Anegdoty</a></li>
+            <li class="sublink" id="scrabblealia"><a href="https://www.pfs.org.pl/scrabblealia.php">Scrabblealia</a></li>
+            <li class="sublink" id="scrabblenet"><a href="https://www.pfs.org.pl/scrabblenet.php">Scrabble w internecie</a></li>
+            <li class="sublink" id="programy"><a href="https://www.pfs.org.pl/programy.php">Programy</a></li>
+            <li class="sublink" id="download"><a href="https://www.pfs.org.pl/download.php">Do pobrania</a></li>
+            <li class="sublink" id="ksiazki"><a href="https://www.pfs.org.pl/ksiazki.php">Książki</a></li>
+            <li class="sublink" id="slowniczek"><a href="https://www.pfs.org.pl/slowniczek.php">Słowniczek</a></li>
+        </ul>
+    </div>
+    <div id="m_english">
+        <div  class="tab"><a href="https://www.pfs.org.pl/english.php"></a></div>
+        <ul>
+            <li class="sublink" id="about"><a href="https://www.pfs.org.pl/english.php">About Polish Scrabble</a></li>
+            <li class="sublink" id="news"><a href="https://www.pfs.org.pl/en_news.php">News</a></li>
+            <li class="sublink" id="bartek"><a href="https://www.pfs.org.pl/bartek.php">Bartek w Johor Bahru</a></li>
+            <li class="sublink" id="franko"><a href="https://www.pfs.org.pl/franko.php">Scrabble frankofońskie</a></li>
+        </ul>
+    </div>
+</div>
+
+<div id="submenu"></div>
+<div id="content">
+<div id='nextTours'>
+		<div class='nextTour' onclick='location.href="turniej.php?id=460"'>
+			<div class='karteczka small1'>
+				<span class='miasto'>Łódź</span><span class='dzien'><span class='big'> 7</span><br />listopada</span></div>
+			<div class='kartka big1'>
+				<span class='miasto'>Łódź</span>
+				<span class='dzien'><b> 7- 8 listopada</b></span>
+				<span class='nazwaturnieju'>Wielka Łódka 2009 &#8212; Jesień &#8212; XV Mistrzostwa Łodzi</span><span class='gp'>Grand&nbsp;Prix&nbsp;2009</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=497"'>
+			<div class='karteczka small2'>
+				<span class='miasto'>Łomża</span><span class='dzien'><span class='big'>14</span><br />listopada</span></div>
+			<div class='kartka big2'>
+				<span class='miasto'>Łomża</span>
+				<span class='dzien'><b>14-15 listopada</b></span>
+				<span class='nazwaturnieju'>I Otwarte Mistrzostwa Łomży</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=462"'>
+			<div class='karteczka small3'>
+				<span class='miasto'>Warszawa</span><span class='dzien'><span class='big'>21</span><br />listopada</span></div>
+			<div class='kartka big3'>
+				<span class='miasto'>Warszawa</span>
+				<span class='dzien'><b>21-22 listopada</b></span>
+				<span class='nazwaturnieju'>XVII Mistrzostwa Polski (faza I)</span></div>
+		</div></div><div class='naglowekrelacji'><span class='tytul'>Test w Łomży<span class='nazwa'>14 - 15 listopada 2009 —  I Otwarte Mistrzostwa Łomży</span></span><a href='#' id='info' class='przycisk'>Informacje</a><a href='#' id='relacja' class='przycisk'>Relacja</a><a href='#' id='klasyfikacja' class='przycisk'>Wyniki</a><a href='#' id='hh' class='przycisk'>HH</a><a href='#' id='rundy' class='przycisk'>Rundy</a><a href='#' id='ranking' class='przycisk'>Ranking</a><div class='galleries'><img src='files/img/gallery.png' style='visibility:hidden;' alt='galeria' /></div></div><h1 style='color:black; margin-top:0px; margin-bottom:30px; padding: 0px'>I Otwarte Mistrzostwa Łomży<span>Łomża, 14 - 15 listopada 2009</span></h1><div id='p_relacja' class='page'><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><div class='relacja' style='clear:both;'><figure style='display:inline-block;float:left;margin:5px'><img src='https://pfs.org.pl/foto_action.php?id=353' alt='Test w Łomży' /></figure><div><B>Łukasz Wojciechowski</b> znakomicie zadebiutował jako organizator turnieju. Obiad dla uczestników, nieustannie dostarczane kanapki, kawa i herbata, ciastka, 
+dobrze przygotowana sala, noclegi, nagrody pieniężne i rzeczowe. Serdeczne gratulacje. Ostatni turniej przed Mistrzostwami Polski to sprawdzian aktualnej 
+formy. W ostatniej rundzie padł rekord najdroższego ruchu &#8212; w partii z <b>Krzysztofem Sporczykiem</b> <b>Sebastian Orzelski</b> położył słowo SPÓŹNIŁY 
+za 347 pkt. Partia zakończyła się wynikiem 669:299 (<a href="zapis.php?id=14" target="_blank">zobacz zapis partii</a>).<br><br>
+<img class="onright" src="foto/spoznily347.jpg" width="223" height="220"><br><br><br><br>
+Gratulacje dla pierwszego Mistrza Łomży &#8212; <b>Mateusza Borsuka</b>. Drugi był <b>Kamil Kister</b>, a trzecie miejsce zajął <b>Tomasz Zwoliński</b>. W turnieju uczestniczyło kilkoro autentycznych debiutantów, dla niektórych z nich to była trzecia albo czwarta w życiu rozegrana partia scrabble. Myślę, że Otwarte Mistrzostwa Łomży wpiszą się na stałe w kalendarz turniejowy PFS. </div><div class='autor'>relacja: Andrzej Lożyński</div></div><a href='https://www.pfs.org.pl/zapis.php?id=14'>Najwyżej punktowany ruch - SPÓŹNIŁY za 347 pkt. - <b>Krzysztof Sporczyk : Sebastian Orzelski</b></a><br /><div style='clear:both;'></div></div><div id='p_info' class='page'><br><p align='center'></p><br><br><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><table id='szczegoly' class='ramkadolna'><tr><td>Rodzaj turnieju</td><td>otwarty (liczba miejsc w turnieju ograniczona do 50)</td></tr><tr><td>Sposób rozgrywania</td><td>- liczba rund: <b>13</b><br>
+- system: połówkowy (rundy 1-12), duńczyk (runda 13)</td></tr><tr><td>Miejsce rozgrywek</td><td><font color="red">Uwaga zmiana miejsca rozgrywek</font><br>
+Centrum Katolickie im. Papieża Jana Pawła II w Łomży, ul. Zawadzka 55</td></tr><tr><td>Obrońca tytułu</td><td>-</td></tr><tr><td>Sędzia</td><td>Andrzej Lożyński</td></tr><tr><td>Harmonogram</td><td><b>Sobota, 14 listopada</b><br>
+9.30-10.30 &#8212; rejestracja zgłoszonych uczestników<br>
+10.45 &#8212; inauguracja I Otwartych Mistrzostw Łomży<br>
+14.00-15.00 &#8212; po 3 rundzie, obiad<br>
+20.00 &#8212; zakończenie gier pierwszego dnia<br>
+<br><br>
+<b>Niedziela, 15 listopada</b><br>
+10.00 rozpoczęcie rozgrywek<br>
+15.00 zakończenie turnieju i rozdanie nagród<br>
+</td></tr><tr><td>Wpisowe</td><td>- 15 zł (14 zł + 1 zł na cele statutowe PFS) za dzień<br>
+- członkowie PFS z aktualnie opłaconymi składkami &#8212; 10 zł za dzień<br>
+- młodzież szkolna &#8212; 5 zł za dzień (do liceum włącznie)<br>
+- debiutanci &#8212; bez opłat</td></tr><tr><td>Dojazd</td><td>Do Łomży PKS, z Dworca autobusami linii 1, 10, 12 (wysiąść przy sklepie Kaufland)</td></tr><tr><td>Wyżywienie</td><td>Darmowy obiad dla wszystkich uczestników<br>
+W czasie turnieju przekąski, kawa, napoje
+</td></tr><tr><td>Noclegi</td><td>Hotel PKS (z własnym wyżywieniem) 25-30 PLN/osoba tel. (86) 2188281, <br>
+Hotel Gromada tel.(86) 2165451 (przy rezerwacji na hasło SCRABBLE &#8212; specjalna cena pokojów 2-os. 100 PLN za pokój ze śniadaniem)<br>
+Hotel Labirynt &#8211; cena za 2-os. pokój 150zł ze śniadaniem, 3-os. &#8211; 220zł (zgłoszenia do organizatora)<br>
+inne &#8212; <a href="http://meteor.turystyka.pl/noclegi,lomza,0.html " target=_blank>http://meteor.turystyka.pl/noclegi,lomza,0.html</a></td></tr><tr><td>Nagrody</td><td>Pieniężne, rzeczowe, puchary, upominki dla każdego uczestnika turnieju</td></tr><tr><td>Organizatorzy</td><td>Łomżyńskie Koło Scrabble<br>
+portal <a href="http://4lomza.pl" target=_blank>4lomza.pl</a><br>
+Łukasz Wojciechowski &#8212; tel. 669 821 414l; mail: kolorowy-f16@wp.pl</td></tr><tr><td>Sponsorzy</td><td>- NOVUM sp. z.o.o<BR>
+- PGF w Łomży<BR>
+- PGE ZE Białystok<BR><BR>
+
+Patronat medialny:<BR>
+- 4lomza.pl<BR>
+- TVP Białystok<BR>
+- Radio Nadzieja<BR>
+- gazeta &#8222;Kontakty&#8221;</td></tr></table><br /><br /></div><div id='p_klasyfikacja' class='page'><pre>Wyniki turnieju I Otwarte Mistrzostwa Łomzy
+
+Lp. Imię            Nazwisko             Miasto               Ranking  Duże pkt Małe pkt Skalpy   Różn. MP
+--- --------------- -------------------- -------------------- -------- -------- -------- -------- --------
+  1 Mateusz         Borsuk               Reda                   123.62     11.0     5491     2002     1211
+  2 Kamil           Kister               Puławy                 112.48      9.0     5263     1881      624
+  3 Tomasz          Zwoliński            Skierdy                140.37      9.0     5151     1775      423
+  4 Mariusz         Sylwestrzuk          Warszawa               124.03      9.0     5069     1724      807
+  5 Rafał           Lenartowski          Gdynia                 135.63      9.0     5025     1862       79
+  6 Grzegorz        Święcki              Białystok              131.54      9.0     4978     1823      238
+  7 Stanisław       Rydzik               Warszawa               138.66      8.0     5412     1747      655
+  8 Rafał           Dąbrowski            Ostróda                136.90      8.0     5143     1699      486
+  9 Michał          Kolaj                Ostróda                115.84      8.0     5022     1714      691
+ 10 Bogdan          Kozłowski            Białystok              115.53      8.0     5001     1666      637
+ 11 Łukasz          Baranowski           Reda                   111.93      8.0     4990     1671      134
+ 12 Czesław         Grajewski            Choroszcz              118.51      7.5     5072     1639      756
+ 13 Magdalena       Kublik               Warszawa               109.88      7.0     5377     1510      867
+ 14 Grzegorz        Kurowski             Warszawa               134.38      7.0     5196     1576      595
+ 15 Łukasz          Święcki              Białystok              115.00      7.0     4995     1483      283
+ 16 Jarosław        Borowski             Bielsk Podlaski        136.61      7.0     4934     1596      469
+ 17 Krzysztof       Langiewicz           Ostróda                127.49      7.0     4799     1484      445
+ 18 Krzysztof       Sporczyk             Piaseczno              121.19      7.0     4772     1547     -261
+ 19 Piotr           Domański             Ostrołęka              100.00      7.0     4565     1553     -303
+ 20 Anna            Arana                Warszawa               103.56      6.5     4586     1442      142
+ 21 Agnieszka       Biegańska            Białystok              100.00      6.5     3948     1282      395
+ 22 Grzegorz        Koczkodon            Ostróda                126.18      6.0     4902     1551       87
+ 23 Dorota          Rudzińska            Warszawa               102.85      6.0     4713     1387      359
+ 24 Jerzy           Krzyżewski           Piasutno               113.72      6.0     4563     1444      -57
+ 25 Łukasz          Wojciechowski        Łomża                  100.00      6.0     4556     1375      262
+ 26 Krzysztof       Chełstowski          Łomża                  100.00      6.0     4316     1432     -135
+ 27 Alicja          Tarczewska           Łomża                  100.00      6.0     4246     1382     -326
+ 28 Janina          Grajewska            Choroszcz              100.00      5.5     4162     1187      196
+ 29 Tomasz          Szczodry             Łomża                  100.00      5.5     3775     1144      -78
+ 30 Anna            Biegańska            Białystok              102.29      5.0     4612     1262       -6
+ 31 Agnieszka       Kozak                Gdynia                 100.00      5.0     4464     1233      -79
+ 32 Krzysztof       Zawadzki             Sampława               100.00      5.0     4157     1119       50
+ 33 Mariusz         Bogdański            Łomża                  100.00      4.5     4055     1097       71
+ 34 Maciej          Sylwestrzuk          Gródek                 100.00      4.5     3560     1016     -346
+ 35 Andrzej         Ciołek               Bielsk Podlaski        100.00      4.0     3005      856      605
+ 36 Marta           Bołbot               Bielsk Podlaski        100.00      3.0     2497      773      339
+ 37 Sebastian       Orzelski             Bielsk Podlaski        113.21      3.0     1696      536      402
+ 38 Mirosław        Dejna                Sampława               100.00      2.5     2486      829    -1779
+ 39 Rafał           Daniluk              Bielsk Podlaski        100.00      2.5     2154      577      150
+ 40 Natalia         Tokajuk              Bielsk Podlaski        100.00      2.0     2148      627     -472
+ 41 Damian          Motycki              Łomża                  100.00      1.5     1833      569    -2616
+ 42 Adam            Sacharczuk           Łomża                  100.00      0.5      432      276    -2700
+</pre></div><div id='p_hh' class='page'><pre>Wyniki poszczególnych graczy w turnieju I Otwarte Mistrzostwa Łomzy
+
+
+
+	Tomasz Zwoliński 140.37 Skierdy         
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Dorota         Rudzińska             102.85 +  463: 306  153
+    2     9 Krzysztof      Sporczyk              121.19 +  422: 310  171
+    3     5 Anna           Arana                 103.56 -  367: 447   54
+    4     9 Krzysztof      Langiewicz            127.49 +  422: 413  177
+    5     5 Grzegorz       Koczkodon             126.18 -  305: 378   76
+    6     7 Piotr          Domański              100.00 +  440: 400  150
+    7     6 Krzysztof      Chełstowski           100.00 +  424: 283  150
+    8     2 Mateusz        Borsuk                123.62 -  378: 442   74
+    9     5 Jarosław       Borowski              136.61 +  444: 355  187
+   10     5 Czesław        Grajewski             118.51 +  355: 337  169
+   11     4 Rafał          Lenartowski           135.63 -  313: 405   86
+   12     5 Bogdan         Kozłowski             115.53 +  376: 344  166
+   13     3 Łukasz         Baranowski            111.93 +  442: 308  162
+                                                          --------------- ---- ------
+                                                                    1775  / 13 136.54
+
+
+
+
+	Stanisław Rydzik 138.66 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Anna           Biegańska             102.29 +  475: 322  152
+    2     7 Magdalena      Kublik                109.88 +  489: 347  160
+    3     3 Grzegorz       Święcki               131.54 -  353: 379   82
+    4     6 Jarosław       Borowski              136.61 +  397: 380  187
+    5     3 Jerzy          Krzyżewski            113.72 +  400: 298  164
+    6     3 Rafał          Dąbrowski             136.90 +  428: 403  187
+    7     2 Rafał          Lenartowski           135.63 +  391: 316  186
+    8     1 Grzegorz       Święcki               131.54 -  363: 385   82
+    9     2 Kamil          Kister                112.48 -  420: 485   62
+   10     3 Michał         Kolaj                 115.84 -  409: 436   66
+   11     1 Mateusz        Borsuk                123.62 -  327: 455   74
+   12     8 Grzegorz       Koczkodon             126.18 +  412: 305  176
+   13     5 Czesław        Grajewski             118.51 +  548: 246  169
+                                                          --------------- ---- ------
+                                                                    1747  / 13 134.38
+
+
+
+
+	Rafał Dąbrowski 136.90 Ostróda                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Agnieszka      Biegańska             100.00 +  422: 284  150
+    2    11 Anna           Biegańska             102.29 +  429: 314  152
+    3     6 Michał         Kolaj                 115.84 +  413: 356  166
+    4     3 Anna           Arana                 103.56 +  463: 336  154
+    5     1 Kamil          Kister                112.48 -  326: 391   62
+    6     3 Stanisław      Rydzik                138.66 -  403: 428   89
+    7     5 Jarosław       Borowski              136.61 +  425: 310  187
+    8     4 Rafał          Lenartowski           135.63 -  334: 350   86
+    9     6 Grzegorz       Koczkodon             126.18 +  387: 349  176
+   10     6 Łukasz         Baranowski            111.93 -  339: 410   62
+   11     7 Krzysztof      Sporczyk              121.19 -  365: 395   71
+   12     9 Magdalena      Kublik                109.88 +  406: 398  160
+   13     6 Grzegorz       Kurowski              134.38 +  431: 336  184
+                                                          --------------- ---- ------
+                                                                    1699  / 13 130.69
+
+
+
+
+	Jarosław Borowski 136.61 Bielsk Podlaski          
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Mariusz        Bogdański             100.00 +  392: 229  150
+    2     4 Grzegorz       Koczkodon             126.18 -  289: 434   76
+    3     7 Czesław        Grajewski             118.51 +  418: 396  169
+    4     6 Stanisław      Rydzik                138.66 -  380: 397   89
+    5    15 Marta          Bołbot                100.00 +  394: 216  150
+    6     9 Anna           Arana                 103.56 +  374: 248  154
+    7     5 Rafał          Dąbrowski             136.90 -  310: 425   87
+    8     7 Bogdan         Kozłowski             115.53 +  521: 286  166
+    9     5 Tomasz         Zwoliński             140.37 -  355: 444   90
+   10    10 Łukasz         Święcki               115.00 +  475: 304  165
+   11     9 Łukasz         Wojciechowski         100.00 +  346: 297  150
+   12     6 Grzegorz       Kurowski              134.38 -  367: 392   84
+   13     7 Bogdan         Kozłowski             115.53 -  313: 397   66
+                                                          --------------- ---- ------
+                                                                    1596  / 13 122.77
+
+
+
+
+	Rafał Lenartowski 135.63 Gdynia
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Marta          Bołbot                100.00 +  411: 295  150
+    2     1 Michał         Kolaj                 115.84 +  379: 358  166
+    3     2 Grzegorz       Koczkodon             126.18 +  449: 424  176
+    4     1 Kamil          Kister                112.48 +  386: 379  162
+    5     2 Grzegorz       Święcki               131.54 -  339: 460   82
+    6     4 Mateusz        Borsuk                123.62 +  440: 418  174
+    7     2 Stanisław      Rydzik                138.66 -  316: 391   89
+    8     4 Rafał          Dąbrowski             136.90 +  350: 334  187
+    9     3 Grzegorz       Kurowski              134.38 +  433: 423  184
+   10     2 Kamil          Kister                112.48 -  353: 356   62
+   11     4 Tomasz         Zwoliński             140.37 +  405: 313  190
+   12     3 Mariusz        Sylwestrzuk           124.03 -  355: 442   74
+   13     4 Michał         Kolaj                 115.84 +  409: 353  166
+                                                          --------------- ---- ------
+                                                                    1862  / 13 143.23
+
+
+
+
+	Grzegorz Kurowski 134.38 Warszawa
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Krzysztof      Chełstowski           100.00 +  360: 311  150
+    2     6 Łukasz         Baranowski            111.93 -  377: 487   62
+    3    13 Krzysztof      Sporczyk              121.19 -  395: 413   71
+    4    14 Mariusz        Bogdański             100.00 +  536: 218  150
+    5    10 Łukasz         Wojciechowski         100.00 +  339: 332  150
+    6     6 Alicja         Tarczewska            100.00 +  468: 227  150
+    7     4 Jerzy          Krzyżewski            113.72 +  397: 268  164
+    8     5 Czesław        Grajewski             118.51 +  408: 291  169
+    9     3 Rafał          Lenartowski           135.63 -  423: 433   86
+   10     4 Mariusz        Sylwestrzuk           124.03 -  379: 400   74
+   11     5 Grzegorz       Koczkodon             126.18 -  386: 423   76
+   12     6 Jarosław       Borowski              136.61 +  392: 367  187
+   13     6 Rafał          Dąbrowski             136.90 -  336: 431   87
+                                                          --------------- ---- ------
+                                                                    1576  / 13 121.23
+
+
+
+
+	Grzegorz Święcki 131.54 Białystok                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Andrzej        Ciołek                100.00 +  411: 309  150
+    2     2 Czesław        Grajewski             118.51 +  339: 334  169
+    3     3 Stanisław      Rydzik                138.66 +  379: 353  189
+    4     2 Łukasz         Baranowski            111.93 +  405: 266  162
+    5     2 Rafał          Lenartowski           135.63 +  460: 339  186
+    6     1 Bogdan         Kozłowski             115.53 +  387: 357  166
+    7     1 Kamil          Kister                112.48 +  502: 311  162
+    8     1 Stanisław      Rydzik                138.66 +  385: 363  189
+    9     1 Mateusz        Borsuk                123.62 -  345: 398   74
+   10     1 Mateusz        Borsuk                123.62 -  243: 488   74
+   11     3 Mariusz        Sylwestrzuk           124.03 -  336: 460   74
+   12     2 Michał         Kolaj                 115.84 +  390: 327  166
+   13     2 Kamil          Kister                112.48 -  396: 435   62
+                                                          --------------- ---- ------
+                                                                    1823  / 13 140.23
+
+
+
+
+	Krzysztof Langiewicz 127.49 Ostróda                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Rafał          Daniluk               100.00 +  406: 175  150
+    2     3 Kamil          Kister                112.48 -  284: 485   62
+    3    14 Tomasz         Szczodry              100.00 +  351: 274  150
+    4     9 Tomasz         Zwoliński             140.37 -  413: 422   90
+    5     8 Michał         Kolaj                 115.84 +  381: 290  166
+    6     5 Grzegorz       Koczkodon             126.18 -  279: 306   76
+    7    10 Dorota         Rudzińska             102.85 -  331: 522   53
+    8    15 Anna           Arana                 103.56 -  374: 416   54
+    9    13 Jerzy          Krzyżewski            113.72 +  397: 320  164
+   10    14 Janina         Grajewska             100.00 +  426: 255  150
+   11     8 Bogdan         Kozłowski             115.53 -  310: 351   66
+   12    13 Alicja         Tarczewska            100.00 +  422: 302  150
+   13    11 Dorota         Rudzińska             102.85 +  425: 236  153
+                                                          --------------- ---- ------
+                                                                    1484  / 13 114.15
+
+
+
+
+	Grzegorz Koczkodon 126.18 Ostróda                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Mirosław       Dejna                 100.00 +  560: 192  150
+    2     4 Jarosław       Borowski              136.61 +  434: 289  187
+    3     2 Rafał          Lenartowski           135.63 -  424: 449   86
+    4     4 Jerzy          Krzyżewski            113.72 -  305: 437   64
+    5     5 Tomasz         Zwoliński             140.37 +  378: 305  190
+    6     5 Krzysztof      Langiewicz            127.49 +  306: 279  177
+    7     8 Magdalena      Kublik                109.88 +  416: 358  160
+    8     3 Kamil          Kister                112.48 -  285: 462   62
+    9     6 Rafał          Dąbrowski             136.90 -  349: 387   87
+   10     8 Piotr          Domański              100.00 -  359: 368   50
+   11     5 Grzegorz       Kurowski              134.38 +  423: 386  184
+   12     8 Stanisław      Rydzik                138.66 -  305: 412   89
+   13    10 Łukasz         Święcki               115.00 -  358: 491   65
+                                                          --------------- ---- ------
+                                                                    1551  / 13 119.31
+
+
+
+
+	Mariusz Sylwestrzuk 124.03 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Piotr          Domański              100.00 -  311: 342   50
+    2    13 Mariusz        Bogdański             100.00 +  440: 268  150
+    3    12 Andrzej        Ciołek                100.00 +  364: 346  150
+    4     5 Magdalena      Kublik                109.88 +  440: 347  160
+    5     4 Bogdan         Kozłowski             115.53 -  312: 368   66
+    6    10 Czesław        Grajewski             118.51 -  324: 433   69
+    7    14 Krzysztof      Zawadzki              100.00 +  467: 228  150
+    8    10 Krzysztof      Chełstowski           100.00 +  459: 255  150
+    9     4 Dorota         Rudzińska             102.85 +  334: 265  153
+   10     4 Grzegorz       Kurowski              134.38 +  400: 379  184
+   11     3 Grzegorz       Święcki               131.54 +  460: 336  182
+   12     3 Rafał          Lenartowski           135.63 +  442: 355  186
+   13     1 Mateusz        Borsuk                123.62 -  316: 340   74
+                                                          --------------- ---- ------
+                                                                    1724  / 13 132.62
+
+
+
+
+	Mateusz Borsuk 123.62 Reda
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Janina         Grajewska             100.00 +  455: 262  150
+    2    10 Anna           Arana                 103.56 -  343: 402   54
+    3    11 Agnieszka      Biegańska             100.00 +  416: 281  150
+    4    10 Piotr          Domański              100.00 +  396: 302  150
+    5     6 Krzysztof      Sporczyk              121.19 +  449: 330  171
+    6     4 Rafał          Lenartowski           135.63 -  418: 440   86
+    7     3 Łukasz         Baranowski            111.93 +  521: 316  162
+    8     2 Tomasz         Zwoliński             140.37 +  442: 378  190
+    9     1 Grzegorz       Święcki               131.54 +  398: 345  182
+   10     1 Grzegorz       Święcki               131.54 +  488: 243  182
+   11     1 Stanisław      Rydzik                138.66 +  455: 327  189
+   12     1 Kamil          Kister                112.48 +  370: 338  162
+   13     1 Mariusz        Sylwestrzuk           124.03 +  340: 316  174
+                                                          --------------- ---- ------
+                                                                    2002  / 13 154.00
+
+
+
+
+	Krzysztof Sporczyk 121.19 Piaseczno
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    12 Agnieszka      Kozak                 100.00 +  324: 279  150
+    2     9 Tomasz         Zwoliński             140.37 -  310: 422   90
+    3    13 Grzegorz       Kurowski              134.38 +  413: 395  184
+    4     8 Łukasz         Święcki               115.00 +  446: 333  165
+    5     6 Mateusz        Borsuk                123.62 -  330: 449   74
+    6     8 Jerzy          Krzyżewski            113.72 -  351: 370   64
+    7     9 Michał         Kolaj                 115.84 -  345: 369   66
+    8    13 Janina         Grajewska             100.00 +  420: 358  150
+    9    11 Krzysztof      Chełstowski           100.00 -  294: 332   50
+   10    13 Alicja         Tarczewska            100.00 +  447: 308  150
+   11     7 Rafał          Dąbrowski             136.90 +  395: 365  187
+   12    10 Anna           Arana                 103.56 +  398: 384  154
+   13     8 Sebastian      Orzelski              113.21 -  299: 669   63
+                                                          --------------- ---- ------
+                                                                    1547  / 13 119.00
+
+
+
+
+	Czesław Grajewski 118.51 Choroszcz
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    13 Damian         Motycki               100.00 +  637:  55  150
+    2     2 Grzegorz       Święcki               131.54 -  334: 339   82
+    3     7 Jarosław       Borowski              136.61 -  396: 418   87
+    4    11 Krzysztof      Zawadzki              100.00 =  334: 334  100
+    5    13 Anna           Biegańska             102.29 +  432: 290  152
+    6    10 Mariusz        Sylwestrzuk           124.03 +  433: 324  174
+    7     7 Bogdan         Kozłowski             115.53 +  401: 370  166
+    8     5 Grzegorz       Kurowski              134.38 -  291: 408   84
+    9     7 Łukasz         Święcki               115.00 +  420: 281  165
+   10     5 Tomasz         Zwoliński             140.37 -  337: 355   90
+   11    12 Krzysztof      Chełstowski           100.00 +  416: 300  150
+   12     7 Piotr          Domański              100.00 +  395: 294  150
+   13     5 Stanisław      Rydzik                138.66 -  246: 548   89
+                                                          --------------- ---- ------
+                                                                    1639  / 13 126.08
+
+
+
+
+	Michał Kolaj 115.84 Ostróda                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    14 Adam           Sacharczuk            100.00 +  639:  13  150
+    2     1 Rafał          Lenartowski           135.63 -  358: 379   86
+    3     6 Rafał          Dąbrowski             136.90 -  356: 413   87
+    4    12 Agnieszka      Biegańska             100.00 +  353: 285  150
+    5     8 Krzysztof      Langiewicz            127.49 -  290: 381   77
+    6    13 Agnieszka      Kozak                 100.00 +  393: 336  150
+    7     9 Krzysztof      Sporczyk              121.19 +  369: 345  171
+    8     8 Jerzy          Krzyżewski            113.72 +  365: 320  164
+    9     8 Magdalena      Kublik                109.88 +  395: 369  160
+   10     3 Stanisław      Rydzik                138.66 +  436: 409  189
+   11     2 Kamil          Kister                112.48 +  388: 282  162
+   12     2 Grzegorz       Święcki               131.54 -  327: 390   82
+   13     4 Rafał          Lenartowski           135.63 -  353: 409   86
+                                                          --------------- ---- ------
+                                                                    1714  / 13 131.85
+
+
+
+
+	Bogdan Kozłowski 115.53 Białystok                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    15 Maciej         Sylwestrzuk           100.00 +  464: 205  150
+    2     8 Piotr          Domański              100.00 -  338: 345   50
+    3    10 Agnieszka      Kozak                 100.00 +  504: 249  150
+    4     7 Alicja         Tarczewska            100.00 +  384: 310  150
+    5     4 Mariusz        Sylwestrzuk           124.03 +  368: 312  174
+    6     1 Grzegorz       Święcki               131.54 -  357: 387   82
+    7     7 Czesław        Grajewski             118.51 -  370: 401   69
+    8     7 Jarosław       Borowski              136.61 -  286: 521   87
+    9    10 Łukasz         Wojciechowski         100.00 +  374: 295  150
+   10     9 Krzysztof      Chełstowski           100.00 +  464: 340  150
+   11     8 Krzysztof      Langiewicz            127.49 +  351: 310  177
+   12     5 Tomasz         Zwoliński             140.37 -  344: 376   90
+   13     7 Jarosław       Borowski              136.61 +  397: 313  187
+                                                          --------------- ---- ------
+                                                                    1666  / 13 128.15
+
+
+
+
+	Łukasz Święcki 115.00 Białystok
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    16 Tomasz         Szczodry              100.00 +  482: 173  150
+    2     5 Jerzy          Krzyżewski            113.72 -  322: 401   64
+    3     9 Krzysztof      Chełstowski           100.00 +  451: 334  150
+    4     8 Krzysztof      Sporczyk              121.19 -  333: 446   71
+    5    12 Alicja         Tarczewska            100.00 -  259: 414   50
+    6    17 Natalia        Tokajuk               100.00 +  463: 245  150
+    7    12 Anna           Arana                 103.56 +  384: 360  154
+    8     9 Piotr          Domański              100.00 +  430: 387  150
+    9     7 Czesław        Grajewski             118.51 -  281: 420   69
+   10    10 Jarosław       Borowski              136.61 -  304: 475   87
+   11     6 Łukasz         Baranowski            111.93 -  346: 364   62
+   12    12 Janina         Grajewska             100.00 +  449: 335  150
+   13    10 Grzegorz       Koczkodon             126.18 +  491: 358  176
+                                                          --------------- ---- ------
+                                                                    1483  / 13 114.08
+
+
+
+
+	Jerzy Krzyżewski 113.72 Piasutno      
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    17 Alicja         Tarczewska            100.00 +  392: 306  150
+    2     5 Łukasz         Święcki               115.00 +  401: 322  165
+    3     1 Kamil          Kister                112.48 -  365: 383   62
+    4     4 Grzegorz       Koczkodon             126.18 +  437: 305  176
+    5     3 Stanisław      Rydzik                138.66 -  298: 400   89
+    6     8 Krzysztof      Sporczyk              121.19 +  370: 351  171
+    7     4 Grzegorz       Kurowski              134.38 -  268: 397   84
+    8     8 Michał         Kolaj                 115.84 -  320: 365   66
+    9    13 Krzysztof      Langiewicz            127.49 -  320: 397   77
+   10    15 Krzysztof      Zawadzki              100.00 +  319: 269  150
+   11    11 Piotr          Domański              100.00 -  326: 331   50
+   12    14 Łukasz         Wojciechowski         100.00 +  387: 366  150
+   13    12 Anna           Arana                 103.56 -  360: 428   54
+                                                          --------------- ---- ------
+                                                                    1444  / 13 111.08
+
+
+
+
+	Sebastian Orzelski 113.21 Bielsk Podlaski          
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+   10     7 Dorota         Rudzińska             102.85 +  388: 376  153
+   11    10 Agnieszka      Kozak                 100.00 +  324: 287  150
+   12     4 Łukasz         Baranowski            111.93 -  315: 332   62
+   13     8 Krzysztof      Sporczyk              121.19 +  669: 299  171
+                                                          --------------- ---- ------
+                                                                     536  /  4 134.00
+
+
+
+
+	Kamil Kister 112.48 Puławy
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    18 Natalia        Tokajuk               100.00 +  565: 200  150
+    2     3 Krzysztof      Langiewicz            127.49 +  485: 284  177
+    3     1 Jerzy          Krzyżewski            113.72 +  383: 365  164
+    4     1 Rafał          Lenartowski           135.63 -  379: 386   86
+    5     1 Rafał          Dąbrowski             136.90 +  391: 326  187
+    6     2 Łukasz         Baranowski            111.93 +  391: 364  162
+    7     1 Grzegorz       Święcki               131.54 -  311: 502   82
+    8     3 Grzegorz       Koczkodon             126.18 +  462: 285  176
+    9     2 Stanisław      Rydzik                138.66 +  485: 420  189
+   10     2 Rafał          Lenartowski           135.63 +  356: 353  186
+   11     2 Michał         Kolaj                 115.84 -  282: 388   66
+   12     1 Mateusz        Borsuk                123.62 -  338: 370   74
+   13     2 Grzegorz       Święcki               131.54 +  435: 396  182
+                                                          --------------- ---- ------
+                                                                    1881  / 13 144.69
+
+
+
+
+	Łukasz Baranowski 111.93 Reda
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    19 Łukasz         Wojciechowski         100.00 +  477: 270  150
+    2     6 Grzegorz       Kurowski              134.38 +  487: 377  184
+    3     4 Piotr          Domański              100.00 +  379: 344  150
+    4     2 Grzegorz       Święcki               131.54 -  266: 405   82
+    5     7 Anna           Arana                 103.56 +  361: 270  154
+    6     2 Kamil          Kister                112.48 -  364: 391   62
+    7     3 Mateusz        Borsuk                123.62 -  316: 521   74
+    8    11 Magdalena      Kublik                109.88 -  448: 486   60
+    9     9 Agnieszka      Kozak                 100.00 +  478: 350  150
+   10     6 Rafał          Dąbrowski             136.90 +  410: 339  187
+   11     6 Łukasz         Święcki               115.00 +  364: 346  165
+   12     4 Sebastian      Orzelski              113.21 +  332: 315  163
+   13     3 Tomasz         Zwoliński             140.37 -  308: 442   90
+                                                          --------------- ---- ------
+                                                                    1671  / 13 128.54
+
+
+
+
+	Magdalena Kublik 109.88 Warszawa
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    20 Krzysztof      Zawadzki              100.00 +  343: 314  150
+    2     7 Stanisław      Rydzik                138.66 -  347: 489   89
+    3    15 Adam           Sacharczuk            100.00 +  651:  34  150
+    4     5 Mariusz        Sylwestrzuk           124.03 -  347: 440   74
+    5     9 Krzysztof      Chełstowski           100.00 -  373: 390   50
+    6    12 Łukasz         Wojciechowski         100.00 +  374: 303  150
+    7     8 Grzegorz       Koczkodon             126.18 -  358: 416   76
+    8    11 Łukasz         Baranowski            111.93 +  486: 448  162
+    9     8 Michał         Kolaj                 115.84 -  369: 395   66
+   10    11 Anna           Arana                 103.56 +  397: 268  154
+   11    13 Anna           Biegańska             102.29 +  400: 342  152
+   12     9 Rafał          Dąbrowski             136.90 -  398: 406   87
+   13     9 Piotr          Domański              100.00 +  534: 265  150
+                                                          --------------- ---- ------
+                                                                    1510  / 13 116.15
+
+
+
+
+	Anna Arana 103.56 Warszawa
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    21 PAUZA
+    2    10 Mateusz        Borsuk                123.62 +  402: 343  174
+    3     5 Tomasz         Zwoliński             140.37 +  447: 367  190
+    4     3 Rafał          Dąbrowski             136.90 -  336: 463   87
+    5     7 Łukasz         Baranowski            111.93 -  270: 361   62
+    6     9 Jarosław       Borowski              136.61 -  248: 374   87
+    7    12 Łukasz         Święcki               115.00 -  360: 384   65
+    8    15 Krzysztof      Langiewicz            127.49 +  416: 374  177
+    9    12 Anna           Biegańska             102.29 +  360: 333  152
+   10    11 Magdalena      Kublik                109.88 -  268: 397   60
+   11    14 Dorota         Rudzińska             102.85 +  367: 290  153
+   12    10 Krzysztof      Sporczyk              121.19 -  384: 398   71
+   13    12 Jerzy          Krzyżewski            113.72 +  428: 360  164
+                                                          --------------- ---- ------
+                                                                    1442  / 12 120.17
+
+
+
+
+	Dorota Rudzińska 102.85 Warszawa
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Tomasz         Zwoliński             140.37 -  306: 463   90
+    2    16 Mirosław       Dejna                 100.00 +  513: 113  150
+    3     8 Alicja         Tarczewska            100.00 -  378: 388   50
+    4    13 Agnieszka      Kozak                 100.00 +  408: 331  150
+    5    11 Piotr          Domański              100.00 -  355: 369   50
+    6    14 Agnieszka      Biegańska             100.00 +  388: 189  150
+    7    10 Krzysztof      Langiewicz            127.49 +  522: 331  177
+    8     6 Anna           Biegańska             102.29 +  353: 344  152
+    9     4 Mariusz        Sylwestrzuk           124.03 -  265: 334   74
+   10     7 Sebastian      Orzelski              113.21 -  376: 388   63
+   11    14 Anna           Arana                 103.56 -  290: 367   54
+   12    11 Krzysztof      Chełstowski           100.00 +  323: 312  150
+   13    11 Krzysztof      Langiewicz            127.49 -  236: 425   77
+                                                          --------------- ---- ------
+                                                                    1387  / 13 106.69
+
+
+
+
+	Anna Biegańska 102.29 Białystok                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Stanisław      Rydzik                138.66 -  322: 475   89
+    2    11 Rafał          Dąbrowski             136.90 -  314: 429   87
+    3    16 Krzysztof      Zawadzki              100.00 +  448: 283  150
+    4    15 Tomasz         Szczodry              100.00 +  487: 179  150
+    5    13 Czesław        Grajewski             118.51 -  290: 432   69
+    6    16 Mariusz        Bogdański             100.00 +  385: 267  150
+    7    13 Alicja         Tarczewska            100.00 +  344: 273  150
+    8     6 Dorota         Rudzińska             102.85 -  344: 353   53
+    9    12 Anna           Arana                 103.56 -  333: 360   54
+   10    12 Łukasz         Wojciechowski         100.00 -  279: 428   50
+   11    13 Magdalena      Kublik                109.88 -  342: 400   60
+   12    15 Agnieszka      Kozak                 100.00 +  414: 367  150
+   13    13 Agnieszka      Biegańska             100.00 -  310: 372   50
+                                                          --------------- ---- ------
+                                                                    1262  / 13  97.08
+
+
+
+
+	Agnieszka Biegańska 100.00 Białystok                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Rafał          Dąbrowski             136.90 -  284: 422   87
+    2    19 Damian         Motycki               100.00 +  368:  64  150
+    3    11 Mateusz        Borsuk                123.62 -  281: 416   74
+    4    12 Michał         Kolaj                 115.84 -  285: 353   66
+    5    17 Tomasz         Szczodry              100.00 +  329: 253  150
+    6    14 Dorota         Rudzińska             102.85 -  189: 388   53
+    7    15 Łukasz         Wojciechowski         100.00 -  329: 407   50
+    8    18 Mirosław       Dejna                 100.00 +  335: 157  150
+    9    15 Janina         Grajewska             100.00 -  237: 286   50
+   10    19 PAUZA
+   11    16 Mariusz        Bogdański             100.00 +  311: 274  150
+   12    16 Maciej         Sylwestrzuk           100.00 +  328: 223  150
+   13    13 Anna           Biegańska             102.29 +  372: 310  152
+                                                          --------------- ---- ------
+                                                                    1282  / 12 106.83
+
+
+
+
+	Mariusz Bogdański 100.00 Łomża
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Jarosław       Borowski              136.61 -  229: 392   87
+    2    13 Mariusz        Sylwestrzuk           124.03 -  268: 440   74
+    3    20 Natalia        Tokajuk               100.00 +  316: 238  150
+    4    14 Grzegorz       Kurowski              134.38 -  218: 536   84
+    5    19 Damian         Motycki               100.00 +  480:  78  150
+    6    16 Anna           Biegańska             102.29 -  267: 385   52
+    7    19 Mirosław       Dejna                 100.00 +  349: 184  150
+    8    14 Łukasz         Wojciechowski         100.00 -  280: 353   50
+    9    16 Tomasz         Szczodry              100.00 +  438: 300  150
+   10    16 Agnieszka      Kozak                 100.00 -  344: 400   50
+   11    16 Agnieszka      Biegańska             100.00 -  274: 311   50
+   12    19 PAUZA
+   13    16 Alicja         Tarczewska            100.00 -  292: 367   50
+                                                          --------------- ---- ------
+                                                                    1097  / 12  91.42
+
+
+
+
+	Marta Bołbot 100.00 Bielsk Podlaski          
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Rafał          Lenartowski           135.63 -  295: 411   86
+    2    18 Tomasz         Szczodry              100.00 -  258: 281   50
+    3    19 Mirosław       Dejna                 100.00 +  433: 145  150
+    4    19 Janina         Grajewska             100.00 -  287: 332   50
+    5    15 Jarosław       Borowski              136.61 -  216: 394   87
+    6    18 Damian         Motycki               100.00 +  444:  35  150
+    7    17 Rafał          Daniluk               100.00 +  310: 222  150
+    8    12 Andrzej        Ciołek                100.00 -  254: 338   50
+                                                          --------------- ---- ------
+                                                                     773  /  8  96.62
+
+
+
+
+	Krzysztof Chełstowski 100.00 Łomża
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Grzegorz       Kurowski              134.38 -  311: 360   84
+    2    14 Maciej         Sylwestrzuk           100.00 +  363: 253  150
+    3     9 Łukasz         Święcki               115.00 -  334: 451   65
+    4    17 Damian         Motycki               100.00 +  444: 113  150
+    5     9 Magdalena      Kublik                109.88 +  390: 373  160
+    6    11 Krzysztof      Zawadzki              100.00 +  335: 263  150
+    7     6 Tomasz         Zwoliński             140.37 -  283: 424   90
+    8    10 Mariusz        Sylwestrzuk           124.03 -  255: 459   74
+    9    11 Krzysztof      Sporczyk              121.19 +  332: 294  171
+   10     9 Bogdan         Kozłowski             115.53 -  340: 464   66
+   11    12 Czesław        Grajewski             118.51 -  300: 416   69
+   12    11 Dorota         Rudzińska             102.85 -  312: 323   53
+   13    15 Krzysztof      Zawadzki              100.00 +  317: 258  150
+                                                          --------------- ---- ------
+                                                                    1432  / 13 110.15
+
+
+
+
+	Andrzej Ciołek 100.00 Bielsk Podlaski          
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Grzegorz       Święcki               131.54 -  309: 411   82
+    2    15 Natalia        Tokajuk               100.00 +  332: 266  150
+    3    12 Mariusz        Sylwestrzuk           124.03 -  346: 364   74
+    4    18 Adam           Sacharczuk            100.00 +  579:  32  150
+    5    14 Krzysztof      Zawadzki              100.00 -  371: 435   50
+    6    15 Janina         Grajewska             100.00 +  394: 297  150
+    7    11 Piotr          Domański              100.00 -  336: 341   50
+    8    12 Marta          Bołbot                100.00 +  338: 254  150
+                                                          --------------- ---- ------
+                                                                     856  /  8 107.00
+
+
+
+
+	Rafał Daniluk 100.00 Bielsk Podlaski
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Krzysztof      Langiewicz            127.49 -  175: 406   77
+    2    17 Alicja         Tarczewska            100.00 -  224: 374   50
+    3    18 Łukasz         Wojciechowski         100.00 -  215: 467   50
+    4    20 Natalia        Tokajuk               100.00 -  224: 271   50
+    5    21 PAUZA
+    6    20 Adam           Sacharczuk            100.00 +  447:  29  150
+    7    17 Marta          Bołbot                100.00 -  222: 310   50
+    8    20 Damian         Motycki               100.00 +  347: 147  150
+                                                          --------------- ---- ------
+                                                                     577  /  7  82.43
+
+
+
+
+	Mirosław Dejna 100.00 Sampława                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Grzegorz       Koczkodon             126.18 -  192: 560   76
+    2    16 Dorota         Rudzińska             102.85 -  113: 513   53
+    3    19 Marta          Bołbot                100.00 -  145: 433   50
+    4    21 PAUZA
+    5    18 Janina         Grajewska             100.00 -  173: 387   50
+    6    19 Maciej         Sylwestrzuk           100.00 -  226: 322   50
+    7    19 Mariusz        Bogdański             100.00 -  184: 349   50
+    8    18 Agnieszka      Biegańska             100.00 -  157: 335   50
+    9    18 Damian         Motycki               100.00 +  197: 158  150
+   10    17 Tomasz         Szczodry              100.00 -  202: 300   50
+   11    15 Alicja         Tarczewska            100.00 -  193: 341   50
+   12    17 Krzysztof      Zawadzki              100.00 -  195: 432   50
+   13    18 Damian         Motycki               100.00 +  209: 135  150
+                                                          --------------- ---- ------
+                                                                     829  / 12  69.08
+
+
+
+
+	Piotr Domański 100.00 Ostrołęka
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Mariusz        Sylwestrzuk           124.03 +  342: 311  174
+    2     8 Bogdan         Kozłowski             115.53 +  345: 338  166
+    3     4 Łukasz         Baranowski            111.93 -  344: 379   62
+    4    10 Mateusz        Borsuk                123.62 -  302: 396   74
+    5    11 Dorota         Rudzińska             102.85 +  369: 355  153
+    6     7 Tomasz         Zwoliński             140.37 -  400: 440   90
+    7    11 Andrzej        Ciołek                100.00 +  341: 336  150
+    8     9 Łukasz         Święcki               115.00 -  387: 430   65
+    9    14 Alicja         Tarczewska            100.00 +  477: 269  150
+   10     8 Grzegorz       Koczkodon             126.18 +  368: 359  176
+   11    11 Jerzy          Krzyżewski            113.72 +  331: 326  164
+   12     7 Czesław        Grajewski             118.51 -  294: 395   69
+   13     9 Magdalena      Kublik                109.88 -  265: 534   60
+                                                          --------------- ---- ------
+                                                                    1553  / 13 119.46
+
+
+
+
+	Janina Grajewska 100.00 Choroszcz
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Mateusz        Borsuk                123.62 -  262: 455   74
+    2    12 Krzysztof      Zawadzki              100.00 -  312: 370   50
+    3    17 Maciej         Sylwestrzuk           100.00 -  250: 269   50
+    4    19 Marta          Bołbot                100.00 +  332: 287  150
+    5    18 Mirosław       Dejna                 100.00 +  387: 173  150
+    6    15 Andrzej        Ciołek                100.00 -  297: 394   50
+    7    18 Tomasz         Szczodry              100.00 +  371: 328  150
+    8    13 Krzysztof      Sporczyk              121.19 -  358: 420   71
+    9    15 Agnieszka      Biegańska             100.00 +  286: 237  150
+   10    14 Krzysztof      Langiewicz            127.49 -  255: 426   77
+   11    17 Damian         Motycki               100.00 +  417: 158  150
+   12    12 Łukasz         Święcki               115.00 -  335: 449   65
+   13    19 PAUZA
+                                                          --------------- ---- ------
+                                                                    1187  / 12  98.92
+
+
+
+
+	Agnieszka Kozak 100.00 Gdynia                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    12 Krzysztof      Sporczyk              121.19 -  279: 324   71
+    2    20 Łukasz         Wojciechowski         100.00 +  379: 296  150
+    3    10 Bogdan         Kozłowski             115.53 -  249: 504   66
+    4    13 Dorota         Rudzińska             102.85 -  331: 408   53
+    5    16 Maciej         Sylwestrzuk           100.00 +  392: 241  150
+    6    13 Michał         Kolaj                 115.84 -  336: 393   66
+    7    16 Natalia        Tokajuk               100.00 +  378: 204  150
+    8    16 Krzysztof      Zawadzki              100.00 +  422: 255  150
+    9     9 Łukasz         Baranowski            111.93 -  350: 478   62
+   10    16 Mariusz        Bogdański             100.00 +  400: 344  150
+   11    10 Sebastian      Orzelski              113.21 -  287: 324   63
+   12    15 Anna           Biegańska             102.29 -  367: 414   52
+   13    14 Łukasz         Wojciechowski         100.00 -  294: 358   50
+                                                          --------------- ---- ------
+                                                                    1233  / 13  94.85
+
+
+
+
+	Damian Motycki 100.00 Łomża
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    13 Czesław        Grajewski             118.51 -   55: 637   69
+    2    19 Agnieszka      Biegańska             100.00 -   64: 368   50
+    3    21 PAUZA
+    4    17 Krzysztof      Chełstowski           100.00 -  113: 444   50
+    5    19 Mariusz        Bogdański             100.00 -   78: 480   50
+    6    18 Marta          Bołbot                100.00 -   35: 444   50
+    7    20 Adam           Sacharczuk            100.00 +  400:   0    0
+    8    20 Rafał          Daniluk               100.00 -  147: 347   50
+    9    18 Mirosław       Dejna                 100.00 -  158: 197   50
+   10    18 Maciej         Sylwestrzuk           100.00 -   98: 455   50
+   11    17 Janina         Grajewska             100.00 -  158: 417   50
+   12    18 Tomasz         Szczodry              100.00 -   92: 451   50
+   13    18 Mirosław       Dejna                 100.00 -  135: 209   50
+                                                          --------------- ---- ------
+                                                                     569  / 11  51.73
+
+
+
+
+	Adam Sacharczuk 100.00 Łomża
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    14 Michał         Kolaj                 115.84 -   13: 639   66
+    2    21 PAUZA
+    3    15 Magdalena      Kublik                109.88 -   34: 651   60
+    4    18 Andrzej        Ciołek                100.00 -   32: 579   50
+    5    20 Natalia        Tokajuk               100.00 -   24: 416   50
+    6    20 Rafał          Daniluk               100.00 -   29: 447   50
+    7    20 Damian         Motycki               100.00 -    0: 400    0
+                                                          --------------- ---- ------
+                                                                     276  /  5  55.20
+
+
+
+
+	Maciej Sylwestrzuk 100.00 Gródek                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    15 Bogdan         Kozłowski             115.53 -  205: 464   66
+    2    14 Krzysztof      Chełstowski           100.00 -  253: 363   50
+    3    17 Janina         Grajewska             100.00 +  269: 250  150
+    4    16 Łukasz         Wojciechowski         100.00 -  221: 384   50
+    5    16 Agnieszka      Kozak                 100.00 -  241: 392   50
+    6    19 Mirosław       Dejna                 100.00 +  322: 226  150
+    7    21 PAUZA
+    8    17 Alicja         Tarczewska            100.00 -  292: 367   50
+    9    17 Krzysztof      Zawadzki              100.00 -  244: 416   50
+   10    18 Damian         Motycki               100.00 +  455:  98  150
+   11    18 Tomasz         Szczodry              100.00 +  294: 287  150
+   12    16 Agnieszka      Biegańska             100.00 -  223: 328   50
+   13    17 Tomasz         Szczodry              100.00 -  241: 331   50
+                                                          --------------- ---- ------
+                                                                    1016  / 12  84.67
+
+
+
+
+	Tomasz Szczodry 100.00 Łomża
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    16 Łukasz         Święcki               115.00 -  173: 482   65
+    2    18 Marta          Bołbot                100.00 +  281: 258  150
+    3    14 Krzysztof      Langiewicz            127.49 -  274: 351   77
+    4    15 Anna           Biegańska             102.29 -  179: 487   52
+    5    17 Agnieszka      Biegańska             100.00 -  253: 329   50
+    6    21 PAUZA
+    7    18 Janina         Grajewska             100.00 -  328: 371   50
+    8    19 Natalia        Tokajuk               100.00 +  318: 308  150
+    9    16 Mariusz        Bogdański             100.00 -  300: 438   50
+   10    17 Mirosław       Dejna                 100.00 +  300: 202  150
+   11    18 Maciej         Sylwestrzuk           100.00 -  287: 294   50
+   12    18 Damian         Motycki               100.00 +  451:  92  150
+   13    17 Maciej         Sylwestrzuk           100.00 +  331: 241  150
+                                                          --------------- ---- ------
+                                                                    1144  / 12  95.33
+
+
+
+
+	Alicja Tarczewska 100.00 Łomża
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    17 Jerzy          Krzyżewski            113.72 -  306: 392   64
+    2    17 Rafał          Daniluk               100.00 +  374: 224  150
+    3     8 Dorota         Rudzińska             102.85 +  388: 378  153
+    4     7 Bogdan         Kozłowski             115.53 -  310: 384   66
+    5    12 Łukasz         Święcki               115.00 +  414: 259  165
+    6     6 Grzegorz       Kurowski              134.38 -  227: 468   84
+    7    13 Anna           Biegańska             102.29 -  273: 344   52
+    8    17 Maciej         Sylwestrzuk           100.00 +  367: 292  150
+    9    14 Piotr          Domański              100.00 -  269: 477   50
+   10    13 Krzysztof      Sporczyk              121.19 -  308: 447   71
+   11    15 Mirosław       Dejna                 100.00 +  341: 193  150
+   12    13 Krzysztof      Langiewicz            127.49 -  302: 422   77
+   13    16 Mariusz        Bogdański             100.00 +  367: 292  150
+                                                          --------------- ---- ------
+                                                                    1382  / 13 106.31
+
+
+
+
+	Natalia Tokajuk 100.00 Bielsk Podlaski
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    18 Kamil          Kister                112.48 -  200: 565   62
+    2    15 Andrzej        Ciołek                100.00 -  266: 332   50
+    3    20 Mariusz        Bogdański             100.00 -  238: 316   50
+    4    20 Rafał          Daniluk               100.00 +  271: 224  150
+    5    20 Adam           Sacharczuk            100.00 +  416:  24  150
+    6    17 Łukasz         Święcki               115.00 -  245: 463   65
+    7    16 Agnieszka      Kozak                 100.00 -  204: 378   50
+    8    19 Tomasz         Szczodry              100.00 -  308: 318   50
+                                                          --------------- ---- ------
+                                                                     627  /  8  78.38
+
+
+
+
+	Łukasz Wojciechowski 100.00 Łomża
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    19 Łukasz         Baranowski            111.93 -  270: 477   62
+    2    20 Agnieszka      Kozak                 100.00 -  296: 379   50
+    3    18 Rafał          Daniluk               100.00 +  467: 215  150
+    4    16 Maciej         Sylwestrzuk           100.00 +  384: 221  150
+    5    10 Grzegorz       Kurowski              134.38 -  332: 339   84
+    6    12 Magdalena      Kublik                109.88 -  303: 374   60
+    7    15 Agnieszka      Biegańska             100.00 +  407: 329  150
+    8    14 Mariusz        Bogdański             100.00 +  353: 280  150
+    9    10 Bogdan         Kozłowski             115.53 -  295: 374   66
+   10    12 Anna           Biegańska             102.29 +  428: 279  152
+   11     9 Jarosław       Borowski              136.61 -  297: 346   87
+   12    14 Jerzy          Krzyżewski            113.72 -  366: 387   64
+   13    14 Agnieszka      Kozak                 100.00 +  358: 294  150
+                                                          --------------- ---- ------
+                                                                    1375  / 13 105.77
+
+
+
+
+	Krzysztof Zawadzki 100.00 Sampława                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    20 Magdalena      Kublik                109.88 -  314: 343   60
+    2    12 Janina         Grajewska             100.00 +  370: 312  150
+    3    16 Anna           Biegańska             102.29 -  283: 448   52
+    4    11 Czesław        Grajewski             118.51 =  334: 334  119
+    5    14 Andrzej        Ciołek                100.00 +  435: 371  150
+    6    11 Krzysztof      Chełstowski           100.00 -  263: 335   50
+    7    14 Mariusz        Sylwestrzuk           124.03 -  228: 467   74
+    8    16 Agnieszka      Kozak                 100.00 -  255: 422   50
+    9    17 Maciej         Sylwestrzuk           100.00 +  416: 244  150
+   10    15 Jerzy          Krzyżewski            113.72 -  269: 319   64
+   11    19 PAUZA
+   12    17 Mirosław       Dejna                 100.00 +  432: 195  150
+   13    15 Krzysztof      Chełstowski           100.00 -  258: 317   50
+                                                          --------------- ---- ------
+                                                                    1119  / 12  93.25
+
+
+</pre></div><div id='p_rundy' class='page'><pre>Wyniki poszczególnych rund turnieju I Otwarte Mistrzostwa Łomzy
+
+
+
+Runda nr  1
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Dorota         Rudzińska            - Tomasz         Zwoliński             306: 463
+   2 Stanisław      Rydzik               - Anna           Biegańska             475: 322
+   3 Agnieszka      Biegańska            - Rafał          Dąbrowski             284: 422
+   4 Jarosław       Borowski             - Mariusz        Bogdański             392: 229
+   5 Marta          Bołbot               - Rafał          Lenartowski           295: 411
+   6 Grzegorz       Kurowski             - Krzysztof      Chełstowski           360: 311
+   7 Andrzej        Ciołek               - Grzegorz       Święcki               309: 411
+   8 Krzysztof      Langiewicz           - Rafał          Daniluk               406: 175
+   9 Mirosław       Dejna                - Grzegorz       Koczkodon             192: 560
+  10 Mariusz        Sylwestrzuk          - Piotr          Domański              311: 342
+  11 Janina         Grajewska            - Mateusz        Borsuk                262: 455
+  12 Krzysztof      Sporczyk             - Agnieszka      Kozak                 324: 279
+  13 Damian         Motycki              - Czesław        Grajewski              55: 637
+  14 Michał         Kolaj                - Adam           Sacharczuk            639:  13
+  15 Maciej         Sylwestrzuk          - Bogdan         Kozłowski             205: 464
+  16 Łukasz         Święcki              - Tomasz         Szczodry              482: 173
+  17 Alicja         Tarczewska           - Jerzy          Krzyżewski            306: 392
+  18 Kamil          Kister               - Natalia        Tokajuk               565: 200
+  19 Łukasz         Wojciechowski        - Łukasz         Baranowski            270: 477
+  20 Magdalena      Kublik               - Krzysztof      Zawadzki              343: 314
+  21 Anna           Arana                - BYE            BYE                   300:   0
+
+
+Runda nr  2
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Rafał          Lenartowski          - Michał         Kolaj                 379: 358
+   2 Grzegorz       Święcki              - Czesław        Grajewski             339: 334
+   3 Krzysztof      Langiewicz           - Kamil          Kister                284: 485
+   4 Grzegorz       Koczkodon            - Jarosław       Borowski              434: 289
+   5 Jerzy          Krzyżewski           - Łukasz         Święcki               401: 322
+   6 Łukasz         Baranowski           - Grzegorz       Kurowski              487: 377
+   7 Stanisław      Rydzik               - Magdalena      Kublik                489: 347
+   8 Piotr          Domański             - Bogdan         Kozłowski             345: 338
+   9 Tomasz         Zwoliński            - Krzysztof      Sporczyk              422: 310
+  10 Mateusz        Borsuk               - Anna           Arana                 343: 402
+  11 Anna           Biegańska            - Rafał          Dąbrowski             314: 429
+  12 Krzysztof      Zawadzki             - Janina         Grajewska             370: 312
+  13 Mariusz        Sylwestrzuk          - Mariusz        Bogdański             440: 268
+  14 Krzysztof      Chełstowski          - Maciej         Sylwestrzuk           363: 253
+  15 Natalia        Tokajuk              - Andrzej        Ciołek                266: 332
+  16 Mirosław       Dejna                - Dorota         Rudzińska             113: 513
+  17 Rafał          Daniluk              - Alicja         Tarczewska            224: 374
+  18 Tomasz         Szczodry             - Marta          Bołbot                281: 258
+  19 Damian         Motycki              - Agnieszka      Biegańska              64: 368
+  20 Agnieszka      Kozak                - Łukasz         Wojciechowski         379: 296
+  21 Adam           Sacharczuk           - BYE            BYE                   300:   0
+
+
+Runda nr  3
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Jerzy          Krzyżewski           - Kamil          Kister                365: 383
+   2 Rafał          Lenartowski          - Grzegorz       Koczkodon             449: 424
+   3 Grzegorz       Święcki              - Stanisław      Rydzik                379: 353
+   4 Łukasz         Baranowski           - Piotr          Domański              379: 344
+   5 Anna           Arana                - Tomasz         Zwoliński             447: 367
+   6 Rafał          Dąbrowski            - Michał         Kolaj                 413: 356
+   7 Czesław        Grajewski            - Jarosław       Borowski              396: 418
+   8 Alicja         Tarczewska           - Dorota         Rudzińska             388: 378
+   9 Krzysztof      Chełstowski          - Łukasz         Święcki               334: 451
+  10 Agnieszka      Kozak                - Bogdan         Kozłowski             249: 504
+  11 Agnieszka      Biegańska            - Mateusz        Borsuk                281: 416
+  12 Andrzej        Ciołek               - Mariusz        Sylwestrzuk           346: 364
+  13 Krzysztof      Sporczyk             - Grzegorz       Kurowski              413: 395
+  14 Krzysztof      Langiewicz           - Tomasz         Szczodry              351: 274
+  15 Magdalena      Kublik               - Adam           Sacharczuk            651:  34
+  16 Anna           Biegańska            - Krzysztof      Zawadzki              448: 283
+  17 Janina         Grajewska            - Maciej         Sylwestrzuk           250: 269
+  18 Rafał          Daniluk              - Łukasz         Wojciechowski         215: 467
+  19 Mirosław       Dejna                - Marta          Bołbot                145: 433
+  20 Mariusz        Bogdański            - Natalia        Tokajuk               316: 238
+  21 Damian         Motycki              - BYE            BYE                   300:   0
+
+
+Runda nr  4
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Kamil          Kister               - Rafał          Lenartowski           379: 386
+   2 Łukasz         Baranowski           - Grzegorz       Święcki               266: 405
+   3 Rafał          Dąbrowski            - Anna           Arana                 463: 336
+   4 Grzegorz       Koczkodon            - Jerzy          Krzyżewski            305: 437
+   5 Magdalena      Kublik               - Mariusz        Sylwestrzuk           347: 440
+   6 Jarosław       Borowski             - Stanisław      Rydzik                380: 397
+   7 Bogdan         Kozłowski            - Alicja         Tarczewska            384: 310
+   8 Łukasz         Święcki              - Krzysztof      Sporczyk              333: 446
+   9 Tomasz         Zwoliński            - Krzysztof      Langiewicz            422: 413
+  10 Mateusz        Borsuk               - Piotr          Domański              396: 302
+  11 Krzysztof      Zawadzki             - Czesław        Grajewski             334: 334
+  12 Michał         Kolaj                - Agnieszka      Biegańska             353: 285
+  13 Dorota         Rudzińska            - Agnieszka      Kozak                 408: 331
+  14 Grzegorz       Kurowski             - Mariusz        Bogdański             536: 218
+  15 Tomasz         Szczodry             - Anna           Biegańska             179: 487
+  16 Łukasz         Wojciechowski        - Maciej         Sylwestrzuk           384: 221
+  17 Krzysztof      Chełstowski          - Damian         Motycki               444: 113
+  18 Adam           Sacharczuk           - Andrzej        Ciołek                 32: 579
+  19 Marta          Bołbot               - Janina         Grajewska             287: 332
+  20 Natalia        Tokajuk              - Rafał          Daniluk               271: 224
+  21 Mirosław       Dejna                - BYE            BYE                   300:   0
+
+
+Runda nr  5
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Kamil          Kister               - Rafał          Dąbrowski             391: 326
+   2 Grzegorz       Święcki              - Rafał          Lenartowski           460: 339
+   3 Stanisław      Rydzik               - Jerzy          Krzyżewski            400: 298
+   4 Bogdan         Kozłowski            - Mariusz        Sylwestrzuk           368: 312
+   5 Grzegorz       Koczkodon            - Tomasz         Zwoliński             378: 305
+   6 Mateusz        Borsuk               - Krzysztof      Sporczyk              449: 330
+   7 Anna           Arana                - Łukasz         Baranowski            270: 361
+   8 Michał         Kolaj                - Krzysztof      Langiewicz            290: 381
+   9 Magdalena      Kublik               - Krzysztof      Chełstowski           373: 390
+  10 Łukasz         Wojciechowski        - Grzegorz       Kurowski              332: 339
+  11 Piotr          Domański             - Dorota         Rudzińska             369: 355
+  12 Alicja         Tarczewska           - Łukasz         Święcki               414: 259
+  13 Czesław        Grajewski            - Anna           Biegańska             432: 290
+  14 Krzysztof      Zawadzki             - Andrzej        Ciołek                435: 371
+  15 Marta          Bołbot               - Jarosław       Borowski              216: 394
+  16 Maciej         Sylwestrzuk          - Agnieszka      Kozak                 241: 392
+  17 Agnieszka      Biegańska            - Tomasz         Szczodry              329: 253
+  18 Janina         Grajewska            - Mirosław       Dejna                 387: 173
+  19 Mariusz        Bogdański            - Damian         Motycki               480:  78
+  20 Natalia        Tokajuk              - Adam           Sacharczuk            416:  24
+  21 Rafał          Daniluk              - BYE            BYE                   300:   0
+
+
+Runda nr  6
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Bogdan         Kozłowski            - Grzegorz       Święcki               357: 387
+   2 Kamil          Kister               - Łukasz         Baranowski            391: 364
+   3 Rafał          Dąbrowski            - Stanisław      Rydzik                403: 428
+   4 Rafał          Lenartowski          - Mateusz        Borsuk                440: 418
+   5 Grzegorz       Koczkodon            - Krzysztof      Langiewicz            306: 279
+   6 Grzegorz       Kurowski             - Alicja         Tarczewska            468: 227
+   7 Piotr          Domański             - Tomasz         Zwoliński             400: 440
+   8 Krzysztof      Sporczyk             - Jerzy          Krzyżewski            351: 370
+   9 Jarosław       Borowski             - Anna           Arana                 374: 248
+  10 Mariusz        Sylwestrzuk          - Czesław        Grajewski             324: 433
+  11 Krzysztof      Zawadzki             - Krzysztof      Chełstowski           263: 335
+  12 Łukasz         Wojciechowski        - Magdalena      Kublik                303: 374
+  13 Agnieszka      Kozak                - Michał         Kolaj                 336: 393
+  14 Dorota         Rudzińska            - Agnieszka      Biegańska             388: 189
+  15 Andrzej        Ciołek               - Janina         Grajewska             394: 297
+  16 Anna           Biegańska            - Mariusz        Bogdański             385: 267
+  17 Łukasz         Święcki              - Natalia        Tokajuk               463: 245
+  18 Marta          Bołbot               - Damian         Motycki               444:  35
+  19 Maciej         Sylwestrzuk          - Mirosław       Dejna                 322: 226
+  20 Adam           Sacharczuk           - Rafał          Daniluk                29: 447
+  21 Tomasz         Szczodry             - BYE            BYE                   300:   0
+
+
+Runda nr  7
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Grzegorz       Święcki              - Kamil          Kister                502: 311
+   2 Stanisław      Rydzik               - Rafał          Lenartowski           391: 316
+   3 Mateusz        Borsuk               - Łukasz         Baranowski            521: 316
+   4 Jerzy          Krzyżewski           - Grzegorz       Kurowski              268: 397
+   5 Rafał          Dąbrowski            - Jarosław       Borowski              425: 310
+   6 Tomasz         Zwoliński            - Krzysztof      Chełstowski           424: 283
+   7 Czesław        Grajewski            - Bogdan         Kozłowski             401: 370
+   8 Grzegorz       Koczkodon            - Magdalena      Kublik                416: 358
+   9 Michał         Kolaj                - Krzysztof      Sporczyk              369: 345
+  10 Dorota         Rudzińska            - Krzysztof      Langiewicz            522: 331
+  11 Piotr          Domański             - Andrzej        Ciołek                341: 336
+  12 Łukasz         Święcki              - Anna           Arana                 384: 360
+  13 Anna           Biegańska            - Alicja         Tarczewska            344: 273
+  14 Mariusz        Sylwestrzuk          - Krzysztof      Zawadzki              467: 228
+  15 Agnieszka      Biegańska            - Łukasz         Wojciechowski         329: 407
+  16 Natalia        Tokajuk              - Agnieszka      Kozak                 204: 378
+  17 Rafał          Daniluk              - Marta          Bołbot                222: 310
+  18 Janina         Grajewska            - Tomasz         Szczodry              371: 328
+  19 Mariusz        Bogdański            - Mirosław       Dejna                 349: 184
+  20 Adam           Sacharczuk           - Damian         Motycki                 0: 400
+  21 Maciej         Sylwestrzuk          - BYE            BYE                   300:   0
+
+
+Runda nr  8
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Grzegorz       Święcki              - Stanisław      Rydzik                385: 363
+   2 Tomasz         Zwoliński            - Mateusz        Borsuk                378: 442
+   3 Kamil          Kister               - Grzegorz       Koczkodon             462: 285
+   4 Rafał          Lenartowski          - Rafał          Dąbrowski             350: 334
+   5 Grzegorz       Kurowski             - Czesław        Grajewski             408: 291
+   6 Anna           Biegańska            - Dorota         Rudzińska             344: 353
+   7 Bogdan         Kozłowski            - Jarosław       Borowski              286: 521
+   8 Jerzy          Krzyżewski           - Michał         Kolaj                 320: 365
+   9 Piotr          Domański             - Łukasz         Święcki               387: 430
+  10 Krzysztof      Chełstowski          - Mariusz        Sylwestrzuk           255: 459
+  11 Łukasz         Baranowski           - Magdalena      Kublik                448: 486
+  12 Andrzej        Ciołek               - Marta          Bołbot                338: 254
+  13 Krzysztof      Sporczyk             - Janina         Grajewska             420: 358
+  14 Mariusz        Bogdański            - Łukasz         Wojciechowski         280: 353
+  15 Anna           Arana                - Krzysztof      Langiewicz            416: 374
+  16 Agnieszka      Kozak                - Krzysztof      Zawadzki              422: 255
+  17 Alicja         Tarczewska           - Maciej         Sylwestrzuk           367: 292
+  18 Agnieszka      Biegańska            - Mirosław       Dejna                 335: 157
+  19 Tomasz         Szczodry             - Natalia        Tokajuk               318: 308
+  20 Damian         Motycki              - Rafał          Daniluk               147: 347
+
+
+Runda nr  9
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Mateusz        Borsuk               - Grzegorz       Święcki               398: 345
+   2 Stanisław      Rydzik               - Kamil          Kister                420: 485
+   3 Rafał          Lenartowski          - Grzegorz       Kurowski              433: 423
+   4 Dorota         Rudzińska            - Mariusz        Sylwestrzuk           265: 334
+   5 Jarosław       Borowski             - Tomasz         Zwoliński             355: 444
+   6 Rafał          Dąbrowski            - Grzegorz       Koczkodon             387: 349
+   7 Czesław        Grajewski            - Łukasz         Święcki               420: 281
+   8 Michał         Kolaj                - Magdalena      Kublik                395: 369
+   9 Łukasz         Baranowski           - Agnieszka      Kozak                 478: 350
+  10 Bogdan         Kozłowski            - Łukasz         Wojciechowski         374: 295
+  11 Krzysztof      Chełstowski          - Krzysztof      Sporczyk              332: 294
+  12 Anna           Arana                - Anna           Biegańska             360: 333
+  13 Krzysztof      Langiewicz           - Jerzy          Krzyżewski            397: 320
+  14 Alicja         Tarczewska           - Piotr          Domański              269: 477
+  15 Janina         Grajewska            - Agnieszka      Biegańska             286: 237
+  16 Mariusz        Bogdański            - Tomasz         Szczodry              438: 300
+  17 Krzysztof      Zawadzki             - Maciej         Sylwestrzuk           416: 244
+  18 Damian         Motycki              - Mirosław       Dejna                 158: 197
+
+
+Runda nr 10
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Mateusz        Borsuk               - Grzegorz       Święcki               488: 243
+   2 Rafał          Lenartowski          - Kamil          Kister                353: 356
+   3 Michał         Kolaj                - Stanisław      Rydzik                436: 409
+   4 Mariusz        Sylwestrzuk          - Grzegorz       Kurowski              400: 379
+   5 Tomasz         Zwoliński            - Czesław        Grajewski             355: 337
+   6 Łukasz         Baranowski           - Rafał          Dąbrowski             410: 339
+   7 Sebastian      Orzelski             - Dorota         Rudzińska             388: 376
+   8 Piotr          Domański             - Grzegorz       Koczkodon             368: 359
+   9 Krzysztof      Chełstowski          - Bogdan         Kozłowski             340: 464
+  10 Jarosław       Borowski             - Łukasz         Święcki               475: 304
+  11 Magdalena      Kublik               - Anna           Arana                 397: 268
+  12 Łukasz         Wojciechowski        - Anna           Biegańska             428: 279
+  13 Krzysztof      Sporczyk             - Alicja         Tarczewska            447: 308
+  14 Krzysztof      Langiewicz           - Janina         Grajewska             426: 255
+  15 Jerzy          Krzyżewski           - Krzysztof      Zawadzki              319: 269
+  16 Agnieszka      Kozak                - Mariusz        Bogdański             400: 344
+  17 Tomasz         Szczodry             - Mirosław       Dejna                 300: 202
+  18 Maciej         Sylwestrzuk          - Damian         Motycki               455:  98
+  19 Agnieszka      Biegańska            - BYE            BYE                   300:   0
+
+
+Runda nr 11
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Stanisław      Rydzik               - Mateusz        Borsuk                327: 455
+   2 Kamil          Kister               - Michał         Kolaj                 282: 388
+   3 Mariusz        Sylwestrzuk          - Grzegorz       Święcki               460: 336
+   4 Tomasz         Zwoliński            - Rafał          Lenartowski           313: 405
+   5 Grzegorz       Kurowski             - Grzegorz       Koczkodon             386: 423
+   6 Łukasz         Święcki              - Łukasz         Baranowski            346: 364
+   7 Rafał          Dąbrowski            - Krzysztof      Sporczyk              365: 395
+   8 Bogdan         Kozłowski            - Krzysztof      Langiewicz            351: 310
+   9 Łukasz         Wojciechowski        - Jarosław       Borowski              297: 346
+  10 Sebastian      Orzelski             - Agnieszka      Kozak                 324: 287
+  11 Jerzy          Krzyżewski           - Piotr          Domański              326: 331
+  12 Czesław        Grajewski            - Krzysztof      Chełstowski           416: 300
+  13 Anna           Biegańska            - Magdalena      Kublik                342: 400
+  14 Anna           Arana                - Dorota         Rudzińska             367: 290
+  15 Mirosław       Dejna                - Alicja         Tarczewska            193: 341
+  16 Mariusz        Bogdański            - Agnieszka      Biegańska             274: 311
+  17 Janina         Grajewska            - Damian         Motycki               417: 158
+  18 Tomasz         Szczodry             - Maciej         Sylwestrzuk           287: 294
+  19 Krzysztof      Zawadzki             - BYE            BYE                   300:   0
+
+
+Runda nr 12
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Kamil          Kister               - Mateusz        Borsuk                338: 370
+   2 Grzegorz       Święcki              - Michał         Kolaj                 390: 327
+   3 Mariusz        Sylwestrzuk          - Rafał          Lenartowski           442: 355
+   4 Sebastian      Orzelski             - Łukasz         Baranowski            315: 332
+   5 Tomasz         Zwoliński            - Bogdan         Kozłowski             376: 344
+   6 Grzegorz       Kurowski             - Jarosław       Borowski              392: 367
+   7 Czesław        Grajewski            - Piotr          Domański              395: 294
+   8 Grzegorz       Koczkodon            - Stanisław      Rydzik                305: 412
+   9 Magdalena      Kublik               - Rafał          Dąbrowski             398: 406
+  10 Krzysztof      Sporczyk             - Anna           Arana                 398: 384
+  11 Dorota         Rudzińska            - Krzysztof      Chełstowski           323: 312
+  12 Łukasz         Święcki              - Janina         Grajewska             449: 335
+  13 Alicja         Tarczewska           - Krzysztof      Langiewicz            302: 422
+  14 Jerzy          Krzyżewski           - Łukasz         Wojciechowski         387: 366
+  15 Agnieszka      Kozak                - Anna           Biegańska             367: 414
+  16 Maciej         Sylwestrzuk          - Agnieszka      Biegańska             223: 328
+  17 Mirosław       Dejna                - Krzysztof      Zawadzki              195: 432
+  18 Damian         Motycki              - Tomasz         Szczodry               92: 451
+  19 Mariusz        Bogdański            - BYE            BYE                   300:   0
+
+
+Runda nr 13
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Mateusz        Borsuk               - Mariusz        Sylwestrzuk           340: 316
+   2 Grzegorz       Święcki              - Kamil          Kister                396: 435
+   3 Łukasz         Baranowski           - Tomasz         Zwoliński             308: 442
+   4 Michał         Kolaj                - Rafał          Lenartowski           353: 409
+   5 Stanisław      Rydzik               - Czesław        Grajewski             548: 246
+   6 Rafał          Dąbrowski            - Grzegorz       Kurowski              431: 336
+   7 Jarosław       Borowski             - Bogdan         Kozłowski             313: 397
+   8 Sebastian      Orzelski             - Krzysztof      Sporczyk              669: 299
+   9 Magdalena      Kublik               - Piotr          Domański              534: 265
+  10 Łukasz         Święcki              - Grzegorz       Koczkodon             491: 358
+  11 Krzysztof      Langiewicz           - Dorota         Rudzińska             425: 236
+  12 Anna           Arana                - Jerzy          Krzyżewski            428: 360
+  13 Anna           Biegańska            - Agnieszka      Biegańska             310: 372
+  14 Łukasz         Wojciechowski        - Agnieszka      Kozak                 358: 294
+  15 Krzysztof      Chełstowski          - Krzysztof      Zawadzki              317: 258
+  16 Alicja         Tarczewska           - Mariusz        Bogdański             367: 292
+  17 Maciej         Sylwestrzuk          - Tomasz         Szczodry              241: 331
+  18 Mirosław       Dejna                - Damian         Motycki               209: 135
+  19 Janina         Grajewska            - BYE            BYE                   300:   0
+</pre></div><div id='p_ranking' class='page'><pre>Lista rankingowa na dzień 21-11-2009
+
+Lp.  Imię i nazwisko                Miasto               Rank.  Skalpy Gry
+---- ------------------------------ -------------------- ------ ------ ----
+   1 Dariusz Kosz                   Nysa                 149.02  29059  195
+   2 Krzysztof Obremski             Legnica              149.01  29652  199
+   3 Mariusz Skrobosz               Warszawa             148.23  29498  199
+   4 Kazimierz.Jr Merklejn          Szczecin             145.80  28286  194
+   5 Miłosz Wrzałek                 Reda                 145.43  26759  184
+   6 Michał Makowski                Warszawa             143.81  15100  105
+   7 Kamil Górka                    Kraków               143.59  26851  187
+   8 Marcin Mroziuk                 Warszawa             143.27   9026   63
+   9 Bartosz Morawski               Gliwice              142.72  22835  160
+  10 Karol Wyrębkiewicz             Łódź                 141.60  26762  189
+  11 Mateusz Żbikowski              Warszawa             141.41  27293  193
+  12 Krzysztof Mówka                Warszawa             141.38  27570  195
+  13 Łukasz Tuszyński               Chłopowo             141.09  26666  189
+  14 Dawid Pikul                    Poznań               141.03  26795  190
+  15 Jakub Zaryński                 Świnoujście          140.16  28033  200
+  16 Tomasz Zwoliński               Skierdy              140.12  27184  194
+  17 Michał Alabrudziński           Włocławek            139.43  26631  191
+  18 Stanisław Rydzik               Warszawa             138.76  27751  200
+  19 Robert Duczemiński             Gorzów Wielkopolski  138.71  27188  196
+  20 Robert Kuszpit                 Biała Podlaska       138.57  26605  192
+  21 Mariusz Wrześniewski           Kraków               138.30  11341   82
+  22 Paweł Jackowski                Warszawa             138.05  27057  196
+  23 Jędrzej Florek                 Bydgoszcz            137.97   4967   36
+  24 Rafał Dąbrowski                Ostróda              137.67  26845  195
+  25 Filip Warzecha                 Gdynia               137.45   8247   60
+  26 Piotr Pietuchowski             Białystok            136.87  27101  198
+  27 Maciej Czupryniak              Milanówek            136.78   4924   36
+  28 Jan Kozłowski                  Kraków               136.65  10932   80
+  29 Justyna Górka                  Kraków               136.63  26369  193
+  30 Dariusz Dzierża                Kraków               136.49   6961   51
+  31 Rafał Lenartowski              Gdynia               136.12  27223  200
+  32 Szymon Fidziński               Kobyłka              136.00   5304   39
+  33 Andrzej Oleksiak               Ostróda              135.67  17095  126
+  34 Wojciech Zemło                 Łódź                 135.67  26185  193
+  35 Adam Szukalski                 Coventry [W. Bryt.]  135.55  13826  102
+  36 Mariusz Margalski              Pieczyska            135.51  13009   96
+  37 Radosław Jachna                Łódź                 135.39  21121  156
+  38 Jakub Szymczak                 Łódź                 135.00  26730  198
+  39 Sławomir Kucia                 Krosno               134.65  15889  118
+  40 Marek Reda                     Wołomin              134.60  26919  200
+  41 Tomasz Ciejka                  Kraków               134.56  26373  196
+  42 Jarosław Borowski              Bielsk Podlaski      134.41  11022   82
+  43 Aleksander Puchalski           Włocławek            134.18  17846  133
+  44 Dawid Adamczyk                 Wodzisław Śląski     134.14  15560  116
+  45 Przemysław Herdzina            Kraków               133.94  26119  195
+  46 Wojciech Usakiewicz            Warszawa             133.81  11106   83
+  47 Dariusz Puton                  Ruda Śląska          133.51  20027  150
+  48 Grzegorz Kurowski              Warszawa             133.35  26536  199
+  49 Wojciech Sołdan                Rumia                133.27  21990  165
+  50 Andrzej Rakoczy                Kraków               132.98   7713   58
+  51 Kamil Nawrocki                 Bydgoszcz            132.92  25787  194
+  52 Grzegorz Święcki               Białystok            132.07   5811   44
+  53 Filip Sosin                    Warszawa             131.87   8308   63
+  54 Maciej Michalak                Łódź                 131.83  17402  132
+  55 Irena Sołdan                   Rumia                131.66  26200  199
+  56 Bogusław Szyszka               Oława                131.51  17491  133
+  57 Patryk Gadus                   Pszczew              131.10  15601  119
+  58 Marek Salamon                  Bytom                130.59   5354   41
+  59 Łukasz Bobowski                Suchedniów           130.35  23985  184
+  60 Tomasz Suchanek                Wrocław              130.32  24109  185
+  61 Karol Waniek                   Wrocław              129.96  15075  116
+  62 Katarzyna Sołdan               Rumia                129.58   8293   64
+  63 Paweł Janaś                    Głogów               129.53  20595  159
+  64 Artur Irzyk                    Kraków               129.27  11376   88
+  65 Marcin Figiel                  Kraków               129.18   8397   65
+  66 Mirosław Uglik                 Warszawa             128.71  24969  194
+  67 Andrzej Kowalski               Gdańsk               128.65  11707   91
+  68 Maciej Perzyński               Piła                 128.56  16070  125
+  69 Mateusz Borsuk                 Reda                 128.21  11026   86
+  70 Małgorzata Sulejewska          Kraków               128.01  23809  186
+  71 Dariusz Kuć                    Stargard Szczecińsk  127.97  24315  190
+  72 Anita Bruska                   Gdynia               127.75  14563  114
+  73 Krzysztof Langiewicz           Ostróda              127.67  24257  190
+  74 Sergiusz Puchalski             Włocławek            127.63   8934   70
+  75 Michał Gawroński               Siemianowice Śląski  127.47   5991   47
+  76 Marek Charytoniuk              Biała Podlaska       127.42   8155   64
+  77 Dariusz Maciejuk               Warszawa             127.33  15152  119
+  78 Kuba Koisar                    Warszawa             127.20  19589  154
+  79 Tomasz Sienkiewicz             Białogard            127.06  18932  149
+  80 Zbigniew Wietecki              Gorzów Wielkopolski  126.82  24984  197
+  81 Marek Herzig                   Gorzów Wielkopolski  126.81  18388  145
+  82 Mariusz Grodek                 Olsztyn              126.75   6084   48
+  83 Marek Dudkiewicz               Milanówek            126.57  25315  200
+  84 Waldemar Czerwoniec            Warszawa             126.18  13627  108
+  85 Marta Dobrzańska               Kraków               126.07   8825   70
+  86 Grzegorz Koczkodon             Ostróda              125.73  25021  199
+  87 Marek Roszak                   Poznań               125.42  17935  143
+  88 Leszek Stecuła                 Bytom                125.36   7647   61
+  89 Joanna Jewtuch                 Warszawa             125.24  16907  135
+  90 Łukasz Szałkiewicz             Wrocław              125.14   7884   63
+  91 Robert Kamiński                Warszawa             124.94  16867  135
+  92 Weronika Rudnicka              Ustka                124.88  23602  189
+  93 Adam Klimont                   Wałcz                124.86  24472  196
+  94 Przemysław Rybicki             Otwock               124.78  24707  198
+  95 Mariusz Sylwestrzuk            Warszawa             124.71  23446  188
+  96 Jolanta Chłopińska             Wałcz                124.62  24300  195
+  97 Paweł Kowalski                 Kutno                124.58  15822  127
+  98 Zofia Gajewska                 Jelenia Góra         124.37  20646  166
+  99 Ryszard Dębski                 Biała Podlaska       124.34   7958   64
+ 100 Jacek Karwowski                Płock                124.24   5218   42
+ 101 Dariusz Białobrzewski          Gdynia               124.20  16518  133
+ 102 Jakub Nalepa                   Gliwice              124.11   5585   45
+ 103 Bartosz Orłowski               Bytom                123.95   4586   37
+ 104 Aleksandra Kaczanowska         Szczecin             123.75  14355  116
+ 105 Beata Wiączkowska              Wrocław              123.64  23491  190
+ 106 Michał Musielak                Bydgoszcz            123.51   6299   51
+ 107 Michał Ozimiński               Łódź                 123.44  23700  192
+ 108 Arkadiusz Biegun               Kraków               123.33  14183  115
+ 109 Małgorzata Szczygieł           Radwanice            123.19  23037  187
+ 110 Piotr Szałkiewicz              Wrocław              123.06  12798  104
+ 111 Piotr Jakubiak                 Żyrardów             123.06   6645   54
+ 112 Marta Szeliga-Frynia           Warszawa             122.81   3807   31
+ 113 Grzegorz Kwiecień              Kraków               122.75  15344  125
+ 114 Walenty Siemaszko              Lipiany              122.58   7600   62
+ 115 Ewa Ciszewska                  Katowice             122.49   9922   81
+ 116 Andrzej Rechowicz              Katowice             122.47  23270  190
+ 117 Andrzej Kwiatkowski            Warszawa             122.29  23846  195
+ 118 Robert Głowacki                Łódź                 122.23  24201  198
+ 119 Joanna Ostrowska               Warszawa             122.14  23940  196
+ 120 Agnieszka Krupka               Krosno               122.03  18061  148
+ 121 Maciej Rzychoń                 Katowice             121.84   8163   67
+ 122 Marcin Kozyra                  Warszawa             121.67   4380   36
+ 123 Grzegorz Wilk                  Kraków               121.50   4860   40
+ 124 Ireneusz Moralewicz            Goleniów             121.49  23569  194
+ 125 Grzegorz Grzeszczuk            Racibórz             121.36   8738   72
+ 126 Michał Trumpus                 Wrocław              121.34   3883   32
+ 127 Dominik Piasecki               Słupsk               121.28   9702   80
+ 128 Bogusław Puchalski             Włocławek            121.08  10171   84
+ 129 Rafał Wesołowski               Warszawa             120.92  24184  200
+ 130 Sławomir Piotrowski            Biała Podlaska       120.74  23666  196
+ 131 Krzysztof Jaworski             Warszawa             120.56   4702   39
+ 132 Adam Weremczuk                 Łódź                 120.33   4332   36
+ 133 Piotr Adamczyk                 Tarnów               120.29  12751  106
+ 134 Szymon Płachta                 Warszawa             119.96   9957   83
+ 135 Grzegorz Pukniel               Lublin               119.39  23043  193
+ 136 Dorota Zielińska               Piaseczno            119.35  10503   88
+ 137 Krzysztof Sporczyk             Piaseczno            119.14  22755  191
+ 138 Czesław Grajewski              Choroszcz            119.13  18823  158
+ 139 Agnieszka Goniowska            Wrocław              119.12  15486  130
+ 140 Krzysztof Kodzis               Inowrocław           118.67  11274   95
+ 141 Dorota Maciejuk                Warszawa             118.66  14595  123
+ 142 Małgorzata Szmuksta            Szczecin             118.60  17079  144
+ 143 Leokadia Litwinowicz           Gliwice              118.58   7945   67
+ 144 Tadeusz Wiśniewski             Piła                 118.54   4149   35
+ 145 Jarosław Sobczak               Warszawa             118.53  17424  147
+ 146 Janusz Krupiński               Bytom                118.46   8292   70
+ 147 Daniel Janus                   Wąchock              118.37  16217  137
+ 148 Eugeniusz Wróblewski           Inowrocław           117.94  10615   90
+ 149 Ewa Żbikowska                  Warszawa             117.94   4246   36
+ 150 Rafał Matczak                  Milanówek            117.50   5640   48
+ 151 Jerzy Matyasik                 Kraków               117.33  23466  200
+ 152 Grażyna Wesołowska             Łódź                 117.18  14296  122
+ 153 Maciej Sancewicz               Gorzów Wielkopolski  117.04  16269  139
+ 154 Mariusz Orzeł                  Nowe Miasto Lubawsk  116.91  11574   99
+ 155 Michał Kolaj                   Ostróda              116.89  23028  197
+ 156 Grzegorz Wiączkowski           Wrocław              116.89  22793  195
+ 157 Krzysztof Leśniak              Kraków               116.86  12037  103
+ 158 Mikołaj Fidziński              Dębica               116.86   5025   43
+ 159 Lucyna Śniadach                Rumia                116.86  15893  136
+ 160 Marek Rogalski                 Warszawa             116.75   8756   75
+ 161 Ireneusz Kurzok                Mikołów              116.75   7822   67
+ 162 Barbara Łukaszewicz            Wrocław              116.59  19470  167
+ 163 Michał  Borejko                Wrocław              116.58   5596   48
+ 164 Stanisław Gasik                Warszawa             116.37  12568  108
+ 165 Jarosław Michalak              Łódź                 116.37   6982   60
+ 166 Jarosław Żuliński              Szczecin             116.33   5584   48
+ 167 Anna Stefańska                 Łódź                 116.13  19393  167
+ 168 Jacek Pietruszka               Kraków               115.99  17167  148
+ 169 Bogdan Kozłowski               Białystok            115.97  11597  100
+ 170 Krzysztof Bukowski             Milanówek            115.95   4638   40
+ 171 Tomasz Łapka                   Opole                115.91  22718  196
+ 172 Andrzej Tyczyno                Bydgoszcz            115.51  16402  142
+ 173 Jarosław Puchalski             Łódź                 115.39  11424   99
+ 174 Janusz Kaczor                  Międzyrzec Podl.     115.34   5421   47
+ 175 Elżbieta Szuba                 Bytom Odrzański      115.25   5532   48
+ 176 Ryszard Żydaczewski            Lubin                115.22   4148   36
+ 177 Patrycja Śliwińska             Szczecin             115.12  21413  186
+ 178 Zdzisław Szota                 Warszawa             115.04  10469   91
+ 179 Tomasz Górka                   Łęczna               115.01   8281   72
+ 180 Halina Roszak                  Poznań               114.89   8617   75
+ 181 Teresa Pawlik                  Lubin                114.85   4479   39
+ 182 Alina Białobrzewska            Gdynia               114.62  19830  173
+ 183 Kamil Kister                   Puławy               114.57  22914  200
+ 184 Mariola Osajda-Matczak         Milanówek            114.22  22501  197
+ 185 Joanna Brychcy                 Katowice             114.08  17796  156
+ 186 Renata Andracka                Poznań               114.08  22587  198
+ 187 Alicja Kosińska                Szczecin             113.98   5357   47
+ 188 Andrzej Gostomski              Łódź                 113.92   4101   36
+ 189 Łukasz Baranowski              Reda                 113.84  22084  194
+ 190 Mateusz Królikowski            Wrocław              113.83   5464   48
+ 191 Andrzej Kroc                   Łódź                 113.76  21955  193
+ 192 Magdalena Kupczyńska           Szczecin             113.69  10118   89
+ 193 Bogusław Książek               Szczecin             113.63  13749  121
+ 194 Jerzy Krzyżewski               Piasutno             113.51  17934  158
+ 195 Rafał Skibicki                 Lębork               113.50  15322  135
+ 196 Radosław Sowiński              Warszawa             113.05   4409   39
+ 197 Tomasz Ruta                    Warszawa             112.98   9377   83
+ 198 Andrzej Słapiński              Warszawa             112.95   4518   40
+ 199 Edward Stefaniak               Biała Podlaska       112.85   5868   52
+ 200 Roman Figiel                   Zawichost            112.84   4965   44
+ 201 Grzegorz Kulgawczuk            Biała Podlaska       112.78  15112  134
+ 202 Beata Piotrowska               Łódź                 112.76  21198  188
+ 203 Małgorzata Supińska            Warszawa             112.71   3945   35
+ 204 Piotr Wierzchowski             Widuchowa            112.68   9916   88
+ 205 Dariusz Nawrocki               Bydgoszcz            112.09  21858  195
+ 206 Michał Puchowski               Izbicko              111.84   3579   32
+ 207 Jarosław Olek                  Warszawa             111.67   4020   36
+ 208 Monika Laskowska               Wrocław              111.30   8904   80
+ 209 Aleksander Puzyna              Warszawa             111.20   8451   76
+ 210 Małgorzata Puternicka          Gdańsk               111.09   6110   55
+ 211 Stanisław Olsztyn              Olsztyn              111.07   9330   84
+ 212 Monika Dymek                   Ustka                111.03   6773   61
+ 213 Adam Janicki                   Łódź                 110.97  19752  178
+ 214 Tomasz Siwiński                Zawiercie            110.93  21743  196
+ 215 Małgorzata Jóźwiak             Iława                110.85  21616  195
+ 216 Karolina Drabik                Skarżysko            110.75   3987   36
+ 217 Magdalena Kublik               Warszawa             110.69  21806  197
+ 218 Jacek Wandzel                  Ząbkowice Śląskie    110.36   7615   69
+ 219 Łukasz Mycio                   Górowo Iławeckie     110.36   6401   58
+ 220 Monika Gawron-Cieślik          Szczecin             110.36  16775  152
+ 221 Kazimierz Merklejn             Szczecin             110.31   8604   78
+ 222 Jarosław Karp                  Jędrzejów            110.24   4520   41
+ 223 Agata Kuć                      Stargard Szczeciński 110.18  17959  163
+ 224 Anna Niedzielko                Szczecin             110.12   8810   80
+ 225 Monika Sadurska                Warszawa             110.05  18048  164
+ 226 Teresa Zalewska                Racibórz             109.92  12641  115
+ 227 Mariusz Makuch                 Zator                109.89   3956   36
+ 228 Remigiusz Skwarek              Bydgoszcz            109.82   4173   38
+ 229 Piotr Broda                    Sandomierz           109.67  14696  134
+ 230 Sławomir Zabawa                Wałcz                109.65   9320   85
+ 231 Piotr Madej                    Wrocław              109.47  11494  105
+ 232 Dorota Kuć                     Stargard Szczecińsk  109.42  21555  197
+ 233 Maciej Grąbczewski             Piła                 109.26  12346  113
+ 234 Lucyna Korga                   Zabrze               109.06   3926   36
+ 235 Agata Kopta                    Wodzisław Śląski     108.98  10026   92
+ 236 Jerzy Luter                    Bytom                108.85  12627  116
+ 237 Katarzyna Żuławska             Katowice             108.84  10666   98
+ 238 Maria Krzyżanowska             Władysławowo         108.51  21159  195
+ 239 Rafał Stachowski               Police               108.51  14757  136
+ 240 Joanna Żłobicka                Wrocław              108.20   9630   89
+ 241 Łukasz Sornek                  Mikołów              108.10  18809  174
+ 242 Danuta Langiewicz              Ostróda              108.01  18362  170
+ 243 Michał Kołodziejczyk           Warszawa             107.95   6477   60
+ 244 Anna Dłużniewska               Warszawa             107.89   3884   36
+ 245 Ryszard Korpalski              Wójtowice            107.76  16919  157
+ 246 Mariusz Kubicki                Inowrocław           107.49   7739   72
+ 247 Małgorzata Sameryt             Warszawa             107.14  11464  107
+ 248 Elżbieta Zębek                 Olsztyn              106.94   3850   36
+ 249 Danuta Połomska                Ostrów Wlkp.         106.43   6386   60
+ 250 Bartosz Muszyński              Ustka                106.36   4999   47
+ 251 Krystyna Augustyniak           Łódź                 106.07   6258   59
+ 252 Jacek Nowak                    Szczecin             106.00   5618   53
+ 253 Przemysław Pawlic              Wrocław              105.65  17116  162
+ 254 Jerzy Ciesielski               Łódź                 105.04   5252   50
+ 255 Urszula Solarska               Łódź                 104.76  20743  198
+ 256 Anna Arana                     Warszawa             104.70  20102  192
+ 257 Anna Swoboda                   Wałbrzych            104.54   5018   48
+ 258 Dorota Stachowska              Wydartowo I          104.40  13363  128
+ 259 Aleksandra Łukaszewicz         Wrocław              104.13   4686   45
+ 260 Grzegorz Bajer                 Łódź                 103.99   7071   68
+ 261 Paweł Michalski                Ksawerów             103.96   4990   48
+ 262 Małgorzata Sikora              Kraków               103.92   5508   53
+ 263 Józef Wietecki                 Gorzów Wielkopolski  103.92   9145   88
+ 264 Daniel Tomczyk                 Piła                 103.71   8089   78
+ 265 Dorota Rudzińska               Warszawa             103.59   7044   68
+ 266 Karol Posielski                Warszawa             103.22   3716   36
+ 267 Marcin Ceglarek                Kraków               103.08   3814   37
+ 268 Zbigniew Rybak                 Warszawa             103.05  16900  164
+ 269 Mieczysław Pastuszak           Gdynia               102.81   3701   36
+ 270 Hanna Gawłowska                Piła                 102.79   6887   67
+ 271 Henryk Piotrowski              Lidzbark Warmiński   102.64   8006   78
+ 272 Wiesław Olewiński              Warszawa             102.62   4002   39
+ 273 Ewa Fiszer-Włodarczyk          Wrocław              102.52   4511   44
+ 274 Piotr Szutenberg               Ustka                102.52   4921   48
+ 275 Bartosz Pięta                  Swarzędz             102.41   6247   61
+ 276 Jan  Olek                      Warszawa             102.31   6241   61
+ 277 Maciej Kuczyński               Gdynia               102.25   8282   81
+ 278 Karol Rembiałkowski            Warszawa             101.90   3057   30
+ 279 Agnieszka Kaczkowska           Gdańsk               101.71   3153   31
+ 280 Ireneusz Kaczmarczyk           Gdańsk               101.13  10619  105
+ 281 Iza Kraj                       Warszawa             101.09   7683   76
+ 282 Rafał Świątek                  Wrocław              100.97   9491   94
+ 283 Wojciech Gołęcki               Inowrocław           100.93  19378  192
+ 284 Joanna Pawlińska               Bielany Wrocławskie  100.83   7159   71
+ 285 Marcin Resler                  Września             100.53   3016   30
+ 286 Izabela  Potęga                Łódź                 100.14   5007   50
+ 287 Jacek Dec                      Pszczew              100.06   6304   63
+ 288 Tomasz Lewiński                Wejherowo            100.03   3501   35
+ 289 Ziemowit Pazda                 Wrocław               99.95   6597   66
+ 290 Grażyna Kula                   Sosnowiec             99.89   3496   35
+ 291 Sławomir Długosz               Ostróda               99.44  16607  167
+ 292 Sławomir Rattay                Zgorzelec             99.32   3675   37
+ 293 Agnieszka Piotrowicz           Gdańsk                99.27  11217  113
+ 294 Agnieszka Kozak                Gdynia                99.18  19042  192
+ 295 Anna  Bogucka                  Wrocław               98.71   4146   42
+ 296 Marianna Kozłowska             Białystok             98.69   8487   86
+ 297 Grażyna Kaczyńska              Łódź                  98.66   7005   71
+ 298 Mariusz Michalski              Inowrocław            97.38   6914   71
+ 299 Robert Wagner                  Wrocław               96.97   5721   59
+ 300 Tomasz Silny                   Gdynia                96.88   5716   59
+ 301 Bożena Guział                  Racibórz              96.81   3485   36
+ 302 Julita Dygnas                  Jelenia Góra          96.80   3388   35
+ 303 Jakub Kraj                     Szczecin              96.55   5986   62
+ 304 Magdalena Ambroszczyk          Łódź                  96.12   3268   34
+ 305 Natalia Kosiba                 Katowice              95.83   4408   46
+ 306 Katarzyna Dębska               Ostróda               95.78  10153  106
+ 307 Bartłomiej Dalecki             Rumia                 95.28   4764   50
+ 308 Katarzyna Bogusławska          Piastów               95.11  11223  118
+ 309 Danuta Wodecka                 Skrzyszów             94.78   5687   60
+ 310 Janina Grajewska               Choroszcz             93.81   6567   70
+ 311 Jacek Cichecki                 Józefów               93.77   4032   43
+ 312 Michał Wodecki                 Skrzyszów             93.55   4397   47
+ 313 Anna Lenartowska               Gdynia                93.47   5421   58
+ 314 Krzysztof Zawadzki             Sampława              93.26  17160  184
+ 315 Marcin Radwański               Wrocław               93.12   8288   89
+ 316 Andrzej Ciołek                 Bielsk Podlaski       92.95   4090   44
+ 317 Radosław Więch                 Warszawa              92.72   5656   61
+ 318 Radosław Pastusiak             Sulęcin               92.60   5278   57
+ 319 Agata Nawrocka                 Bydgoszcz             92.25   4059   44
+ 320 Sławomir Wolski                Wrocław               91.56   3296   36
+ 321 Paweł Golubiński               Gdynia                91.39   2833   31
+ 322 Mateusz Gołębiewski            Łódź                  90.99   7552   83
+ 323 Dariusz Zębek                  Olsztyn               90.22   2887   32
+ 324 Sylwia Buks                    Warszawa              90.18  14789  164
+ 325 Justyna Szymendera             Ostrów Wlkp           89.58   3225   36
+ 326 Zygmunt Skwarek                Katowice              89.53   3223   36
+ 327 Agata Pastusiak                Sulęcin               89.27   4999   56
+ 328 Grzegorz Cieplak               Warszawa              89.06   3028   34
+ 329 Maciej Kuć                     Stargard Szczeciński  88.83   5863   66
+ 330 Wojciech Obremski              Legnica               88.80   3641   41
+ 331 Dorota Patera                  Legnica               87.74   3071   35
+ 332 Joanna Zacharewicz             Bydgoszcz             84.64   4655   55
+ 333 Beata Sekuła                   Szczecin              84.57   3721   44
+ 334 Paulina Naplocha               Racibórz              84.25   8846  105
+ 335 Jan Pawłowski                  Warszawa              82.91   4477   54
+ 336 Natalia Połomska               Ostrów Wlkp           82.83   4804   58
+ 337 Leszek Katyński                Słupsk                82.63   4710   57
+ 338 Blanka Zwolińska               Skierdy               81.44   7248   89
+ 339 Alicja Bielecka                Poznań                81.07   3324   41
+ 340 Marta Łęgowska                 Inowrocław            80.55   4511   56
+ 341 Małgorzata Baśko               Andrespol             77.68   2641   34
+ 342 Magdalena Sulejewska           Kraków                76.65   3756   49
+ 343 Izabela Długosz                Ostróda               74.33   3791   51
+ 344 Małgorzata Nowakowska          Pruszcz Gdański       73.22   2929   40
+ 345 Karolina Długosz               Ostróda               71.38   2855   40
+ 346 Jolanta Bednarska              Łódź                  67.75   2168   32
+ 347 Paweł Jankowski                Nowe Miasto Lubawsk   67.71   3724   55
+ 348 Mirosław Dejna                 Sampława              57.69  10327  179
+
+
+
+
+Poczekalnia na dzień 21-11-2009
+
+Lp.  Imię i nazwisko                Miasto               Rank.  Skalpy Gry
+---- ------------------------------ -------------------- ------ ------ ----
+   1 Michał Szymkowski              Wrocław              124.45   3609   29
+   2 Jacek Gigoła                   Gorzów Wielkopolski  106.29   2976   28
+   3 Anna Chybowska                 Sochaczew            103.23   2684   26
+   4 Anna Szyperska                 Poznań                93.96   2443   26
+   5 Barbara Turbo                  Szczecin             111.24   2781   25
+   6 Jerzy Tatarczuk                Warszawa             109.48   2737   25
+   7 Łukasz Wojciechowski           Łomża                105.88   2647   25
+   8 Dominika Brzezińska            Piła                  89.56   2239   25
+   9 Ewa Kondracka                  Warszawa             134.25   3222   24
+  10 Marcin Skowron                 Zabrze               128.83   3092   24
+  11 Maciej Michalski               Łódź                 121.46   2915   24
+  12 Tomasz Lempart                 Kraków               119.92   2878   24
+  13 Maciej Chmielowski             Kraków               119.25   2862   24
+  14 Marek Róziecki                 Rybnik               117.79   2827   24
+  15 Andrzej Stańczyk               Kraków               115.17   2764   24
+  16 Ryszard Niżewski               Warszawa             114.96   2759   24
+  17 Beata Marynowicz               Racibórz             113.83   2732   24
+  18 Andrzej Grabiński              Suchedniów           113.67   2728   24
+  19 Katarzyna Rosiek               Kraków               109.83   2636   24
+  20 Leszek Kacprzyk                Katowice             109.79   2635   24
+  21 Marcin Żuchowski               Bydgoszcz            109.21   2621   24
+  22 Łukasz Moskal                  Kurzętnik            109.12   2619   24
+  23 Karolina Rubaszewska           Wrocław              107.83   2588   24
+  24 Elżbieta Święcka               Białystok            107.25   2574   24
+  25 Anna Andrzejczuk               Milanówek            105.96   2543   24
+  26 Michał Garnowski               Pasłęk               102.83   2468   24
+  27 Joanna Kubińska                Warszawa             102.58   2462   24
+  28 Damian Chabrowski              Lublin               102.12   2451   24
+  29 Janusz Sojka                   Łódź                 100.33   2408   24
+  30 Joanna Regdos                  Kraków               100.25   2406   24
+  31 Zdzisław Parnicki              Słupsk                98.25   2358   24
+  32 Krzysztof Sojka                Łódź                  97.58   2342   24
+  33 Jędrzej Krasnoborski           Węgorzewo             96.75   2322   24
+  34 Justyna Wiśniewska             Stargard Szczeciński  96.46   2315   24
+  35 Dominik Małocha                Demblin               95.75   2298   24
+  36 Krzysztof Borodziuk            Kostrzyn              94.58   2270   24
+  37 Jan Lisiewski                  Piasutno              93.08   2234   24
+  38 Mateusz Stańczyk               Tarnów                90.21   2165   24
+  39 Michał Dulat                   Kraków                89.67   2152   24
+  40 Piotr Szewczyk                 Skarżysko-Kamienna    89.04   2137   24
+  41 Zbigniew Skrzypczyk            Jawor                 85.21   2045   24
+  42 Marta Bożemska                 Ustka                 84.21   2021   24
+  43 Edward Smołka                  Zabrze                83.46   2003   24
+  44 Bartosz Klimczak               Mysiadło              81.08   1946   24
+  45 Beata Kozłowska                Białystok             74.33   1784   24
+  46 Marek Swoboda                  Wałbrzych            106.61   2452   23
+  47 Kamil Piecewicz                Nowe Miasto Lubawsk  104.39   2401   23
+  48 Grażyna Cieślikowska           Racibórz             103.39   2378   23
+  49 Adam Graczyk                   Nowe Miasto Lubawsk   90.30   2077   23
+  50 Norbert Skrzyński              Warszawa              89.87   2067   23
+  51 Artur Tomczyk                  Piła                 108.41   2385   22
+  52 Błażej Fidziński               Dębica                86.95   1913   22
+  53 Eugeniusz Tuszyński            Nowe Miasto Lubawsk   85.91   1890   22
+  54 Małgorzata Armknecht           Bydgoszcz             82.50   1815   22
+  55 Maciej Śliwa                   Zabrze               124.62   2617   21
+  56 Grzegorz Miecugow              Warszawa             108.75   2175   20
+  57 Bartosz Boniecki               Elbląg               107.90   2158   20
+  58 Andrzej Czesław Kowalski       Wałbrzych            107.15   2143   20
+  59 Beata Błaszczyk                Łowicz                95.60   1912   20
+  60 Julia Solarska                 Łódź                  69.35   1387   20
+  61 Marek Syczuk                   Warszawa             139.58   2652   19
+  62 Radosław Konca                 Warszawa             137.68   2616   19
+  63 Jarosław Kamienik              Słupsk               103.32   1963   19
+  64 Grzegorz Sęk                   Wrocław               96.84   1840   19
+  65 Arkadiusz Łydka                Jaworzno             118.06   2125   18
+  66 Marta Sztajnert                Wisła                109.11   1964   18
+  67 Leszek Kilian                  Jaworzno             103.33   1860   18
+  68 Adam Kędzior                   Lublin                87.61   1577   18
+  69 Anna Kurpiel                   Warszawa              67.56   1216   18
+  70 Filip Dalecki                  Rumia                102.35   1740   17
+  71 Marcin Łydka                   Jaworzno              57.76    982   17
+  72 Barbara Krawczyk               Warszawa              70.44   1127   16
+  73 Andrzej Przybyłowicz           Warszawa             138.60   2079   15
+  74 Mikołaj Przybyłowicz           Warszawa             111.13   1667   15
+  75 Piotr Chabowski                Piła                 107.33   1610   15
+  76 Jacek Gasik                    Warszawa             102.47   1537   15
+  77 Władysław Zieliński            Białogard             93.53   1403   15
+  78 Marta Bołbot                   Bielsk Podlaski       84.47   1267   15
+  79 Kinga Niżewska                 Warszawa              83.07   1246   15
+  80 Agnieszka Kotlarz              Gdynia                69.00   1035   15
+  81 Andrzej Puchalski              Łódź                 108.71   1522   14
+  82 Marek Antosik                  Nowy Dwór Mazowieck  105.57   1478   14
+  83 Agnieszka Jaśkiewicz           Czechowice-Dziedzice  96.21   1347   14
+  84 Sandra Sekuła                  Szczecin              90.86   1272   14
+  85 Elżbieta Hardej                Piaseczno             56.93    797   14
+  86 Paweł Łęcki                    Gorzów Wielkopolski  127.15   1653   13
+  87 Wojciech Zieliński             Szczecin             123.69   1608   13
+  88 Piotr Domański                 Ostrołęka            119.46   1553   13
+  89 Łukasz Święcki                 Białystok            114.08   1483   13
+  90 Maciej Bukowski                Szczecin             110.38   1435   13
+  91 Krzysztof Chełstowski          Łomża                110.15   1432   13
+  92 Alicja Tarczewska              Łomża                106.31   1382   13
+  93 Marcin  Baniewski              Pełczyce             101.92   1325   13
+  94 Mirosław Norwajszas            Szczecin             101.92   1325   13
+  95 Anna Biegańska                 Białystok             97.08   1262   13
+  96 Przemysław Kaliszuk            Szczecin              95.23   1238   13
+  97 Maurycy Machnio                Lipiany               90.46   1176   13
+  98 Waldemar Stankiewicz           Mieszkowice           89.31   1161   13
+  99 Dorota Franków                 Gorzów Wielkopolski   88.54   1151   13
+ 100 Czesław Konopko                Szczecin              84.31   1096   13
+ 101 Arkadiusz Kaliszuk             Szczecin              78.31   1018   13
+ 102 Krystyna Puchalska             Łódź                  73.38    954   13
+ 103 Mirosław Dymkowski             Czechowice-Dziedzice  71.54    930   13
+ 104 Robert Zabłocki                Łódź                 137.08   1645   12
+ 105 Bartłomiej Bęben               Jarosław             128.75   1545   12
+ 106 Krystian Wandzlewicz           Nowe Miasto Lubawsk  128.25   1539   12
+ 107 Sławomir Buk                   Gliwice              125.83   1510   12
+ 108 Leszek Dobrowolski             Wrocław              125.75   1509   12
+ 109 Paweł Szulc                    Szczecin             124.67   1496   12
+ 110 Andrzej Szmidtke               Bolszewo             121.00   1452   12
+ 111 Kinga Pruszak                  Bydgoszcz            119.33   1432   12
+ 112 Monika Lewandowska             Warszawa             118.08   1417   12
+ 113 Paweł Jędryka                  Tarnów               115.08   1381   12
+ 114 Jarosław Krzemiński            Tuchów               114.25   1371   12
+ 115 Maciej Stolarczyk              Zator                114.08   1369   12
+ 116 Ewa Marek-Domagała             Jelenia Góra         109.67   1316   12
+ 117 Paweł Miczko                   Sandomierz           108.58   1303   12
+ 118 Przemysław Pok                 Szczecin             108.00   1296   12
+ 119 Rafał  Wagnerowski             Tarnów               107.92   1295   12
+ 120 Paulina Mech                   Kraków               107.83   1294   12
+ 121 Iwona Rutkowska                Warszawa             107.00   1284   12
+ 122 Agnieszka Biegańska            Białystok            106.83   1282   12
+ 123 Tomasz Figiel                  Zawichost            106.67   1280   12
+ 124 Maria Grzegorzewska            Nowe Miasto Lubawsk  105.58   1267   12
+ 125 Tomasz Smulewicz               Łódź                 104.17   1250   12
+ 126 Marcin Bertrand                Poznań               103.75   1245   12
+ 127 Konrad Sowula                  Kraków               103.25   1239   12
+ 128 Paweł Frynia                   Konstantynów Łódzki  103.08   1237   12
+ 129 Bartek Kaczanowski             Szczecin             102.75   1233   12
+ 130 Anna Gorszka-Bilska            Przecław             102.42   1229   12
+ 131 Iwona Kucia                    Krosno               102.25   1227   12
+ 132 Jan Ziółkowski                 Rumia                102.25   1227   12
+ 133 Agata Brzezińska               Świebodzice          101.50   1218   12
+ 134 Lucyna Sapis                   Słupsk               101.00   1212   12
+ 135 Waldemar Kudliński             Bydgoszcz            100.75   1209   12
+ 136 Artur Tanistra                 Glinka                99.42   1193   12
+ 137 Andrzej Gronkiewicz            Gdańsk                99.33   1192   12
+ 138 Marta Świątkowska              Wrocław               98.75   1185   12
+ 139 Lidia Szpakowska               Jaworzno              97.58   1171   12
+ 140 Krzysztof Kałuża               Sosnowiec             97.33   1168   12
+ 141 Piotr Morawski                 Gdańsk                96.92   1163   12
+ 142 Andrzej Zając                  Jaworzno              96.83   1162   12
+ 143 Dorota Ziembowicz              Gliwice               96.17   1154   12
+ 144 Anna Szutenberg                Ustka                 95.50   1146   12
+ 145 Tomasz Szczodry                Łomża                 95.33   1144   12
+ 146 Krystyna Borecka               Wałcz                 94.75   1137   12
+ 147 Marcela Wołowiec               Gdynia                94.67   1136   12
+ 148 Czesława Pawłowska             Wrocław               94.42   1133   12
+ 149 Katarzyna Pawluch              Zabrze                93.83   1126   12
+ 150 Łukasz Sobierajski             Ostróda               93.08   1117   12
+ 151 Sławomir Szymański             Szczecin              92.83   1114   12
+ 152 Mariusz Niemczyk               Kraków                91.58   1099   12
+ 153 Anna Gabriela Kortońska        Kraków                91.50   1098   12
+ 154 Mariusz Bogdański              Łomża                 91.42   1097   12
+ 155 Maciej Zięba                   Wrocław               91.17   1094   12
+ 156 Piotr Ziętal                   Legnica               91.08   1093   12
+ 157 Szymon Stolarczyk              Zator                 90.92   1091   12
+ 158 Robert Kurdziel                Katowice              90.83   1090   12
+ 159 Kuba Wróblewski                Ustka                 90.83   1090   12
+ 160 Krzysztof Wychudzki            Ostróda               90.33   1084   12
+ 161 Barbara Belof                  Falkenberg (Szwecja   90.08   1081   12
+ 162 Jolanta Szabla                 Wrocław               90.08   1081   12
+ 163 Dariusz Szulc                  Legnica               89.83   1078   12
+ 164 Maciej Polak                   Warszawa              89.50   1074   12
+ 165 Maciej Stańczyk                Kraków                89.00   1068   12
+ 166 Wacław Sarek                   Jaworzno              88.25   1059   12
+ 167 Maria Jarosz                   Lublin                86.42   1037   12
+ 168 Daniel Such                    Legnica               85.75   1029   12
+ 169 Kamil Tylmanowski              Brodnica              85.08   1021   12
+ 170 Maciej Sylwestrzuk             Gródek                84.67   1016   12
+ 171 Piotr Narewski                 Gdańsk                83.92   1007   12
+ 172 Sylwia Kozłowska               Białystok             83.33   1000   12
+ 173 Andrzej Stolot                 Zabrze                83.25    999   12
+ 174 Artur Jakimczyk                Olsztyn               82.75    993   12
+ 175 Paweł Łyszczarz                Gorzów Wielkopolski   82.08    985   12
+ 176 Anna Żyła                      Wrocław               82.08    985   12
+ 177 Piotr Matyasik                 Kraków                79.42    953   12
+ 178 Ewa Bożemska                   Ustka                 79.25    951   12
+ 179 Szymon Jankowski               Nowe Miasto Lubawsk   78.17    938   12
+ 180 Grzegorz Kokot                 Ustka                 76.83    922   12
+ 181 Waldemar  Różanowski           Police                73.83    886   12
+ 182 Ewa Kujawska                   Poznań                71.58    859   12
+ 183 Paweł Skowron                  Legnica               70.92    851   12
+ 184 Piotr Sadzyński                Jaworzno              69.08    829   12
+ 185 Daria Ząbik                    Legnica               61.08    733   12
+ 186 Zdzisław Stańkowski            Ostrzeszów           102.36   1126   11
+ 187 Piotr Sobociński               Inowrocław            95.91   1055   11
+ 188 Pawel Kulka                    Brodnica              92.73   1020   11
+ 189 Paweł Morga                    Warszawa              91.64   1008   11
+ 190 Ryszard Schwartz               Kąpino                89.00    979   11
+ 191 Aneta Szczyrzyca               Jaworzno              88.27    971   11
+ 192 Klaudyna Hubeny                Łódź                  86.09    947   11
+ 193 Magdalena Jacak                Kraków                86.00    946   11
+ 194 Sławomir Grudziński            Ostróda               84.91    934   11
+ 195 Anna Straburzyńska             Bydgoszcz             84.91    934   11
+ 196 Jolanta Skrobisz               Warszawa              83.55    919   11
+ 197 Barbara Rapacz                 Złotniki Kujawskie    83.09    914   11
+ 198 Kuba Żuliński                  Przecław              83.00    913   11
+ 199 Kamil Kajfasz                  Spytkowice            81.73    899   11
+ 200 Barbara Żydaczewska            Lubin                 81.55    897   11
+ 201 Wojciech Kuć                   Stargard Szczecińsk   79.91    879   11
+ 202 Dariusz Zając                  Jaworzno              79.18    871   11
+ 203 Sylwia Łada                    Inowrocław            77.64    854   11
+ 204 Mateusz  Chojnacki             Bydgoszcz             76.36    840   11
+ 205 Rafał Stachura                 Zator                 75.09    826   11
+ 206 Agnieszka Niwelińska           Kraków                74.36    818   11
+ 207 Marta Armknecht                Bydgoszcz             73.82    812   11
+ 208 Sonia Cieślikowska             Racibórz              72.73    800   11
+ 209 Bogumił Włodek                 Łódź                  72.36    796   11
+ 210 Paweł Jakubiak                 Ostróda               71.64    788   11
+ 211 Maria Jankowska                Gdynia                71.45    786   11
+ 212 Piotr Jankowski                Nowe Miasto Lubawsk   71.45    786   11
+ 213 Marcin Kołodziejski            Brodnica              71.36    785   11
+ 214 Mateusz Wasylko                Szczecin              70.09    771   11
+ 215 Piotr Kalus                    Chorzów               68.91    758   11
+ 216 Lidia Beling                   Łódź                  66.18    728   11
+ 217 Przemysław Mamoń               Spytkowice            65.18    717   11
+ 218 Mateusz Zawadzki               Sampław               65.18    717   11
+ 219 Monika Szczyrzyca              Jaworzno              65.09    716   11
+ 220 Michał Mamoń                   Zator                 64.91    714   11
+ 221 Anna Skudlarska                Wrocław               63.00    693   11
+ 222 Wiktoria Kliber                Ostrów Wielkopolski   62.45    687   11
+ 223 Damian Motycki                 Łomża                 51.73    569   11
+ 224 Artur Koszel                   Warszawa             124.00   1240   10
+ 225 Joanna Zadrożna                Szczecin             121.80   1218   10
+ 226 Tomasz Żbikowski               Warszawa              88.20    882   10
+ 227 Wojciech Kwaśniak              Częstochowa           87.40    874   10
+ 228 Marian Wiatr                   Warszawa              78.30    783   10
+ 229 Kinga Kunert                   Zelistrzewo           76.40    764   10
+ 230 Paweł Bratuń                   Dąbrowa Górnicza     109.33    984    9
+ 231 Stanisław Książek              Skawina              105.56    950    9
+ 232 Paweł Brylski                  Kraków                66.11    595    9
+ 233 Waldemar Dębski                Ostróda               64.78    583    9
+ 234 Filip Klar                     Mielec               123.00    984    8
+ 235 Joanna Julian                  Wrocław              106.12    849    8
+ 236 Marek Starostka                Olkusz               102.75    822    8
+ 237 Karolina Alferowicz            Wrocław              100.38    803    8
+ 238 Maciej Pilc                    Poznań                97.50    780    8
+ 239 Michał Gorlicki                Łódź                  90.00    720    8
+ 240 Romuald Owczarek               Wałbrzych             86.00    688    8
+ 241 Leszek Kowalik                 Bydgoszcz             82.75    662    8
+ 242 Natalia Tokajuk                Bielsk Podlaski       78.38    627    8
+ 243 Adrian Fulczyk                 Mysłowice             73.00    584    8
+ 244 Marzena Mazur                  Warszawa             143.86   1007    7
+ 245 Zdzisław Figurski              Gryfów Śląski        121.86    853    7
+ 246 Bogdan Pokojski                Brwinów              105.86    741    7
+ 247 Michał Waszkiewicz             Warszawa             104.29    730    7
+ 248 Małgorzata Szablowska          Wrocław               98.29    688    7
+ 249 Krzysztof Wysoczański          Kraków                98.14    687    7
+ 250 Justyna Woszczyna              Kraków                87.00    609    7
+ 251 Remigiusz Rydz                 Kochlice              86.29    604    7
+ 252 Wojciech Urbański              Warszawa              85.14    596    7
+ 253 Mateusz Lipczyński             Sopot                 82.57    578    7
+ 254 Rafał Daniluk                  Bielsk Podlaski       82.43    577    7
+ 255 Natalia Lis zz                 Trzebnica             81.86    573    7
+ 256 Kamil Puton                    Ruda Śląska           78.71    551    7
+ 257 Jacek Czubak                   Legnica               69.71    488    7
+ 258 Mirosław Przepiórkowski        Inowrocław            69.57    487    7
+ 259 Barbara Pęska                  Nowy Dwór Mazowiecki  69.14    484    7
+ 260 Magda Dąbrowska                Bielsk Podlaski       68.86    482    7
+ 261 Przemysław Szczepaniak         Szczecin              55.29    387    7
+ 262 Cezary Bureta                  Wrocław               54.14    379    7
+ 263 Michał Patera                  Legnica               53.00    371    7
+ 264 Krzysztof Usakiewicz           Warszawa             135.00    810    6
+ 265 Piotr Rosół                    Warszawa             108.00    648    6
+ 266 Izabela Wyłoga                 Lublin                99.33    596    6
+ 267 Jolanta Kosmowska              Warszawa              98.17    589    6
+ 268 Barbara Sajna                  Nowy Dwór Mazowiecki  96.50    579    6
+ 269 Sylwia Pliszka                 Szczecin              95.83    575    6
+ 270 Iwona  Szymańska               Września              94.83    569    6
+ 271 Zygmunt Sołtysiak              Piastów               93.00    558    6
+ 272 Marcin Ochal                   Dęblin                81.50    489    6
+ 273 Aldona Głośnicka               Ostróda               77.50    465    6
+ 274 Paweł Szczekutek               Warszawa              75.00    450    6
+ 275 Robert Oleszczuk               Rowy                  74.50    447    6
+ 276 Mieczysław Karwowski           Nowy Dwór Mazowiecki  73.50    441    6
+ 277 Tomasz Litman                  Szczecin              72.00    432    6
+ 278 Paweł Mroczkowski              Nowy Dwór Mazowiecki  64.00    384    6
+ 279 Karol Nitkowski                Szczytno              62.83    377    6
+ 280 Dawid Hudzik                   Zabrze                62.17    373    6
+ 281 Filip Pieczyński               Piastów               58.33    350    6
+ 282 Ewa Bator                      Bydgoszcz             58.17    349    6
+ 283 Maciej Gołaszewski             Wrocław               54.67    328    6
+ 284 Marek Gutjar                   Starogard Gdański    105.60    528    5
+ 285 Monika Kowalik                 Kraków                90.00    450    5
+ 286 Marcin Kukuła                  Jelenia Góra          79.00    395    5
+ 287 Andrzej Matyasik               Kraków                72.40    362    5
+ 288 Zuzanna Molak                  Warszawa              71.80    359    5
+ 289 Agnieszka Wydra                Gorzów Wielkopolski   57.20    286    5
+ 290 Adam Sacharczuk                Łomża                 55.20    276    5
+ 291 Zenon Cichy                    Gorzów Wielkopolski   50.00    250    5
+ 292 Sebastian Orzelski             Bielsk Podlaski      134.00    536    4
+ 293 Kinga Stecuła                  Bytom                125.00    500    4
+ 294 Paweł Stefaniak                Biała Podlaska       111.50    446    4
+ 295 Anna Czarnecka                 Zgierz               106.75    427    4
+ 296 Małgorzata Deszczyńska         Milanówek            100.75    403    4
+ 297 Michał Cichy                   Katowice              87.25    349    4
+ 298 Stanisław Stolarczyk           Zator                 78.50    314    4
+ 299 Paweł Kasprzak                 Warszawa              73.25    293    4
+ 300 Joanna Żądło                   Wrocław               68.25    273    4
+ 301 Izabela Borkiewicz             Kraków                57.25    229    4
+ 302 Patrycjusz Śliwiński           Wrocław               53.50    214    4
+ 303 Witold Berus                   Zabrze                51.50    206    4
+ 304 Maria Gaca                     Bydgoszcz             50.00    200    4
+ 305 Maria Krawczuk                 Wrocław              118.67    356    3
+ 306 Ewa Stypułkowska               Warszawa              90.00    270    3
+ 307 Agnieszka Pellowska            Słupsk                77.33    232    3
+ 308 Michał Jaworek                 Zabrze                74.00    222    3
+ 309 Joanna Zając                   Warszawa              71.00    213    3
+ 310 Grzegorz Głowacki              Piastów               62.67    188    3
+ 311 Joanna Duda                    Zabrze                62.33    187    3
+ 312 Anna Sroka                     Wrocław               57.67    173    3
+ 313 Elżbieta Nadolna               Ustka                 57.33    172    3
+ 314 Barbara Spodniewska            Tychy                 57.00    171    3
+ 315 Jerzy Stępniewski              Wrocław               57.00    171    3
+ 316 Dorota Kupiec                  Dęblin                56.33    169    3
+ 317 Edward Kupiec                  Dęblin                65.50    131    2
+ 318 Maria Kosińska                 Piła                  64.00    128    2
+ 319 Jan Staniewicz                 Lublin                62.50    125    2
+ 320 Tadeusz Bach                   Wejherowo             62.00    124    2
+ 321 Michał Dzierżak                Wrocław               60.00    120    2
+ 322 Katarzyna Dziwnik              Bydgoszcz             50.00    100    2
+ 323 Walerian Pawlicki              Wrocław               75.00     75    1
+ 324 Tomasz  Jedynak                Majków                74.00     74    1
+ 325 Patrycja Chodyna               Grudziądz             73.00     73    1
+ 326 Tomasz Maciąg                  Wrocław               73.00     73    1
+ 327 Łukasz Musiał                  Wrocław               71.00     71    1
+ 328 Radosław Wodecki               Wrocław               67.00     67    1
+ 329 Marta Tralińska                Wrocław               62.00     62    1
+</pre></div><div id='p_przebieg' class='page'>
+
+    </div><div style="clear:both;width:100%;" class="alignright">
+
+<script>
+<!--
+if ((document.getElementById("content").offsetHeight + document.getElementById("top").offsetHeight) > screen.height)
+    document.write("<br /><br /><a href='#top'>do góry</a>");
+-->
+</script>
+
+</div>
+</div>
+
+<div id="bottom">
+<ul id="bottomlinks">
+<div class='onleft'>
+ Osób on-line: 59</div>
+    <li><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+    <li><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+    <li><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+    <li><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+    <li><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+    <li><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+</ul>
+    SCRABBLE® jest zastrzeżonym znakiem towarowym J.W. Spears &amp; Sons&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://www.pfs.org.pl/prawaautorskie.php">© Prawa autorskie</a>
+</div>
+</body>
+</html>

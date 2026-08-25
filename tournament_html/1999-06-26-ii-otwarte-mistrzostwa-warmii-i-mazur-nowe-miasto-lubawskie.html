@@ -1,0 +1,856 @@
+
+<html>
+<head>
+    <title>Polska Federacja Scrabble :: II Otwarte Mistrzostwa Warmii i Mazur</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="files/img/favicon.ico" />
+    <link rel="stylesheet" href="files/css/style.css" type="text/css" />
+	<link rel="stylesheet" href="files/css/style-index.css" type="text/css" />
+    <!--[if IE]><link rel="stylesheet" type="text/css" href="files/css/styleie.css" /><![endif]-->
+    <!--[if lt IE 7.]><script defer type="text/javascript" src="files/js/pngfix.js"></script><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="files/js/minmax.js"></script><![endif]-->
+    <script type="text/javascript" src="files/js/jquery.js"></script>
+    <script type="text/javascript" src="files/js/jquery-bp.js"></script>
+    <script type="text/javascript" src="files/js/java.js"></script>
+    <script>jSubmenu ("turnieje","kalendarz");jKalendarz();</script>
+    <script>
+    var url, page;
+
+    page = 'info';
+    url  = document.location.toString();
+
+    if (url.match ('#')) {
+      page = url.split ('#')[1];
+      if ($.inArray (page, [ 'info', 'relacja', 'klasyfikacja', 'hh', 'rundy', 'ranking', 'przebieg' ]) == -1)
+        page = 'info';
+    }
+
+    $(document).ready(function(){
+        $('a#listaucz').bind('click', function(event){
+            $('div#lista').toggle();
+            event.preventDefault();
+        }).toggle(function() { $(this).text('schowaj listę uczestników'); }, function() { $(this).text("pokaż listę uczestników"); });
+        $('div#lista table tr:last td').css({"border-bottom" : "none"});
+
+        $("a.przycisk").click (function (e) {
+            if ($(this).attr ('href') !== '#')
+                return true;
+
+            e.preventDefault ();
+
+            id       = this.id;
+            this.id += 'tmp';
+            window.location.hash = id;
+            this.id  = id;
+
+            $(".page").hide ();
+            $(".page#p_" + id).show ();
+
+            $("a.przycisk").removeClass ('active');
+            $(this).addClass ('active');
+
+            return false;
+        });
+
+        $("a.przycisk#" + page).click ();
+        $('html, body').animate ({ scrollTop: 0 }, 0);
+    });
+    </script>
+  <style type="text/css">
+    .page {
+        display: none;
+    }
+    #szczegoly{
+        width: 100%;
+        border-spacing: 0;
+        margin-top: 30px;
+        text-align: left;
+        font-size: inherit;
+    }
+    #szczegoly td{
+        padding: 10px 20px 10px 0;
+        vertical-align: top;
+    }
+    #szczegoly td:first-child{
+        font-weight: bold;
+        width: 160px;
+    }
+    div#lista{
+        display:none;
+        margin-top: 15px;
+    }
+    div#lista table{
+        margin-top: 10px;
+        text-align: left;
+        font-size: inherit;
+    }
+    div#lista table td{
+        padding: 3px 8px;
+        border-bottom: 1px dashed #1576AE;
+    }
+    div#lista table th{
+        padding: 0px 5px 10px 5px;
+    }
+    div#lista table td.ptaszek{
+        text-align: center;
+        background: url('files/img/tick.png') no-repeat center center;
+    }
+    div#lista table th{
+        white-space: nowrap;
+        width: auto;
+    }
+    div#lista table td:first-child, div#lista table th:first-child{
+        text-align:right;
+        width: auto;
+    }
+    </style>
+</head>
+
+<body>
+
+<script type="text/javascript">setMenu();</script>
+
+<div id="top" onclick="location.href='https://www.pfs.org.pl'">
+</div>
+<div id="menu">
+
+    <div id="m_glowna">
+        <div class="tab"><a href="https://www.pfs.org.pl/index.php"></a></div>
+
+        <ul>
+            <li class="sublink" id="aktualnosci"><a href="https://www.pfs.org.pl">Aktualności</a></li>
+            <li class="sublink" id="nowy"><a href="https://www.pfs.org.pl/dlanowych.php">Jestem tu nowy</a></li>
+            <li class="sublink" id="anagramator"><a href="https://www.pfs.org.pl/osps_online.php?main=1">Słownik online</a></li>
+            <li class="sublink" id="siodemka"><a href="https://www.pfs.org.pl/siodemka.php?main=1">Siódemka tygodnia</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+            <li class="sublink" id="dlasponsorow"><a href="https://www.pfs.org.pl/dlasponsorow.php">Dla sponsorów</a></li>
+            <li class="sublink" id="kontakt"><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+        </ul>
+    </div>
+    <div id="m_turnieje">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kalendarz.php"></a></div>
+        <ul>
+            <li class="sublink" id="kalendarz"><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+            <li class="sublink" id="regulaminy"><a href="https://www.pfs.org.pl/regulaminy.php">Regulaminy</a></li>
+            <li class="sublink" id="sedziowie"><a href="https://www.pfs.org.pl/sedziowie.php">Sędziowie</a></li>
+            <li class="sublink" id="gp"><a href="https://www.pfs.org.pl/gp2026.php">Grand Prix</a></li>
+<!--            <li class="sublink" id="mr"><a href="https://www.pfs.org.pl/mr2020.php">Mistrzostwa Regionów</a></li>-->
+            <li class="sublink" id="archiwum"><a href="https://www.pfs.org.pl/archiwum.php">Historia</a></li>
+            <li class="sublink" id="galeria"><a href="https://www.pfs.org.pl/galeria.php">Zdjęcia</a></li>
+            <li class="sublink" id="rekordy"><a href="https://www.pfs.org.pl/rekordy.php">Rekordy</a></li>
+        </ul>
+    </div>
+    <div id="m_pfs">
+        <div  class="tab"><a href="https://www.pfs.org.pl/opfs.php"></a></div>
+        <ul>
+            <li class="sublink" id="opfs"><a href="https://www.pfs.org.pl/opfs.php">O PFS</a></li>
+            <li class="sublink" id="jakprzystapic"><a href="https://www.pfs.org.pl/jakprzystapic.php">Jak przystąpić</a></li>
+            <li class="sublink" id="dlaczlonkow"><a href="https://www.pfs.org.pl/dlaczlonkow.php">Dla członków</a></li>
+            <li class="sublink" id="wladze"><a href="https://www.pfs.org.pl/wladze.php">Władze</a></li>
+            <li class="sublink" id="komisje"><a href="https://www.pfs.org.pl/komisje.php">Komisje</a></li>
+            <li class="sublink" id="statut"><a href="https://www.pfs.org.pl/statut.php">Statut</a></li>
+            <li class="sublink" id="uchwaly"><a href="https://www.pfs.org.pl/uchwaly.php">Uchwały</a></li>
+            <li class="sublink" id="honorowi"><a href="https://www.pfs.org.pl/honorowi.php">Honorowi członkowie</a></li>
+            <li class="sublink" id="finanse"><a href="https://www.pfs.org.pl/finanse.php">Finanse</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabble">
+        <div  class="tab"><a href="https://www.pfs.org.pl/osps_online.php?desktop=1"></a></div>
+        <ul>
+            <li class="sublink" id="osps_online"><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+            <li class="sublink" id="zds"><a href="https://www.pfs.org.pl/zds2.php">ZDS</a></li>
+            <li class="sublink" id="osps"><a href="https://www.pfs.org.pl/osps.php">OSPS</a></li>
+            <li class="sublink" id="aktualizacje"><a href="https://www.pfs.org.pl/osps_aktualizacje.php">Aktualizacje</a></li>
+            <li class="sublink" id="dwojki"><a href="https://www.pfs.org.pl/dwojki.php">2-literówki</a></li>
+            <li class="sublink" id="trojki"><a href="https://www.pfs.org.pl/trojki.php">3-literówki</a></li>
+            <li class="sublink" id="siodemkat"><a href="https://www.pfs.org.pl/siodemka.php">Siódemka tygodnia</a></li>
+            <li class="sublink" id="slowneroznosci"><a href="https://www.pfs.org.pl/slowneroznosci.php">Słowne różności</a></li>
+        </ul>
+    </div>
+    <div id="m_ranking">
+        <div  class="tab"><a href="https://www.pfs.org.pl/ranking.php"></a></div>
+        <ul>
+            <li class="sublink" id="aktranking"><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+            <li class="sublink" id="medale"><a href="https://www.pfs.org.pl/medale.php">Klasyfikacja medalowa</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabblisci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/mistrzowiepolski.php"></a></div>
+        <ul>
+            <li class="sublink" id="mistrzowiepolski"><a href="https://www.pfs.org.pl/mistrzowiepolski.php">Mistrzowie Polski</a></li>
+            <li class="sublink" id="zdobywcypp"><a href="https://www.pfs.org.pl/zdobywcypp.php">Zdobywcy Pucharu Polski</a></li>
+            <li class="sublink" id="zwyciezcygp"><a href="https://www.pfs.org.pl/zwyciezcygp.php">Zwycięzcy Grand Prix</a></li>
+            <li class="sublink" id="liderzyrankingu"><a href="https://www.pfs.org.pl/liderzyrankingu.php">Liderzy rankingu</a></li>
+            <li class="sublink" id="zwyciezcylemans"><a href="https://www.pfs.org.pl/zwyciezcylemans.php">Zwycięzcy 24h Le Mans</a></li>
+            <li class="sublink" id="zwyciezcykmp"><a href="https://www.pfs.org.pl/zwyciezcykmp.php">KMP</a>
+        </ul>
+    </div>
+    <div id="m_kluby">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kluby.php"></a></div>
+        <ul>
+            <li class="sublink" id="rejestrklubow"><a href="https://www.pfs.org.pl/kluby.php">Rejestr klubów</a></li>
+            <li class="sublink" id="kmp"><a href="https://www.pfs.org.pl/kmp.php">KMP</a></li>
+            <li class="sublink" id="wiescizklubow"><a href="https://www.pfs.org.pl/wiescizklubow.php">Wieści z klubów</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/about.php">Statystyki klubowe</a></li>
+        </ul>
+    </div>
+    <div id="m_roznosci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/historia.php"></a></div>
+        <ul>
+            <li class="sublink" id="historia"><a href="https://www.pfs.org.pl/historia.php">Historia</a></li>
+            <li class="sublink" id="odmiany"><a href="https://www.pfs.org.pl/odmiany.php">Odmiany</a></li>
+            <li class="sublink" id="anegdoty"><a href="https://www.pfs.org.pl/anegdoty.php">Anegdoty</a></li>
+            <li class="sublink" id="scrabblealia"><a href="https://www.pfs.org.pl/scrabblealia.php">Scrabblealia</a></li>
+            <li class="sublink" id="scrabblenet"><a href="https://www.pfs.org.pl/scrabblenet.php">Scrabble w internecie</a></li>
+            <li class="sublink" id="programy"><a href="https://www.pfs.org.pl/programy.php">Programy</a></li>
+            <li class="sublink" id="download"><a href="https://www.pfs.org.pl/download.php">Do pobrania</a></li>
+            <li class="sublink" id="ksiazki"><a href="https://www.pfs.org.pl/ksiazki.php">Książki</a></li>
+            <li class="sublink" id="slowniczek"><a href="https://www.pfs.org.pl/slowniczek.php">Słowniczek</a></li>
+        </ul>
+    </div>
+    <div id="m_english">
+        <div  class="tab"><a href="https://www.pfs.org.pl/english.php"></a></div>
+        <ul>
+            <li class="sublink" id="about"><a href="https://www.pfs.org.pl/english.php">About Polish Scrabble</a></li>
+            <li class="sublink" id="news"><a href="https://www.pfs.org.pl/en_news.php">News</a></li>
+            <li class="sublink" id="bartek"><a href="https://www.pfs.org.pl/bartek.php">Bartek w Johor Bahru</a></li>
+            <li class="sublink" id="franko"><a href="https://www.pfs.org.pl/franko.php">Scrabble frankofońskie</a></li>
+        </ul>
+    </div>
+</div>
+
+<div id="submenu"></div>
+<div id="content">
+<div id='nextTours'>
+		<div class='nextTour' onclick='location.href="turniej.php?id=338"'>
+			<div class='karteczka small1'>
+				<span class='miasto'>Sudomie</span><span class='dzien'><span class='big'>13</span><br />czerwca</span></div>
+			<div class='kartka big1'>
+				<span class='miasto'>Sudomie</span>
+				<span class='dzien'><b>13 czerwca</b></span>
+				<span class='nazwaturnieju'>III Otwarte Mistrzostwa Kaszub</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=337"'>
+			<div class='karteczka small2'>
+				<span class='miasto'>Nowe Miasto Lubawskie</span><span class='dzien'><span class='big'>26</span><br />czerwca</span></div>
+			<div class='kartka big2'>
+				<span class='miasto'>Nowe Miasto Lubawskie</span>
+				<span class='dzien'><b>26-27 czerwca</b></span>
+				<span class='nazwaturnieju'>II Otwarte Mistrzostwa Warmii i Mazur</span><span class='gp'>Grand&nbsp;Prix&nbsp;1999</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=336"'>
+			<div class='karteczka small3'>
+				<span class='miasto'>Słupsk</span><span class='dzien'><span class='big'>31</span><br />lipca</span></div>
+			<div class='kartka big3'>
+				<span class='miasto'>Słupsk</span>
+				<span class='dzien'><b>31- 1 sierpnia</b></span>
+				<span class='nazwaturnieju'>III Otwarte Mistrzostwa Ziemi Słupskiej</span><span class='gp'>Grand&nbsp;Prix&nbsp;1999</span></div>
+		</div></div><div class='naglowekrelacji'><span class='tytul'>II Otwarte Mistrzostwa Warmii i&nbsp;Mazur<span class='nazwa'>26 - 27 czerwca 1999 —  II Otwarte Mistrzostwa Warmii i Mazur</span></span><a href='#' id='info' class='przycisk'>Informacje</a><a href='#' id='relacja' class='przycisk'>Relacja</a><a href='#' id='klasyfikacja' class='przycisk'>Wyniki</a><a href='#' id='hh' class='przycisk'>HH</a><div class='galleries'><img src='files/img/gallery.png' style='visibility:hidden;' alt='galeria' /></div></div><h1 style='color:black; margin-top:0px; margin-bottom:30px; padding: 0px'>II Otwarte Mistrzostwa Warmii i Mazur<span><img src='files/img/map-2.png' style='vertical-align: bottom;' title='Grand Prix'> Nowe Miasto Lubawskie, 26 - 27 czerwca 1999 <br>Grand&nbsp;Prix&nbsp;1999</span></h1><div id='p_relacja' class='page'><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><div class='relacja' style='clear:both;'><div><pre>
+ 1. Dariusz Banaszek (Warszawa)
+ 2. Tomasz Zwoliński (Warszawa)
+ 3. Wojciech Usakiewicz (Warszawa)
+ 4. Andrzej Kwiatkowski (Warszawa)
+ 5. Mariusz Orzeł (Nowe Miasto Lubawskie)
+ 6. Kazimierz M. Merklejn (Szczecin)
+ 7. Magdalena Merklejn (Szczecin)
+ 8. Andrzej Oleksiak (Ostróda)
+ 9. Adam Grzona (Toruń)
+ 10. Krzysztof Bukowski (Nowe Miasto Lubawskie) 
+
+25 uczestników, 12 rund 
+</pre></div><div class='autor'></div></div><div style='clear:both;'></div></div><div id='p_info' class='page'><br><p align='center'></p><br><br><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br>Zobacz, jak było na poprzednich turniejach:<br><a href='turniej.php?id=395'>I Otwarte Mistrzostwa Warmii i Mazur</a><br><table id='szczegoly' class='ramkadolna'></table><br /><br /></div><div id='p_klasyfikacja' class='page'><pre>Wyniki turnieju II Otwarte Mistrzostwa Warmii i Mazur
+
+Lp. Imię            Nazwisko             Miasto               Ranking  Duże pkt Małe pkt Skalpy   Różn. MP
+--- --------------- -------------------- -------------------- -------- -------- -------- -------- --------
+  1 Dariusz         Banaszek             Warszawa               142.00     10.0     4639     1781      802
+  2 Tomasz          Zwoliński            Warszawa               143.00     10.0     4612     1809      499
+  3 Wojciech        Usakiewicz           Warszawa               132.00      9.0     4657     1753      683
+  4 Andrzej         Kwiatkowski          Warszawa               111.00      7.0     4414     1429      347
+  5 Mariusz         Orzeł                Nowe Miasto Lubawskie   127.00      7.0     4366     1507      293
+  6 Kazimierz.J     Merklejn             Szczecin               108.00      7.0     4322     1535      -11
+  7 Magdalena       Merklejn             Szczecin               102.00      7.0     4176     1428      140
+  8 Andrzej         Oleksiak             Hel                    100.00      6.0     4345     1244      115
+  9 Adam            Grzona               Toruń                  110.00      6.0     4281     1318      228
+ 10 Krzysztof       Bukowski             Milanówek              113.00      6.0     4238     1409     -142
+ 11 Aleksandra      Merklejn-Kaczanowska Szczecin               103.00      6.0     4077     1332      128
+ 12 Krystian        Wandzlewicz          Nowe Miasto Lubawskie   100.00      6.0     4018     1218        5
+ 13 Barbara         Orzeł                Nowe Miasto Lubawskie   100.00      6.0     3817     1237     -325
+ 14 Stefan          Dawidson             Częstochowa            111.00      5.0     4178     1264      -28
+ 15 Maria           Grzegorzewska        Nowe Miasto Lubawskie   100.00      5.0     4070     1154      126
+ 16 Krzysztof       Usakiewicz           Warszawa               102.01      5.0     3959     1230     -116
+ 17 Krzysztof       Noskowicz            Toruń                  100.00      5.0     3872     1166      -77
+ 18 Mariusz         Neumann              Nowe Miasto Lubawskie   100.00      5.0     3722     1144     -165
+ 19 Jan             Bielaszka            Nowe Miasto Lubawskie   100.00      5.0     3556     1125     -591
+ 20 Krzysztof       Żurawski             Nowe Miasto Lubawskie   100.00      4.5     3242      900      350
+ 21 Jerzy           Banasiak             Radom                  100.00      4.0     3320     1058     -609
+ 22 Andrzej         Lożyński             Piastów                102.00      4.0     1807      650      631
+ 23 Dariusz         Szekliński           Nowe Miasto Lubawskie   100.00      3.0     2637      912    -1292
+ 24 Grzegorz        Orzeł                Nowe Miasto Lubawskie   100.00      2.5     1355      450      199
+ 25 Anna            Bielaszka            Nowe Miasto Lubawskie   100.00      0.0     2665      605    -1190
+</pre></div><div id='p_hh' class='page'><pre>Wyniki poszczególnych graczy w turnieju II Otwarte Mistrzostwa Warmii i Mazur
+
+
+
+	Tomasz Zwoliński 143.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Magdalena      Merklejn              102.00 +  418: 289  152
+    2     2 Adam           Grzona                110.00 +  447: 338  160
+    3     1 Dariusz        Banaszek              142.00 -  362: 366   92
+    4     2 Aleksandra     Merklejn-Kaczanowska  103.00 +  433: 319  153
+    5     2 Kazimierz.J    Merklejn              108.00 +  363: 360  158
+    6     2 Wojciech       Usakiewicz            132.00 -  337: 426   82
+    7     3 Krzysztof      Usakiewicz            102.01 +  402: 337  152
+    8     3 Krzysztof      Bukowski              113.00 +  371: 346  163
+    9     2 Mariusz        Orzeł                 127.00 +  330: 329  177
+   10     2 Stefan         Dawidson              111.00 +  382: 367  161
+   11     1 Wojciech       Usakiewicz            132.00 +  385: 356  182
+   12     2 Mariusz        Orzeł                 127.00 +  382: 280  177
+                                                          --------------- ---- ------
+                                                                    1809  / 12 150.75
+
+
+
+
+	Dariusz Banaszek 142.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Jerzy          Banasiak              100.00 +  480: 201  150
+    2     1 Kazimierz.J    Merklejn              108.00 +  351: 340  158
+    3     1 Tomasz         Zwoliński             143.00 +  366: 362  193
+    4     1 Wojciech       Usakiewicz            132.00 +  362: 356  182
+    5     1 Mariusz        Orzeł                 127.00 +  538: 361  177
+    6     1 Krzysztof      Usakiewicz            102.01 +  331: 293  152
+    7     1 Krzysztof      Bukowski              113.00 -  281: 376   63
+    8     2 Stefan         Dawidson              111.00 -  294: 343   61
+    9     3 Magdalena      Merklejn              102.00 +  397: 325  152
+   10     3 Aleksandra     Merklejn-Kaczanowska  103.00 +  357: 302  153
+   11     2 Kazimierz.J    Merklejn              108.00 +  509: 217  158
+   12     1 Wojciech       Usakiewicz            132.00 +  373: 361  182
+                                                          --------------- ---- ------
+                                                                    1781  / 12 148.42
+
+
+
+
+	Wojciech Usakiewicz 132.00 Warszawa               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Krzysztof      Noskowicz             100.00 +  398: 277  150
+    2     3 Andrzej        Kwiatkowski           111.00 +  338: 282  161
+    3     2 Krzysztof      Bukowski              113.00 +  452: 352  163
+    4     1 Dariusz        Banaszek              142.00 -  356: 362   92
+    5     3 Aleksandra     Merklejn-Kaczanowska  103.00 +  444: 318  153
+    6     2 Tomasz         Zwoliński             143.00 +  426: 337  193
+    7     2 Mariusz        Orzeł                 127.00 +  362: 317  177
+    8     1 Kazimierz.J    Merklejn              108.00 +  409: 328  158
+    9     1 Stefan         Dawidson              111.00 +  343: 337  161
+   10     1 Adam           Grzona                110.00 +  412: 306  160
+   11     1 Tomasz         Zwoliński             143.00 -  356: 385   93
+   12     1 Dariusz        Banaszek              142.00 -  361: 373   92
+                                                          --------------- ---- ------
+                                                                    1753  / 12 146.08
+
+
+
+
+	Mariusz Orzeł 127.00 Nowe Miasto Lubawskie       
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Mariusz        Neumann               100.00 -  330: 341   50
+    2     7 Maria          Grzegorzewska         100.00 +  335: 299  150
+    3     6 Krzysztof      Noskowicz             100.00 +  393: 324  150
+    4     4 Krzysztof      Bukowski              113.00 +  371: 343  163
+    5     1 Dariusz        Banaszek              142.00 -  361: 538   92
+    6     3 Kazimierz.J    Merklejn              108.00 +  454: 286  158
+    7     2 Wojciech       Usakiewicz            132.00 -  317: 362   82
+    8     4 Andrzej        Kwiatkowski           111.00 +  390: 306  161
+    9     2 Tomasz         Zwoliński             143.00 -  329: 330   93
+   10     5 Magdalena      Merklejn              102.00 +  370: 292  152
+   11     3 Krzysztof      Bukowski              113.00 +  436: 270  163
+   12     2 Tomasz         Zwoliński             143.00 -  280: 382   93
+                                                          --------------- ---- ------
+                                                                    1507  / 12 125.58
+
+
+
+
+	Krzysztof Bukowski 113.00 Milanówek
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Maria          Grzegorzewska         100.00 +  352: 342  150
+    2     5 Mariusz        Neumann               100.00 +  388: 290  150
+    3     2 Wojciech       Usakiewicz            132.00 -  352: 452   82
+    4     4 Mariusz        Orzeł                 127.00 -  343: 371   77
+    5     5 Stefan         Dawidson              111.00 +  352: 322  161
+    6     4 Andrzej        Kwiatkowski           111.00 +  408: 404  161
+    7     1 Dariusz        Banaszek              142.00 +  376: 281  192
+    8     3 Tomasz         Zwoliński             143.00 -  346: 371   93
+    9     4 Barbara        Orzeł                 100.00 +  394: 333  150
+   10     4 Kazimierz.J    Merklejn              108.00 -  304: 388   58
+   11     3 Mariusz        Orzeł                 127.00 -  270: 436   77
+   12     4 Kazimierz.J    Merklejn              108.00 -  353: 390   58
+                                                          --------------- ---- ------
+                                                                    1409  / 12 117.42
+
+
+
+
+	Stefan Dawidson 111.00 Częstochowa            
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Jan            Bielaszka             100.00 +  359: 271  150
+    2     4 Krzysztof      Usakiewicz            102.01 -  352: 358   52
+    3     5 Andrzej        Kwiatkowski           111.00 -  374: 406   61
+    4     7 Maria          Grzegorzewska         100.00 +  383: 300  150
+    5     5 Krzysztof      Bukowski              113.00 -  322: 352   63
+    6     7 Adam           Grzona                110.00 +  374: 326  160
+    7     4 Barbara        Orzeł                 100.00 +  332: 282  150
+    8     2 Dariusz        Banaszek              142.00 +  343: 294  192
+    9     1 Wojciech       Usakiewicz            132.00 -  337: 343   82
+   10     2 Tomasz         Zwoliński             143.00 -  367: 382   93
+   11     5 Andrzej        Kwiatkowski           111.00 -  266: 454   61
+   12     6 Andrzej        Oleksiak              100.00 -  369: 438   50
+                                                          --------------- ---- ------
+                                                                    1264  / 12 105.33
+
+
+
+
+	Andrzej Kwiatkowski 111.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Krystian       Wandzlewicz           100.00 +  406: 302  150
+    2     3 Wojciech       Usakiewicz            132.00 -  282: 338   82
+    3     5 Stefan         Dawidson              111.00 +  406: 374  161
+    4     3 Kazimierz.J    Merklejn              108.00 -  313: 349   58
+    5     6 Magdalena      Merklejn              102.00 +  329: 308  152
+    6     4 Krzysztof      Bukowski              113.00 -  404: 408   63
+    7     6 Aleksandra     Merklejn-Kaczanowska  103.00 +  346: 312  153
+    8     4 Mariusz        Orzeł                 127.00 -  306: 390   77
+    9     6 Adam           Grzona                110.00 -  319: 407   60
+   10     7 Krzysztof      Usakiewicz            102.01 +  369: 309  152
+   11     5 Stefan         Dawidson              111.00 +  454: 266  161
+   12     3 Adam           Grzona                110.00 +  480: 304  160
+                                                          --------------- ---- ------
+                                                                    1429  / 12 119.08
+
+
+
+
+	Adam Grzona 110.00 Toruń                    
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Dariusz        Szekliński            100.00 +  434: 196  150
+    2     2 Tomasz         Zwoliński             143.00 -  338: 447   93
+    3     4 Kazimierz.J    Merklejn              108.00 -  342: 352   58
+    4     6 Jan            Bielaszka             100.00 +  368: 260  150
+    5     4 Krzysztof      Usakiewicz            102.01 -  280: 367   52
+    6     7 Stefan         Dawidson              111.00 -  326: 374   61
+    7    11 Jerzy          Banasiak              100.00 +  398: 216  150
+    8    12 Andrzej        Oleksiak              100.00 +  391: 315  150
+    9     6 Andrzej        Kwiatkowski           111.00 +  407: 319  161
+   10     1 Wojciech       Usakiewicz            132.00 -  306: 412   82
+   11     4 Andrzej        Oleksiak              100.00 +  387: 315  150
+   12     3 Andrzej        Kwiatkowski           111.00 -  304: 480   61
+                                                          --------------- ---- ------
+                                                                    1318  / 12 109.83
+
+
+
+
+	Kazimierz.J Merklejn 108.00 Szczecin               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Barbara        Orzeł                 100.00 +  512: 277  150
+    2     1 Dariusz        Banaszek              142.00 -  340: 351   92
+    3     4 Adam           Grzona                110.00 +  352: 342  160
+    4     3 Andrzej        Kwiatkowski           111.00 +  349: 313  161
+    5     2 Tomasz         Zwoliński             143.00 -  360: 363   93
+    6     3 Mariusz        Orzeł                 127.00 -  286: 454   77
+    7     5 Andrzej        Oleksiak              100.00 +  406: 362  150
+    8     1 Wojciech       Usakiewicz            132.00 -  328: 409   82
+    9     5 Krzysztof      Usakiewicz            102.01 +  394: 296  152
+   10     4 Krzysztof      Bukowski              113.00 +  388: 304  163
+   11     2 Dariusz        Banaszek              142.00 -  217: 509   92
+   12     4 Krzysztof      Bukowski              113.00 +  390: 353  163
+                                                          --------------- ---- ------
+                                                                    1535  / 12 127.92
+
+
+
+
+	Aleksandra Merklejn-Kaczanowska 103.00 Szczecin                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Anna           Bielaszka             100.00 +  334: 205  150
+    2     6 Andrzej        Oleksiak              100.00 +  355: 351  150
+    3     3 Krzysztof      Usakiewicz            102.01 +  375: 272  152
+    4     2 Tomasz         Zwoliński             143.00 -  319: 433   93
+    5     3 Wojciech       Usakiewicz            132.00 -  318: 444   82
+    6     5 Barbara        Orzeł                 100.00 -  314: 339   50
+    7     6 Andrzej        Kwiatkowski           111.00 -  312: 346   61
+    8     8 Krzysztof      Noskowicz             100.00 +  351: 297  150
+    9     7 Krystian       Wandzlewicz           100.00 +  386: 266  150
+   10     3 Dariusz        Banaszek              142.00 -  302: 357   92
+   11     6 Magdalena      Merklejn              102.00 -  351: 353   52
+   12     7 Maria          Grzegorzewska         100.00 +  360: 286  150
+                                                          --------------- ---- ------
+                                                                    1332  / 12 111.00
+
+
+
+
+	Krzysztof Usakiewicz 102.01 Warszawa               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Andrzej        Oleksiak              100.00 +  366: 358  150
+    2     4 Stefan         Dawidson              111.00 +  358: 352  161
+    3     3 Aleksandra     Merklejn-Kaczanowska  103.00 -  272: 375   53
+    4     5 Mariusz        Neumann               100.00 +  380: 272  150
+    5     4 Adam           Grzona                110.00 +  367: 280  160
+    6     1 Dariusz        Banaszek              142.00 -  293: 331   92
+    7     3 Tomasz         Zwoliński             143.00 -  337: 402   93
+    8     5 Magdalena      Merklejn              102.00 -  317: 322   52
+    9     5 Kazimierz.J    Merklejn              108.00 -  296: 394   58
+   10     7 Andrzej        Kwiatkowski           111.00 -  309: 369   61
+   11     9 Krzysztof      Noskowicz             100.00 +  347: 298  150
+   12     8 Barbara        Orzeł                 100.00 -  317: 322   50
+                                                          --------------- ---- ------
+                                                                    1230  / 12 102.50
+
+
+
+
+	Andrzej Lożyński 102.00 Piastów                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    8    10 Dariusz        Szekliński            100.00 +  325: 174  150
+    9    11 Jerzy          Banasiak              100.00 -  338: 371   50
+   10    12 Anna           Bielaszka             100.00 +  384: 187  150
+   11    11 Jerzy          Banasiak              100.00 +  370: 186  150
+   12     9 Jan            Bielaszka             100.00 +  390: 258  150
+                                                          --------------- ---- ------
+                                                                     650  /  5 130.00
+
+
+
+
+	Magdalena Merklejn 102.00 Szczecin               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Tomasz         Zwoliński             143.00 -  289: 418   93
+    2     8 Krystian       Wandzlewicz           100.00 +  345: 298  150
+    3     7 Mariusz        Neumann               100.00 -  326: 361   50
+    4     8 Krzysztof      Noskowicz             100.00 +  350: 324  150
+    5     6 Andrzej        Kwiatkowski           111.00 -  308: 329   61
+    6     8 Jerzy          Banasiak              100.00 +  384: 286  150
+    7     7 Jan            Bielaszka             100.00 +  417: 259  150
+    8     5 Krzysztof      Usakiewicz            102.01 +  322: 317  152
+    9     3 Dariusz        Banaszek              142.00 -  325: 397   92
+   10     5 Mariusz        Orzeł                 127.00 -  292: 370   77
+   11     6 Aleksandra     Merklejn-Kaczanowska  103.00 +  353: 351  153
+   12     5 Krystian       Wandzlewicz           100.00 +  465: 326  150
+                                                          --------------- ---- ------
+                                                                    1428  / 12 119.00
+
+
+
+
+	Jerzy Banasiak 100.00 Radom                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Dariusz        Banaszek              142.00 -  201: 480   92
+    2    11 Dariusz        Szekliński            100.00 +  280: 215  150
+    3     8 Jan            Bielaszka             100.00 -  302: 310   50
+    4     9 Barbara        Orzeł                 100.00 -  287: 294   50
+    5    12 Anna           Bielaszka             100.00 +  304: 218  150
+    6     8 Magdalena      Merklejn              102.00 -  286: 384   52
+    7    11 Adam           Grzona                110.00 -  216: 398   60
+    8     9 Mariusz        Neumann               100.00 +  305: 298  150
+    9    11 Andrzej        Lożyński              102.00 +  371: 338  152
+   10    10 Maria          Grzegorzewska         100.00 -  297: 329   50
+   11    11 Andrzej        Lożyński              102.00 -  186: 370   52
+   12    11 Mariusz        Neumann               100.00 -  285: 295   50
+                                                          --------------- ---- ------
+                                                                    1058  / 12  88.17
+
+
+
+
+	Anna Bielaszka 100.00 Nowe Miasto Lubawskie   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Aleksandra     Merklejn-Kaczanowska  103.00 -  205: 334   53
+    2    10 Jan            Bielaszka             100.00 -  301: 336   50
+    3    11 Dariusz        Szekliński            100.00 -  244: 247   50
+    4    12 Krystian       Wandzlewicz           100.00 -  219: 320   50
+    5    12 Jerzy          Banasiak              100.00 -  218: 304   50
+    6    12 Krzysztof      Noskowicz             100.00 -  212: 337   50
+    7    12 Mariusz        Neumann               100.00 -  186: 316   50
+    8    11 Maria          Grzegorzewska         100.00 -  273: 347   50
+    9    12 Krzysztof      Żurawski              100.00 -  185: 391   50
+   10    12 Andrzej        Lożyński              102.00 -  187: 384   52
+   11    12 Dariusz        Szekliński            100.00 -  200: 260   50
+   12    12 Dariusz        Szekliński            100.00 -  235: 279   50
+                                                          --------------- ---- ------
+                                                                     605  / 12  50.42
+
+
+
+
+	Jan Bielaszka 100.00 Nowe Miasto Lubawskie           
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Stefan         Dawidson              111.00 -  271: 359   61
+    2    10 Anna           Bielaszka             100.00 +  336: 301  150
+    3     8 Jerzy          Banasiak              100.00 +  310: 302  150
+    4     6 Adam           Grzona                110.00 -  260: 368   60
+    5     8 Grzegorz       Orzeł                 100.00 +  314: 313  150
+    6     6 Andrzej        Oleksiak              100.00 -  294: 346   50
+    7     7 Magdalena      Merklejn              102.00 -  259: 417   52
+    8     7 Krystian       Wandzlewicz           100.00 -  278: 407   50
+    9    10 Dariusz        Szekliński            100.00 +  303: 223  150
+   10     9 Krzysztof      Żurawski              100.00 -  315: 411   50
+   11    10 Mariusz        Neumann               100.00 +  358: 310  150
+   12     9 Andrzej        Lożyński              102.00 -  258: 390   52
+                                                          --------------- ---- ------
+                                                                    1125  / 12  93.75
+
+
+
+
+	Maria Grzegorzewska 100.00 Nowe Miasto Lubawskie          
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Krzysztof      Bukowski              113.00 -  342: 352   63
+    2     7 Mariusz        Orzeł                 127.00 -  299: 335   77
+    3     9 Andrzej        Oleksiak              100.00 +  395: 389  150
+    4     7 Stefan         Dawidson              111.00 -  300: 383   61
+    5    10 Krystian       Wandzlewicz           100.00 -  356: 371   50
+    6    10 Dariusz        Szekliński            100.00 +  466: 142  150
+    7     9 Grzegorz       Orzeł                 100.00 -  238: 279   50
+    8    11 Anna           Bielaszka             100.00 +  347: 273  150
+    9     9 Krzysztof      Noskowicz             100.00 -  310: 381   50
+   10    10 Jerzy          Banasiak              100.00 +  329: 297  150
+   11     8 Krzysztof      Żurawski              100.00 +  402: 382  150
+   12     7 Aleksandra     Merklejn-Kaczanowska  103.00 -  286: 360   53
+                                                          --------------- ---- ------
+                                                                    1154  / 12  96.17
+
+
+
+
+	Mariusz Neumann 100.00 Nowe Miasto Lubawskie
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Mariusz        Orzeł                 127.00 +  341: 330  177
+    2     5 Krzysztof      Bukowski              113.00 -  290: 388   63
+    3     7 Magdalena      Merklejn              102.00 +  361: 326  152
+    4     5 Krzysztof      Usakiewicz            102.01 -  272: 380   52
+    5     7 Barbara        Orzeł                 100.00 -  297: 384   50
+    6     9 Krystian       Wandzlewicz           100.00 -  246: 304   50
+    7    12 Anna           Bielaszka             100.00 +  316: 186  150
+    8     9 Jerzy          Banasiak              100.00 -  298: 305   50
+    9     8 Andrzej        Oleksiak              100.00 -  337: 428   50
+   10    11 Dariusz        Szekliński            100.00 +  359: 213  150
+   11    10 Jan            Bielaszka             100.00 -  310: 358   50
+   12    11 Jerzy          Banasiak              100.00 +  295: 285  150
+                                                          --------------- ---- ------
+                                                                    1144  / 12  95.33
+
+
+
+
+	Krzysztof Noskowicz 100.00 Toruń                    
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Wojciech       Usakiewicz            132.00 -  277: 398   82
+    2     9 Barbara        Orzeł                 100.00 +  359: 280  150
+    3     6 Mariusz        Orzeł                 127.00 -  324: 393   77
+    4     8 Magdalena      Merklejn              102.00 -  324: 350   52
+    5     9 Andrzej        Oleksiak              100.00 -  276: 300   50
+    6    12 Anna           Bielaszka             100.00 +  337: 212  150
+    7    10 Dariusz        Szekliński            100.00 +  345: 252  150
+    8     8 Aleksandra     Merklejn-Kaczanowska  103.00 -  297: 351   53
+    9     9 Maria          Grzegorzewska         100.00 +  381: 310  150
+   10     8 Krystian       Wandzlewicz           100.00 -  277: 421   50
+   11     9 Krzysztof      Usakiewicz            102.01 -  298: 347   52
+   12    10 Krzysztof      Żurawski              100.00 +  377: 335  150
+                                                          --------------- ---- ------
+                                                                    1166  / 12  97.17
+
+
+
+
+	Andrzej Oleksiak 100.00 Hel     
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Krzysztof      Usakiewicz            102.01 -  358: 366   52
+    2     6 Aleksandra     Merklejn-Kaczanowska  103.00 -  351: 355   53
+    3     9 Maria          Grzegorzewska         100.00 -  389: 395   50
+    4    11 Krzysztof      Żurawski              100.00 +  351: 350  150
+    5     9 Krzysztof      Noskowicz             100.00 +  300: 276  150
+    6     6 Jan            Bielaszka             100.00 +  346: 294  150
+    7     5 Kazimierz.J    Merklejn              108.00 -  362: 406   58
+    8    12 Adam           Grzona                110.00 -  315: 391   60
+    9     8 Mariusz        Neumann               100.00 +  428: 337  150
+   10     6 Barbara        Orzeł                 100.00 +  392: 304  150
+   11     4 Adam           Grzona                110.00 -  315: 387   60
+   12     6 Stefan         Dawidson              111.00 +  438: 369  161
+                                                          --------------- ---- ------
+                                                                    1244  / 12 103.67
+
+
+
+
+	Barbara Orzeł 100.00 Nowe Miasto Lubawskie         
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Kazimierz.J    Merklejn              108.00 -  277: 512   58
+    2     9 Krzysztof      Noskowicz             100.00 -  280: 359   50
+    3    10 Krystian       Wandzlewicz           100.00 +  375: 280  150
+    4     9 Jerzy          Banasiak              100.00 +  294: 287  150
+    5     7 Mariusz        Neumann               100.00 +  384: 297  150
+    6     5 Aleksandra     Merklejn-Kaczanowska  103.00 +  339: 314  153
+    7     4 Stefan         Dawidson              111.00 -  282: 332   61
+    8     6 Krzysztof      Żurawski              100.00 +  306: 269  150
+    9     4 Krzysztof      Bukowski              113.00 -  333: 394   63
+   10     6 Andrzej        Oleksiak              100.00 -  304: 392   50
+   11     7 Krystian       Wandzlewicz           100.00 -  321: 389   50
+   12     8 Krzysztof      Usakiewicz            102.01 +  322: 317  152
+                                                          --------------- ---- ------
+                                                                    1237  / 12 103.08
+
+
+
+
+	Grzegorz Orzeł 100.00 Nowe Miasto Lubawskie      
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    4    10 Dariusz        Szekliński            100.00 +  368: 209  150
+    5     8 Jan            Bielaszka             100.00 -  313: 314   50
+    6    11 Krzysztof      Żurawski              100.00 =  395: 395  100
+    7     9 Maria          Grzegorzewska         100.00 +  279: 238  150
+                                                          --------------- ---- ------
+                                                                     450  /  4 112.50
+
+
+
+
+	Dariusz Szekliński 100.00 Nowe Miasto Lubawskie
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Adam           Grzona                110.00 -  196: 434   60
+    2    11 Jerzy          Banasiak              100.00 -  215: 280   50
+    3    11 Anna           Bielaszka             100.00 +  247: 244  150
+    4    10 Grzegorz       Orzeł                 100.00 -  209: 368   50
+    5    11 Krzysztof      Żurawski              100.00 -  227: 370   50
+    6    10 Maria          Grzegorzewska         100.00 -  142: 466   50
+    7    10 Krzysztof      Noskowicz             100.00 -  252: 345   50
+    8    10 Andrzej        Lożyński              102.00 -  174: 325   52
+    9    10 Jan            Bielaszka             100.00 -  223: 303   50
+   10    11 Mariusz        Neumann               100.00 -  213: 359   50
+   11    12 Anna           Bielaszka             100.00 +  260: 200  150
+   12    12 Anna           Bielaszka             100.00 +  279: 235  150
+                                                          --------------- ---- ------
+                                                                     912  / 12  76.00
+
+
+
+
+	Krystian Wandzlewicz 100.00 Nowe Miasto Lubawskie    
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Andrzej        Kwiatkowski           111.00 -  302: 406   61
+    2     8 Magdalena      Merklejn              102.00 -  298: 345   52
+    3    10 Barbara        Orzeł                 100.00 -  280: 375   50
+    4    12 Anna           Bielaszka             100.00 +  320: 219  150
+    5    10 Maria          Grzegorzewska         100.00 +  371: 356  150
+    6     9 Mariusz        Neumann               100.00 +  304: 246  150
+    7     8 Krzysztof      Żurawski              100.00 -  334: 339   50
+    8     7 Jan            Bielaszka             100.00 +  407: 278  150
+    9     7 Aleksandra     Merklejn-Kaczanowska  103.00 -  266: 386   53
+   10     8 Krzysztof      Noskowicz             100.00 +  421: 277  150
+   11     7 Barbara        Orzeł                 100.00 +  389: 321  150
+   12     5 Magdalena      Merklejn              102.00 -  326: 465   52
+                                                          --------------- ---- ------
+                                                                    1218  / 12 101.50
+
+
+
+
+	Krzysztof Żurawski 100.00 Nowe Miasto Lubawskie
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    4    11 Andrzej        Oleksiak              100.00 -  350: 351   50
+    5    11 Dariusz        Szekliński            100.00 +  370: 227  150
+    6    11 Grzegorz       Orzeł                 100.00 =  395: 395  100
+    7     8 Krystian       Wandzlewicz           100.00 +  339: 334  150
+    8     6 Barbara        Orzeł                 100.00 -  269: 306   50
+    9    12 Anna           Bielaszka             100.00 +  391: 185  150
+   10     9 Jan            Bielaszka             100.00 +  411: 315  150
+   11     8 Maria          Grzegorzewska         100.00 -  382: 402   50
+   12    10 Krzysztof      Noskowicz             100.00 -  335: 377   50
+                                                          --------------- ---- ------
+                                                                     900  /  9 100.00
+
+
+</pre></div><div id='p_rundy' class='page'><pre></pre></div><div id='p_ranking' class='page'><pre></pre></div><div id='p_przebieg' class='page'>
+
+    </div><div style="clear:both;width:100%;" class="alignright">
+
+<script>
+<!--
+if ((document.getElementById("content").offsetHeight + document.getElementById("top").offsetHeight) > screen.height)
+    document.write("<br /><br /><a href='#top'>do góry</a>");
+-->
+</script>
+
+</div>
+</div>
+
+<div id="bottom">
+<ul id="bottomlinks">
+<div class='onleft'>
+ Osób on-line: 54</div>
+    <li><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+    <li><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+    <li><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+    <li><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+    <li><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+    <li><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+</ul>
+    SCRABBLE® jest zastrzeżonym znakiem towarowym J.W. Spears &amp; Sons&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://www.pfs.org.pl/prawaautorskie.php">© Prawa autorskie</a>
+</div>
+</body>
+</html>

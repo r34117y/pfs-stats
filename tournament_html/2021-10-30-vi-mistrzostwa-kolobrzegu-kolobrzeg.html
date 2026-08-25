@@ -1,0 +1,2263 @@
+
+<html>
+<head>
+    <title>Polska Federacja Scrabble :: VI Mistrzostwa Kołobrzegu</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="files/img/favicon.ico" />
+    <link rel="stylesheet" href="files/css/style.css" type="text/css" />
+	<link rel="stylesheet" href="files/css/style-index.css" type="text/css" />
+    <!--[if IE]><link rel="stylesheet" type="text/css" href="files/css/styleie.css" /><![endif]-->
+    <!--[if lt IE 7.]><script defer type="text/javascript" src="files/js/pngfix.js"></script><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="files/js/minmax.js"></script><![endif]-->
+    <script type="text/javascript" src="files/js/jquery.js"></script>
+    <script type="text/javascript" src="files/js/jquery-bp.js"></script>
+    <script type="text/javascript" src="files/js/java.js"></script>
+    <script>jSubmenu ("turnieje","kalendarz");jKalendarz();</script>
+    <script>
+    var url, page;
+
+    page = 'info';
+    url  = document.location.toString();
+
+    if (url.match ('#')) {
+      page = url.split ('#')[1];
+      if ($.inArray (page, [ 'info', 'relacja', 'klasyfikacja', 'hh', 'rundy', 'ranking', 'przebieg' ]) == -1)
+        page = 'info';
+    }
+
+    $(document).ready(function(){
+        $('a#listaucz').bind('click', function(event){
+            $('div#lista').toggle();
+            event.preventDefault();
+        }).toggle(function() { $(this).text('schowaj listę uczestników'); }, function() { $(this).text("pokaż listę uczestników"); });
+        $('div#lista table tr:last td').css({"border-bottom" : "none"});
+
+        $("a.przycisk").click (function (e) {
+            if ($(this).attr ('href') !== '#')
+                return true;
+
+            e.preventDefault ();
+
+            id       = this.id;
+            this.id += 'tmp';
+            window.location.hash = id;
+            this.id  = id;
+
+            $(".page").hide ();
+            $(".page#p_" + id).show ();
+
+            $("a.przycisk").removeClass ('active');
+            $(this).addClass ('active');
+
+            return false;
+        });
+
+        $("a.przycisk#" + page).click ();
+        $('html, body').animate ({ scrollTop: 0 }, 0);
+    });
+    </script>
+  <style type="text/css">
+    .page {
+        display: none;
+    }
+    #szczegoly{
+        width: 100%;
+        border-spacing: 0;
+        margin-top: 30px;
+        text-align: left;
+        font-size: inherit;
+    }
+    #szczegoly td{
+        padding: 10px 20px 10px 0;
+        vertical-align: top;
+    }
+    #szczegoly td:first-child{
+        font-weight: bold;
+        width: 160px;
+    }
+    div#lista{
+        display:none;
+        margin-top: 15px;
+    }
+    div#lista table{
+        margin-top: 10px;
+        text-align: left;
+        font-size: inherit;
+    }
+    div#lista table td{
+        padding: 3px 8px;
+        border-bottom: 1px dashed #1576AE;
+    }
+    div#lista table th{
+        padding: 0px 5px 10px 5px;
+    }
+    div#lista table td.ptaszek{
+        text-align: center;
+        background: url('files/img/tick.png') no-repeat center center;
+    }
+    div#lista table th{
+        white-space: nowrap;
+        width: auto;
+    }
+    div#lista table td:first-child, div#lista table th:first-child{
+        text-align:right;
+        width: auto;
+    }
+    </style>
+</head>
+
+<body>
+
+<script type="text/javascript">setMenu();</script>
+
+<div id="top" onclick="location.href='https://www.pfs.org.pl'">
+</div>
+<div id="menu">
+
+    <div id="m_glowna">
+        <div class="tab"><a href="https://www.pfs.org.pl/index.php"></a></div>
+
+        <ul>
+            <li class="sublink" id="aktualnosci"><a href="https://www.pfs.org.pl">Aktualności</a></li>
+            <li class="sublink" id="nowy"><a href="https://www.pfs.org.pl/dlanowych.php">Jestem tu nowy</a></li>
+            <li class="sublink" id="anagramator"><a href="https://www.pfs.org.pl/osps_online.php?main=1">Słownik online</a></li>
+            <li class="sublink" id="siodemka"><a href="https://www.pfs.org.pl/siodemka.php?main=1">Siódemka tygodnia</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+            <li class="sublink" id="dlasponsorow"><a href="https://www.pfs.org.pl/dlasponsorow.php">Dla sponsorów</a></li>
+            <li class="sublink" id="kontakt"><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+        </ul>
+    </div>
+    <div id="m_turnieje">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kalendarz.php"></a></div>
+        <ul>
+            <li class="sublink" id="kalendarz"><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+            <li class="sublink" id="regulaminy"><a href="https://www.pfs.org.pl/regulaminy.php">Regulaminy</a></li>
+            <li class="sublink" id="sedziowie"><a href="https://www.pfs.org.pl/sedziowie.php">Sędziowie</a></li>
+            <li class="sublink" id="gp"><a href="https://www.pfs.org.pl/gp2026.php">Grand Prix</a></li>
+<!--            <li class="sublink" id="mr"><a href="https://www.pfs.org.pl/mr2020.php">Mistrzostwa Regionów</a></li>-->
+            <li class="sublink" id="archiwum"><a href="https://www.pfs.org.pl/archiwum.php">Historia</a></li>
+            <li class="sublink" id="galeria"><a href="https://www.pfs.org.pl/galeria.php">Zdjęcia</a></li>
+            <li class="sublink" id="rekordy"><a href="https://www.pfs.org.pl/rekordy.php">Rekordy</a></li>
+        </ul>
+    </div>
+    <div id="m_pfs">
+        <div  class="tab"><a href="https://www.pfs.org.pl/opfs.php"></a></div>
+        <ul>
+            <li class="sublink" id="opfs"><a href="https://www.pfs.org.pl/opfs.php">O PFS</a></li>
+            <li class="sublink" id="jakprzystapic"><a href="https://www.pfs.org.pl/jakprzystapic.php">Jak przystąpić</a></li>
+            <li class="sublink" id="dlaczlonkow"><a href="https://www.pfs.org.pl/dlaczlonkow.php">Dla członków</a></li>
+            <li class="sublink" id="wladze"><a href="https://www.pfs.org.pl/wladze.php">Władze</a></li>
+            <li class="sublink" id="komisje"><a href="https://www.pfs.org.pl/komisje.php">Komisje</a></li>
+            <li class="sublink" id="statut"><a href="https://www.pfs.org.pl/statut.php">Statut</a></li>
+            <li class="sublink" id="uchwaly"><a href="https://www.pfs.org.pl/uchwaly.php">Uchwały</a></li>
+            <li class="sublink" id="honorowi"><a href="https://www.pfs.org.pl/honorowi.php">Honorowi członkowie</a></li>
+            <li class="sublink" id="finanse"><a href="https://www.pfs.org.pl/finanse.php">Finanse</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabble">
+        <div  class="tab"><a href="https://www.pfs.org.pl/osps_online.php?desktop=1"></a></div>
+        <ul>
+            <li class="sublink" id="osps_online"><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+            <li class="sublink" id="zds"><a href="https://www.pfs.org.pl/zds2.php">ZDS</a></li>
+            <li class="sublink" id="osps"><a href="https://www.pfs.org.pl/osps.php">OSPS</a></li>
+            <li class="sublink" id="aktualizacje"><a href="https://www.pfs.org.pl/osps_aktualizacje.php">Aktualizacje</a></li>
+            <li class="sublink" id="dwojki"><a href="https://www.pfs.org.pl/dwojki.php">2-literówki</a></li>
+            <li class="sublink" id="trojki"><a href="https://www.pfs.org.pl/trojki.php">3-literówki</a></li>
+            <li class="sublink" id="siodemkat"><a href="https://www.pfs.org.pl/siodemka.php">Siódemka tygodnia</a></li>
+            <li class="sublink" id="slowneroznosci"><a href="https://www.pfs.org.pl/slowneroznosci.php">Słowne różności</a></li>
+        </ul>
+    </div>
+    <div id="m_ranking">
+        <div  class="tab"><a href="https://www.pfs.org.pl/ranking.php"></a></div>
+        <ul>
+            <li class="sublink" id="aktranking"><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+            <li class="sublink" id="medale"><a href="https://www.pfs.org.pl/medale.php">Klasyfikacja medalowa</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabblisci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/mistrzowiepolski.php"></a></div>
+        <ul>
+            <li class="sublink" id="mistrzowiepolski"><a href="https://www.pfs.org.pl/mistrzowiepolski.php">Mistrzowie Polski</a></li>
+            <li class="sublink" id="zdobywcypp"><a href="https://www.pfs.org.pl/zdobywcypp.php">Zdobywcy Pucharu Polski</a></li>
+            <li class="sublink" id="zwyciezcygp"><a href="https://www.pfs.org.pl/zwyciezcygp.php">Zwycięzcy Grand Prix</a></li>
+            <li class="sublink" id="liderzyrankingu"><a href="https://www.pfs.org.pl/liderzyrankingu.php">Liderzy rankingu</a></li>
+            <li class="sublink" id="zwyciezcylemans"><a href="https://www.pfs.org.pl/zwyciezcylemans.php">Zwycięzcy 24h Le Mans</a></li>
+            <li class="sublink" id="zwyciezcykmp"><a href="https://www.pfs.org.pl/zwyciezcykmp.php">KMP</a>
+        </ul>
+    </div>
+    <div id="m_kluby">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kluby.php"></a></div>
+        <ul>
+            <li class="sublink" id="rejestrklubow"><a href="https://www.pfs.org.pl/kluby.php">Rejestr klubów</a></li>
+            <li class="sublink" id="kmp"><a href="https://www.pfs.org.pl/kmp.php">KMP</a></li>
+            <li class="sublink" id="wiescizklubow"><a href="https://www.pfs.org.pl/wiescizklubow.php">Wieści z klubów</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/about.php">Statystyki klubowe</a></li>
+        </ul>
+    </div>
+    <div id="m_roznosci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/historia.php"></a></div>
+        <ul>
+            <li class="sublink" id="historia"><a href="https://www.pfs.org.pl/historia.php">Historia</a></li>
+            <li class="sublink" id="odmiany"><a href="https://www.pfs.org.pl/odmiany.php">Odmiany</a></li>
+            <li class="sublink" id="anegdoty"><a href="https://www.pfs.org.pl/anegdoty.php">Anegdoty</a></li>
+            <li class="sublink" id="scrabblealia"><a href="https://www.pfs.org.pl/scrabblealia.php">Scrabblealia</a></li>
+            <li class="sublink" id="scrabblenet"><a href="https://www.pfs.org.pl/scrabblenet.php">Scrabble w internecie</a></li>
+            <li class="sublink" id="programy"><a href="https://www.pfs.org.pl/programy.php">Programy</a></li>
+            <li class="sublink" id="download"><a href="https://www.pfs.org.pl/download.php">Do pobrania</a></li>
+            <li class="sublink" id="ksiazki"><a href="https://www.pfs.org.pl/ksiazki.php">Książki</a></li>
+            <li class="sublink" id="slowniczek"><a href="https://www.pfs.org.pl/slowniczek.php">Słowniczek</a></li>
+        </ul>
+    </div>
+    <div id="m_english">
+        <div  class="tab"><a href="https://www.pfs.org.pl/english.php"></a></div>
+        <ul>
+            <li class="sublink" id="about"><a href="https://www.pfs.org.pl/english.php">About Polish Scrabble</a></li>
+            <li class="sublink" id="news"><a href="https://www.pfs.org.pl/en_news.php">News</a></li>
+            <li class="sublink" id="bartek"><a href="https://www.pfs.org.pl/bartek.php">Bartek w Johor Bahru</a></li>
+            <li class="sublink" id="franko"><a href="https://www.pfs.org.pl/franko.php">Scrabble frankofońskie</a></li>
+        </ul>
+    </div>
+</div>
+
+<div id="submenu"></div>
+<div id="content">
+<div id='nextTours'>
+		<div class='nextTour' onclick='location.href="turniej.php?id=1191"'>
+			<div class='karteczka small1'>
+				<span class='miasto'>Jaworzno</span><span class='dzien'><span class='big'>17</span><br />października</span></div>
+			<div class='kartka big1'>
+				<span class='miasto'>Jaworzno</span>
+				<span class='dzien'><b>17 października</b></span>
+				<span class='nazwaturnieju'>II Kawiarniany Turniej Scrabble</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=1203"'>
+			<div class='karteczka small2'>
+				<span class='miasto'>Kołobrzeg</span><span class='dzien'><span class='big'>30</span><br />października</span></div>
+			<div class='kartka big2'>
+				<span class='miasto'>Kołobrzeg</span>
+				<span class='dzien'><b>30-31 października</b></span>
+				<span class='nazwaturnieju'>VI Mistrzostwa Kołobrzegu</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=1179"'>
+			<div class='karteczka small3'>
+				<span class='miasto'>Miętne k. Garwolina</span><span class='dzien'><span class='big'>11</span><br />listopada</span></div>
+			<div class='kartka big3'>
+				<span class='miasto'>Miętne k. Garwolina</span>
+				<span class='dzien'><b>11-14 listopada</b></span>
+				<span class='nazwaturnieju'>XXVIII Mistrzostwa Polski</span></div>
+		</div></div><div class='naglowekrelacji'><span class='tytul'>Po sześciu latach Rafał Lenartowski znowu najlepszy w Kołobrzegu<span class='nazwa'>30 - 31 października 2021 —  VI Mistrzostwa Kołobrzegu</span></span><a href='#' id='info' class='przycisk'>Informacje</a><a href='#' id='relacja' class='przycisk'>Relacja</a><a href='#' id='klasyfikacja' class='przycisk'>Wyniki</a><a href='#' id='hh' class='przycisk'>HH</a><a href='#' id='rundy' class='przycisk'>Rundy</a><a href='#' id='ranking' class='przycisk'>Ranking</a><a href='live/index.php?id=1203' class='przycisk'>Przebieg</a><div class='galleries'><img src='files/img/gallery.png' style='visibility:hidden;' alt='galeria' /></div></div><h1 style='color:black; margin-top:0px; margin-bottom:30px; padding: 0px'>VI Mistrzostwa Kołobrzegu<span>Kołobrzeg, 30 - 31 października 2021</span></h1><div id='p_relacja' class='page'><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><div class='relacja' style='clear:both;'><figure style='display:inline-block;float:left;margin:5px'><img src='https://pfs.org.pl/foto_action.php?id=2360' alt='Po sześciu latach Rafał Lenartowski znowu najlepszy w Kołobrzegu' /></figure><div>Ponad 2 lata czekała brać scrabblowa na VI Mistrzostwa Kołobrzegu w Scrabble. Jednak dzięki determinacji i uporowi Anny Arany, pomocy członków <b>Klubu Scrabblowego START Kołobrzeg</b>, <b>Fundacji UMYSŁ im. Alfreda Buttsa</b> zawody doszły w końcu do skutku. Po raz pierwszy (miejmy nadzieję nie ostatni) turniej odbył się w <b>Miejskiej Bibliotece Publicznej im. Galla Anonima</b>. To bardzo przyjazne miejsce dla scrabblistów. Graliśmy na pierwszym piętrze w 2 salach bibliotecznych, pośród regałów wypełnionych książkami, pełnymi słów, które (czuło się to dosłownie w powietrzu) chciały wydostać się spośród okładek i pojawić na planszach. Na parterze natomiast mieścił się bufet, gdzie przez cały czas trwania turnieju, a nawet po jego zakończeniu, można było przekąsić coś słodkiego, owocowego, albo napić się ciepłych i zimnych napojów. Na parterze można też było pograć w przeróżne gry, albo chociaż poznać ich zasady, chętnie objaśniane przez graczy z tutejszego Klubu Gier Planszowych. W turnieju wzięło udział 44 osób (w tym dwóch debiutantów). Przez prawie cały turniej na fotelu lidera pojawiały się 2 nazwiska: <b>Bartosz Bartczak</b> i <b>Rafał Lenartowski</b>. Obaj zdobyli po 9 punktów i spotkali się ponownie w ostatniej rundzie w walce o pierwsze miejsce. Tym razem Rafał okazał się lepszy, biorąc rewanż za 8 kolejkę, a Bartosz musiał zadowolić się 3 miejscem. Na drugim miejscu uplasowała się <b>Alicja Grąbczewska</b>, która okazała się prawdziwą królową polowania. Zdobyła również nagrody: dla najlepszej zawodniczki turnieju, za „skok tygrysa”, oraz zaproszenie do Kołobrzegu na weekendowy pobyt dla 2 osób (wylosowana została spośród wszystkich uczestników). Najlepszą zawodniczką z Kołobrzegu została <b>Anna Arana</b>. Najlepszym debiutantem <b>Jakub Augustyn</b>. Pierwsza trójka otrzymał nagrody pieniężne i praktyczne butelkowe „puchary”. Wszyscy pozostali zawodnicy mogli wybrać sobie nagrody rzeczowe z puli przygotowanej przez organizatorów. Było to możliwe dzięki gronu sponsorów:<br>
+- Urząd Miasta Kołobrzeg<br>
+- AOMB Kraków<br>
+- Apa2 Szczecin<br>
+- „Auto Seba” Ustronie Morskie<br>
+- Delikatesy Centrum Kołobrzeg<br>
+- IGNIF Kominki<br>
+- IM Filter Goleniów<br>
+- Pensjonat „Marino” Kołobrzeg<br>
+- Brico Marche Kołobrzeg<br>
+- Tawerna Wiking Kołobrzeg<br>
+- Bricomarche Kołobrzeg<br><br>
+
+Dziękujemy i do zobaczenia za rok!<br><br>
+
+P.S. Z grą w Scrabble podobno jest jak z jazdą na rowerze. Można nie grać 5 lat, przyjechać na turniej i zostać ponownie Mistrzem Kołobrzegu w Scrabble! Tego właśnie dokonał Rafał!</div><div class='autor'>relacja: Adam Janicki</div></div><div style='clear:both;'></div></div><div id='p_info' class='page'><br><p align='center'></p><br><br><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br>Zobacz, jak było na poprzednich turniejach:<br><a href='turniej.php?id=1074'>V Otwarte Mistrzostwa Kołobrzegu</a><br><a href='turniej.php?id=1018'>IV Otwarte Mistrzostwa Kołobrzegu</a><br><a href='turniej.php?id=944'>III Otwarte Mistrzostwa Kołobrzegu</a><br><table id='szczegoly' class='ramkadolna'><tr><td>Rodzaj turnieju</td><td>otwarty (ograniczenie do 48 graczy)</td></tr><tr><td>Sposób rozgrywania</td><td>liczba rund: <b>12</b><br>
+system: połówkowy (rundy 1-11), duńczyk (runda 12)<br>
+20 minut dla gracza na partię</td></tr><tr><td>Miejsce rozgrywek</td><td>Miejska biblioteka Publiczna im. Galla Anonima ul. Frankowskiego 3 Kołobrzeg</td></tr><tr><td>Obrońca tytułu</td><td>Kacper Zegadło</td></tr><tr><td>Sędzia</td><td>Adam Janicki</td></tr><tr><td>Harmonogram</td><td><b>Sobota, 30 października (7 rund)</b><br>
+11.30 — rozpoczęcie zapisów na turniej (dla osób niezapisanych przez internet) <br>
+12:00 — rozpoczęcie turnieju<br>
+14:00-15:00 — przerwa obiadowa<br>
+20:00 — zakończenie gier<br><br>
+
+<b>Niedziela, 31 października (5 rund)</b><br>
+9:00 — rozpoczęcie drugiego dnia rozgrywek<br>
+14:00 — uroczyste zakończenie turnieju</td></tr><tr><td>Wpisowe</td><td>25 zł za dzień<br>
+członkowie PFS z aktualnie opłaconymi składkami — 15 zł za dzień<br>
+młodzież szkolna — 10 zł za dzień (do szkoły średniej włącznie)<br>
+debiutanci — bez opłat</td></tr><tr><td>Dojazd</td><td>Od dworca PKP 600m -7 minut pieszo.</td></tr><tr><td>Wyżywienie</td><td>Kawa, herbata, napoje, ciastka<br>
+W sobotę obiad — 30 zł — zapisy w formularzu zgłoszeniowym</td></tr><tr><td>Noclegi</td><td>Noclegi we własnym zakresie. Kołobrzeg posiada mnóstwo miejsc noclegowych w bardzo różnych cenach. Przy rezerwacji noclegu proszę się upewnić czy nie obowiązują dodatkowe opłaty za dezynfekcję, częstokroć nie uwidaczniane w ofercie.
+
+</td></tr><tr><td>Nagrody</td><td>Puchary i nagrody finansowe dla zwycięzców, drobne upominki dla innych uczestników. W miarę pozyskania sponsorów fundowane będą nagrody specjalne.</td></tr><tr><td>Dodatkowe atrakcje</td><td>Możliwe kąpiele morskie.</td></tr><tr><td>Zgłoszenia uczestników</td><td><a href='' id='listaucz'>pokaż listę uczestników</a>
+            <div id='lista'>
+            <table width=100%><td width=5% >Lp.</td><td width=15% style='font-weight:bold;'>Imię i nazwisko</td><td width=15% style='font-weight:bold;border-left:#1576AE 1px dashed;'>Miasto</td><td width=10% style='font-weight:bold;border-left:#1576AE 1px dashed;'>Status uczestnika</td><td width=40% style='font-weight:bold;border-left:#1576AE 1px dashed;'>Dodatkowe opcje</td><td width=15% style='font-weight:bold;border-left:#1576AE 1px dashed;'>Data zgłoszenia</td><tr>
+					<td>1</td>
+					<td>Rafał Wesołowski</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Warszawa</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>ryba</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2021-09-28 11:35:15</td>
+                </tr><tr>
+					<td>2</td>
+					<td>Bartosz Bartczak</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Poznań</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>ryba</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2021-09-28 12:01:38</td>
+                </tr><tr>
+					<td>3</td>
+					<td>Anna Arana</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Kołobrzeg</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>wege</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2021-09-28 13:32:02</td>
+                </tr><tr>
+					<td>4</td>
+					<td>Halina Cecot</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Kołobrzeg</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>wege</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2021-09-28 13:47:29</td>
+                </tr><tr>
+					<td>5</td>
+					<td>Marek Cecot</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Kołobrzeg</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>ryba</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2021-09-28 13:50:18</td>
+                </tr><tr>
+					<td>6</td>
+					<td>Jolanta Olczak</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Kołobrzeg</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>ryba</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2021-09-28 13:53:18</td>
+                </tr><tr>
+					<td>7</td>
+					<td>Zuzanna Cichoń</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Gdańsk</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>ryba</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2021-09-28 13:58:32</td>
+                </tr><tr>
+					<td>8</td>
+					<td>Ala Białobrzewska</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Gdynia</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>wege</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2021-09-28 14:08:53</td>
+                </tr><tr>
+					<td>9</td>
+					<td>Darek Białobrzewski</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Gdynia</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>udko</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2021-09-28 14:09:52</td>
+                </tr><tr>
+					<td>10</td>
+					<td>Małgorzata Szmuksta</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Szczecin</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>ryba</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2021-09-28 14:14:17</td>
+                </tr><tr>
+					<td>11</td>
+					<td>Jakub Onoszko</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Gdynia</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>wege</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2021-09-28 14:18:57</td>
+                </tr><tr>
+					<td>12</td>
+					<td>Marta Świątkowska</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Wrocław</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>wege x2</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2021-09-28 14:28:26</td>
+                </tr><tr>
+					<td>13</td>
+					<td>Małgorzata Wesołowska </td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Kołobrzeg</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>ryba</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2021-09-28 14:29:21</td>
+                </tr><tr>
+					<td>14</td>
+					<td>Anita Bruska</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Gdynia</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>wege</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2021-09-28 14:31:30</td>
+                </tr><tr>
+					<td>15</td>
+					<td>Irek Moralewicz</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Goleniów</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>ryba</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2021-09-28 15:02:17</td>
+                </tr><tr>
+					<td>16</td>
+					<td>Franek Łysek</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Warszawa</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>młodzież</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2021-09-28 15:58:21</td>
+                </tr><tr>
+					<td>17</td>
+					<td>Maciej Kuczyński</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Gdynia</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>ryba</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2021-09-28 16:02:33</td>
+                </tr><tr>
+					<td>18</td>
+					<td>Dariusz Kuć</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Stargard</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>wege</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2021-09-28 16:56:23</td>
+                </tr><tr>
+					<td>19</td>
+					<td>Dorota Kuć</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Stargard</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>ryba</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2021-09-28 16:56:46</td>
+                </tr><tr>
+					<td>20</td>
+					<td>Bartłomiej Pawlak</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Stary Szwarocin</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>wege</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2021-09-28 17:08:10</td>
+                </tr><tr>
+					<td>21</td>
+					<td>Jadwiga Szczurowska</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Świnoujście</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2021-09-28 17:30:31</td>
+                </tr><tr>
+					<td>22</td>
+					<td>Łukasz Tuszyński</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Chłopowo</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>ryba</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2021-09-28 19:24:57</td>
+                </tr><tr>
+					<td>23</td>
+					<td>Jacek Nowak</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Szczecin</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>ryba</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2021-09-28 19:35:35</td>
+                </tr><tr>
+					<td>24</td>
+					<td>Alicja Grąbczewska</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Szczecin</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>ryba</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2021-09-28 21:26:42</td>
+                </tr><tr>
+					<td>25</td>
+					<td>Maciej Grąbczewski</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Szczecin</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>ryba</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2021-09-28 21:27:14</td>
+                </tr><tr>
+					<td>26</td>
+					<td>Iwona Wieluńska </td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Kołobrzeg </td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>ryba</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2021-09-28 21:58:09</td>
+                </tr><tr>
+					<td>27</td>
+					<td>Monika Gawron-Cieślik</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Szczecin</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>ryba</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2021-09-28 22:13:10</td>
+                </tr><tr>
+					<td>28</td>
+					<td>Krystyna Czajkowska</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Kołobrzeg</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>ryba</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2021-09-28 22:21:22</td>
+                </tr><tr>
+					<td>29</td>
+					<td>Beata Kiżewska</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Świnoujście</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>ryba</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2021-09-28 23:08:50</td>
+                </tr><tr>
+					<td>30</td>
+					<td>Monika Siemaszko</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Poznań</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>udko</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2021-09-29 02:50:47</td>
+                </tr><tr>
+					<td>31</td>
+					<td>Walenty Siemaszko</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Lipiany</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>udko</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2021-09-29 02:57:08</td>
+                </tr><tr>
+					<td>32</td>
+					<td>Tomasz Sehnal</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Warszawa</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2021-09-29 08:06:34</td>
+                </tr><tr>
+					<td>33</td>
+					<td>Łukasz Przyszlak</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Świnoujście</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>udko</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2021-09-29 09:07:42</td>
+                </tr><tr>
+					<td>34</td>
+					<td>Elżbieta Fitał</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Kołobrzeg</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2021-09-29 09:09:46</td>
+                </tr><tr>
+					<td>35</td>
+					<td>Lucyna Śniadach</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Rumia</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>ryba</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2021-09-29 09:27:52</td>
+                </tr><tr>
+					<td>36</td>
+					<td>Paweł Wdziękoński</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Świnoujście</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>ryba</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2021-09-29 09:54:33</td>
+                </tr><tr>
+					<td>37</td>
+					<td>Teresa Balewska</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Reda</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>ryba</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2021-09-29 10:01:55</td>
+                </tr><tr>
+					<td>38</td>
+					<td>Ewa Tymińska</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Gdańsk</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>ryba</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2021-09-29 10:27:09</td>
+                </tr><tr>
+					<td>39</td>
+					<td>Rafał Lenartowski&nbsp;<img src=files/img/star.png></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Gdynia</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>wege</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2021-09-29 11:46:36</td>
+                </tr><tr>
+					<td>40</td>
+					<td>Błażej Ochocki</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Przeźmierowo</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2021-09-29 15:39:31</td>
+                </tr><tr>
+					<td>41</td>
+					<td>Jerzy Luter </td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Bytom </td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2021-09-29 16:28:15</td>
+                </tr><tr>
+					<td>42</td>
+					<td>Łukasz Pudło</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Gdańsk</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2021-09-29 19:40:22</td>
+                </tr><tr>
+					<td>43</td>
+					<td>Jakub Augustyn</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Kołobrzeg</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>debiut</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2021-10-25 15:18:46</td>
+                </tr><tr>
+					<td>44</td>
+					<td>Justyna Sławińska-Budzich</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Gdańsk</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>ryba</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2021-10-28 12:54:47</td>
+                </tr><tr>
+					<td>45</td>
+					<td>Paweł Augustyn</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Kołobrzeg</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2021-10-29 13:40:06</td>
+                </tr></table>
+				</div></td></tr><tr><td>Organizatorzy</td><td>Miejska Biblioteka Publiczna im. Galla Anonima<br>
+Fundacja UMYSŁ im. Alfreda Buttsa — 606 433 699  <br>
+Klub scrabblowy START Kołobrzeg <br>
+</td></tr><tr><td>Sponsorzy</td><td>Urząd Miasta Kołobrzeg i inni</td></tr></table><br /><br /></div><div id='p_klasyfikacja' class='page'><pre>Wyniki turnieju VI Mistrzostwa Kołobrzegu
+
+Lp. Imię            Nazwisko             Miasto               Ranking  Duże pkt Małe pkt Skalpy   Różn. MP
+--- --------------- -------------------- -------------------- -------- -------- -------- -------- --------
+  1 Rafał           Lenartowski          Gdynia                 150.45     10.0     5297     1994      901
+  2 Alicja          Grąbczewska          Szczecin               121.86      9.0     4852     1830      702
+  3 Bartosz         Bartczak             Poznań                 129.16      9.0     4567     1921      264
+  4 Bartłomiej      Pawlak               Stary Szwarocin        126.40      8.0     4895     1780      372
+  5 Ireneusz        Moralewicz           Goleniów               129.13      8.0     4824     1790      528
+  6 Rafał           Wesołowski           Warszawa               141.79      8.0     4653     1762      411
+  7 Franciszek      Łysek                Warszawa               144.55      8.0     4624     1798       35
+  8 Jerzy           Luter                Bytom                  126.81      8.0     4466     1675      289
+  9 Jakub           Onoszko              Gdynia                 136.70      7.0     4887     1620      613
+ 10 Łukasz          Tuszyński            Chłopowo               143.27      7.0     4828     1632      322
+ 11 Maciej          Grąbczewski          Szczecin               145.95      7.0     4781     1602      537
+ 12 Dorota          Kuć                  Stargard               131.10      7.0     4642     1573      324
+ 13 Dariusz         Kuć                  Stargard               136.00      7.0     4601     1689      384
+ 14 Maciej          Kuczyński            Gdynia                 148.11      7.0     4479     1519      493
+ 15 Dariusz         Białobrzewski        Gdynia                 126.61      7.0     4450     1630       22
+ 16 Justyna         Sławińska-Budzich    Kolnik                 140.50      7.0     4436     1569      148
+ 17 Błażej          Ochocki              Przeźmierowo           107.45      7.0     4428     1580      225
+ 18 Anita           Bruska               Gdynia                 110.97      7.0     4365     1668     -226
+ 19 Małgorzata      Szmuksta             Szczecin               135.50      6.0     4520     1421      339
+ 20 Monika          Gawron-Cieślik       Szczecin               137.68      6.0     4460     1478      243
+ 21 Anna            Arana                Kołobrzeg              116.32      6.0     4425     1487        8
+ 22 Iwona           Wieluńska            Kołobrzeg              122.82      6.0     4425     1491     -116
+ 23 Tomasz          Sehnal               Warszawa               126.81      6.0     4388     1573       73
+ 24 Łukasz          Pudło                Gdańsk                 100.00      6.0     4344     1321       67
+ 25 Marta           Świątkowska          Wrocław                113.26      6.0     4277     1464     -301
+ 26 Paweł           Wdziękoński          Świnoujście            114.16      6.0     4200     1449     -198
+ 27 Jadwiga         Szczurowska          Świnoujście            107.86      6.0     4178     1336     -108
+ 28 Marek           Cecot                Kołobrzeg              104.40      6.0     4100     1432     -125
+ 29 Monika          Siemaszko            Lipiany                125.67      5.0     4406     1286      129
+ 30 Łukasz          Przyszlak            Świnoujście            124.24      5.0     4339     1372      121
+ 31 Jacek           Nowak                Szczecin               104.27      5.0     4308     1206      137
+ 32 Zuzanna         Cichoń               Gdańsk                 115.75      5.0     4225     1298     -197
+ 33 Ala             Białobrzewska        Gdynia                 127.39      5.0     4218     1399     -584
+ 34 Teresa          Balewska             Reda                   100.00      5.0     4138     1247     -362
+ 35 Beata           Kiżewska             Świnoujście            100.00      4.5     4009     1118     -141
+ 36 Jolanta         Olczak               Kołobrzeg              102.25      4.5     3844     1105     -183
+ 37 Walenty         Siemaszko            Lipiany                123.42      4.0     4085     1182     -333
+ 38 Małgorzata      Wesołowska           Kołobrzeg              102.33      4.0     3929     1189     -269
+ 39 Halina          Cecot                Kołobrzeg              108.71      3.5     3835      967     -136
+ 40 Krystyna        Czajkowska           Kołobrzeg              101.72      2.5     3741      846     -152
+ 41 Ewa             Tymińska             Gdańsk                 100.00      2.5     3591      842     -432
+ 42 Jakub           Augustyn             Kołobrzeg              100.00      2.5     3362      861     -759
+ 43 Elżbieta        Fitał                Kołobrzeg              100.00      1.0     1381      438     -724
+ 44 Paweł           Augustyn             Kołobrzeg              100.00      0.0      898      279     -541
+</pre></div><div id='p_hh' class='page'><pre>Wyniki poszczególnych graczy w turnieju VI Mistrzostwa Kołobrzegu
+
+
+
+	Rafał Lenartowski 150.45 Gdynia
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Walenty        Siemaszko             123.42 +  558: 268  173
+    2     1 Dariusz        Kuć                   136.00 +  415: 388  186
+    3     1 Rafał          Wesołowski            141.79 -  397: 403   92
+    4     3 Tomasz         Sehnal                126.81 +  389: 385  177
+    5     2 Jerzy          Luter                 126.81 +  468: 298  177
+    6     2 Dariusz        Białobrzewski         126.61 +  489: 361  177
+    7     2 Franciszek     Łysek                 144.55 +  439: 335  195
+    8     1 Bartosz        Bartczak              129.16 -  366: 452   79
+    9     2 Jakub          Onoszko               136.70 +  441: 428  187
+   10     2 Ireneusz       Moralewicz            129.13 +  434: 407  179
+   11     2 Łukasz         Tuszyński             143.27 +  451: 392  193
+   12     1 Bartosz        Bartczak              129.16 +  450: 279  179
+                                                          --------------- ---- ------
+                                                                    1994  / 12 166.17
+
+
+
+
+	Maciej Kuczyński 148.11 Gdynia                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Iwona          Wieluńska             122.82 -  365: 370   73
+    2    17 Błażej         Ochocki               107.45 -  259: 380   57
+    3    22 Paweł          Augustyn              100.00 +  354: 247  150
+    4    15 Anna           Arana                 116.32 +  393: 373  166
+    5    12 Dorota         Kuć                   131.10 +  384: 347  181
+    6     9 Tomasz         Sehnal                126.81 -  307: 314   77
+    7    12 Zuzanna        Cichoń                115.75 +  469: 267  166
+    8     8 Łukasz         Przyszlak             124.24 -  351: 423   74
+    9    15 Marek          Cecot                 104.40 +  414: 346  154
+   10     8 Rafał          Wesołowski            141.79 -  330: 395   92
+   11    13 Marta          Świątkowska           113.26 +  440: 231  163
+   12     9 Anna           Arana                 116.32 +  413: 293  166
+                                                          --------------- ---- ------
+                                                                    1519  / 12 126.58
+
+
+
+
+	Maciej Grąbczewski 145.95 Szczecin
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Alicja         Grąbczewska           121.86 +  445: 407  172
+    2     6 Anita          Bruska                110.97 -  331: 356   61
+    3    11 Małgorzata     Wesołowska            102.33 +  456: 327  152
+    4     7 Błażej         Ochocki               107.45 +  416: 267  157
+    5     4 Dariusz        Kuć                   136.00 -  380: 408   86
+    6     8 Iwona          Wieluńska             122.82 +  394: 341  173
+    7     6 Małgorzata     Szmuksta              135.50 +  446: 356  186
+    8     3 Łukasz         Tuszyński             143.27 -  366: 371   93
+    9     5 Justyna        Sławińska-Budzich     140.50 +  367: 328  191
+   10     3 Bartłomiej     Pawlak                126.40 -  368: 382   76
+   11     3 Ireneusz       Moralewicz            129.13 +  446: 259  179
+   12     4 Bartłomiej     Pawlak                126.40 -  366: 442   76
+                                                          --------------- ---- ------
+                                                                    1602  / 12 133.50
+
+
+
+
+	Franciszek Łysek 144.55 Warszawa
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Anna           Arana                 116.32 +  427: 334  166
+    2     9 Justyna        Sławińska-Budzich     140.50 +  419: 402  191
+    3     3 Ireneusz       Moralewicz            129.13 -  318: 491   79
+    4     4 Łukasz         Tuszyński             143.27 +  436: 357  193
+    5     7 Ala            Białobrzewska         127.39 +  479: 336  177
+    6     4 Rafał          Wesołowski            141.79 +  365: 329  192
+    7     2 Rafał          Lenartowski           150.45 -  335: 439  100
+    8     5 Jakub          Onoszko               136.70 +  437: 374  187
+    9     4 Dariusz        Kuć                   136.00 +  393: 344  186
+   10     1 Bartosz        Bartczak              129.16 -  369: 388   79
+   11     4 Bartłomiej     Pawlak                126.40 +  367: 341  176
+   12     2 Alicja         Grąbczewska           121.86 -  279: 454   72
+                                                          --------------- ---- ------
+                                                                    1798  / 12 149.83
+
+
+
+
+	Łukasz Tuszyński 143.27 Chłopowo                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Zuzanna        Cichoń                115.75 +  461: 377  166
+    2     4 Ireneusz       Moralewicz            129.13 -  356: 393   79
+    3     7 Paweł          Wdziękoński           114.16 +  472: 291  164
+    4     4 Franciszek     Łysek                 144.55 -  357: 436   95
+    5     8 Małgorzata     Wesołowska            102.33 +  487: 336  152
+    6     6 Jerzy          Luter                 126.81 +  399: 376  177
+    7     4 Tomasz         Sehnal                126.81 +  423: 354  177
+    8     3 Maciej         Grąbczewski           145.95 +  371: 366  196
+    9     1 Bartosz        Bartczak              129.16 -  332: 453   79
+   10     4 Dariusz        Kuć                   136.00 -  332: 377   86
+   11     2 Rafał          Lenartowski           150.45 -  392: 451  100
+   12     7 Anita          Bruska                110.97 +  446: 296  161
+                                                          --------------- ---- ------
+                                                                    1632  / 12 136.00
+
+
+
+
+	Rafał Wesołowski 141.79 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Paweł          Wdziękoński           114.16 +  420: 315  164
+    2    11 Ewa            Tymińska              100.00 +  375: 275  150
+    3     1 Rafał          Lenartowski           150.45 +  403: 397  200
+    4     1 Jakub          Onoszko               136.70 +  419: 351  187
+    5     1 Bartosz        Bartczak              129.16 -  322: 414   79
+    6     4 Franciszek     Łysek                 144.55 -  329: 365   95
+    7     3 Bartłomiej     Pawlak                126.40 -  437: 449   76
+    8     7 Dariusz        Białobrzewski         126.61 -  357: 373   77
+    9     9 Walenty        Siemaszko             123.42 +  395: 299  173
+   10     8 Maciej         Kuczyński             148.11 +  395: 330  198
+   11     7 Tomasz         Sehnal                126.81 +  383: 310  177
+   12     5 Dariusz        Kuć                   136.00 +  418: 364  186
+                                                          --------------- ---- ------
+                                                                    1762  / 12 146.83
+
+
+
+
+	Justyna Sławińska-Budzich 140.50 Kolnik                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Marta          Świątkowska           113.26 +  363: 334  163
+    2     9 Franciszek     Łysek                 144.55 -  402: 419   95
+    3    12 Iwona          Wieluńska             122.82 -  390: 394   73
+    4    14 Jolanta        Olczak                102.25 +  341: 335  152
+    5    14 Błażej         Ochocki               107.45 +  419: 348  157
+    6     5 Bartłomiej     Pawlak                126.40 -  300: 387   76
+    7    15 Marek          Cecot                 104.40 +  433: 318  154
+    8     9 Monika         Gawron-Cieślik        137.68 +  389: 371  188
+    9     5 Maciej         Grąbczewski           145.95 -  328: 367   96
+   10    10 Paweł          Wdziękoński           114.16 +  412: 326  164
+   11     9 Łukasz         Przyszlak             124.24 +  331: 302  174
+   12     6 Jerzy          Luter                 126.81 -  328: 387   77
+                                                          --------------- ---- ------
+                                                                    1569  / 12 130.75
+
+
+
+
+	Monika Gawron-Cieślik 137.68 Szczecin                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Anita          Bruska                110.97 -  374: 381   61
+    2    16 Halina         Cecot                 108.71 +  323: 256  159
+    3    10 Dariusz        Kuć                   136.00 -  287: 385   86
+    4    12 Monika         Siemaszko             125.67 +  391: 288  176
+    5    11 Zuzanna        Cichoń                115.75 +  355: 346  166
+    6    10 Łukasz         Przyszlak             124.24 +  414: 340  174
+    7     7 Alicja         Grąbczewska           121.86 -  357: 427   72
+    8     9 Justyna        Sławińska-Budzich     140.50 -  371: 389   91
+    9    11 Anna           Arana                 116.32 +  454: 279  166
+   10     6 Jakub          Onoszko               136.70 -  369: 419   87
+   11    12 Paweł          Wdziękoński           114.16 -  309: 321   64
+   12    13 Monika         Siemaszko             125.67 +  456: 386  176
+                                                          --------------- ---- ------
+                                                                    1478  / 12 123.17
+
+
+
+
+	Jakub Onoszko 136.70 Gdynia                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Halina         Cecot                 108.71 +  463: 288  159
+    2     3 Beata          Kiżewska              100.00 +  366: 323  150
+    3     4 Anita          Bruska                110.97 +  452: 289  161
+    4     1 Rafał          Wesołowski            141.79 -  351: 419   92
+    5     5 Dariusz        Białobrzewski         126.61 -  294: 384   77
+    6    11 Ala            Białobrzewska         127.39 +  481: 326  177
+    7     8 Marta          Świątkowska           113.26 +  492: 281  163
+    8     5 Franciszek     Łysek                 144.55 -  374: 437   95
+    9     2 Rafał          Lenartowski           150.45 -  428: 441  100
+   10     6 Monika         Gawron-Cieślik        137.68 +  419: 369  188
+   11     1 Bartosz        Bartczak              129.16 +  409: 358  179
+   12     3 Ireneusz       Moralewicz            129.13 -  358: 359   79
+                                                          --------------- ---- ------
+                                                                    1620  / 12 135.00
+
+
+
+
+	Dariusz Kuć 136.00 Stargard
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Jadwiga        Szczurowska           107.86 +  406: 322  158
+    2     1 Rafał          Lenartowski           150.45 -  388: 415  100
+    3    10 Monika         Gawron-Cieślik        137.68 +  385: 287  188
+    4    10 Anita          Bruska                110.97 +  400: 352  161
+    5     4 Maciej         Grąbczewski           145.95 +  408: 380  196
+    6     3 Ireneusz       Moralewicz            129.13 +  374: 313  179
+    7     1 Bartosz        Bartczak              129.16 +  475: 289  179
+    8     2 Bartłomiej     Pawlak                126.40 -  364: 365   76
+    9     4 Franciszek     Łysek                 144.55 -  344: 393   95
+   10     4 Łukasz         Tuszyński             143.27 +  377: 332  193
+   11     5 Alicja         Grąbczewska           121.86 -  316: 351   72
+   12     5 Rafał          Wesołowski            141.79 -  364: 418   92
+                                                          --------------- ---- ------
+                                                                    1689  / 12 140.75
+
+
+
+
+	Małgorzata Szmuksta 135.50 Szczecin                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Błażej         Ochocki               107.45 +  445: 287  157
+    2     5 Bartosz        Bartczak              129.16 -  291: 336   79
+    3    16 Jakub          Augustyn              100.00 +  427: 252  150
+    4     5 Alicja         Grąbczewska           121.86 -  279: 378   72
+    5    15 Marek          Cecot                 104.40 +  354: 325  154
+    6     7 Marta          Świątkowska           113.26 +  408: 304  163
+    7     6 Maciej         Grąbczewski           145.95 -  356: 446   96
+    8    11 Dorota         Kuć                   131.10 -  332: 437   81
+    9    14 Łukasz         Pudło                 100.00 +  438: 250  150
+   10    12 Ala            Białobrzewska         127.39 +  480: 318  177
+   11     8 Anita          Bruska                110.97 -  362: 441   61
+   12     8 Dorota         Kuć                   131.10 -  348: 407   81
+                                                          --------------- ---- ------
+                                                                    1421  / 12 118.42
+
+
+
+
+	Dorota Kuć 131.10 Stargard 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    12 Marek          Cecot                 104.40 +  424: 265  154
+    2    10 Ala            Białobrzewska         127.39 -  335: 474   77
+    3    14 Błażej         Ochocki               107.45 -  364: 422   57
+    4    16 Walenty        Siemaszko             123.42 +  418: 343  173
+    5    12 Maciej         Kuczyński             148.11 -  347: 384   98
+    6    15 Teresa         Balewska              100.00 +  423: 307  150
+    7     9 Anita          Bruska                110.97 -  361: 368   61
+    8    11 Małgorzata     Szmuksta              135.50 +  437: 332  186
+    9     8 Tomasz         Sehnal                126.81 +  378: 300  177
+   10     7 Dariusz        Białobrzewski         126.61 +  376: 358  177
+   11     6 Jerzy          Luter                 126.81 -  372: 417   77
+   12     8 Małgorzata     Szmuksta              135.50 +  407: 348  186
+                                                          --------------- ---- ------
+                                                                    1573  / 12 131.08
+
+
+
+
+	Bartosz Bartczak 129.16 Poznań
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    13 Jacek          Nowak                 104.27 +  392: 361  154
+    2     5 Małgorzata     Szmuksta              135.50 +  336: 291  186
+    3     5 Ala            Białobrzewska         127.39 +  455: 202  177
+    4     2 Ireneusz       Moralewicz            129.13 +  383: 376  179
+    5     1 Rafał          Wesołowski            141.79 +  414: 322  192
+    6     1 Alicja         Grąbczewska           121.86 +  368: 350  172
+    7     1 Dariusz        Kuć                   136.00 -  289: 475   86
+    8     1 Rafał          Lenartowski           150.45 +  452: 366  200
+    9     1 Łukasz         Tuszyński             143.27 +  453: 332  193
+   10     1 Franciszek     Łysek                 144.55 +  388: 369  195
+   11     1 Jakub          Onoszko               136.70 -  358: 409   87
+   12     1 Rafał          Lenartowski           150.45 -  279: 450  100
+                                                          --------------- ---- ------
+                                                                    1921  / 12 160.08
+
+
+
+
+	Ireneusz Moralewicz 129.13 Goleniów
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    14 Małgorzata     Wesołowska            102.33 +  396: 274  152
+    2     4 Łukasz         Tuszyński             143.27 +  393: 356  193
+    3     3 Franciszek     Łysek                 144.55 +  491: 318  195
+    4     2 Bartosz        Bartczak              129.16 -  376: 383   79
+    5     3 Tomasz         Sehnal                126.81 +  520: 391  177
+    6     3 Dariusz        Kuć                   136.00 -  313: 374   86
+    7     5 Dariusz        Białobrzewski         126.61 +  436: 277  177
+    8     4 Alicja         Grąbczewska           121.86 +  474: 319  172
+    9     3 Bartłomiej     Pawlak                126.40 +  400: 366  176
+   10     2 Rafał          Lenartowski           150.45 -  407: 434  100
+   11     3 Maciej         Grąbczewski           145.95 -  259: 446   96
+   12     3 Jakub          Onoszko               136.70 +  359: 358  187
+                                                          --------------- ---- ------
+                                                                    1790  / 12 149.17
+
+
+
+
+	Ala Białobrzewska 127.39 Gdynia                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    15 Jolanta        Olczak                102.25 +  345: 342  152
+    2    10 Dorota         Kuć                   131.10 +  474: 335  181
+    3     5 Bartosz        Bartczak              129.16 -  202: 455   79
+    4    11 Łukasz         Przyszlak             124.24 +  359: 346  174
+    5     7 Franciszek     Łysek                 144.55 -  336: 479   95
+    6    11 Jakub          Onoszko               136.70 -  326: 481   87
+    7    13 Jerzy          Luter                 126.81 +  441: 276  177
+    8    10 Tomasz         Sehnal                126.81 -  344: 410   77
+    9    10 Monika         Siemaszko             125.67 +  336: 305  176
+   10    12 Małgorzata     Szmuksta              135.50 -  318: 480   86
+   11    14 Błażej         Ochocki               107.45 -  378: 533   57
+   12    16 Jadwiga        Szczurowska           107.86 -  359: 360   58
+                                                          --------------- ---- ------
+                                                                    1399  / 12 116.58
+
+
+
+
+	Jerzy Luter 126.81 Bytom                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    16 Krystyna       Czajkowska            101.72 +  434: 293  152
+    2     8 Dariusz        Białobrzewski         126.61 +  365: 314  177
+    3     6 Bartłomiej     Pawlak                126.40 -  412: 415   76
+    4     8 Beata          Kiżewska              100.00 +  359: 268  150
+    5     2 Rafał          Lenartowski           150.45 -  298: 468  100
+    6     6 Łukasz         Tuszyński             143.27 -  376: 399   93
+    7    13 Ala            Białobrzewska         127.39 -  276: 441   77
+    8    16 Teresa         Balewska              100.00 +  415: 246  150
+    9    13 Jacek          Nowak                 104.27 +  316: 301  154
+   10     9 Łukasz         Przyszlak             124.24 +  411: 332  174
+   11     6 Dorota         Kuć                   131.10 +  417: 372  181
+   12     6 Justyna        Sławińska-Budzich     140.50 +  387: 328  191
+                                                          --------------- ---- ------
+                                                                    1675  / 12 139.58
+
+
+
+
+	Tomasz Sehnal 126.81 Warszawa
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    17 Jakub          Augustyn              100.00 +  403: 258  150
+    2     2 Bartłomiej     Pawlak                126.40 +  392: 366  176
+    3     2 Łukasz         Przyszlak             124.24 +  406: 279  174
+    4     3 Rafał          Lenartowski           150.45 -  385: 389  100
+    5     3 Ireneusz       Moralewicz            129.13 -  391: 520   79
+    6     9 Maciej         Kuczyński             148.11 +  314: 307  198
+    7     4 Łukasz         Tuszyński             143.27 -  354: 423   93
+    8    10 Ala            Białobrzewska         127.39 +  410: 344  177
+    9     8 Dorota         Kuć                   131.10 -  300: 378   81
+   10    11 Monika         Siemaszko             125.67 +  391: 272  176
+   11     7 Rafał          Wesołowski            141.79 -  310: 383   92
+   12    10 Dariusz        Białobrzewski         126.61 -  332: 396   77
+                                                          --------------- ---- ------
+                                                                    1573  / 12 131.08
+
+
+
+
+	Dariusz Białobrzewski 126.61 Gdynia                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    18 Paweł          Augustyn              100.00 +  365: 270  150
+    2     8 Jerzy          Luter                 126.81 -  314: 365   77
+    3    13 Anna           Arana                 116.32 +  462: 374  166
+    4     6 Bartłomiej     Pawlak                126.40 +  389: 374  176
+    5     5 Jakub          Onoszko               136.70 +  384: 294  187
+    6     2 Rafał          Lenartowski           150.45 -  361: 489  100
+    7     5 Ireneusz       Moralewicz            129.13 -  277: 436   79
+    8     7 Rafał          Wesołowski            141.79 +  373: 357  192
+    9     6 Alicja         Grąbczewska           121.86 -  339: 423   72
+   10     7 Dorota         Kuć                   131.10 -  358: 376   81
+   11    11 Iwona          Wieluńska             122.82 +  432: 338  173
+   12    10 Tomasz         Sehnal                126.81 +  396: 332  177
+                                                          --------------- ---- ------
+                                                                    1630  / 12 135.83
+
+
+
+
+	Bartłomiej Pawlak 126.40 Stary Szwarocin
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    19 Teresa         Balewska              100.00 +  464: 395  150
+    2     2 Tomasz         Sehnal                126.81 -  366: 392   77
+    3     6 Jerzy          Luter                 126.81 +  415: 412  177
+    4     6 Dariusz        Białobrzewski         126.61 -  374: 389   77
+    5     9 Paweł          Wdziękoński           114.16 +  544: 333  164
+    6     5 Justyna        Sławińska-Budzich     140.50 +  387: 300  191
+    7     3 Rafał          Wesołowski            141.79 +  449: 437  192
+    8     2 Dariusz        Kuć                   136.00 +  365: 364  186
+    9     3 Ireneusz       Moralewicz            129.13 -  366: 400   79
+   10     3 Maciej         Grąbczewski           145.95 +  382: 368  196
+   11     4 Franciszek     Łysek                 144.55 -  341: 367   95
+   12     4 Maciej         Grąbczewski           145.95 +  442: 366  196
+                                                          --------------- ---- ------
+                                                                    1780  / 12 148.33
+
+
+
+
+	Monika Siemaszko 125.67 Lipiany                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    20 Beata          Kiżewska              100.00 -  397: 401   50
+    2    13 Paweł          Wdziękoński           114.16 -  352: 413   64
+    3    17 Teresa         Balewska              100.00 +  471: 278  150
+    4    12 Monika         Gawron-Cieślik        137.68 -  288: 391   88
+    5    16 Jolanta        Olczak                102.25 +  423: 303  152
+    6    12 Anita          Bruska                110.97 -  324: 432   61
+    7    14 Jacek          Nowak                 104.27 +  386: 250  154
+    8    12 Iwona          Wieluńska             122.82 +  419: 326  173
+    9    10 Ala            Białobrzewska         127.39 -  305: 336   77
+   10    11 Tomasz         Sehnal                126.81 -  272: 391   77
+   11    15 Małgorzata     Wesołowska            102.33 +  383: 300  152
+   12    13 Monika         Gawron-Cieślik        137.68 -  386: 456   88
+                                                          --------------- ---- ------
+                                                                    1286  / 12 107.17
+
+
+
+
+	Łukasz Przyszlak 124.24 Świnoujście
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    21 Łukasz         Pudło                 100.00 +  439: 301  150
+    2     7 Iwona          Wieluńska             122.82 +  450: 315  173
+    3     2 Tomasz         Sehnal                126.81 -  279: 406   77
+    4    11 Ala            Białobrzewska         127.39 -  346: 359   77
+    5    13 Beata          Kiżewska              100.00 +  451: 235  150
+    6    10 Monika         Gawron-Cieślik        137.68 -  340: 414   88
+    7    10 Błażej         Ochocki               107.45 +  357: 322  157
+    8     8 Maciej         Kuczyński             148.11 +  423: 351  198
+    9     7 Anita          Bruska                110.97 -  339: 387   61
+   10     9 Jerzy          Luter                 126.81 -  332: 411   77
+   11     9 Justyna        Sławińska-Budzich     140.50 -  302: 331   91
+   12    12 Iwona          Wieluńska             122.82 -  281: 386   73
+                                                          --------------- ---- ------
+                                                                    1372  / 12 114.33
+
+
+
+
+	Walenty Siemaszko 123.42 Lipiany                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Rafał          Lenartowski           150.45 -  268: 558  100
+    2    20 Marta          Świątkowska           113.26 -  386: 420   63
+    3    20 Krystyna       Czajkowska            101.72 +  302: 265  152
+    4    16 Dorota         Kuć                   131.10 -  343: 418   81
+    5    17 Anna           Arana                 116.32 -  303: 345   66
+    6    20 Jakub          Augustyn              100.00 +  435: 226  150
+    7    19 Elżbieta       Fitał                 100.00 +  327: 260  150
+    8    14 Zuzanna        Cichoń                115.75 +  511: 298  166
+    9     9 Rafał          Wesołowski            141.79 -  299: 395   92
+   10    17 Łukasz         Pudło                 100.00 -  301: 401   50
+   11    18 Jadwiga        Szczurowska           107.86 -  336: 396   58
+   12    17 Marek          Cecot                 104.40 -  274: 436   54
+                                                          --------------- ---- ------
+                                                                    1182  / 12  98.50
+
+
+
+
+	Iwona Wieluńska 122.82 Kołobrzeg
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Maciej         Kuczyński             148.11 +  370: 365  198
+    2     7 Łukasz         Przyszlak             124.24 -  315: 450   74
+    3    12 Justyna        Sławińska-Budzich     140.50 +  394: 390  191
+    4     9 Marta          Świątkowska           113.26 +  420: 390  163
+    5     6 Alicja         Grąbczewska           121.86 -  344: 442   72
+    6     8 Maciej         Grąbczewski           145.95 -  341: 394   96
+    7    11 Anna           Arana                 116.32 -  239: 471   66
+    8    12 Monika         Siemaszko             125.67 -  326: 419   76
+    9    18 Jolanta        Olczak                102.25 +  512: 252  152
+   10    15 Małgorzata     Wesołowska            102.33 +  440: 255  152
+   11    11 Dariusz        Białobrzewski         126.61 -  338: 432   77
+   12    12 Łukasz         Przyszlak             124.24 +  386: 281  174
+                                                          --------------- ---- ------
+                                                                    1491  / 12 124.25
+
+
+
+
+	Alicja Grąbczewska 121.86 Szczecin
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Maciej         Grąbczewski           145.95 -  407: 445   96
+    2    12 Jadwiga        Szczurowska           107.86 +  395: 328  158
+    3     9 Jolanta        Olczak                102.25 +  443: 277  152
+    4     5 Małgorzata     Szmuksta              135.50 +  378: 279  186
+    5     6 Iwona          Wieluńska             122.82 +  442: 344  173
+    6     1 Bartosz        Bartczak              129.16 -  350: 368   79
+    7     7 Monika         Gawron-Cieślik        137.68 +  427: 357  188
+    8     4 Ireneusz       Moralewicz            129.13 -  319: 474   79
+    9     6 Dariusz        Białobrzewski         126.61 +  423: 339  177
+   10     5 Anita          Bruska                110.97 +  463: 344  161
+   11     5 Dariusz        Kuć                   136.00 +  351: 316  186
+   12     2 Franciszek     Łysek                 144.55 +  454: 279  195
+                                                          --------------- ---- ------
+                                                                    1830  / 12 152.50
+
+
+
+
+	Anna Arana 116.32 Kołobrzeg
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Franciszek     Łysek                 144.55 -  334: 427   95
+    2    21 Marek          Cecot                 104.40 +  426: 336  154
+    3    13 Dariusz        Białobrzewski         126.61 -  374: 462   77
+    4    15 Maciej         Kuczyński             148.11 -  373: 393   98
+    5    17 Walenty        Siemaszko             123.42 +  345: 303  173
+    6    16 Beata          Kiżewska              100.00 +  443: 333  150
+    7    11 Iwona          Wieluńska             122.82 +  471: 239  173
+    8     6 Anita          Bruska                110.97 -  287: 345   61
+    9    11 Monika         Gawron-Cieślik        137.68 -  279: 454   88
+   10    13 Jacek          Nowak                 104.27 +  382: 371  154
+   11    10 Zuzanna        Cichoń                115.75 +  418: 341  166
+   12     9 Maciej         Kuczyński             148.11 -  293: 413   98
+                                                          --------------- ---- ------
+                                                                    1487  / 12 123.92
+
+
+
+
+	Zuzanna Cichoń 115.75 Gdańsk         
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Łukasz         Tuszyński             143.27 -  377: 461   93
+    2    15 Krystyna       Czajkowska            101.72 +  427: 297  152
+    3     8 Beata          Kiżewska              100.00 -  357: 365   50
+    4    13 Teresa         Balewska              100.00 +  415: 324  150
+    5    11 Monika         Gawron-Cieślik        137.68 -  346: 355   88
+    6    13 Małgorzata     Wesołowska            102.33 +  369: 310  152
+    7    12 Maciej         Kuczyński             148.11 -  267: 469   98
+    8    14 Walenty        Siemaszko             123.42 -  298: 511   73
+    9    16 Halina         Cecot                 108.71 +  374: 268  159
+   10    16 Marek          Cecot                 104.40 +  352: 276  154
+   11    10 Anna           Arana                 116.32 -  341: 418   66
+   12    15 Marta          Świątkowska           113.26 -  302: 368   63
+                                                          --------------- ---- ------
+                                                                    1298  / 12 108.17
+
+
+
+
+	Paweł Wdziękoński 114.16 Świnoujście
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Rafał          Wesołowski            141.79 -  315: 420   92
+    2    13 Monika         Siemaszko             125.67 +  413: 352  176
+    3     7 Łukasz         Tuszyński             143.27 -  291: 472   93
+    4    18 Ewa            Tymińska              100.00 +  404: 189  150
+    5     9 Bartłomiej     Pawlak                126.40 -  333: 544   76
+    6    19 Jolanta        Olczak                102.25 -  317: 378   52
+    7    18 Halina         Cecot                 108.71 +  404: 364  159
+    8    17 Krystyna       Czajkowska            101.72 +  343: 257  152
+    9    12 Marta          Świątkowska           113.26 +  410: 294  163
+   10    10 Justyna        Sławińska-Budzich     140.50 -  326: 412   91
+   11    12 Monika         Gawron-Cieślik        137.68 +  321: 309  188
+   12    11 Błażej         Ochocki               107.45 -  323: 407   57
+                                                          --------------- ---- ------
+                                                                    1449  / 12 120.75
+
+
+
+
+	Marta Świątkowska 113.26 Wrocław                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Justyna        Sławińska-Budzich     140.50 -  334: 363   91
+    2    20 Walenty        Siemaszko             123.42 +  420: 386  173
+    3    15 Ewa            Tymińska              100.00 +  457: 311  150
+    4     9 Iwona          Wieluńska             122.82 -  390: 420   73
+    5    10 Anita          Bruska                110.97 +  452: 374  161
+    6     7 Małgorzata     Szmuksta              135.50 -  304: 408   86
+    7     8 Jakub          Onoszko               136.70 -  281: 492   87
+    8    13 Błażej         Ochocki               107.45 +  338: 331  157
+    9    12 Paweł          Wdziękoński           114.16 -  294: 410   64
+   10    14 Jadwiga        Szczurowska           107.86 +  408: 341  158
+   11    13 Maciej         Kuczyński             148.11 -  231: 440   98
+   12    15 Zuzanna        Cichoń                115.75 +  368: 302  166
+                                                          --------------- ---- ------
+                                                                    1464  / 12 122.00
+
+
+
+
+	Anita Bruska 110.97 Gdynia                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Monika         Gawron-Cieślik        137.68 +  381: 374  188
+    2     6 Maciej         Grąbczewski           145.95 +  356: 331  196
+    3     4 Jakub          Onoszko               136.70 -  289: 452   87
+    4    10 Dariusz        Kuć                   136.00 -  352: 400   86
+    5    10 Marta          Świątkowska           113.26 -  374: 452   63
+    6    12 Monika         Siemaszko             125.67 +  432: 324  176
+    7     9 Dorota         Kuć                   131.10 +  368: 361  181
+    8     6 Anna           Arana                 116.32 +  345: 287  166
+    9     7 Łukasz         Przyszlak             124.24 +  387: 339  174
+   10     5 Alicja         Grąbczewska           121.86 -  344: 463   72
+   11     8 Małgorzata     Szmuksta              135.50 +  441: 362  186
+   12     7 Łukasz         Tuszyński             143.27 -  296: 446   93
+                                                          --------------- ---- ------
+                                                                    1668  / 12 139.00
+
+
+
+
+	Halina Cecot 108.71 Kołobrzeg
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Jakub          Onoszko               136.70 -  288: 463   87
+    2    16 Monika         Gawron-Cieślik        137.68 -  256: 323   88
+    3    21 Jadwiga        Szczurowska           107.86 -  310: 362   58
+    4    21 Elżbieta       Fitał                 100.00 +  384: 284  150
+    5    18 Łukasz         Pudło                 100.00 -  296: 482   50
+    6    22 PAUZA
+    7    18 Paweł          Wdziękoński           114.16 -  364: 404   64
+    8    21 Ewa            Tymińska              100.00 +  363: 269  150
+    9    16 Zuzanna        Cichoń                115.75 -  268: 374   66
+   10    20 Jakub          Augustyn              100.00 +  417: 268  150
+   11    19 Marek          Cecot                 104.40 -  288: 408   54
+   12    19 Beata          Kiżewska              100.00 -  301: 334   50
+                                                          --------------- ---- ------
+                                                                     967  / 11  87.91
+
+
+
+
+	Jadwiga Szczurowska 107.86 Świnoujście
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Dariusz        Kuć                   136.00 -  322: 406   86
+    2    12 Alicja         Grąbczewska           121.86 -  328: 395   72
+    3    21 Halina         Cecot                 108.71 +  362: 310  159
+    4    20 Łukasz         Pudło                 100.00 -  325: 471   50
+    5    20 Ewa            Tymińska              100.00 +  435: 264  150
+    6    18 Marek          Cecot                 104.40 -  318: 331   54
+    7    17 Teresa         Balewska              100.00 -  302: 379   50
+    8    19 Jakub          Augustyn              100.00 +  305: 276  150
+    9    20 Krystyna       Czajkowska            101.72 +  384: 351  152
+   10    14 Marta          Świątkowska           113.26 -  341: 408   63
+   11    18 Walenty        Siemaszko             123.42 +  396: 336  173
+   12    16 Ala            Białobrzewska         127.39 +  360: 359  177
+                                                          --------------- ---- ------
+                                                                    1336  / 12 111.33
+
+
+
+
+	Błażej Ochocki 107.45 Przeźmierowo
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Małgorzata     Szmuksta              135.50 -  287: 445   86
+    2    17 Maciej         Kuczyński             148.11 +  380: 259  198
+    3    14 Dorota         Kuć                   131.10 +  422: 364  181
+    4     7 Maciej         Grąbczewski           145.95 -  267: 416   96
+    5    14 Justyna        Sławińska-Budzich     140.50 -  348: 419   91
+    6    14 Łukasz         Pudło                 100.00 +  392: 245  150
+    7    10 Łukasz         Przyszlak             124.24 -  322: 357   74
+    8    13 Marta          Świątkowska           113.26 -  331: 338   63
+    9    17 Beata          Kiżewska              100.00 +  373: 319  150
+   10    18 Teresa         Balewska              100.00 +  366: 340  150
+   11    14 Ala            Białobrzewska         127.39 +  533: 378  177
+   12    11 Paweł          Wdziękoński           114.16 +  407: 323  164
+                                                          --------------- ---- ------
+                                                                    1580  / 12 131.67
+
+
+
+
+	Marek Cecot 104.40 Kołobrzeg
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    12 Dorota         Kuć                   131.10 -  265: 424   81
+    2    21 Anna           Arana                 116.32 -  336: 426   66
+    3    19 Elżbieta       Fitał                 100.00 +  348: 280  150
+    4    17 Jacek          Nowak                 104.27 +  355: 322  154
+    5    15 Małgorzata     Szmuksta              135.50 -  325: 354   86
+    6    18 Jadwiga        Szczurowska           107.86 +  331: 318  158
+    7    15 Justyna        Sławińska-Budzich     140.50 -  318: 433   91
+    8    15 Łukasz         Pudło                 100.00 +  356: 340  150
+    9    15 Maciej         Kuczyński             148.11 -  346: 414   98
+   10    16 Zuzanna        Cichoń                115.75 -  276: 352   66
+   11    19 Halina         Cecot                 108.71 +  408: 288  159
+   12    17 Walenty        Siemaszko             123.42 +  436: 274  173
+                                                          --------------- ---- ------
+                                                                    1432  / 12 119.33
+
+
+
+
+	Jacek Nowak 104.27 Szczecin                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    13 Bartosz        Bartczak              129.16 -  361: 392   79
+    2    18 Małgorzata     Wesołowska            102.33 -  348: 413   52
+    3    18 Łukasz         Pudło                 100.00 +  372: 329  150
+    4    17 Marek          Cecot                 104.40 -  322: 355   54
+    5    19 Jakub          Augustyn              100.00 +  431: 237  150
+    6    17 Krystyna       Czajkowska            101.72 +  383: 294  152
+    7    14 Monika         Siemaszko             125.67 -  250: 386   76
+    8    18 Beata          Kiżewska              100.00 +  343: 340  150
+    9    13 Jerzy          Luter                 126.81 -  301: 316   77
+   10    13 Anna           Arana                 116.32 -  371: 382   66
+   11    17 Teresa         Balewska              100.00 +  477: 357  150
+   12    14 Łukasz         Pudło                 100.00 -  349: 370   50
+                                                          --------------- ---- ------
+                                                                    1206  / 12 100.50
+
+
+
+
+	Małgorzata Wesołowska 102.33 Kołobrzeg                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    14 Ireneusz       Moralewicz            129.13 -  274: 396   79
+    2    18 Jacek          Nowak                 104.27 +  413: 348  154
+    3    11 Maciej         Grąbczewski           145.95 -  327: 456   96
+    4    19 Jakub          Augustyn              100.00 +  373: 265  150
+    5     8 Łukasz         Tuszyński             143.27 -  336: 487   93
+    6    13 Zuzanna        Cichoń                115.75 -  310: 369   66
+    7    20 Krystyna       Czajkowska            101.72 -  285: 336   52
+    8    20 Elżbieta       Fitał                 100.00 +  400:   1  150
+    9    19 Ewa            Tymińska              100.00 +  321: 315  150
+   10    15 Iwona          Wieluńska             122.82 -  255: 440   73
+   11    15 Monika         Siemaszko             125.67 -  300: 383   76
+   12    18 Teresa         Balewska              100.00 -  335: 402   50
+                                                          --------------- ---- ------
+                                                                    1189  / 12  99.08
+
+
+
+
+	Jolanta Olczak 102.25 Kołobrzeg
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    15 Ala            Białobrzewska         127.39 -  342: 345   77
+    2    19 Paweł          Augustyn              100.00 +  363: 191  150
+    3     9 Alicja         Grąbczewska           121.86 -  277: 443   72
+    4    14 Justyna        Sławińska-Budzich     140.50 -  335: 341   91
+    5    16 Monika         Siemaszko             125.67 -  303: 423   76
+    6    19 Paweł          Wdziękoński           114.16 +  378: 317  164
+    7    16 Łukasz         Pudło                 100.00 -  250: 401   50
+    8    22 PAUZA
+    9    18 Iwona          Wieluńska             122.82 -  252: 512   73
+   10    21 Ewa            Tymińska              100.00 -  337: 396   50
+   11    20 Jakub          Augustyn              100.00 +  337: 295  150
+   12    20 Krystyna       Czajkowska            101.72 +  370: 363  152
+                                                          --------------- ---- ------
+                                                                    1105  / 11 100.45
+
+
+
+
+	Krystyna Czajkowska 101.72 Kołobrzeg
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    16 Jerzy          Luter                 126.81 -  293: 434   77
+    2    15 Zuzanna        Cichoń                115.75 -  297: 427   66
+    3    20 Walenty        Siemaszko             123.42 -  265: 302   73
+    4    22 Paweł          Augustyn              100.00 +  357: 190  150
+    5    22 PAUZA
+    6    17 Jacek          Nowak                 104.27 -  294: 383   54
+    7    20 Małgorzata     Wesołowska            102.33 +  336: 285  152
+    8    17 Paweł          Wdziękoński           114.16 -  257: 343   64
+    9    20 Jadwiga        Szczurowska           107.86 -  351: 384   58
+   10    19 Beata          Kiżewska              100.00 -  313: 371   50
+   11    21 Ewa            Tymińska              100.00 -  315: 404   50
+   12    20 Jolanta        Olczak                102.25 -  363: 370   52
+                                                          --------------- ---- ------
+                                                                     846  / 11  76.91
+
+
+
+
+	Jakub Augustyn 100.00 Kołobrzeg
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    17 Tomasz         Sehnal                126.81 -  258: 403   77
+    2    22 PAUZA
+    3    16 Małgorzata     Szmuksta              135.50 -  252: 427   86
+    4    19 Małgorzata     Wesołowska            102.33 -  265: 373   52
+    5    19 Jacek          Nowak                 104.27 -  237: 431   54
+    6    20 Walenty        Siemaszko             123.42 -  226: 435   73
+    7    21 Ewa            Tymińska              100.00 +  376: 324  150
+    8    19 Jadwiga        Szczurowska           107.86 -  276: 305   58
+    9    21 Teresa         Balewska              100.00 -  286: 405   50
+   10    20 Halina         Cecot                 108.71 -  268: 417   59
+   11    20 Jolanta        Olczak                102.25 -  295: 337   52
+   12    21 Ewa            Tymińska              100.00 +  323: 264  150
+                                                          --------------- ---- ------
+                                                                     861  / 11  78.27
+
+
+
+
+	Paweł Augustyn 100.00 Kołobrzeg
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    18 Dariusz        Białobrzewski         126.61 -  270: 365   77
+    2    19 Jolanta        Olczak                102.25 -  191: 363   52
+    3    22 Maciej         Kuczyński             148.11 -  247: 354   98
+    4    22 Krystyna       Czajkowska            101.72 -  190: 357   52
+                                                          --------------- ---- ------
+                                                                     279  /  4  69.75
+
+
+
+
+	Teresa Balewska 100.00 Reda
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    19 Bartłomiej     Pawlak                126.40 -  395: 464   76
+    2    14 Łukasz         Pudło                 100.00 +  339: 307  150
+    3    17 Monika         Siemaszko             125.67 -  278: 471   76
+    4    13 Zuzanna        Cichoń                115.75 -  324: 415   66
+    5    21 Elżbieta       Fitał                 100.00 +  366: 239  150
+    6    15 Dorota         Kuć                   131.10 -  307: 423   81
+    7    17 Jadwiga        Szczurowska           107.86 +  379: 302  158
+    8    16 Jerzy          Luter                 126.81 -  246: 415   77
+    9    21 Jakub          Augustyn              100.00 +  405: 286  150
+   10    18 Błażej         Ochocki               107.45 -  340: 366   57
+   11    17 Jacek          Nowak                 104.27 -  357: 477   54
+   12    18 Małgorzata     Wesołowska            102.33 +  402: 335  152
+                                                          --------------- ---- ------
+                                                                    1247  / 12 103.92
+
+
+
+
+	Elżbieta Fitał 100.00 Kołobrzeg
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    3    19 Marek          Cecot                 104.40 -  280: 348   54
+    4    21 Halina         Cecot                 108.71 -  284: 384   59
+    5    21 Teresa         Balewska              100.00 -  239: 366   50
+    6    21 Ewa            Tymińska              100.00 +  317: 280  150
+    7    19 Walenty        Siemaszko             123.42 -  260: 327   73
+    8    20 Małgorzata     Wesołowska            102.33 -    1: 400   52
+                                                          --------------- ---- ------
+                                                                     438  /  6  73.00
+
+
+
+
+	Beata Kiżewska 100.00 Świnoujście
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    20 Monika         Siemaszko             125.67 +  401: 397  176
+    2     3 Jakub          Onoszko               136.70 -  323: 366   87
+    3     8 Zuzanna        Cichoń                115.75 +  365: 357  166
+    4     8 Jerzy          Luter                 126.81 -  268: 359   77
+    5    13 Łukasz         Przyszlak             124.24 -  235: 451   74
+    6    16 Anna           Arana                 116.32 -  333: 443   66
+    7    22 PAUZA
+    8    18 Jacek          Nowak                 104.27 -  340: 343   54
+    9    17 Błażej         Ochocki               107.45 -  319: 373   57
+   10    19 Krystyna       Czajkowska            101.72 +  371: 313  152
+   11    16 Łukasz         Pudło                 100.00 -  420: 447   50
+   12    19 Halina         Cecot                 108.71 +  334: 301  159
+                                                          --------------- ---- ------
+                                                                    1118  / 11 101.64
+
+
+
+
+	Łukasz Pudło 100.00 Gdańsk
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    21 Łukasz         Przyszlak             124.24 -  301: 439   74
+    2    14 Teresa         Balewska              100.00 -  307: 339   50
+    3    18 Jacek          Nowak                 104.27 -  329: 372   54
+    4    20 Jadwiga        Szczurowska           107.86 +  471: 325  158
+    5    18 Halina         Cecot                 108.71 +  482: 296  159
+    6    14 Błażej         Ochocki               107.45 -  245: 392   57
+    7    16 Jolanta        Olczak                102.25 +  401: 250  152
+    8    15 Marek          Cecot                 104.40 -  340: 356   54
+    9    14 Małgorzata     Szmuksta              135.50 -  250: 438   86
+   10    17 Walenty        Siemaszko             123.42 +  401: 301  173
+   11    16 Beata          Kiżewska              100.00 +  447: 420  150
+   12    14 Jacek          Nowak                 104.27 +  370: 349  154
+                                                          --------------- ---- ------
+                                                                    1321  / 12 110.08
+
+
+
+
+	Ewa Tymińska 100.00 Gdańsk
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    22 PAUZA
+    2    11 Rafał          Wesołowski            141.79 -  275: 375   92
+    3    15 Marta          Świątkowska           113.26 -  311: 457   63
+    4    18 Paweł          Wdziękoński           114.16 -  189: 404   64
+    5    20 Jadwiga        Szczurowska           107.86 -  264: 435   58
+    6    21 Elżbieta       Fitał                 100.00 -  280: 317   50
+    7    21 Jakub          Augustyn              100.00 -  324: 376   50
+    8    21 Halina         Cecot                 108.71 -  269: 363   59
+    9    19 Małgorzata     Wesołowska            102.33 -  315: 321   52
+   10    21 Jolanta        Olczak                102.25 +  396: 337  152
+   11    21 Krystyna       Czajkowska            101.72 +  404: 315  152
+   12    21 Jakub          Augustyn              100.00 -  264: 323   50
+                                                          --------------- ---- ------
+                                                                     842  / 11  76.55
+
+
+</pre></div><div id='p_rundy' class='page'><pre>Wyniki poszczególnych rund turnieju VI Mistrzostwa Kołobrzegu
+
+
+
+Runda nr  1
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Rafał          Lenartowski          - Walenty        Siemaszko             558: 268
+   2 Iwona          Wieluńska            - Maciej         Kuczyński             370: 365
+   3 Maciej         Grąbczewski          - Alicja         Grąbczewska           445: 407
+   4 Anna           Arana                - Franciszek     Łysek                 334: 427
+   5 Łukasz         Tuszyński            - Zuzanna        Cichoń                461: 377
+   6 Paweł          Wdziękoński          - Rafał          Wesołowski            315: 420
+   7 Justyna        Sławińska-Budzich    - Marta          Świątkowska           363: 334
+   8 Anita          Bruska               - Monika         Gawron-Cieślik        381: 374
+   9 Jakub          Onoszko              - Halina         Cecot                 463: 288
+  10 Jadwiga        Szczurowska          - Dariusz        Kuć                   322: 406
+  11 Małgorzata     Szmuksta             - Błażej         Ochocki               445: 287
+  12 Marek          Cecot                - Dorota         Kuć                   265: 424
+  13 Bartosz        Bartczak             - Jacek          Nowak                 392: 361
+  14 Małgorzata     Wesołowska           - Ireneusz       Moralewicz            274: 396
+  15 Ala            Białobrzewska        - Jolanta        Olczak                345: 342
+  16 Krystyna       Czajkowska           - Jerzy          Luter                 293: 434
+  17 Tomasz         Sehnal               - Jakub          Augustyn              403: 258
+  18 Paweł          Augustyn             - Dariusz        Białobrzewski         270: 365
+  19 Bartłomiej     Pawlak               - Teresa         Balewska              464: 395
+  20 Beata          Kiżewska             - Monika         Siemaszko             401: 397
+  21 Łukasz         Przyszlak            - Łukasz         Pudło                 439: 301
+  22 Ewa            Tymińska             - BYE            BYE                   300:   0
+
+
+Runda nr  2
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Dariusz        Kuć                  - Rafał          Lenartowski           388: 415
+   2 Tomasz         Sehnal               - Bartłomiej     Pawlak                392: 366
+   3 Jakub          Onoszko              - Beata          Kiżewska              366: 323
+   4 Ireneusz       Moralewicz           - Łukasz         Tuszyński             393: 356
+   5 Małgorzata     Szmuksta             - Bartosz        Bartczak              291: 336
+   6 Maciej         Grąbczewski          - Anita          Bruska                331: 356
+   7 Łukasz         Przyszlak            - Iwona          Wieluńska             450: 315
+   8 Dariusz        Białobrzewski        - Jerzy          Luter                 314: 365
+   9 Franciszek     Łysek                - Justyna        Sławińska-Budzich     419: 402
+  10 Dorota         Kuć                  - Ala            Białobrzewska         335: 474
+  11 Rafał          Wesołowski           - Ewa            Tymińska              375: 275
+  12 Alicja         Grąbczewska          - Jadwiga        Szczurowska           395: 328
+  13 Monika         Siemaszko            - Paweł          Wdziękoński           352: 413
+  14 Teresa         Balewska             - Łukasz         Pudło                 339: 307
+  15 Zuzanna        Cichoń               - Krystyna       Czajkowska            427: 297
+  16 Monika         Gawron-Cieślik       - Halina         Cecot                 323: 256
+  17 Maciej         Kuczyński            - Błażej         Ochocki               259: 380
+  18 Jacek          Nowak                - Małgorzata     Wesołowska            348: 413
+  19 Jolanta        Olczak               - Paweł          Augustyn              363: 191
+  20 Walenty        Siemaszko            - Marta          Świątkowska           386: 420
+  21 Marek          Cecot                - Anna           Arana                 336: 426
+  22 Jakub          Augustyn             - BYE            BYE                   300:   0
+
+
+Runda nr  3
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Rafał          Lenartowski          - Rafał          Wesołowski            397: 403
+   2 Łukasz         Przyszlak            - Tomasz         Sehnal                279: 406
+   3 Franciszek     Łysek                - Ireneusz       Moralewicz            318: 491
+   4 Anita          Bruska               - Jakub          Onoszko               289: 452
+   5 Bartosz        Bartczak             - Ala            Białobrzewska         455: 202
+   6 Jerzy          Luter                - Bartłomiej     Pawlak                412: 415
+   7 Paweł          Wdziękoński          - Łukasz         Tuszyński             291: 472
+   8 Beata          Kiżewska             - Zuzanna        Cichoń                365: 357
+   9 Alicja         Grąbczewska          - Jolanta        Olczak                443: 277
+  10 Dariusz        Kuć                  - Monika         Gawron-Cieślik        385: 287
+  11 Małgorzata     Wesołowska           - Maciej         Grąbczewski           327: 456
+  12 Iwona          Wieluńska            - Justyna        Sławińska-Budzich     394: 390
+  13 Dariusz        Białobrzewski        - Anna           Arana                 462: 374
+  14 Błażej         Ochocki              - Dorota         Kuć                   422: 364
+  15 Marta          Świątkowska          - Ewa            Tymińska              457: 311
+  16 Jakub          Augustyn             - Małgorzata     Szmuksta              252: 427
+  17 Monika         Siemaszko            - Teresa         Balewska              471: 278
+  18 Łukasz         Pudło                - Jacek          Nowak                 329: 372
+  19 Elżbieta       Fitał                - Marek          Cecot                 280: 348
+  20 Walenty        Siemaszko            - Krystyna       Czajkowska            302: 265
+  21 Halina         Cecot                - Jadwiga        Szczurowska           310: 362
+  22 Paweł          Augustyn             - Maciej         Kuczyński             247: 354
+
+
+Runda nr  4
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Rafał          Wesołowski           - Jakub          Onoszko               419: 351
+   2 Ireneusz       Moralewicz           - Bartosz        Bartczak              376: 383
+   3 Rafał          Lenartowski          - Tomasz         Sehnal                389: 385
+   4 Łukasz         Tuszyński            - Franciszek     Łysek                 357: 436
+   5 Alicja         Grąbczewska          - Małgorzata     Szmuksta              378: 279
+   6 Bartłomiej     Pawlak               - Dariusz        Białobrzewski         374: 389
+   7 Błażej         Ochocki              - Maciej         Grąbczewski           267: 416
+   8 Jerzy          Luter                - Beata          Kiżewska              359: 268
+   9 Marta          Świątkowska          - Iwona          Wieluńska             390: 420
+  10 Dariusz        Kuć                  - Anita          Bruska                400: 352
+  11 Ala            Białobrzewska        - Łukasz         Przyszlak             359: 346
+  12 Monika         Gawron-Cieślik       - Monika         Siemaszko             391: 288
+  13 Teresa         Balewska             - Zuzanna        Cichoń                324: 415
+  14 Jolanta        Olczak               - Justyna        Sławińska-Budzich     335: 341
+  15 Maciej         Kuczyński            - Anna           Arana                 393: 373
+  16 Dorota         Kuć                  - Walenty        Siemaszko             418: 343
+  17 Jacek          Nowak                - Marek          Cecot                 322: 355
+  18 Ewa            Tymińska             - Paweł          Wdziękoński           189: 404
+  19 Małgorzata     Wesołowska           - Jakub          Augustyn              373: 265
+  20 Łukasz         Pudło                - Jadwiga        Szczurowska           471: 325
+  21 Halina         Cecot                - Elżbieta       Fitał                 384: 284
+  22 Krystyna       Czajkowska           - Paweł          Augustyn              357: 190
+
+
+Runda nr  5
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Bartosz        Bartczak             - Rafał          Wesołowski            414: 322
+   2 Jerzy          Luter                - Rafał          Lenartowski           298: 468
+   3 Tomasz         Sehnal               - Ireneusz       Moralewicz            391: 520
+   4 Maciej         Grąbczewski          - Dariusz        Kuć                   380: 408
+   5 Jakub          Onoszko              - Dariusz        Białobrzewski         294: 384
+   6 Iwona          Wieluńska            - Alicja         Grąbczewska           344: 442
+   7 Franciszek     Łysek                - Ala            Białobrzewska         479: 336
+   8 Łukasz         Tuszyński            - Małgorzata     Wesołowska            487: 336
+   9 Paweł          Wdziękoński          - Bartłomiej     Pawlak                333: 544
+  10 Anita          Bruska               - Marta          Świątkowska           374: 452
+  11 Zuzanna        Cichoń               - Monika         Gawron-Cieślik        346: 355
+  12 Dorota         Kuć                  - Maciej         Kuczyński             347: 384
+  13 Beata          Kiżewska             - Łukasz         Przyszlak             235: 451
+  14 Justyna        Sławińska-Budzich    - Błażej         Ochocki               419: 348
+  15 Marek          Cecot                - Małgorzata     Szmuksta              325: 354
+  16 Monika         Siemaszko            - Jolanta        Olczak                423: 303
+  17 Anna           Arana                - Walenty        Siemaszko             345: 303
+  18 Łukasz         Pudło                - Halina         Cecot                 482: 296
+  19 Jakub          Augustyn             - Jacek          Nowak                 237: 431
+  20 Jadwiga        Szczurowska          - Ewa            Tymińska              435: 264
+  21 Elżbieta       Fitał                - Teresa         Balewska              239: 366
+  22 Krystyna       Czajkowska           - BYE            BYE                   300:   0
+
+
+Runda nr  6
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Alicja         Grąbczewska          - Bartosz        Bartczak              350: 368
+   2 Dariusz        Białobrzewski        - Rafał          Lenartowski           361: 489
+   3 Ireneusz       Moralewicz           - Dariusz        Kuć                   313: 374
+   4 Rafał          Wesołowski           - Franciszek     Łysek                 329: 365
+   5 Bartłomiej     Pawlak               - Justyna        Sławińska-Budzich     387: 300
+   6 Łukasz         Tuszyński            - Jerzy          Luter                 399: 376
+   7 Małgorzata     Szmuksta             - Marta          Świątkowska           408: 304
+   8 Maciej         Grąbczewski          - Iwona          Wieluńska             394: 341
+   9 Maciej         Kuczyński            - Tomasz         Sehnal                307: 314
+  10 Monika         Gawron-Cieślik       - Łukasz         Przyszlak             414: 340
+  11 Ala            Białobrzewska        - Jakub          Onoszko               326: 481
+  12 Anita          Bruska               - Monika         Siemaszko             432: 324
+  13 Zuzanna        Cichoń               - Małgorzata     Wesołowska            369: 310
+  14 Błażej         Ochocki              - Łukasz         Pudło                 392: 245
+  15 Teresa         Balewska             - Dorota         Kuć                   307: 423
+  16 Anna           Arana                - Beata          Kiżewska              443: 333
+  17 Jacek          Nowak                - Krystyna       Czajkowska            383: 294
+  18 Jadwiga        Szczurowska          - Marek          Cecot                 318: 331
+  19 Jolanta        Olczak               - Paweł          Wdziękoński           378: 317
+  20 Walenty        Siemaszko            - Jakub          Augustyn              435: 226
+  21 Ewa            Tymińska             - Elżbieta       Fitał                 280: 317
+  22 Halina         Cecot                - BYE            BYE                   300:   0
+
+
+Runda nr  7
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Dariusz        Kuć                  - Bartosz        Bartczak              475: 289
+   2 Rafał          Lenartowski          - Franciszek     Łysek                 439: 335
+   3 Bartłomiej     Pawlak               - Rafał          Wesołowski            449: 437
+   4 Tomasz         Sehnal               - Łukasz         Tuszyński             354: 423
+   5 Dariusz        Białobrzewski        - Ireneusz       Moralewicz            277: 436
+   6 Małgorzata     Szmuksta             - Maciej         Grąbczewski           356: 446
+   7 Monika         Gawron-Cieślik       - Alicja         Grąbczewska           357: 427
+   8 Marta          Świątkowska          - Jakub          Onoszko               281: 492
+   9 Dorota         Kuć                  - Anita          Bruska                361: 368
+  10 Łukasz         Przyszlak            - Błażej         Ochocki               357: 322
+  11 Iwona          Wieluńska            - Anna           Arana                 239: 471
+  12 Maciej         Kuczyński            - Zuzanna        Cichoń                469: 267
+  13 Jerzy          Luter                - Ala            Białobrzewska         276: 441
+  14 Monika         Siemaszko            - Jacek          Nowak                 386: 250
+  15 Justyna        Sławińska-Budzich    - Marek          Cecot                 433: 318
+  16 Łukasz         Pudło                - Jolanta        Olczak                401: 250
+  17 Teresa         Balewska             - Jadwiga        Szczurowska           379: 302
+  18 Halina         Cecot                - Paweł          Wdziękoński           364: 404
+  19 Elżbieta       Fitał                - Walenty        Siemaszko             260: 327
+  20 Krystyna       Czajkowska           - Małgorzata     Wesołowska            336: 285
+  21 Jakub          Augustyn             - Ewa            Tymińska              376: 324
+  22 Beata          Kiżewska             - BYE            BYE                   300:   0
+
+
+Runda nr  8
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Bartosz        Bartczak             - Rafał          Lenartowski           452: 366
+   2 Dariusz        Kuć                  - Bartłomiej     Pawlak                364: 365
+   3 Łukasz         Tuszyński            - Maciej         Grąbczewski           371: 366
+   4 Ireneusz       Moralewicz           - Alicja         Grąbczewska           474: 319
+   5 Franciszek     Łysek                - Jakub          Onoszko               437: 374
+   6 Anna           Arana                - Anita          Bruska                287: 345
+   7 Rafał          Wesołowski           - Dariusz        Białobrzewski         357: 373
+   8 Łukasz         Przyszlak            - Maciej         Kuczyński             423: 351
+   9 Justyna        Sławińska-Budzich    - Monika         Gawron-Cieślik        389: 371
+  10 Ala            Białobrzewska        - Tomasz         Sehnal                344: 410
+  11 Dorota         Kuć                  - Małgorzata     Szmuksta              437: 332
+  12 Monika         Siemaszko            - Iwona          Wieluńska             419: 326
+  13 Błażej         Ochocki              - Marta          Świątkowska           331: 338
+  14 Walenty        Siemaszko            - Zuzanna        Cichoń                511: 298
+  15 Marek          Cecot                - Łukasz         Pudło                 356: 340
+  16 Jerzy          Luter                - Teresa         Balewska              415: 246
+  17 Paweł          Wdziękoński          - Krystyna       Czajkowska            343: 257
+  18 Jacek          Nowak                - Beata          Kiżewska              343: 340
+  19 Jadwiga        Szczurowska          - Jakub          Augustyn              305: 276
+  20 Małgorzata     Wesołowska           - Elżbieta       Fitał                 400:   1
+  21 Ewa            Tymińska             - Halina         Cecot                 269: 363
+  22 Jolanta        Olczak               - BYE            BYE                   300:   0
+
+
+Runda nr  9
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Bartosz        Bartczak             - Łukasz         Tuszyński             453: 332
+   2 Jakub          Onoszko              - Rafał          Lenartowski           428: 441
+   3 Bartłomiej     Pawlak               - Ireneusz       Moralewicz            366: 400
+   4 Franciszek     Łysek                - Dariusz        Kuć                   393: 344
+   5 Maciej         Grąbczewski          - Justyna        Sławińska-Budzich     367: 328
+   6 Alicja         Grąbczewska          - Dariusz        Białobrzewski         423: 339
+   7 Anita          Bruska               - Łukasz         Przyszlak             387: 339
+   8 Tomasz         Sehnal               - Dorota         Kuć                   300: 378
+   9 Rafał          Wesołowski           - Walenty        Siemaszko             395: 299
+  10 Ala            Białobrzewska        - Monika         Siemaszko             336: 305
+  11 Monika         Gawron-Cieślik       - Anna           Arana                 454: 279
+  12 Marta          Świątkowska          - Paweł          Wdziękoński           294: 410
+  13 Jacek          Nowak                - Jerzy          Luter                 301: 316
+  14 Łukasz         Pudło                - Małgorzata     Szmuksta              250: 438
+  15 Maciej         Kuczyński            - Marek          Cecot                 414: 346
+  16 Zuzanna        Cichoń               - Halina         Cecot                 374: 268
+  17 Beata          Kiżewska             - Błażej         Ochocki               319: 373
+  18 Jolanta        Olczak               - Iwona          Wieluńska             252: 512
+  19 Ewa            Tymińska             - Małgorzata     Wesołowska            315: 321
+  20 Krystyna       Czajkowska           - Jadwiga        Szczurowska           351: 384
+  21 Jakub          Augustyn             - Teresa         Balewska              286: 405
+
+
+Runda nr 10
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Bartosz        Bartczak             - Franciszek     Łysek                 388: 369
+   2 Rafał          Lenartowski          - Ireneusz       Moralewicz            434: 407
+   3 Maciej         Grąbczewski          - Bartłomiej     Pawlak                368: 382
+   4 Łukasz         Tuszyński            - Dariusz        Kuć                   332: 377
+   5 Anita          Bruska               - Alicja         Grąbczewska           344: 463
+   6 Jakub          Onoszko              - Monika         Gawron-Cieślik        419: 369
+   7 Dariusz        Białobrzewski        - Dorota         Kuć                   358: 376
+   8 Maciej         Kuczyński            - Rafał          Wesołowski            330: 395
+   9 Łukasz         Przyszlak            - Jerzy          Luter                 332: 411
+  10 Paweł          Wdziękoński          - Justyna        Sławińska-Budzich     326: 412
+  11 Monika         Siemaszko            - Tomasz         Sehnal                272: 391
+  12 Małgorzata     Szmuksta             - Ala            Białobrzewska         480: 318
+  13 Anna           Arana                - Jacek          Nowak                 382: 371
+  14 Jadwiga        Szczurowska          - Marta          Świątkowska           341: 408
+  15 Iwona          Wieluńska            - Małgorzata     Wesołowska            440: 255
+  16 Marek          Cecot                - Zuzanna        Cichoń                276: 352
+  17 Walenty        Siemaszko            - Łukasz         Pudło                 301: 401
+  18 Teresa         Balewska             - Błażej         Ochocki               340: 366
+  19 Beata          Kiżewska             - Krystyna       Czajkowska            371: 313
+  20 Halina         Cecot                - Jakub          Augustyn              417: 268
+  21 Jolanta        Olczak               - Ewa            Tymińska              337: 396
+
+
+Runda nr 11
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Jakub          Onoszko              - Bartosz        Bartczak              409: 358
+   2 Rafał          Lenartowski          - Łukasz         Tuszyński             451: 392
+   3 Ireneusz       Moralewicz           - Maciej         Grąbczewski           259: 446
+   4 Bartłomiej     Pawlak               - Franciszek     Łysek                 341: 367
+   5 Dariusz        Kuć                  - Alicja         Grąbczewska           316: 351
+   6 Jerzy          Luter                - Dorota         Kuć                   417: 372
+   7 Rafał          Wesołowski           - Tomasz         Sehnal                383: 310
+   8 Małgorzata     Szmuksta             - Anita          Bruska                362: 441
+   9 Justyna        Sławińska-Budzich    - Łukasz         Przyszlak             331: 302
+  10 Zuzanna        Cichoń               - Anna           Arana                 341: 418
+  11 Dariusz        Białobrzewski        - Iwona          Wieluńska             432: 338
+  12 Monika         Gawron-Cieślik       - Paweł          Wdziękoński           309: 321
+  13 Marta          Świątkowska          - Maciej         Kuczyński             231: 440
+  14 Błażej         Ochocki              - Ala            Białobrzewska         533: 378
+  15 Małgorzata     Wesołowska           - Monika         Siemaszko             300: 383
+  16 Łukasz         Pudło                - Beata          Kiżewska              447: 420
+  17 Jacek          Nowak                - Teresa         Balewska              477: 357
+  18 Walenty        Siemaszko            - Jadwiga        Szczurowska           336: 396
+  19 Halina         Cecot                - Marek          Cecot                 288: 408
+  20 Jakub          Augustyn             - Jolanta        Olczak                295: 337
+  21 Ewa            Tymińska             - Krystyna       Czajkowska            404: 315
+
+
+Runda nr 12
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Bartosz        Bartczak             - Rafał          Lenartowski           279: 450
+   2 Alicja         Grąbczewska          - Franciszek     Łysek                 454: 279
+   3 Ireneusz       Moralewicz           - Jakub          Onoszko               359: 358
+   4 Maciej         Grąbczewski          - Bartłomiej     Pawlak                366: 442
+   5 Rafał          Wesołowski           - Dariusz        Kuć                   418: 364
+   6 Justyna        Sławińska-Budzich    - Jerzy          Luter                 328: 387
+   7 Anita          Bruska               - Łukasz         Tuszyński             296: 446
+   8 Dorota         Kuć                  - Małgorzata     Szmuksta              407: 348
+   9 Anna           Arana                - Maciej         Kuczyński             293: 413
+  10 Tomasz         Sehnal               - Dariusz        Białobrzewski         332: 396
+  11 Paweł          Wdziękoński          - Błażej         Ochocki               323: 407
+  12 Iwona          Wieluńska            - Łukasz         Przyszlak             386: 281
+  13 Monika         Siemaszko            - Monika         Gawron-Cieślik        386: 456
+  14 Jacek          Nowak                - Łukasz         Pudło                 349: 370
+  15 Zuzanna        Cichoń               - Marta          Świątkowska           302: 368
+  16 Ala            Białobrzewska        - Jadwiga        Szczurowska           359: 360
+  17 Marek          Cecot                - Walenty        Siemaszko             436: 274
+  18 Teresa         Balewska             - Małgorzata     Wesołowska            402: 335
+  19 Beata          Kiżewska             - Halina         Cecot                 334: 301
+  20 Krystyna       Czajkowska           - Jolanta        Olczak                363: 370
+  21 Jakub          Augustyn             - Ewa            Tymińska              323: 264
+</pre></div><div id='p_ranking' class='page'><pre>Lista rankingowa na dzień 01-11-2021
+
+Lp.  Imię i nazwisko                Miasto               Rank.  Skalpy Gry
+---- ------------------------------ -------------------- ------ ------ ----
+   1 Kazimierz Merklejn             Warszawa             166.54  12990   78
+   2 Michał Alabrudziński           Włocławek            163.73   9660   59
+   3 Kacper Zegadło                 Warszawa             158.52  13157   83
+   4 Mariusz Skrobosz               Warszawa             158.35  27553  174
+   5 Łukasz Bobowski                Suchedniów           157.58  16231  103
+   6 Jakub Szymczak                 Łódź                 156.61   7204   46
+   7 Mirosław Uglik                 Warszawa             156.58   8142   52
+   8 Mariusz Wrześniewski           Kraków               156.25  21563  138
+   9 Miłosz Wrzałek                 Warszawa             155.02  20463  132
+  10 Krzysztof Mówka                Warszawa             153.51   9057   59
+  11 Maciej Czupryniak              Milanówek            152.96  15755  103
+  12 Krzysztof Obremski             Legnica              152.12   7454   49
+  13 Paweł Mazurek                  Polanica-Zdrój       152.08   5475   36
+  14 Marek Dudkiewicz               Milanówek            150.57  18370  122
+  15 Jakub Zaryński                 Świnoujście          150.10   7655   51
+  16 Grzegorz Kurowski              Warszawa             150.05  12754   85
+  17 Przemysław Herdzina            Kraków               149.59   5834   39
+  18 Michał Waszkiewicz             Białystok            148.44  11133   75
+  19 Joanna Juszczak                Warszawa             148.03   9918   67
+  20 Adrian Ziemniewicz             Białystok            147.63  12401   84
+  21 Karol Wyrębkiewicz             Kraków               147.30   5450   37
+  22 Wojciech Zemło                 Łódź                 146.53  10697   73
+  23 Tomasz Nasiłowski              Siedlce              146.31  15363  105
+  24 Michał Makowski                Warszawa             146.22   7311   50
+  25 Janusz Krupiński               Bytom                146.16  14031   96
+  26 Paweł Jackowski                Warszawa             145.89   6711   46
+  27 Jan Mrozowski                  Kraków               145.83  19396  133
+  28 Dariusz Kuć                    Stargard             145.76   5539   38
+  29 Katarzyna Polak                Warszawa             145.61   4514   31
+  30 Dawid Pikul                    Poznań               145.49   5674   39
+  31 Sławomir Piotrowski            Deszczno             145.39   5525   38
+  32 Franciszek Łysek               Warszawa             145.01  28711  198
+  33 Maciej Skrzypczak              Kędzierzyn-Koźle     144.83  15207  105
+  34 Rafał Błaszkiewicz             Milanówek            144.36  10971   76
+  35 Justyna Górka                  Kraków               144.21   8220   57
+  36 Kamil Górka                    Kraków               143.84  19850  138
+  37 Maciej Kuczyński               Gdynia               143.06   5150   36
+  38 Łukasz Tuszyński               Chłopowo             142.26  16360  115
+  39 Rafał Wesołowski               Warszawa             142.14  24448  172
+  40 Dariusz Ulatowski              Tuchola              141.88   7236   51
+  41 Szymon Płachta                 Warszawa             141.74   5528   39
+  42 Dariusz Putoń                  Ruda Śląska          141.72   9070   64
+  43 Jarosław Puchalski             Chrzanów Mały        141.41   6222   44
+  44 Artur Irzyk                    Strzyżów             141.26   8617   61
+  45 Szymon Dąbrowski               Warszawa             141.14  25969  184
+  46 Irena Sołdan                   Warszawa             140.54  22908  163
+  47 Marcin Stachowski              Wydartowo I          139.90   7135   51
+  48 Tomasz Zwoliński               Skierdy              139.89  11051   79
+  49 Katarzyna Ślusarska            Milanówek            139.82   4614   33
+  50 Piotr Domański                 Lublin               139.62   6702   48
+  51 Marcin Rogala                  Warszawa             139.24  22557  162
+  52 Wojciech Usakiewicz            Warszawa             138.67   4160   30
+  53 Mikołaj Cieplik                Ostrzeszów           138.25  13687   99
+  54 Andrzej Kroc                   Łódź                 138.21  11748   85
+  55 Marcin Orzechowski             Warszawa             138.16   5250   38
+  56 Justyna Sławińska-Budzich      Kolnik               138.06   6627   48
+  57 Marcin Mroziuk                 Warszawa             137.82   4548   33
+  58 Tomasz Lempart                 Kraków               136.59  13796  101
+  59 Jakub Onoszko                  Gdynia               136.49  13513   99
+  60 Maciej Grąbczewski             Szczecin             136.48   4231   31
+  61 Andrzej Rechowicz              Katowice             136.38   8728   64
+  62 Bartłomiej Pawlak              Stary Szwarocin      136.35   4227   31
+  63 Andrzej Kowalski               Gdańsk               135.92   4893   36
+  64 Jacek Mańko                    Poznań               135.78   5024   37
+  65 Robert Kamiński                Warszawa             135.62   8544   63
+  66 Dorota Kuć                     Stargard             135.47   5148   38
+  67 Adam Grzelec                   Poznań               135.03   7832   58
+  68 Daniel Janus                   Wąchock              134.82   5932   44
+  69 Krzysztof Sporczyk             Piaseczno            134.80  18468  137
+  70 Anna Demczyszyn                Bystra               134.61   4173   31
+  71 Grażyna Wesołowska             Łódź                 133.99  11255   84
+  72 Adam Sternik                   Kętrzyn              133.94   6563   49
+  73 Marek Rogalski                 Warszawa             133.92  19017  142
+  74 Małgorzata Deszczyńska         Warszawa             133.69  14305  107
+  75 Jakub Błażejewski              Poznań               133.50   8277   62
+  76 Agnieszka Matus                Milanówek            133.40  15741  118
+  77 Jakub Hassa                    Lutol Suchy          133.11   8785   66
+  78 Arkadiusz Kleniewski           Dzierzążnia          132.80  26294  198
+  79 Krzysztof Gibas                Kraków               132.77   5842   44
+  80 Krzysztof Kałuża               Sosnowiec            132.71  14333  108
+  81 Andrzej Kwiatkowski            Warszawa             132.59  15646  118
+  82 Natalia Ogierman               Katowice             132.43  11654   88
+  83 Bartosz Bartczak               Poznań               132.39  26081  197
+  84 Maciej Nawrocki                Babimost             132.00   9504   72
+  85 Konrad Mikusek                 Milanówek            131.28  13259  101
+  86 Dominik Ulejczyk               Będzin               131.16  21117  161
+  87 Adam Janicki                   Wrocław              131.10   7997   61
+  88 Szymon Stępień                 Bytom                130.94  11130   85
+  89 Natalia Woźniak                Dziwnówek            130.77   6146   47
+  90 Krzysztof Kodzis               Bydgoszcz            130.76   4838   37
+  91 Alicja Grąbczewska             Szczecin             130.65   4050   31
+  92 Wojciech Sołdan                Gdynia               130.53   4699   36
+  93 Mariusz Orzeł                  Nowe Miasto Lubawsk  130.48   8090   62
+  94 Małgorzata Szmuksta            Szczecin             130.11   4944   38
+  95 Agata Kuć                      Stargard             129.74   6487   50
+  96 Jerzy Matyasik                 Kraków               129.27  14608  113
+  97 Adam Ziemniewicz               Białystok            129.07   7873   61
+  98 Małgorzata Szczygieł           Radwanice            128.76   4249   33
+  99 Ewa Dunikowska                 Kraków               128.74   4377   34
+ 100 Marcin Ceglarek                Kraków               128.71   6564   51
+ 101 Marta Szcześniak               Krzyków              128.64   5660   44
+ 102 Marta Bajorek                  Warszawa             128.57   9000   70
+ 103 Jerzy Luter                    Bytom                128.41  25682  200
+ 104 Zdzisław Stańkowski            Rząska               128.25   6669   52
+ 105 Tomasz Sehnal                  Warszawa             127.76  19931  156
+ 106 Piotr Broda                    Sandomierz           127.63  15443  121
+ 107 Arkadiusz Łydka                Jaworzno             127.45  11343   89
+ 108 Rafał Matczak                  Milanówek            127.36   4203   33
+ 109 Arkadiusz Biegun               Kraków               126.67   4560   36
+ 110 Paweł Maciejczuk               Białystok            126.51  17206  136
+ 111 Czesław Grajewski              Białystok            126.23   9341   74
+ 112 Iwona Wieluńska                Kołobrzeg            125.47   4768   38
+ 113 Joanna Ostrowska               Warszawa             124.99  23998  192
+ 114 Zbigniew Rybak                 Warszawa             124.98  11248   90
+ 115 Ireneusz Kurzok                Mikołów              124.13   7572   61
+ 116 Stanisław Gasik                Warszawa             123.20   3696   30
+ 117 Zbigniew Wietecki              Gorzów Wielkopolski  123.12  11573   94
+ 118 Marianna Kozłowska             Białystok            123.02   9965   81
+ 119 Sławomir Rosochacz             Lublin               122.82   4790   39
+ 120 Grzegorz Pukniel               Łódź                 122.58   7845   64
+ 121 Marcin Kurowski                Racibórz             122.42  16772  137
+ 122 Teresa Zalewska                Racibórz             122.39  14809  121
+ 123 Tomasz A. Praga                Białystok            122.30   6115   50
+ 124 Bożena Guział                  Racibórz             122.20  13198  108
+ 125 Katarzyna Kowalska             Katowice             122.20   5621   46
+ 126 Izabela Chmielewska            Zabrze               121.84   5239   43
+ 127 Jacek Baltyn                   Suchedniów           121.61   3770   31
+ 128 Urszula Rechowicz              Katowice             121.52   8628   71
+ 129 Maciej Sylwestrzuk             Białystok            121.43   9107   75
+ 130 Marta Sztajnert                Międzyświeć          121.23   6789   56
+ 131 Łukasz Barbuziński             Wrocław              121.14   4361   36
+ 132 Dariusz Sowula                 Kraków               121.13   7268   60
+ 133 Maciej Dąbrowski               Warszawa             120.78  13044  108
+ 134 Dorota Rudzińska               Warszawa             120.61   3739   31
+ 135 Zdzisław Szota                 Warszawa             120.14   5046   42
+ 136 Bogdan Kozłowski               Białystok            119.49   9440   79
+ 137 Monika Siemaszko               Lipiany              119.06   4286   36
+ 138 Tomasz Siwiński                Zawiercie            118.78   5820   49
+ 139 Dariusz Buławko                Warszawa             118.66   9018   76
+ 140 Michał Szorc                   Białystok            118.65   5814   49
+ 141 Agata Kopta                    Wodzisław Śląski     118.46   6989   59
+ 142 Błażej Ochocki                 Przeźmierowo         118.36   5563   47
+ 143 Sławomir Wolski                Wrocław              118.14  12759  108
+ 144 Anita Bruska                   Gdynia               117.98   5663   48
+ 145 Sylwia Łada                    Inowrocław           117.84   4478   38
+ 146 Andrzej Bednaruk               Gdańsk               117.26   7153   61
+ 147 Dorota Stachowska              Wydartowo I          117.00   5967   51
+ 148 Michał Dąbrowski               Warszawa             116.75   3736   32
+ 149 Zuzanna Cichoń                 Gdańsk               116.28   4186   36
+ 150 Zofia Górka                    Łęczna               116.17   5576   48
+ 151 Joanna Brychcy                 Katowice             115.52   5314   46
+ 152 Beata Stelmach                 Warszawa             115.48  12703  110
+ 153 Walenty Siemaszko              Lipiany              115.11   4144   36
+ 154 Marta Świątkowska              Wrocław              114.70   8373   73
+ 155 Igor Kabalewski                Podkowa Leśna        114.43   8582   75
+ 156 Józef Burzyński                Ełk                  114.26  15425  135
+ 157 Anna Arana                     Kołobrzeg            113.91  10024   88
+ 158 Krzysztof Zawadzki             Sampława             113.14  17537  155
+ 159 Sławomir Wiśniowski            Jaworzno             113.07   4749   42
+ 160 Teresa Radziewicz              Juchnowiec Górny     112.22   6509   58
+ 161 Maria Skutela                  Warszawa             111.81   3466   31
+ 162 Maciej Onoszko                 Warszawa             111.61   4911   44
+ 163 Marcin Radwański               Nowa Wieś Wrocławska 111.21   3670   33
+ 164 Leszek Kilian                  Jaworzno             111.04  10882   98
+ 165 Marta Majewska                 Wadowice             109.38   7985   73
+ 166 Bernadeta Kudlińska            Osielsko             109.38   5250   48
+ 167 Mariusz Rostkowski             Częstochowa          107.53   4086   38
+ 168 Agnieszka Dawid                Kraków               107.35   4938   46
+ 169 Marek Cecot                    Kołobrzeg            106.67   8427   79
+ 170 Waldemar Wypchał               Kraków               106.36   6275   59
+ 171 Halina Cecot                   Kołobrzeg            105.31  10742  102
+ 172 Waldemar Kudliński             Osielsko             103.22   4645   45
+ 173 Wojciech Łysek                 Warszawa             102.21  12878  126
+ 174 Wojciech Wojtysiak             Warszawa             101.99  18461  181
+ 175 Krzysztof Nasiłowski           Siedlce              101.74   6206   61
+ 176 Aneta Szczyrzyca               Jaworzno             101.46  10349  102
+ 177 Marcin Stachowiak              Poznań               100.62   3723   37
+ 178 Zygmunt Skwarek                Katowice              99.86   3695   37
+ 179 Krystyna Perekitko             Ciechanowiec          99.26   3474   35
+ 180 Grażyna Chłopek                Jaworzno              97.53   4779   49
+ 181 Magdalena Mazuchowska-Żak      Łask                  96.64   3479   36
+ 182 Łukasz Soliwoda                Wrocław               95.22   5713   60
+ 183 Krystyna Czajkowska            Kołobrzeg             95.20   3332   35
+ 184 Teresa Balewska                Reda                  93.24   9044   97
+ 185 Andrzej Klich                  Jaworzno              91.85  10930  119
+ 186 Ewa Tymińska                   Gdańsk                90.63   3172   35
+ 187 Bernadeta Zapała               Jaworzno              90.19   6494   72
+ 188 Marzena  Skrzypczak            Kędzierzyn-Koźle      85.63   2569   30
+ 189 Janina Sobala                  Łęczna                85.21   2897   34
+ 190 Jan Pawłowski                  Warszawa              82.48   2557   31
+ 191 Julia  Orłowska                Warszawa              80.44   2574   32
+ 192 Dawid Węgrzyński               Zabrze                71.13   2205   31
+ 193 Wiktor Górnicki                Warszawa              69.85   2305   33
+
+
+
+
+Poczekalnia na dzień 01-11-2021
+
+Lp.  Imię i nazwisko                Miasto               Rank.  Skalpy Gry
+---- ------------------------------ -------------------- ------ ------ ----
+   1 Dawid Adamczyk                 Inowrocław           156.93   4394   28
+   2 Paweł Pogorzelski              Olsztyn              153.07   4133   27
+   3 Andrzej Rakoczy                Kraków               138.30   3734   27
+   4 Marek Reda                     Warszawa             157.12   4085   26
+   5 Tomasz Suchanek                Wrocław              134.23   3490   26
+   6 Ireneusz Moralewicz            Goleniów             129.65   3371   26
+   7 Monika Gawron-Cieślik          Szczecin             127.88   3325   26
+   8 Łukasz Przyszlak               Świnoujście          126.81   3297   26
+   9 Ewa Madejczyk                  Katowice             123.54   3212   26
+  10 Paweł Wdziękoński              Świnoujście          120.27   3127   26
+  11 Ryszard Korpalski              Wójtowice            115.58   3005   26
+  12 Artur Wawrzynowski             Żukowo               114.58   2979   26
+  13 Samir Chakrar                  Poznań               125.88   3147   25
+  14 Maciej Labe                    Poznań               117.16   2929   25
+  15 Liliana Dąbrowska              Warszawa             110.84   2771   25
+  16 Jadwiga Szczurowska            Świnoujście          106.04   2651   25
+  17 Jacek Nowak                    Szczecin              96.60   2415   25
+  18 Małgorzata Wesołowska          Kołobrzeg             93.44   2336   25
+  19 Aleksander Puchalski           Włocławek            151.50   3636   24
+  20 Konrad Sowula                  Kraków               134.00   3216   24
+  21 Agnieszka Walas                Kraków               133.50   3204   24
+  22 Sławomir Długosz               Ostróda              129.88   3117   24
+  23 Karolina Urbańska              Poznań               127.17   3052   24
+  24 Marek Roszak                   Poznań               125.58   3014   24
+  25 Ala Białobrzewska              Gdynia               124.96   2999   24
+  26 Halina Roszak                  Poznań               118.54   2845   24
+  27 Magdalena Cichoń               Korsze               116.33   2792   24
+  28 Iwona Duźniak                  Dębica               110.79   2659   24
+  29 Stanisław Olsztyn              Olsztyn              109.25   2622   24
+  30 Katarzyna Dębska               Ostróda              107.17   2572   24
+  31 Dorota Gwiazdoń                Nowa Wieś            104.67   2512   24
+  32 Jolanta Olczak                 Kołobrzeg            103.75   2490   24
+  33 Renata Andracka                Zwola                100.75   2418   24
+  34 Beata Kiżewska                 Świnoujście           93.88   2253   24
+  35 Roman Błoszyński               Rumejki               90.12   2163   24
+  36 Ziemowit Pazda                 Wrocław              109.87   2527   23
+  37 Lucyna Śniadach                Rumia                109.87   2527   23
+  38 Grzegorz Bajer                 Łódź                  98.30   2261   23
+  39 Marcin Taraszewski             Góra Kalwaria         91.00   2093   23
+  40 Daniel Taraszewski             Góra Kalwaria         85.74   1972   23
+  41 Elżbieta Zdankowska            Olsztyn               81.09   1865   23
+  42 Marian Zdankowski              Olsztyn               74.74   1719   23
+  43 Jolanta Zięba                  Zabrze               103.55   2278   22
+  44 Natalia Mówka                  Warszawa             102.25   2045   20
+  45 Mariusz Sylwestrzuk            Kobyłka              139.16   2644   19
+  46 Małgorzata Sulejewska          Kraków               134.32   2552   19
+  47 Radosław Chomentowski          Krosno               125.42   2383   19
+  48 Mariola Osajda-Matczak         Milanówek            120.47   2289   19
+  49 Wojciech Wąs                   Warszawa             110.37   2097   19
+  50 Józef Wietecki                 Gorzów Wielkopolski   94.58   1797   19
+  51 Elżbieta Fitał                 Kołobrzeg             75.47   1434   19
+  52 Karolina Sikora                Jaworzno              91.78   1652   18
+  53 Tomasz Górka                   Kraków               146.67   2200   15
+  54 Bartosz Morawski               Wrocław              145.80   2187   15
+  55 Marta Jamrozy                  Dąbrowa Górnicza     123.27   1849   15
+  56 Leszek Stecuła                 Bytom                121.53   1823   15
+  57 Michał Sak                     Lublin               120.67   1810   15
+  58 Michał Burak                   Wrocław              116.73   1751   15
+  59 Patryk Gadus                   Pszczew              153.57   2150   14
+  60 Maciej Kuć                     Stargard             128.43   1798   14
+  61 Jakub Kowalski                 Piaseczno            113.50   1589   14
+  62 Agnieszka Kłosowska            Warszawa              90.71   1270   14
+  63 Sylwia Bagińska-Worwa          Dąbrowa Górnicza      89.57   1254   14
+  64 Iwona Skubis                   Dąbrowa Górnicza      62.00    868   14
+  65 Dariusz Kosz                   Nysa                 146.23   1901   13
+  66 Bronisław Parada               Polanica-Zdrój       121.92   1585   13
+  67 Jarosław Michalak              Łódź                 116.69   1517   13
+  68 Grażyna Smereka                Racibórz             112.31   1460   13
+  69 Tadeusz Kondej                 Świnoujście          102.69   1335   13
+  70 Michał Sztajnert               Wisła                 90.15   1172   13
+  71 Agnieszka Antos                Racibórz              87.62   1139   13
+  72 Radosław Pastusiak             Gorzów Wielkopolski   78.54   1021   13
+  73 Dominik Urbacki                Pruszków             170.42   2045   12
+  74 Rafał Lenartowski              Gdynia               166.17   1994   12
+  75 Iwona Kucia                    Krosno               150.92   1811   12
+  76 Krystian Wandzlewicz           Nowe Miasto Lubawsk  145.17   1742   12
+  77 Sławomir Kucia                 Krosno               141.75   1701   12
+  78 Dariusz Białobrzewski          Gdynia               135.83   1630   12
+  79 Piotr Potoczek                 Nowy Sącz            134.42   1613   12
+  80 Klara Wigier                   Milanówek            133.75   1605   12
+  81 Weronika Rudnicka              Szczecin             124.75   1497   12
+  82 Piotr Maciejczak               Poznań               122.25   1467   12
+  83 Dorota Zielińska               Piaseczno            118.83   1426   12
+  84 Małgorzata Pochopień           Kraków               116.17   1394   12
+  85 Maria Uryga                    Kraków               115.67   1388   12
+  86 Jerzy Krzyżewski               Piasutno             113.92   1367   12
+  87 Aleksandra Brzeska             Piastów              113.00   1356   12
+  88 Przemysław Rybicki             Otwock               112.75   1353   12
+  89 Adrian Gerula                  Przemyśl             111.50   1338   12
+  90 Łukasz Pudło                   Gdańsk               110.08   1321   12
+  91 Robert Wagner                  Wrocław              109.67   1316   12
+  92 Katarzyna Okoniewska           Poznań               108.83   1306   12
+  93 Lidia Szpakowska               Jaworzno             108.50   1302   12
+  94 Rafał Stachowski               Police               103.08   1237   12
+  95 Lidia Żywna                    Gdynia               103.08   1237   12
+  96 Sławomir Nowak                 Jaworzno             102.83   1234   12
+  97 Przemysław Woiński             Łódź                 100.33   1204   12
+  98 Irena Kosieradzka              Warszawa              99.75   1197   12
+  99 Mariusz Michalski              Inowrocław            98.00   1176   12
+ 100 Alina Krasowska                Olsztyn               94.17   1130   12
+ 101 Agata Rosińska                 Warszawa              85.00   1020   12
+ 102 Bartosz Szalewski              Gdańsk                83.92   1007   12
+ 103 Grzegorz Włodarczyk            Pabianice             77.08    925   12
+ 104 Waldemar Dębski                Ostróda               72.08    865   12
+ 105 Joanna Ryduchowska-Wrzałek     Reda                  70.58    847   12
+ 106 Olga Swarcewicz                Warszawa             112.91   1242   11
+ 107 Juliusz Czupryniak             Warszawa             111.09   1222   11
+ 108 Katarzyna Rożany               Tczew                107.82   1186   11
+ 109 Jerzy Ciesielski               Łódź                 104.18   1146   11
+ 110 Barbara Wiśniewska             Gdańsk               103.82   1142   11
+ 111 Łukasz Moskal                  Kurzętnik            100.09   1101   11
+ 112 Nikodem Halek                  Kraków                96.18   1058   11
+ 113 Adam Graczyk                   Nowe Miasto Lubawsk   93.82   1032   11
+ 114 Marcel Smolarek                Nowa Wieś             92.73   1020   11
+ 115 Jakub Tyczyński                Kraków                91.55   1007   11
+ 116 Alicja Bielecka-Żabierek       Poznań                90.27    993   11
+ 117 Eulalia Halek                  Konary                90.00    990   11
+ 118 Marek Popczyk                  Tychy                 84.00    924   11
+ 119 Jakub Augustyn                 Kołobrzeg             78.27    861   11
+ 120 Jacek Kukułka                  Jaworzno              77.36    851   11
+ 121 Sławomir Gędoś                 Jaworzno              75.09    826   11
+ 122 Krystyna Kuczyńska             Olsztyn               73.18    805   11
+ 123 Tadeusz Sokólski               Białystok             70.64    777   11
+ 124 Eugeniusz Tuszyński            Nowe Miasto Lubawsk   69.45    764   11
+ 125 Małgorzata Gędoś               Kraków                68.27    751   11
+ 126 Paweł Jankowski                Nowe Miasto Lubawsk   56.55    622   11
+ 127 Martyna Śmiechura              Nowa Wieś             56.00    616   11
+ 128 Grzegorz Piotrkiewicz          Warszawa             130.80   1308   10
+ 129 Grzegorz Abraham               Warszawa              54.30    543   10
+ 130 Dariusz Wiza                   Katowice              56.89    512    9
+ 131 Maciej Sancewicz               Gorzów Wielkopolski  160.00   1280    8
+ 132 Barbara Obremska               Wrocław              172.00   1204    7
+ 133 Kamil Kister                   Warszawa             158.29   1108    7
+ 134 Wojciech Gołęcki               Inowrocław           153.57   1075    7
+ 135 Agnieszka Dymkowska            Bielsko-Biała        136.71    957    7
+ 136 Jarosław Olek                  Warszawa             130.71    915    7
+ 137 Paweł Morga                    Warszawa             115.14    806    7
+ 138 Justyna Nieznalska             Jejkowice            111.86    783    7
+ 139 Jerzy Kędra                    Warszawa             110.57    774    7
+ 140 Agata Bojarska                 Gdańsk               105.00    735    7
+ 141 Agnieszka  Putkiewicz          Warszawa              99.57    697    7
+ 142 Andrzej  Pastor                Warszawa              96.57    676    7
+ 143 Barbara Spodniewska            Tychy                 91.86    643    7
+ 144 Sebastian Wojtysiak            Warszawa              90.86    636    7
+ 145 Dorota Berezowska              Warszawa              87.86    615    7
+ 146 Mirosław Dymkowski             Bielsko-Biała         85.86    601    7
+ 147 Aleksandra Nowicka             Puszczykowo           64.57    452    7
+ 148 Mateusz Stańczyk               Tarnów               136.67    820    6
+ 149 Andrzej Stańczyk               Tarnów                99.67    598    6
+ 150 Hanna Siemionow                Białystok             93.33    560    6
+ 151 Marian  Majszyk                Mińsk Mazowiecki      79.33    476    6
+ 152 Magda Wilczek                  Warszawa              74.00    444    6
+ 153 Łukasz Trendak                 Warszawa              70.67    424    6
+ 154 Jolanta Dąbrowska              Żory                  67.50    405    6
+ 155 Szymon Jachimek                Mosty                101.80    509    5
+ 156 Olga Żukowicz                  Ustronie Morskie      97.00    485    5
+ 157 Sebastian Orzelski             Bielsk Podlaski       89.20    446    5
+ 158 Jana Jachimek                  Mosty                 60.00    300    5
+ 159 Magdalena  Bochan-Jachimek     Mosty                 55.80    279    5
+ 160 Tomasz Kłosowski               Kraków                52.40    262    5
+ 161 Emilia Stachowiak              Poznań                51.80    259    5
+ 162 Magdalena Podlaska             Warszawa             108.50    434    4
+ 163 Jolanta Kosmowska              Warszawa             104.75    419    4
+ 164 Paweł Augustyn                 Kołobrzeg             69.75    279    4
+ 165 Maciej  Ciuba                  Warszawa             103.00    309    3
+ 166 Kuba Kallus                    Katowice              97.33    292    3
+ 167 Mateusz Pietrosiński           Michałowice           75.00    225    3
+ 168 Dorota Nurzyńska               Piaseczno             63.00    189    3
+ 169 Joanna Neyman                  Puszczykowo           79.50    159    2
+ 170 Konrad Pajorski                Puszczykowo           72.00    144    2
+ 171 Jarosław Pietrzak              Warszawa              54.00    108    2
+ 172 Ewa Wawoczny                   Racibórz              54.00    108    2
+ 173 Jakub Miłosławski              Warszawa              50.00    100    2
+ 174 Tymon Jachimek                 Mosty                 93.00     93    1
+ 175 Aleksandra Lembas              Kraków                82.00     82    1
+ 176 Krzysztof Lipczyński           Puszczykowo           78.00     78    1
+ 177 Jan Dzierżko                   Warszawa              72.00     72    1
+ 178 Agnieszka Olkiewicz            Toruń                 72.00     72    1
+</pre></div><div id='p_przebieg' class='page'>
+
+    </div><div style="clear:both;width:100%;" class="alignright">
+
+<script>
+<!--
+if ((document.getElementById("content").offsetHeight + document.getElementById("top").offsetHeight) > screen.height)
+    document.write("<br /><br /><a href='#top'>do góry</a>");
+-->
+</script>
+
+</div>
+</div>
+
+<div id="bottom">
+<ul id="bottomlinks">
+<div class='onleft'>
+ Osób on-line: 63</div>
+    <li><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+    <li><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+    <li><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+    <li><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+    <li><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+    <li><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+</ul>
+    SCRABBLE® jest zastrzeżonym znakiem towarowym J.W. Spears &amp; Sons&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://www.pfs.org.pl/prawaautorskie.php">© Prawa autorskie</a>
+</div>
+</body>
+</html>

@@ -1,0 +1,728 @@
+
+<html>
+<head>
+    <title>Polska Federacja Scrabble :: Festiwal Gier WOW!</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="files/img/favicon.ico" />
+    <link rel="stylesheet" href="files/css/style.css" type="text/css" />
+	<link rel="stylesheet" href="files/css/style-index.css" type="text/css" />
+    <!--[if IE]><link rel="stylesheet" type="text/css" href="files/css/styleie.css" /><![endif]-->
+    <!--[if lt IE 7.]><script defer type="text/javascript" src="files/js/pngfix.js"></script><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="files/js/minmax.js"></script><![endif]-->
+    <script type="text/javascript" src="files/js/jquery.js"></script>
+    <script type="text/javascript" src="files/js/jquery-bp.js"></script>
+    <script type="text/javascript" src="files/js/java.js"></script>
+    <script>jSubmenu ("turnieje","kalendarz");jKalendarz();</script>
+    <script>
+    var url, page;
+
+    page = 'info';
+    url  = document.location.toString();
+
+    if (url.match ('#')) {
+      page = url.split ('#')[1];
+      if ($.inArray (page, [ 'info', 'relacja', 'klasyfikacja', 'hh', 'rundy', 'ranking', 'przebieg' ]) == -1)
+        page = 'info';
+    }
+
+    $(document).ready(function(){
+        $('a#listaucz').bind('click', function(event){
+            $('div#lista').toggle();
+            event.preventDefault();
+        }).toggle(function() { $(this).text('schowaj listę uczestników'); }, function() { $(this).text("pokaż listę uczestników"); });
+        $('div#lista table tr:last td').css({"border-bottom" : "none"});
+
+        $("a.przycisk").click (function (e) {
+            if ($(this).attr ('href') !== '#')
+                return true;
+
+            e.preventDefault ();
+
+            id       = this.id;
+            this.id += 'tmp';
+            window.location.hash = id;
+            this.id  = id;
+
+            $(".page").hide ();
+            $(".page#p_" + id).show ();
+
+            $("a.przycisk").removeClass ('active');
+            $(this).addClass ('active');
+
+            return false;
+        });
+
+        $("a.przycisk#" + page).click ();
+        $('html, body').animate ({ scrollTop: 0 }, 0);
+    });
+    </script>
+  <style type="text/css">
+    .page {
+        display: none;
+    }
+    #szczegoly{
+        width: 100%;
+        border-spacing: 0;
+        margin-top: 30px;
+        text-align: left;
+        font-size: inherit;
+    }
+    #szczegoly td{
+        padding: 10px 20px 10px 0;
+        vertical-align: top;
+    }
+    #szczegoly td:first-child{
+        font-weight: bold;
+        width: 160px;
+    }
+    div#lista{
+        display:none;
+        margin-top: 15px;
+    }
+    div#lista table{
+        margin-top: 10px;
+        text-align: left;
+        font-size: inherit;
+    }
+    div#lista table td{
+        padding: 3px 8px;
+        border-bottom: 1px dashed #1576AE;
+    }
+    div#lista table th{
+        padding: 0px 5px 10px 5px;
+    }
+    div#lista table td.ptaszek{
+        text-align: center;
+        background: url('files/img/tick.png') no-repeat center center;
+    }
+    div#lista table th{
+        white-space: nowrap;
+        width: auto;
+    }
+    div#lista table td:first-child, div#lista table th:first-child{
+        text-align:right;
+        width: auto;
+    }
+    </style>
+</head>
+
+<body>
+
+<script type="text/javascript">setMenu();</script>
+
+<div id="top" onclick="location.href='https://www.pfs.org.pl'">
+</div>
+<div id="menu">
+
+    <div id="m_glowna">
+        <div class="tab"><a href="https://www.pfs.org.pl/index.php"></a></div>
+
+        <ul>
+            <li class="sublink" id="aktualnosci"><a href="https://www.pfs.org.pl">Aktualności</a></li>
+            <li class="sublink" id="nowy"><a href="https://www.pfs.org.pl/dlanowych.php">Jestem tu nowy</a></li>
+            <li class="sublink" id="anagramator"><a href="https://www.pfs.org.pl/osps_online.php?main=1">Słownik online</a></li>
+            <li class="sublink" id="siodemka"><a href="https://www.pfs.org.pl/siodemka.php?main=1">Siódemka tygodnia</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+            <li class="sublink" id="dlasponsorow"><a href="https://www.pfs.org.pl/dlasponsorow.php">Dla sponsorów</a></li>
+            <li class="sublink" id="kontakt"><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+        </ul>
+    </div>
+    <div id="m_turnieje">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kalendarz.php"></a></div>
+        <ul>
+            <li class="sublink" id="kalendarz"><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+            <li class="sublink" id="regulaminy"><a href="https://www.pfs.org.pl/regulaminy.php">Regulaminy</a></li>
+            <li class="sublink" id="sedziowie"><a href="https://www.pfs.org.pl/sedziowie.php">Sędziowie</a></li>
+            <li class="sublink" id="gp"><a href="https://www.pfs.org.pl/gp2026.php">Grand Prix</a></li>
+<!--            <li class="sublink" id="mr"><a href="https://www.pfs.org.pl/mr2020.php">Mistrzostwa Regionów</a></li>-->
+            <li class="sublink" id="archiwum"><a href="https://www.pfs.org.pl/archiwum.php">Historia</a></li>
+            <li class="sublink" id="galeria"><a href="https://www.pfs.org.pl/galeria.php">Zdjęcia</a></li>
+            <li class="sublink" id="rekordy"><a href="https://www.pfs.org.pl/rekordy.php">Rekordy</a></li>
+        </ul>
+    </div>
+    <div id="m_pfs">
+        <div  class="tab"><a href="https://www.pfs.org.pl/opfs.php"></a></div>
+        <ul>
+            <li class="sublink" id="opfs"><a href="https://www.pfs.org.pl/opfs.php">O PFS</a></li>
+            <li class="sublink" id="jakprzystapic"><a href="https://www.pfs.org.pl/jakprzystapic.php">Jak przystąpić</a></li>
+            <li class="sublink" id="dlaczlonkow"><a href="https://www.pfs.org.pl/dlaczlonkow.php">Dla członków</a></li>
+            <li class="sublink" id="wladze"><a href="https://www.pfs.org.pl/wladze.php">Władze</a></li>
+            <li class="sublink" id="komisje"><a href="https://www.pfs.org.pl/komisje.php">Komisje</a></li>
+            <li class="sublink" id="statut"><a href="https://www.pfs.org.pl/statut.php">Statut</a></li>
+            <li class="sublink" id="uchwaly"><a href="https://www.pfs.org.pl/uchwaly.php">Uchwały</a></li>
+            <li class="sublink" id="honorowi"><a href="https://www.pfs.org.pl/honorowi.php">Honorowi członkowie</a></li>
+            <li class="sublink" id="finanse"><a href="https://www.pfs.org.pl/finanse.php">Finanse</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabble">
+        <div  class="tab"><a href="https://www.pfs.org.pl/osps_online.php?desktop=1"></a></div>
+        <ul>
+            <li class="sublink" id="osps_online"><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+            <li class="sublink" id="zds"><a href="https://www.pfs.org.pl/zds2.php">ZDS</a></li>
+            <li class="sublink" id="osps"><a href="https://www.pfs.org.pl/osps.php">OSPS</a></li>
+            <li class="sublink" id="aktualizacje"><a href="https://www.pfs.org.pl/osps_aktualizacje.php">Aktualizacje</a></li>
+            <li class="sublink" id="dwojki"><a href="https://www.pfs.org.pl/dwojki.php">2-literówki</a></li>
+            <li class="sublink" id="trojki"><a href="https://www.pfs.org.pl/trojki.php">3-literówki</a></li>
+            <li class="sublink" id="siodemkat"><a href="https://www.pfs.org.pl/siodemka.php">Siódemka tygodnia</a></li>
+            <li class="sublink" id="slowneroznosci"><a href="https://www.pfs.org.pl/slowneroznosci.php">Słowne różności</a></li>
+        </ul>
+    </div>
+    <div id="m_ranking">
+        <div  class="tab"><a href="https://www.pfs.org.pl/ranking.php"></a></div>
+        <ul>
+            <li class="sublink" id="aktranking"><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+            <li class="sublink" id="medale"><a href="https://www.pfs.org.pl/medale.php">Klasyfikacja medalowa</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabblisci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/mistrzowiepolski.php"></a></div>
+        <ul>
+            <li class="sublink" id="mistrzowiepolski"><a href="https://www.pfs.org.pl/mistrzowiepolski.php">Mistrzowie Polski</a></li>
+            <li class="sublink" id="zdobywcypp"><a href="https://www.pfs.org.pl/zdobywcypp.php">Zdobywcy Pucharu Polski</a></li>
+            <li class="sublink" id="zwyciezcygp"><a href="https://www.pfs.org.pl/zwyciezcygp.php">Zwycięzcy Grand Prix</a></li>
+            <li class="sublink" id="liderzyrankingu"><a href="https://www.pfs.org.pl/liderzyrankingu.php">Liderzy rankingu</a></li>
+            <li class="sublink" id="zwyciezcylemans"><a href="https://www.pfs.org.pl/zwyciezcylemans.php">Zwycięzcy 24h Le Mans</a></li>
+            <li class="sublink" id="zwyciezcykmp"><a href="https://www.pfs.org.pl/zwyciezcykmp.php">KMP</a>
+        </ul>
+    </div>
+    <div id="m_kluby">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kluby.php"></a></div>
+        <ul>
+            <li class="sublink" id="rejestrklubow"><a href="https://www.pfs.org.pl/kluby.php">Rejestr klubów</a></li>
+            <li class="sublink" id="kmp"><a href="https://www.pfs.org.pl/kmp.php">KMP</a></li>
+            <li class="sublink" id="wiescizklubow"><a href="https://www.pfs.org.pl/wiescizklubow.php">Wieści z klubów</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/about.php">Statystyki klubowe</a></li>
+        </ul>
+    </div>
+    <div id="m_roznosci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/historia.php"></a></div>
+        <ul>
+            <li class="sublink" id="historia"><a href="https://www.pfs.org.pl/historia.php">Historia</a></li>
+            <li class="sublink" id="odmiany"><a href="https://www.pfs.org.pl/odmiany.php">Odmiany</a></li>
+            <li class="sublink" id="anegdoty"><a href="https://www.pfs.org.pl/anegdoty.php">Anegdoty</a></li>
+            <li class="sublink" id="scrabblealia"><a href="https://www.pfs.org.pl/scrabblealia.php">Scrabblealia</a></li>
+            <li class="sublink" id="scrabblenet"><a href="https://www.pfs.org.pl/scrabblenet.php">Scrabble w internecie</a></li>
+            <li class="sublink" id="programy"><a href="https://www.pfs.org.pl/programy.php">Programy</a></li>
+            <li class="sublink" id="download"><a href="https://www.pfs.org.pl/download.php">Do pobrania</a></li>
+            <li class="sublink" id="ksiazki"><a href="https://www.pfs.org.pl/ksiazki.php">Książki</a></li>
+            <li class="sublink" id="slowniczek"><a href="https://www.pfs.org.pl/slowniczek.php">Słowniczek</a></li>
+        </ul>
+    </div>
+    <div id="m_english">
+        <div  class="tab"><a href="https://www.pfs.org.pl/english.php"></a></div>
+        <ul>
+            <li class="sublink" id="about"><a href="https://www.pfs.org.pl/english.php">About Polish Scrabble</a></li>
+            <li class="sublink" id="news"><a href="https://www.pfs.org.pl/en_news.php">News</a></li>
+            <li class="sublink" id="bartek"><a href="https://www.pfs.org.pl/bartek.php">Bartek w Johor Bahru</a></li>
+            <li class="sublink" id="franko"><a href="https://www.pfs.org.pl/franko.php">Scrabble frankofońskie</a></li>
+        </ul>
+    </div>
+</div>
+
+<div id="submenu"></div>
+<div id="content">
+<div id='nextTours'>
+		<div class='nextTour' onclick='location.href="turniej.php?id=545"'>
+			<div class='karteczka small1'>
+				<span class='miasto'>Pszczyna</span><span class='dzien'><span class='big'> 2</span><br />października</span></div>
+			<div class='kartka big1'>
+				<span class='miasto'>Pszczyna</span>
+				<span class='dzien'><b> 2- 3 października</b></span>
+				<span class='nazwaturnieju'>I Turniej Scrabble o Puchar Burmistrza Pszczyny</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=547"'>
+			<div class='karteczka small2'>
+				<span class='miasto'>Warszawa</span><span class='dzien'><span class='big'> 2</span><br />października</span></div>
+			<div class='kartka big2'>
+				<span class='miasto'>Warszawa</span>
+				<span class='dzien'><b> 2 października</b></span>
+				<span class='nazwaturnieju'>Festiwal Gier WOW!</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=536"'>
+			<div class='karteczka small3'>
+				<span class='miasto'>Łódź</span><span class='dzien'><span class='big'> 9</span><br />października</span></div>
+			<div class='kartka big3'>
+				<span class='miasto'>Łódź</span>
+				<span class='dzien'><b> 9-10 października</b></span>
+				<span class='nazwaturnieju'>XVI Mistrzostwa Łodzi</span></div>
+		</div></div><div class='naglowekrelacji'><span class='tytul'>Turniej HMMM... dla Mistrzyczka<span class='nazwa'>02 października 2010 —  Festiwal Gier WOW!</span></span><a href='#' id='info' class='przycisk'>Informacje</a><a href='#' id='relacja' class='przycisk'>Relacja</a><a href='#' id='klasyfikacja' class='przycisk'>Wyniki</a><a href='#' id='hh' class='przycisk'>HH</a><a href='#' id='rundy' class='przycisk'>Rundy</a><div class='galleries'><img src='files/img/gallery.png' style='visibility:hidden;' alt='galeria' /></div></div><h1 style='color:black; margin-top:0px; margin-bottom:30px; padding: 0px'>Festiwal Gier WOW!<span>Warszawa, 02 października 2010 <br>turniej&nbsp;nierankingowy</span></h1><div id='p_relacja' class='page'><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><div class='relacja' style='clear:both;'><div>Na początku czekały nas same niespodzianki. Po pierwsze – przyjemne – turniej  nierankingowy przyciągnął w sumie ponad 20 uczestników :) Po drugie – zaskakujące – pojawiła się dwuosobowa ekipa z Łodzi :). Po trzecie – nieprzyjemne – wycofanie się sponsora spowodowało wyparowanie puli nagród i pucharów :(.<br><br>
+
+W gronie Macaków przywykliśmy do wszelkich niespodzianek, więc poradziliśmy sobie z tą sytuacją skutecznie i bez problemu. Dzięki temu do ostatniej rundy trwała zacięta rywalizacja o jak najwyższe miejsce w turnieju oraz w rankingu klubowym, do którego zaliczyliśmy turniej HMM... przepraszam WOW. 
+O zwycięstwie zadecydował bezpośredni pojedynek Klubowego Mistrza Polski 2010, Mistrzyczka z debiutantem w macakowych rozgrywkach Mirasem (może przychodzenie do klubu wejdzie mu w nawyk – zapraszamy!). Mistrzyczek swoją wygraną przypieczętował wygraną w całym turnieju – "zapewniając" Mirasowi cenne trzecie miejsce. Po wygranej z Ponurym Mleczarzem na drugie miejsce wysunął się El Magico. <br><br>
+Wszystkim przemknęło przez głowy pytanie, które miejsce zajęłaby Kroteczka, gdyby mogła grać od początku turnieju, a nie tylko po przerwie obiadowej – cztery gry i cztery wygrane... <br><br>
+
+Warto wspomnieć jeszcze, że nagrodę dla najlepszej kobiety turnieju wymogła na mnie, jako prowadzącemu zawody – przyznam, nie opierałem się długo :) – powszechnie znana i lubiana Niczyj kotek. Skoro Wymagaj to mój nick, to sami powiedzcie...  Ach, a nagrodą był rzecz jasna... całus!!!<br><br>
+ 
+Odnotujmy również trzy zwycięstwa czyniącego postępy Szymanka 95:), nadto nasi łódzcy goście tym razem potwierdzili słuszność idei olimpijskiej – najważniejszy jest nie wynik, a udział w zawodach:). Wyniki nie były może specjalnie zaskakujące, ale zapewne i Gościu, i Marek Przedporcie, nie mówiąc o Hopelessie czy Larrym, liczyli na lepsze lokaty. O sobie już nic nie powiem...
+Wszystkich zainteresowanych rozszyfrowaniem powyższej relacji i wynikami, odsyłam do stosownej zakładki.
+
+</div><div class='autor'>relacja: wymagaj - Krzysztof Sporczyk</div></div><div style='clear:both;'></div></div><div id='p_info' class='page'><br><p align='center'></p><br><br><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br>Zobacz, jak było na poprzednich turniejach:<br><a href='turniej.php?id=432'>Warsaw Open 2008</a><br><a href='turniej.php?id=92'>Festiwal Gier Towarzyskich Warsaw Open 2007</a><br><a href='turniej.php?id=114'>Festiwal Gier Towarzyskich Monopoly Warsaw Open 2006</a><br><table id='szczegoly' class='ramkadolna'><tr><td>Rodzaj turnieju</td><td>otwarty</td></tr><tr><td>Sposób rozgrywania</td><td>- liczba rund: <b>7</b><br>
+- system: połówkowy (rundy 1-6), duńczyk (runda 7)</td></tr><tr><td>Miejsce rozgrywek</td><td>Wyższa Szkoła Ekonomiczno-Informatyczna<br>
+ul. Stokłosy 3, Warszawa</td></tr><tr><td>Harmonogram</td><td><b>Sobota, 2 października (7 rund)</b><br>
+10:00 &mdash; rozpoczęcie turnieju<br>
+ok. 14:00-15:00 &mdash; przerwa obiadowa<br>
+ok. 18:00 &mdash; rozdanie nagród i&nbsp;zakończenie turnieju</td></tr><tr><td>Wpisowe</td><td>Udział w&nbsp;turnieju jest bezpłatny</td></tr><tr><td>Dojazd</td><td>metrem do&nbsp;stacji Stokłosy</td></tr><tr><td>Wyżywienie</td><td>we własnym zakresie</td></tr><tr><td>Nagrody</td><td>puchary<br>
+nagrody rzeczowe</td></tr></table><br /><br /></div><div id='p_klasyfikacja' class='page'><pre>20101002_Turniej_WOW - 2 października 2010 r. (7 rund)
+
+MIEJSCE                                              p-ty RAZEM
+---------------------------------------------------------------
+  1.Miłosz Wrzałek          139 Reda                2986  6.0
+  2.Marek Syczuk            100 Warszawa            2910  5.0
+  3.Mirosław Uglik          100 Warszawa            2865  5.0
+  4.Magdalena Kublik        118 Warszawa            2640  5.0
+  5.Piotr Pietuchowski      132 Białystok           2846  4.0
+  6.Marek Reda              129 Wołomin             2695  4.0
+  7.Tomasz Łapka            119 Warszawa            2616  4.0
+  8.Dorota Maciejuk         106 Warszawa            1624  4.0
+  9.Grzegorz Kurowski       131 Warszawa            2919  3.0
+ 10.Andrzej Kroc            100 Łódź                2333  3.0
+ 11.Anna Arana              110 Warszawa            2315  3.0
+ 12.Szymon Dąbrowski        100 Warszawa            2250  3.0
+ 13.Anna Kuc                100 Warszawa            2104  3.0
+ 14.Radosław Więch          100 Warszawa            2277  2.5
+ 15.Krzysztof Sporczyk      122 Piaseczno           2376  2.0
+ 16.Stanisław Rydzik        139 Warszawa            1918  2.0
+ 17.Piotr Jakubiak          131 Warszawa            1153  2.0
+ 18.Adam Janicki            100 Łódź                2427  1.0
+ 19.Sylwia Buks             100 Warszawa            1732  1.0
+ 20.Jakub Mioduszewski      116 Żyrardów            1007  1.0
+ 21.Liliana Dąbrowska       100 Warszawa             643  0.0
+</pre></div><div id='p_hh' class='page'><pre>20101002_Turniej_WOW
+
+  1  Miłosz Wrzałek          139 Reda              
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1    1   10  Jakub Mioduszewski     116   +  431:302   166
+   2    4    7  Krzysztof Sporczyk     122   +  532:269   172
+   3    1    4  Grzegorz Kurowski      131   +  458:434   181
+   4    1   18  Mirosław Uglik         100   +  370:355   150
+   5    1    3  Piotr Pietuchowski     132   +  433:338   182
+   6    1    9  Magdalena Kublik       118   -  387:428    68
+   7    9   18  Mirosław Uglik         100   +  375:371   150
+                                                 --------------
+                                                 RANKING: 152.71
+
+
+  2  Stanisław Rydzik        139 Warszawa          
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1    2   11  Anna Arana             110   +  434:305   160
+   2    3    6  Marek Reda             129   +  447:365   179
+   3    2   18  Mirosław Uglik         100   -  287:439    50
+   4    4    3  Piotr Pietuchowski     132   -  397:498    82
+   5    4    8  Tomasz Łapka           119   -  353:413    69
+   6            PAUZA
+   7            PAUZA
+                                                 --------------
+                                                 RANKING: 108.00
+
+
+  3  Piotr Pietuchowski      132 Białystok         
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1    3   12  Radosław Więch         100   +  443:257   150
+   2    1    4  Grzegorz Kurowski      131   -  314:396    81
+   3    5   19  Sylwia Buks            100   +  533:292   150
+   4    4    2  Stanisław Rydzik       139   +  498:397   189
+   5    1    1  Miłosz Wrzałek         139   -  338:433    89
+   6    2   18  Mirosław Uglik         100   -  320:394    50
+   7    3   17  Andrzej Kroc           100   +  400:336   150
+                                                 --------------
+                                                 RANKING: 122.71
+
+
+  4  Grzegorz Kurowski       131 Warszawa          
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1    4   13  Anna Kuc               100   +  477:285   150
+   2    1    3  Piotr Pietuchowski     132   +  396:314   182
+   3    1    1  Miłosz Wrzałek         139   -  434:458    89
+   4    2    9  Magdalena Kublik       118   -  422:465    68
+   5    2   18  Mirosław Uglik         100   -  300:378    50
+   6    5   20  Dorota Maciejuk        106   -  399:460    56
+   7    5    7  Krzysztof Sporczyk     122   +  491:439   172
+                                                 --------------
+                                                 RANKING: 109.57
+
+
+  5  Piotr Jakubiak          131 Warszawa          
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1    5   14  Szymon Dąbrowski       100   +  389:349   150
+   2    5   15  Marek Syczuk           100   -  357:504    50
+   3    4    6  Marek Reda             129   +  407:369   179
+   4            PAUZA
+   5            PAUZA
+   6            PAUZA
+   7            PAUZA
+                                                 --------------
+                                                 RANKING: 126.33
+
+
+  6  Marek Reda              129 Wołomin           
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1    6   15  Marek Syczuk           100   +  415:369   150
+   2    3    2  Stanisław Rydzik       139   -  365:447    89
+   3    4    5  Piotr Jakubiak         131   -  369:407    81
+   4    5   17  Andrzej Kroc           100   +  410:270   150
+   5    5   13  Anna Kuc               100   +  525:238   150
+   6    3    8  Tomasz Łapka           119   -  307:366    69
+   7    4   12  Radosław Więch         100   +  304:302   150
+                                                 --------------
+                                                 RANKING: 119.86
+
+
+  7  Krzysztof Sporczyk      122 Piaseczno         
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1    7   16  Adam Janicki           100   +  356:353   150
+   2    4    1  Miłosz Wrzałek         139   -  269:532    89
+   3    6   17  Andrzej Kroc           100   -  310:333    50
+   4    7   20  Dorota Maciejuk        106   -  269:355    56
+   5    9   19  Sylwia Buks            100   -  319:451    50
+   6    9   21  Liliana Dąbrowska      100   +  414:298   150
+   7    5    4  Grzegorz Kurowski      131   -  439:491    81
+                                                 --------------
+                                                 RANKING: 89.43
+
+
+  8  Tomasz Łapka            119 Warszawa          
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1    8   17  Andrzej Kroc           100   -  290:379    50
+   2    8    9  Magdalena Kublik       118   -  312:322    68
+   3    9   14  Szymon Dąbrowski       100   +  455:250   150
+   4    6   11  Anna Arana             110   +  390:297   160
+   5    4    2  Stanisław Rydzik       139   +  413:353   189
+   6    3    6  Marek Reda             129   +  366:307   179
+   7    2   15  Marek Syczuk           100   -  390:410    50
+                                                 --------------
+                                                 RANKING: 120.86
+
+
+  9  Magdalena Kublik        118 Warszawa          
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1    9   18  Mirosław Uglik         100   -  234:477    50
+   2    8    8  Tomasz Łapka           119   +  322:312   169
+   3    7   10  Jakub Mioduszewski     116   +  442:335   166
+   4    2    4  Grzegorz Kurowski      131   +  465:422   181
+   5    3   15  Marek Syczuk           100   +  413:341   150
+   6    1    1  Miłosz Wrzałek         139   +  428:387   189
+   7    1   20  Dorota Maciejuk        106   -  336:445    56
+                                                 --------------
+                                                 RANKING: 137.29
+
+
+ 10  Jakub Mioduszewski      116 Żyrardów          
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1    1    1  Miłosz Wrzałek         139   -  302:431    89
+   2    6   16  Adam Janicki           100   +  370:364   150
+   3    7    9  Magdalena Kublik       118   -  335:442    68
+   4            PAUZA
+   5            PAUZA
+   6            PAUZA
+   7            PAUZA
+                                                 --------------
+                                                 RANKING: 102.33
+
+
+ 11  Anna Arana              110 Warszawa          
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1    2    2  Stanisław Rydzik       139   -  305:434    89
+   2    7   14  Szymon Dąbrowski       100   +  360:331   150
+   3    8   13  Anna Kuc               100   -  290:304    50
+   4    6    8  Tomasz Łapka           119   -  297:390    69
+   5    8   16  Adam Janicki           100   +  385:346   150
+   6    7   12  Radosław Więch         100   -  318:409    50
+   7    7   21  Liliana Dąbrowska      100   +  360:345   150
+                                                 --------------
+                                                 RANKING: 101.14
+
+
+ 12  Radosław Więch          100 Warszawa          
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1    3    3  Piotr Pietuchowski     132   -  257:443    82
+   2    9   13  Anna Kuc               100   -  281:285    50
+   3            PAUZA
+   4    8   19  Sylwia Buks            100   +  426:280   150
+   5    6   20  Dorota Maciejuk        106   -  302:364    56
+   6    7   11  Anna Arana             110   +  409:318   160
+   7    4    6  Marek Reda             129   -  302:304    79
+                                                 --------------
+                                                 RANKING: 96.17
+
+
+ 13  Anna Kuc                100 Warszawa          
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1    4    4  Grzegorz Kurowski      131   -  285:477    81
+   2    9   12  Radosław Więch         100   +  285:281   150
+   3    8   11  Anna Arana             110   +  304:290   160
+   4    3   15  Marek Syczuk           100   -  309:376    50
+   5    5    6  Marek Reda             129   -  238:525    79
+   6    8   14  Szymon Dąbrowski       100   -  302:309    50
+   7    8   16  Adam Janicki           100   +  381:316   150
+                                                 --------------
+                                                 RANKING: 102.86
+
+
+ 14  Szymon Dąbrowski        100 Warszawa          
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1    5    5  Piotr Jakubiak         131   -  349:389    81
+   2    7   11  Anna Arana             110   -  331:360    60
+   3    9    8  Tomasz Łapka           119   -  250:455    69
+   4    9   16  Adam Janicki           100   +  331:294   150
+   5    7   17  Andrzej Kroc           100   -  325:423    50
+   6    8   13  Anna Kuc               100   +  309:302   150
+   7    6   19  Sylwia Buks            100   +  355:334   150
+                                                 --------------
+                                                 RANKING: 101.43
+
+
+ 15  Marek Syczuk            100 Warszawa          
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1    6    6  Marek Reda             129   -  369:415    79
+   2    5    5  Piotr Jakubiak         131   +  504:357   181
+   3    3   16  Adam Janicki           100   +  430:337   150
+   4    3   13  Anna Kuc               100   +  376:309   150
+   5    3    9  Magdalena Kublik       118   -  341:413    68
+   6    4   17  Andrzej Kroc           100   +  480:255   150
+   7    2    8  Tomasz Łapka           119   +  410:390   169
+                                                 --------------
+                                                 RANKING: 135.29
+
+
+ 16  Adam Janicki            100 Łódź              
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1    7    7  Krzysztof Sporczyk     122   -  353:356    72
+   2    6   10  Jakub Mioduszewski     116   -  364:370    66
+   3    3   15  Marek Syczuk           100   -  337:430    50
+   4    9   14  Szymon Dąbrowski       100   -  294:331    50
+   5    8   11  Anna Arana             110   -  346:385    60
+   6    6   19  Sylwia Buks            100   +  417:375   150
+   7    8   13  Anna Kuc               100   -  316:381    50
+                                                 --------------
+                                                 RANKING: 71.14
+
+
+ 17  Andrzej Kroc            100 Łódź              
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1    8    8  Tomasz Łapka           119   +  379:290   169
+   2    2   18  Mirosław Uglik         100   -  337:451    50
+   3    6    7  Krzysztof Sporczyk     122   +  333:310   172
+   4    5    6  Marek Reda             129   -  270:410    79
+   5    7   14  Szymon Dąbrowski       100   +  423:325   150
+   6    4   15  Marek Syczuk           100   -  255:480    50
+   7    3    3  Piotr Pietuchowski     132   -  336:400    82
+                                                 --------------
+                                                 RANKING: 107.43
+
+
+ 18  Mirosław Uglik          100 Warszawa          
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1    9    9  Magdalena Kublik       118   +  477:234   168
+   2    2   17  Andrzej Kroc           100   +  451:337   150
+   3    2    2  Stanisław Rydzik       139   +  439:287   189
+   4    1    1  Miłosz Wrzałek         139   -  355:370    89
+   5    2    4  Grzegorz Kurowski      131   +  378:300   181
+   6    2    3  Piotr Pietuchowski     132   +  394:320   182
+   7    9    1  Miłosz Wrzałek         139   -  371:375    89
+                                                 --------------
+                                                 RANKING: 149.71
+
+
+ 19  Sylwia Buks             100 Warszawa          
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1            PAUZA
+   2            PAUZA
+   3    5    3  Piotr Pietuchowski     132   -  292:533    82
+   4    8   12  Radosław Więch         100   -  280:426    50
+   5    9    7  Krzysztof Sporczyk     122   +  451:319   172
+   6    6   16  Adam Janicki           100   -  375:417    50
+   7    6   14  Szymon Dąbrowski       100   -  334:355    50
+                                                 --------------
+                                                 RANKING: 80.80
+
+
+ 20  Dorota Maciejuk         106 Warszawa          
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1            PAUZA
+   2            PAUZA
+   3            PAUZA
+   4    7    7  Krzysztof Sporczyk     122   +  355:269   172
+   5    6   12  Radosław Więch         100   +  364:302   150
+   6    5    4  Grzegorz Kurowski      131   +  460:399   181
+   7    1    9  Magdalena Kublik       118   +  445:336   168
+                                                 --------------
+                                                 RANKING: 167.75
+
+
+ 21  Liliana Dąbrowska       100 Warszawa          
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1            PAUZA
+   2            PAUZA
+   3            PAUZA
+   4            PAUZA
+   5            PAUZA
+   6    9    7  Krzysztof Sporczyk     122   -  298:414    72
+   7    7   11  Anna Arana             110   -  345:360    60
+                                                 --------------
+                                                 RANKING: 66.00
+
+
+</pre></div><div id='p_rundy' class='page'><pre>Wyniki 1 rundy
+
+1.        M.Wrzałek - J.Mioduszewski   431 : 302
+2.         S.Rydzik - A.Arana          434 : 305
+3.   P.Pietuchowski - R.Więch          443 : 257
+4.            A.Kuc - G.Kurowski       285 : 477
+5.      S.Dąbrowski - P.Jakubiak       349 : 389
+6.           M.Reda - M.Syczuk         415 : 369
+7.       K.Sporczyk - A.Janicki        356 : 353
+8.           A.Kroc - T.Łapka          379 : 290
+9.          M.Uglik - M.Kublik         477 : 234
+
+
+Wyniki 2 rundy
+
+1.       G.Kurowski - P.Pietuchowski   396 : 314
+2.          M.Uglik - A.Kroc           451 : 337
+3.         S.Rydzik - M.Reda           447 : 365
+4.        M.Wrzałek - K.Sporczyk       532 : 269
+5.         M.Syczuk - P.Jakubiak       504 : 357
+6.   J.Mioduszewski - A.Janicki        370 : 364
+7.          A.Arana - S.Dąbrowski      360 : 331
+8.         M.Kublik - T.Łapka          322 : 312
+9.          R.Więch - A.Kuc            281 : 285
+
+
+Wyniki 3 rundy
+
+1.       G.Kurowski - M.Wrzałek        434 : 458
+2.         S.Rydzik - M.Uglik          287 : 439
+3.        A.Janicki - M.Syczuk         337 : 430
+4.       P.Jakubiak - M.Reda           407 : 369
+5.   P.Pietuchowski - S.Buks           533 : 292
+6.       K.Sporczyk - A.Kroc           310 : 333
+7.         M.Kublik - J.Mioduszewski   442 : 335
+8.            A.Kuc - A.Arana          304 : 290
+9.          T.Łapka - S.Dąbrowski      455 : 250
+10.          R.Więch - PAUZA
+
+
+Wyniki 4 rundy
+
+1.          M.Uglik - M.Wrzałek        355 : 370
+2.         M.Kublik - G.Kurowski       465 : 422
+3.         M.Syczuk - A.Kuc            376 : 309
+4.   P.Pietuchowski - S.Rydzik         498 : 397
+5.           A.Kroc - M.Reda           270 : 410
+6.          A.Arana - T.Łapka          297 : 390
+7.       D.Maciejuk - K.Sporczyk       355 : 269
+8.           S.Buks - R.Więch          280 : 426
+9.      S.Dąbrowski - A.Janicki        331 : 294
+
+
+Wyniki 5 rundy
+
+1.        M.Wrzałek - P.Pietuchowski   433 : 338
+2.       G.Kurowski - M.Uglik          300 : 378
+3.         M.Syczuk - M.Kublik         341 : 413
+4.          T.Łapka - S.Rydzik         413 : 353
+5.           M.Reda - A.Kuc            525 : 238
+6.          R.Więch - D.Maciejuk       302 : 364
+7.      S.Dąbrowski - A.Kroc           325 : 423
+8.        A.Janicki - A.Arana          346 : 385
+9.       K.Sporczyk - S.Buks           319 : 451
+
+
+Wyniki 6 rundy
+
+1.        M.Wrzałek - M.Kublik         387 : 428
+2.          M.Uglik - P.Pietuchowski   394 : 320
+3.           M.Reda - T.Łapka          307 : 366
+4.           A.Kroc - M.Syczuk         255 : 480
+5.       D.Maciejuk - G.Kurowski       460 : 399
+6.        A.Janicki - S.Buks           417 : 375
+7.          A.Arana - R.Więch          318 : 409
+8.            A.Kuc - S.Dąbrowski      302 : 309
+9.      L.Dąbrowska - K.Sporczyk       298 : 414
+
+
+Wyniki 7 rundy
+
+1.         M.Kublik - D.Maciejuk       336 : 445
+2.          T.Łapka - M.Syczuk         390 : 410
+3.           A.Kroc - P.Pietuchowski   336 : 400
+4.          R.Więch - M.Reda           302 : 304
+5.       K.Sporczyk - G.Kurowski       439 : 491
+6.           S.Buks - S.Dąbrowski      334 : 355
+7.          A.Arana - L.Dąbrowska      360 : 345
+8.            A.Kuc - A.Janicki        381 : 316
+9.          M.Uglik - M.Wrzałek        371 : 375</pre></div><div id='p_ranking' class='page'><pre></pre></div><div id='p_przebieg' class='page'>
+
+    </div><div style="clear:both;width:100%;" class="alignright">
+
+<script>
+<!--
+if ((document.getElementById("content").offsetHeight + document.getElementById("top").offsetHeight) > screen.height)
+    document.write("<br /><br /><a href='#top'>do góry</a>");
+-->
+</script>
+
+</div>
+</div>
+
+<div id="bottom">
+<ul id="bottomlinks">
+<div class='onleft'>
+ Osób on-line: 61</div>
+    <li><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+    <li><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+    <li><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+    <li><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+    <li><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+    <li><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+</ul>
+    SCRABBLE® jest zastrzeżonym znakiem towarowym J.W. Spears &amp; Sons&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://www.pfs.org.pl/prawaautorskie.php">© Prawa autorskie</a>
+</div>
+</body>
+</html>

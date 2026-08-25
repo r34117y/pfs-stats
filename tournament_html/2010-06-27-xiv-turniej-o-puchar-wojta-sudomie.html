@@ -1,0 +1,1356 @@
+
+<html>
+<head>
+    <title>Polska Federacja Scrabble :: XIV Turniej o Puchar Wójta</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="files/img/favicon.ico" />
+    <link rel="stylesheet" href="files/css/style.css" type="text/css" />
+	<link rel="stylesheet" href="files/css/style-index.css" type="text/css" />
+    <!--[if IE]><link rel="stylesheet" type="text/css" href="files/css/styleie.css" /><![endif]-->
+    <!--[if lt IE 7.]><script defer type="text/javascript" src="files/js/pngfix.js"></script><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="files/js/minmax.js"></script><![endif]-->
+    <script type="text/javascript" src="files/js/jquery.js"></script>
+    <script type="text/javascript" src="files/js/jquery-bp.js"></script>
+    <script type="text/javascript" src="files/js/java.js"></script>
+    <script>jSubmenu ("turnieje","kalendarz");jKalendarz();</script>
+    <script>
+    var url, page;
+
+    page = 'info';
+    url  = document.location.toString();
+
+    if (url.match ('#')) {
+      page = url.split ('#')[1];
+      if ($.inArray (page, [ 'info', 'relacja', 'klasyfikacja', 'hh', 'rundy', 'ranking', 'przebieg' ]) == -1)
+        page = 'info';
+    }
+
+    $(document).ready(function(){
+        $('a#listaucz').bind('click', function(event){
+            $('div#lista').toggle();
+            event.preventDefault();
+        }).toggle(function() { $(this).text('schowaj listę uczestników'); }, function() { $(this).text("pokaż listę uczestników"); });
+        $('div#lista table tr:last td').css({"border-bottom" : "none"});
+
+        $("a.przycisk").click (function (e) {
+            if ($(this).attr ('href') !== '#')
+                return true;
+
+            e.preventDefault ();
+
+            id       = this.id;
+            this.id += 'tmp';
+            window.location.hash = id;
+            this.id  = id;
+
+            $(".page").hide ();
+            $(".page#p_" + id).show ();
+
+            $("a.przycisk").removeClass ('active');
+            $(this).addClass ('active');
+
+            return false;
+        });
+
+        $("a.przycisk#" + page).click ();
+        $('html, body').animate ({ scrollTop: 0 }, 0);
+    });
+    </script>
+  <style type="text/css">
+    .page {
+        display: none;
+    }
+    #szczegoly{
+        width: 100%;
+        border-spacing: 0;
+        margin-top: 30px;
+        text-align: left;
+        font-size: inherit;
+    }
+    #szczegoly td{
+        padding: 10px 20px 10px 0;
+        vertical-align: top;
+    }
+    #szczegoly td:first-child{
+        font-weight: bold;
+        width: 160px;
+    }
+    div#lista{
+        display:none;
+        margin-top: 15px;
+    }
+    div#lista table{
+        margin-top: 10px;
+        text-align: left;
+        font-size: inherit;
+    }
+    div#lista table td{
+        padding: 3px 8px;
+        border-bottom: 1px dashed #1576AE;
+    }
+    div#lista table th{
+        padding: 0px 5px 10px 5px;
+    }
+    div#lista table td.ptaszek{
+        text-align: center;
+        background: url('files/img/tick.png') no-repeat center center;
+    }
+    div#lista table th{
+        white-space: nowrap;
+        width: auto;
+    }
+    div#lista table td:first-child, div#lista table th:first-child{
+        text-align:right;
+        width: auto;
+    }
+    </style>
+</head>
+
+<body>
+
+<script type="text/javascript">setMenu();</script>
+
+<div id="top" onclick="location.href='https://www.pfs.org.pl'">
+</div>
+<div id="menu">
+
+    <div id="m_glowna">
+        <div class="tab"><a href="https://www.pfs.org.pl/index.php"></a></div>
+
+        <ul>
+            <li class="sublink" id="aktualnosci"><a href="https://www.pfs.org.pl">Aktualności</a></li>
+            <li class="sublink" id="nowy"><a href="https://www.pfs.org.pl/dlanowych.php">Jestem tu nowy</a></li>
+            <li class="sublink" id="anagramator"><a href="https://www.pfs.org.pl/osps_online.php?main=1">Słownik online</a></li>
+            <li class="sublink" id="siodemka"><a href="https://www.pfs.org.pl/siodemka.php?main=1">Siódemka tygodnia</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+            <li class="sublink" id="dlasponsorow"><a href="https://www.pfs.org.pl/dlasponsorow.php">Dla sponsorów</a></li>
+            <li class="sublink" id="kontakt"><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+        </ul>
+    </div>
+    <div id="m_turnieje">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kalendarz.php"></a></div>
+        <ul>
+            <li class="sublink" id="kalendarz"><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+            <li class="sublink" id="regulaminy"><a href="https://www.pfs.org.pl/regulaminy.php">Regulaminy</a></li>
+            <li class="sublink" id="sedziowie"><a href="https://www.pfs.org.pl/sedziowie.php">Sędziowie</a></li>
+            <li class="sublink" id="gp"><a href="https://www.pfs.org.pl/gp2026.php">Grand Prix</a></li>
+<!--            <li class="sublink" id="mr"><a href="https://www.pfs.org.pl/mr2020.php">Mistrzostwa Regionów</a></li>-->
+            <li class="sublink" id="archiwum"><a href="https://www.pfs.org.pl/archiwum.php">Historia</a></li>
+            <li class="sublink" id="galeria"><a href="https://www.pfs.org.pl/galeria.php">Zdjęcia</a></li>
+            <li class="sublink" id="rekordy"><a href="https://www.pfs.org.pl/rekordy.php">Rekordy</a></li>
+        </ul>
+    </div>
+    <div id="m_pfs">
+        <div  class="tab"><a href="https://www.pfs.org.pl/opfs.php"></a></div>
+        <ul>
+            <li class="sublink" id="opfs"><a href="https://www.pfs.org.pl/opfs.php">O PFS</a></li>
+            <li class="sublink" id="jakprzystapic"><a href="https://www.pfs.org.pl/jakprzystapic.php">Jak przystąpić</a></li>
+            <li class="sublink" id="dlaczlonkow"><a href="https://www.pfs.org.pl/dlaczlonkow.php">Dla członków</a></li>
+            <li class="sublink" id="wladze"><a href="https://www.pfs.org.pl/wladze.php">Władze</a></li>
+            <li class="sublink" id="komisje"><a href="https://www.pfs.org.pl/komisje.php">Komisje</a></li>
+            <li class="sublink" id="statut"><a href="https://www.pfs.org.pl/statut.php">Statut</a></li>
+            <li class="sublink" id="uchwaly"><a href="https://www.pfs.org.pl/uchwaly.php">Uchwały</a></li>
+            <li class="sublink" id="honorowi"><a href="https://www.pfs.org.pl/honorowi.php">Honorowi członkowie</a></li>
+            <li class="sublink" id="finanse"><a href="https://www.pfs.org.pl/finanse.php">Finanse</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabble">
+        <div  class="tab"><a href="https://www.pfs.org.pl/osps_online.php?desktop=1"></a></div>
+        <ul>
+            <li class="sublink" id="osps_online"><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+            <li class="sublink" id="zds"><a href="https://www.pfs.org.pl/zds2.php">ZDS</a></li>
+            <li class="sublink" id="osps"><a href="https://www.pfs.org.pl/osps.php">OSPS</a></li>
+            <li class="sublink" id="aktualizacje"><a href="https://www.pfs.org.pl/osps_aktualizacje.php">Aktualizacje</a></li>
+            <li class="sublink" id="dwojki"><a href="https://www.pfs.org.pl/dwojki.php">2-literówki</a></li>
+            <li class="sublink" id="trojki"><a href="https://www.pfs.org.pl/trojki.php">3-literówki</a></li>
+            <li class="sublink" id="siodemkat"><a href="https://www.pfs.org.pl/siodemka.php">Siódemka tygodnia</a></li>
+            <li class="sublink" id="slowneroznosci"><a href="https://www.pfs.org.pl/slowneroznosci.php">Słowne różności</a></li>
+        </ul>
+    </div>
+    <div id="m_ranking">
+        <div  class="tab"><a href="https://www.pfs.org.pl/ranking.php"></a></div>
+        <ul>
+            <li class="sublink" id="aktranking"><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+            <li class="sublink" id="medale"><a href="https://www.pfs.org.pl/medale.php">Klasyfikacja medalowa</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabblisci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/mistrzowiepolski.php"></a></div>
+        <ul>
+            <li class="sublink" id="mistrzowiepolski"><a href="https://www.pfs.org.pl/mistrzowiepolski.php">Mistrzowie Polski</a></li>
+            <li class="sublink" id="zdobywcypp"><a href="https://www.pfs.org.pl/zdobywcypp.php">Zdobywcy Pucharu Polski</a></li>
+            <li class="sublink" id="zwyciezcygp"><a href="https://www.pfs.org.pl/zwyciezcygp.php">Zwycięzcy Grand Prix</a></li>
+            <li class="sublink" id="liderzyrankingu"><a href="https://www.pfs.org.pl/liderzyrankingu.php">Liderzy rankingu</a></li>
+            <li class="sublink" id="zwyciezcylemans"><a href="https://www.pfs.org.pl/zwyciezcylemans.php">Zwycięzcy 24h Le Mans</a></li>
+            <li class="sublink" id="zwyciezcykmp"><a href="https://www.pfs.org.pl/zwyciezcykmp.php">KMP</a>
+        </ul>
+    </div>
+    <div id="m_kluby">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kluby.php"></a></div>
+        <ul>
+            <li class="sublink" id="rejestrklubow"><a href="https://www.pfs.org.pl/kluby.php">Rejestr klubów</a></li>
+            <li class="sublink" id="kmp"><a href="https://www.pfs.org.pl/kmp.php">KMP</a></li>
+            <li class="sublink" id="wiescizklubow"><a href="https://www.pfs.org.pl/wiescizklubow.php">Wieści z klubów</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/about.php">Statystyki klubowe</a></li>
+        </ul>
+    </div>
+    <div id="m_roznosci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/historia.php"></a></div>
+        <ul>
+            <li class="sublink" id="historia"><a href="https://www.pfs.org.pl/historia.php">Historia</a></li>
+            <li class="sublink" id="odmiany"><a href="https://www.pfs.org.pl/odmiany.php">Odmiany</a></li>
+            <li class="sublink" id="anegdoty"><a href="https://www.pfs.org.pl/anegdoty.php">Anegdoty</a></li>
+            <li class="sublink" id="scrabblealia"><a href="https://www.pfs.org.pl/scrabblealia.php">Scrabblealia</a></li>
+            <li class="sublink" id="scrabblenet"><a href="https://www.pfs.org.pl/scrabblenet.php">Scrabble w internecie</a></li>
+            <li class="sublink" id="programy"><a href="https://www.pfs.org.pl/programy.php">Programy</a></li>
+            <li class="sublink" id="download"><a href="https://www.pfs.org.pl/download.php">Do pobrania</a></li>
+            <li class="sublink" id="ksiazki"><a href="https://www.pfs.org.pl/ksiazki.php">Książki</a></li>
+            <li class="sublink" id="slowniczek"><a href="https://www.pfs.org.pl/slowniczek.php">Słowniczek</a></li>
+        </ul>
+    </div>
+    <div id="m_english">
+        <div  class="tab"><a href="https://www.pfs.org.pl/english.php"></a></div>
+        <ul>
+            <li class="sublink" id="about"><a href="https://www.pfs.org.pl/english.php">About Polish Scrabble</a></li>
+            <li class="sublink" id="news"><a href="https://www.pfs.org.pl/en_news.php">News</a></li>
+            <li class="sublink" id="bartek"><a href="https://www.pfs.org.pl/bartek.php">Bartek w Johor Bahru</a></li>
+            <li class="sublink" id="franko"><a href="https://www.pfs.org.pl/franko.php">Scrabble frankofońskie</a></li>
+        </ul>
+    </div>
+</div>
+
+<div id="submenu"></div>
+<div id="content">
+<div id='nextTours'>
+		<div class='nextTour' onclick='location.href="turniej.php?id=540"'>
+			<div class='karteczka small1'>
+				<span class='miasto'>Sudomie</span><span class='dzien'><span class='big'>26</span><br />czerwca</span></div>
+			<div class='kartka big1'>
+				<span class='miasto'>Sudomie</span>
+				<span class='dzien'><b>26- 4 lipca</b></span>
+				<span class='nazwaturnieju'>Letnie wczasy skrablowe</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=541"'>
+			<div class='karteczka small2'>
+				<span class='miasto'>Sudomie</span><span class='dzien'><span class='big'>27</span><br />czerwca</span></div>
+			<div class='kartka big2'>
+				<span class='miasto'>Sudomie</span>
+				<span class='dzien'><b>27 czerwca</b></span>
+				<span class='nazwaturnieju'>XIV Turniej o Puchar Wójta</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=509"'>
+			<div class='karteczka small3'>
+				<span class='miasto'>Ostróda</span><span class='dzien'><span class='big'> 3</span><br />lipca</span></div>
+			<div class='kartka big3'>
+				<span class='miasto'>Ostróda</span>
+				<span class='dzien'><b> 3- 4 lipca</b></span>
+				<span class='nazwaturnieju'>X Otwarte Mistrzostwa Ziemi Ostródzkiej &#8222;Blanki w Szranki&#8221;</span><span class='gp'>Grand&nbsp;Prix&nbsp;2010</span></div>
+		</div></div><div class='naglowekrelacji'><span class='tytul'>XIV Turniej o Puchar Wojta Gminy Kościerzyna<span class='nazwa'>27 czerwca 2010 —  XIV Turniej o Puchar Wójta</span></span><a href='#' id='info' class='przycisk'>Informacje</a><a href='#' id='relacja' class='przycisk'>Relacja</a><a href='#' id='klasyfikacja' class='przycisk'>Wyniki</a><a href='#' id='hh' class='przycisk'>HH</a><a href='#' id='rundy' class='przycisk'>Rundy</a><a href='#' id='ranking' class='przycisk'>Ranking</a><div class='galleries'><img src='files/img/gallery.png' style='visibility:hidden;' alt='galeria' /></div></div><h1 style='color:black; margin-top:0px; margin-bottom:30px; padding: 0px'>XIV Turniej o Puchar Wójta<span>Sudomie, 27 czerwca 2010</span></h1><div id='p_relacja' class='page'><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><div class='relacja' style='clear:both;'><figure style='display:inline-block;float:left;margin:5px'><img src='https://pfs.org.pl/foto_action.php?id=396' alt='XIV Turniej o Puchar Wojta Gminy Kościerzyna' /></figure><div>Wczasy scrabblowe zaczęły się od turnieju, na którym zabrakło najgroźniejszych zwykle Stanisława Rydzika i Tomka Zwolińskiego, którzy w tym czasie walczyli o laury w Ełku. Pod ich nieobecność tytuł zdobyła <b>Irena Sołdan</b> wygrywając 5 z 7 partii i mając przewagę nad następnym <b>Michałem Musielakiem</b> ponad 200 małych punktów. Trzecie miejsce zajęła <b>Alina Białobrzewska</b>. Wspaniała pogoda zapowiada udane pod każdym względem wczasy.</div><div class='autor'>relacja: Andrzej Lożyński</div></div><div style='clear:both;'></div></div><div id='p_info' class='page'><br><p align='center'></p><br><br><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br>Zobacz, jak było na poprzednich turniejach:<br><a href='turniej.php?id=482'>XIII Turniej o Puchar Wójta Gminy Kościerzyna</a><br><a href='turniej.php?id=83'>XII Turniej o Puchar Wójta</a><br><a href='turniej.php?id=124'>Turniej o Puchar Wójta </a><br><table id='szczegoly' class='ramkadolna'><tr><td>Rodzaj turnieju</td><td>otwarty</td></tr><tr><td>Sposób rozgrywania</td><td>- liczba rund: <b>7</b><br>
+- system: połówkowy (rundy 1-6), duńczyk (runda 7)</td></tr><tr><td>Miejsce rozgrywek</td><td>Ośrodek Sudomie, Rybaki k. Kościerzyny<br><br>
+Adres e-mail: <a href="mailto:sudomie@sudomie.pl">sudomie@sudomie.pl</a><br>
+Adres www: <a href="http://www.sudomie.pl">www.sudomie.pl</a></td></tr><tr><td>Obrońca tytułu</td><td>Rafał Lenartowski</td></tr><tr><td>Sędzia</td><td>Andrzej Lożyński</td></tr><tr><td>Harmonogram</td><td><b>Niedziela, 27 czerwca (7 rund)</b><br>
+11:00 &#8212; rozpoczęcie turnieju<br>
+14:00-15:00 &#8212; przerwa obiadowa<br>
+19:00 &#8212; zakończenie turnieju</td></tr><tr><td>Wpisowe</td><td>- 15 zł (14 zł + 1 zł na&nbsp;cele statutowe PFS) za&nbsp;dzień<br>
+- członkowie PFS z&nbsp;aktualnie opłaconymi składkami &mdash; 10 zł za&nbsp;dzień<br>
+- młodzież szkolna &mdash; 5 zł za&nbsp;dzień (do liceum włącznie)<br>
+- debiutanci &mdash; bez opłat</td></tr><tr><td>Dojazd</td><td>Autobusem z&nbsp;Kościerzyny do&nbsp;drugiego przystanku Rybaki. Dalej 900 m piechotą.</td></tr><tr><td>Wyżywienie</td><td>na miejscu</td></tr><tr><td>Noclegi</td><td>konieczna wcześniejsza rezerwacja</td></tr><tr><td>Nagrody</td><td>puchar i&nbsp;nagrody rzeczowe</td></tr><tr><td>Dodatkowe atrakcje</td><td>wspólna kąpiel w&nbsp;jeziorze</td></tr><tr><td>Organizatorzy</td><td>Andrzej Lożyński<br>
+tel. 602 278 365<br><br>
+
+Jerzy Komorowski, OW Sudomie<br> 
+83-400 Kościerzyna, skr. poczt. 7<br>
+tel. (058) 686 26 01 lub (058) 686 44 54<br> 
+kom. 0 602 499 438</td></tr><tr><td>Sponsorzy</td><td>Urząd Wójta Gminy Kościerzyna</td></tr></table><br /><br /></div><div id='p_klasyfikacja' class='page'><pre>Wyniki turnieju XIV  Turniej o Puchar Wójta Gminy Kościerzyna
+
+Lp. Imię            Nazwisko             Miasto               Ranking  Duże pkt Małe pkt Skalpy   Różn. MP
+--- --------------- -------------------- -------------------- -------- -------- -------- -------- --------
+  1 Irena           Sołdan               Rumia                  130.51      5.0     2889     1007      295
+  2 Michał          Musielak             Bydgoszcz              131.63      5.0     2673     1002      238
+  3 Alina           Białobrzewska        Gdynia                 115.25      5.0     2610     1003      234
+  4 Rafał           Lenartowski          Gdynia                 139.18      5.0     2567     1016      138
+  5 Adam            Janicki              Łódź                   111.09      4.0     2830      931      479
+  6 Leszek          Nowak                Myślibórz              128.84      4.0     2682      902       26
+  7 Marek           Reda                 Wołomin                134.91      4.0     2522      860       59
+  8 Dorota          Maciejuk             Warszawa               120.14      3.0     2628      778      239
+  9 Magdalena       Kublik               Warszawa               116.14      3.0     2403      715     -176
+ 10 Grażyna         Kula                 Sosnowiec              111.08      3.0     2195      759     -482
+ 11 Sylwia          Buks                 Warszawa               100.00      2.0     2480      656     -103
+ 12 Katarzyna       Bogusławska          Piastów                100.00      2.0     2326      628     -430
+ 13 Anna            Lenartowska          Gdynia                 100.00      2.0     1337      445     -155
+ 14 Kuba            Koisar               Warszawa               127.26      2.0     1207      404      272
+ 15 Piotr           Morawski             Gdańsk                 100.00      0.0     2065      448     -634
+</pre></div><div id='p_hh' class='page'><pre>Wyniki poszczególnych graczy w turnieju XIV  Turniej o Puchar Wójta Gminy Kościerzyna
+
+
+
+	Rafał Lenartowski 139.18 Gdynia
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Magdalena      Kublik                116.14 +  383: 321  166
+    2     1 Dorota         Maciejuk              120.14 +  347: 331  170
+    3     1 Kuba           Koisar                127.26 +  325: 324  177
+    4     1 Michał         Musielak              131.63 +  363: 353  182
+    5     1 Leszek         Nowak                 128.84 +  498: 233  179
+    6     1 Adam           Janicki               111.09 -  356: 433   61
+    7     1 Irena          Sołdan                130.51 -  295: 434   81
+                                                          --------------- ---- ------
+                                                                    1016  /  7 145.14
+
+
+
+
+	Marek Reda 134.91 Wołomin                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Alina          Białobrzewska         115.25 -  271: 349   65
+    2     6 Sylwia         Buks                  100.00 +  343: 305  150
+    3     5 Irena          Sołdan                130.51 -  357: 508   81
+    4     4 Dorota         Maciejuk              120.14 +  381: 333  170
+    5     7 Piotr          Morawski              100.00 +  358: 318  150
+    6     3 Leszek         Nowak                 128.84 +  448: 273  179
+    7     3 Alina          Białobrzewska         115.25 -  364: 377   65
+                                                          --------------- ---- ------
+                                                                     860  /  7 122.86
+
+
+
+
+	Michał Musielak 131.63 Bydgoszcz                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Adam           Janicki               111.09 +  350: 323  161
+    2     2 Leszek         Nowak                 128.84 +  427: 332  179
+    3     2 Dorota         Maciejuk              120.14 +  345: 332  170
+    4     1 Rafał          Lenartowski           139.18 -  353: 363   89
+    5     2 Grażyna        Kula                  111.08 +  526: 244  161
+    6     2 Irena          Sołdan                130.51 -  280: 460   81
+    7     2 Adam           Janicki               111.09 +  392: 381  161
+                                                          --------------- ---- ------
+                                                                    1002  /  7 143.14
+
+
+
+
+	Irena Sołdan 130.51 Rumia                    
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Grażyna        Kula                  111.08 +  418: 297  161
+    2     4 Adam           Janicki               111.09 -  291: 497   61
+    3     5 Marek          Reda                  134.91 +  508: 357  185
+    4     3 Leszek         Nowak                 128.84 -  308: 468   79
+    5     4 Sylwia         Buks                  100.00 +  470: 400  150
+    6     2 Michał         Musielak              131.63 +  460: 280  182
+    7     1 Rafał          Lenartowski           139.18 +  434: 295  189
+                                                          --------------- ---- ------
+                                                                    1007  /  7 143.86
+
+
+
+
+	Leszek Nowak 128.84 Myślibórz                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Sylwia         Buks                  100.00 +  486: 300  150
+    2     2 Michał         Musielak              131.63 -  332: 427   82
+    3     4 Alina          Białobrzewska         115.25 +  414: 344  165
+    4     3 Irena          Sołdan                130.51 +  468: 308  181
+    5     1 Rafał          Lenartowski           139.18 -  233: 498   89
+    6     3 Marek          Reda                  134.91 -  273: 448   85
+    7     4 Anna           Lenartowska           100.00 +  476: 331  150
+                                                          --------------- ---- ------
+                                                                     902  /  7 128.86
+
+
+
+
+	Kuba Koisar 127.26 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Piotr          Morawski              100.00 +  465: 292  150
+    2     3 Alina          Białobrzewska         115.25 +  418: 318  165
+    3     1 Rafał          Lenartowski           139.18 -  324: 325   89
+                                                          --------------- ---- ------
+                                                                     404  /  3 134.67
+
+
+
+
+	Dorota Maciejuk 120.14 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Katarzyna      Bogusławska           100.00 +  582: 236  150
+    2     1 Rafał          Lenartowski           139.18 -  331: 347   89
+    3     2 Michał         Musielak              131.63 -  332: 345   82
+    4     4 Marek          Reda                  134.91 -  333: 381   85
+    5     3 Adam           Janicki               111.09 -  331: 461   61
+    6     7 Piotr          Morawski              100.00 +  352: 344  150
+    7     5 Grażyna        Kula                  111.08 +  367: 275  161
+                                                          --------------- ---- ------
+                                                                     778  /  7 111.14
+
+
+
+
+	Magdalena Kublik 116.14 Warszawa
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Rafał          Lenartowski           139.18 -  321: 383   89
+    2     5 Piotr          Morawski              100.00 +  355: 287  150
+    3     3 Adam           Janicki               111.09 -  276: 429   61
+    4     6 Alina          Białobrzewska         115.25 -  335: 446   65
+    5     6 Anna           Lenartowska           100.00 +  355: 297  150
+    6     6 Katarzyna      Bogusławska           100.00 -  329: 341   50
+    7     6 Katarzyna      Bogusławska           100.00 +  432: 396  150
+                                                          --------------- ---- ------
+                                                                     715  /  7 102.14
+
+
+
+
+	Alina Białobrzewska 115.25 Gdynia                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Marek          Reda                  134.91 +  349: 271  185
+    2     3 Kuba           Koisar                127.26 -  318: 418   77
+    3     4 Leszek         Nowak                 128.84 -  344: 414   79
+    4     6 Magdalena      Kublik                116.14 +  446: 335  166
+    5     5 Katarzyna      Bogusławska           100.00 +  417: 297  150
+    6     4 Grażyna        Kula                  111.08 +  359: 277  161
+    7     3 Marek          Reda                  134.91 +  377: 364  185
+                                                          --------------- ---- ------
+                                                                    1003  /  7 143.29
+
+
+
+
+	Adam Janicki 111.09 Łódź                     
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Michał         Musielak              131.63 -  323: 350   82
+    2     4 Irena          Sołdan                130.51 +  497: 291  181
+    3     3 Magdalena      Kublik                116.14 +  429: 276  166
+    4     2 Grażyna        Kula                  111.08 -  306: 355   61
+    5     3 Dorota         Maciejuk              120.14 +  461: 331  170
+    6     1 Rafał          Lenartowski           139.18 +  433: 356  189
+    7     2 Michał         Musielak              131.63 -  381: 392   82
+                                                          --------------- ---- ------
+                                                                     931  /  7 133.00
+
+
+
+
+	Grażyna Kula 111.08 Sosnowiec                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Irena          Sołdan                130.51 -  297: 418   81
+    2     7 Katarzyna      Bogusławska           100.00 +  381: 340  150
+    3     6 Sylwia         Buks                  100.00 +  366: 361  150
+    4     2 Adam           Janicki               111.09 +  355: 306  161
+    5     2 Michał         Musielak              131.63 -  244: 526   82
+    6     4 Alina          Białobrzewska         115.25 -  277: 359   65
+    7     5 Dorota         Maciejuk              120.14 -  275: 367   70
+                                                          --------------- ---- ------
+                                                                     759  /  7 108.43
+
+
+
+
+	Katarzyna Bogusławska 100.00 Piastów
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Dorota         Maciejuk              120.14 -  236: 582   70
+    2     7 Grażyna        Kula                  111.08 -  340: 381   61
+    3     7 Piotr          Morawski              100.00 +  387: 269  150
+    4     5 Anna           Lenartowska           100.00 -  329: 346   50
+    5     5 Alina          Białobrzewska         115.25 -  297: 417   65
+    6     6 Magdalena      Kublik                116.14 +  341: 329  166
+    7     6 Magdalena      Kublik                116.14 -  396: 432   66
+                                                          --------------- ---- ------
+                                                                     628  /  7  89.71
+
+
+
+
+	Sylwia Buks 100.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Leszek         Nowak                 128.84 -  300: 486   79
+    2     6 Marek          Reda                  134.91 -  305: 343   85
+    3     6 Grażyna        Kula                  111.08 -  361: 366   61
+    4     7 Piotr          Morawski              100.00 +  339: 274  150
+    5     4 Irena          Sołdan                130.51 -  400: 470   81
+    6     5 Anna           Lenartowska           100.00 -  332: 363   50
+    7     7 Piotr          Morawski              100.00 +  443: 281  150
+                                                          --------------- ---- ------
+                                                                     656  /  7  93.71
+
+
+
+
+	Anna Lenartowska 100.00 Gdynia                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    4     5 Katarzyna      Bogusławska           100.00 +  346: 329  150
+    5     6 Magdalena      Kublik                116.14 -  297: 355   66
+    6     5 Sylwia         Buks                  100.00 +  363: 332  150
+    7     4 Leszek         Nowak                 128.84 -  331: 476   79
+                                                          --------------- ---- ------
+                                                                     445  /  4 111.25
+
+
+
+
+	Piotr Morawski 100.00 Gdańsk                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Kuba           Koisar                127.26 -  292: 465   77
+    2     5 Magdalena      Kublik                116.14 -  287: 355   66
+    3     7 Katarzyna      Bogusławska           100.00 -  269: 387   50
+    4     7 Sylwia         Buks                  100.00 -  274: 339   50
+    5     7 Marek          Reda                  134.91 -  318: 358   85
+    6     7 Dorota         Maciejuk              120.14 -  344: 352   70
+    7     7 Sylwia         Buks                  100.00 -  281: 443   50
+                                                          --------------- ---- ------
+                                                                     448  /  7  64.00
+
+
+</pre></div><div id='p_rundy' class='page'><pre>Wyniki poszczególnych rund turnieju XIV  Turniej o Puchar Wójta Gminy KoPcierzyna
+
+
+
+Runda nr  1
+-----------
+Stół Gospodarz                             GoPć                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Rafał          Lenartowski          - Magdalena      Kublik                383: 321
+   2 Alina          Białobrzewska        - Marek          Reda                  349: 271
+   3 Michał         Musielak             - Adam           Janicki               350: 323
+   4 Grażyna        Kula                 - Irena          Sołdan                297: 418
+   5 Leszek         Nowak                - Sylwia         Buks                  486: 300
+   6 Piotr          Morawski             - Kuba           Koisar                292: 465
+   7 Dorota         Maciejuk             - Katarzyna      Bogusławska           582: 236
+
+
+Runda nr  2
+-----------
+Stół Gospodarz                             GoPć                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Dorota         Maciejuk             - Rafał          Lenartowski           331: 347
+   2 Leszek         Nowak                - Michał         Musielak              332: 427
+   3 Kuba           Koisar               - Alina          Białobrzewska         418: 318
+   4 Adam           Janicki              - Irena          Sołdan                497: 291
+   5 Magdalena      Kublik               - Piotr          Morawski              355: 287
+   6 Marek          Reda                 - Sylwia         Buks                  343: 305
+   7 Katarzyna      Bogusławska          - Grażyna        Kula                  340: 381
+
+
+Runda nr  3
+-----------
+Stół Gospodarz                             GoPć                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Kuba           Koisar               - Rafał          Lenartowski           324: 325
+   2 Michał         Musielak             - Dorota         Maciejuk              345: 332
+   3 Adam           Janicki              - Magdalena      Kublik                429: 276
+   4 Alina          Białobrzewska        - Leszek         Nowak                 344: 414
+   5 Irena          Sołdan               - Marek          Reda                  508: 357
+   6 Sylwia         Buks                 - Grażyna        Kula                  361: 366
+   7 Piotr          Morawski             - Katarzyna      Bogusławska           269: 387
+
+
+Runda nr  4
+-----------
+Stół Gospodarz                             GoPć                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Rafał          Lenartowski          - Michał         Musielak              363: 353
+   2 Grażyna        Kula                 - Adam           Janicki               355: 306
+   3 Irena          Sołdan               - Leszek         Nowak                 308: 468
+   4 Marek          Reda                 - Dorota         Maciejuk              381: 333
+   5 Anna           Lenartowska          - Katarzyna      Bogusławska           346: 329
+   6 Magdalena      Kublik               - Alina          Białobrzewska         335: 446
+   7 Sylwia         Buks                 - Piotr          Morawski              339: 274
+
+
+Runda nr  5
+-----------
+Stół Gospodarz                             GoPć                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Rafał          Lenartowski          - Leszek         Nowak                 498: 233
+   2 Michał         Musielak             - Grażyna        Kula                  526: 244
+   3 Adam           Janicki              - Dorota         Maciejuk              461: 331
+   4 Sylwia         Buks                 - Irena          Sołdan                400: 470
+   5 Katarzyna      Bogusławska          - Alina          Białobrzewska         297: 417
+   6 Anna           Lenartowska          - Magdalena      Kublik                297: 355
+   7 Piotr          Morawski             - Marek          Reda                  318: 358
+
+
+Runda nr  6
+-----------
+Stół Gospodarz                             GoPć                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Adam           Janicki              - Rafał          Lenartowski           433: 356
+   2 Irena          Sołdan               - Michał         Musielak              460: 280
+   3 Marek          Reda                 - Leszek         Nowak                 448: 273
+   4 Grażyna        Kula                 - Alina          Białobrzewska         277: 359
+   5 Anna           Lenartowska          - Sylwia         Buks                  363: 332
+   6 Katarzyna      Bogusławska          - Magdalena      Kublik                341: 329
+   7 Dorota         Maciejuk             - Piotr          Morawski              352: 344
+
+
+Runda nr  7
+-----------
+Stół Gospodarz                             GoPć                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Rafał          Lenartowski          - Irena          Sołdan                295: 434
+   2 Michał         Musielak             - Adam           Janicki               392: 381
+   3 Alina          Białobrzewska        - Marek          Reda                  377: 364
+   4 Leszek         Nowak                - Anna           Lenartowska           476: 331
+   5 Grażyna        Kula                 - Dorota         Maciejuk              275: 367
+   6 Magdalena      Kublik               - Katarzyna      Bogusławska           432: 396
+   7 Piotr          Morawski             - Sylwia         Buks                  281: 443
+</pre></div><div id='p_ranking' class='page'><pre>Lista rankingowa na dzień 03-07-2010
+
+Lp.  Imię i nazwisko                Miasto               Rank.  Skalpy Gry
+---- ------------------------------ -------------------- ------ ------ ----
+   1 Dariusz Kosz                   Nysa                 152.34  29250  192
+   2 Marcin Mroziuk                 Warszawa             151.05  11631   77
+   3 Kazimierz.Jr Merklejn          Szczecin             146.88  28935  197
+   4 Michał Makowski                Warszawa             145.06  23065  159
+   5 Krzysztof Obremski             Legnica              144.62  28635  198
+   6 Dawid Pikul                    Poznań               143.34  27234  190
+   7 Bartosz Morawski               Gliwice              143.23  27213  190
+   8 Mateusz Żbikowski              Warszawa             143.19  25345  177
+   9 Mariusz Skrobosz               Warszawa             142.96  28306  198
+  10 Kamil Górka                    Kraków               142.74  27692  194
+  11 Stanisław Rydzik               Warszawa             142.69  28396  199
+  12 Jakub Zaryński                 Świnoujście          142.29  27746  195
+  13 Miłosz Wrzałek                 Reda                 142.18  27725  195
+  14 Rafał Dąbrowski                Ostróda              142.11  27143  191
+  15 Tomasz Zwoliński               Skierdy              141.97  27969  197
+  16 Filip Warzecha                 Gdynia               141.33   8480   60
+  17 Karol Wyrębkiewicz             Łódź                 141.33  27842  197
+  18 Krzysztof Mówka                Warszawa             141.30  27694  196
+  19 Wojciech Zemło                 Łódź                 139.84  20697  148
+  20 Rafał Lenartowski              Gdynia               139.39  27321  196
+  21 Mariusz Margalski              Pieczyska            139.18   5428   39
+  22 Justyna Górka                  Kraków               138.72  26495  191
+  23 Adam Szukalski                 Coventry [W. Bryt.]  138.70  18309  132
+  24 Marek Syczuk                   Warszawa             138.58  14135  102
+  25 Michał Alabrudziński           Włocławek            138.48  24788  179
+  26 Mariusz Wrześniewski           Kraków               138.30  11341   82
+  27 Andrzej Oleksiak               Ostróda              138.20   7048   51
+  28 Łukasz Tuszyński               Chłopowo             137.74  24104  175
+  29 Dawid Adamczyk                 Wodzisław Śląski     137.30  17575  128
+  30 Marek Salamon                  Bytom                136.77   4240   31
+  31 Dariusz Puton                  Ruda Śląska          136.73  16408  120
+  32 Jan Kozłowski                  Kraków               136.40  12685   93
+  33 Robert Duczemiński             Gorzów Wielkopolski  136.01  26113  192
+  34 Paweł Jackowski                Warszawa             135.34  26255  194
+  35 Przemysław Herdzina            Kraków               135.31  27062  200
+  36 Dariusz Dzierża                Kraków               135.12   7026   52
+  37 Jarosław Borowski              Bielsk Podlaski      135.06  13641  101
+  38 Grzegorz Kurowski              Warszawa             134.74  26140  194
+  39 Kamil Nawrocki                 Bydgoszcz            134.52  22330  166
+  40 Marek Reda                     Wołomin              134.49  26898  200
+  41 Tomasz Ciejka                  Kraków               134.32  25790  192
+  42 Łukasz Bobowski                Suchedniów           133.88  26107  195
+  43 Piotr Pietuchowski             Białystok            133.87  26640  199
+  44 Wojciech Usakiewicz            Warszawa             133.47   6807   51
+  45 Karol Waniek                   Wrocław              133.44  16413  123
+  46 Robert Kuszpit                 Biała Podlaska       133.29  24126  181
+  47 Bogusław Szyszka               Oława                133.16  20240  152
+  48 Sławomir Kucia                 Krosno               132.96  10238   77
+  49 Rafał Matczak                  Milanówek            132.57  10208   77
+  50 Michał Musielak                Bydgoszcz            132.44  13244  100
+  51 Marek Herzig                   Gorzów Wielkopolski  132.17  16654  126
+  52 Andrzej Rakoczy                Kraków               131.95  14382  109
+  53 Filip Sosin                    Warszawa             131.88   6726   51
+  54 Radosław Jachna                Łódź                 131.82  26364  200
+  55 Jakub Szymczak                 Łódź                 131.42  25759  196
+  56 Paweł Janaś                    Głogów               131.39  23518  179
+  57 Aleksander Puchalski           Włocławek            131.32  16021  122
+  58 Wojciech Sołdan                Rumia                131.15  22952  175
+  59 Mirosław Uglik                 Warszawa             130.97  25540  195
+  60 Irena Sołdan                   Rumia                130.80  25244  193
+  61 Patryk Gadus                   Pszczew              130.80  10856   83
+  62 Marek Charytoniuk              Biała Podlaska       130.79  11117   85
+  63 Michał Gawroński               Siemianowice Śląski  130.53   4699   36
+  64 Robert Kamiński                Warszawa             130.39  21254  163
+  65 Zbigniew Wietecki              Gorzów Wielkopolski  130.37  25814  198
+  66 Tomasz Suchanek                Wrocław              130.35  24376  187
+  67 Andrzej Kowalski               Gdańsk               130.05   7153   55
+  68 Maciej Perzyński               Piła                 129.76  16479  127
+  69 Marek Roszak                   Poznań               129.59  18272  141
+  70 Katarzyna Sołdan               Rumia                129.44   5048   39
+  71 Maciej Michalak                Łódź                 129.30  16033  124
+  72 Marek Dudkiewicz               Milanówek            129.19  24934  193
+  73 Weronika Rudnicka              Ustka                128.66  25732  200
+  74 Ryszard Dębski                 Biała Podlaska       128.62  10933   85
+  75 Sergiusz Puchalski             Włocławek            128.10   4996   39
+  76 Dariusz Białobrzewski          Gdynia               127.91  16501  129
+  77 Dariusz Maciejuk               Warszawa             127.91  14326  112
+  78 Arkadiusz Łydka                Jaworzno             127.80   3834   30
+  79 Przemysław Rybicki             Otwock               127.75  24273  190
+  80 Kuba Koisar                    Warszawa             127.48  12748  100
+  81 Artur Irzyk                    Kraków               127.34   9423   74
+  82 Janusz Kaczor                  Międzyrzec Podl.     127.08   8133   64
+  83 Piotr Jakubiak                 Żyrardów             127.02  10289   81
+  84 Grzegorz Koczkodon             Ostróda              126.80  25360  200
+  85 Krzysztof Langiewicz           Ostróda              126.75  22815  180
+  86 Mateusz Borsuk                 Reda                 126.60  13420  106
+  87 Agnieszka Krupka               Krosno               126.60  23167  183
+  88 Grzegorz Święcki               Białystok            126.41   6194   49
+  89 Piotr Domański                 Ostrołęka            126.33   6569   52
+  90 Adam Jurkowski                 Knurów               126.22   4544   36
+  91 Waldemar Czerwoniec            Warszawa             126.21  15650  124
+  92 Marta Dobrzańska               Kraków               126.07   8825   70
+  93 Zofia Gajewska                 Jelenia Góra         125.91  14102  112
+  94 Michał Ozimiński               Łódź                 125.88  24672  196
+  95 Dariusz Kuć                    Stargard Szczecińsk  125.66  23625  188
+  96 Tomasz Sienkiewicz             Białogard            125.30  17166  137
+  97 Małgorzata Sulejewska          Kraków               124.98  24371  195
+  98 Beata Wiączkowska              Wrocław              124.93  23737  190
+  99 Tomasz Górka                   Łęczna               124.81   4493   36
+ 100 Szymon Płachta                 Warszawa             124.69  16584  133
+ 101 Arkadiusz Biegun               Kraków               124.49  11951   96
+ 102 Małgorzata Szczygieł           Radwanice            124.26  21125  170
+ 103 Jacek Karwowski                Płock                124.24   5218   42
+ 104 Ireneusz Moralewicz            Goleniów             123.90  23912  193
+ 105 Ewa Ciszewska                  Katowice             123.75   9900   80
+ 106 Adam Klimont                   Wałcz                123.57  24590  199
+ 107 Marek Gajdosz                  Nowy Sącz            123.44   6419   52
+ 108 Robert Głowacki                Łódź                 123.44  21972  178
+ 109 Krzysztof Kodzis               Inowrocław           123.29  12699  103
+ 110 Marcin Figiel                  Kraków               123.13   5541   45
+ 111 Kamil Kister                   Puławy               123.08  23386  190
+ 112 Jolanta Chłopińska             Wałcz                122.85  24202  197
+ 113 Dominik Piasecki               Słupsk               122.69  10306   84
+ 114 Jarosław Puchalski             Łódź                 122.54  14582  119
+ 115 Anita Bruska                   Gdynia               122.53  16419  134
+ 116 Mariusz Sylwestrzuk            Warszawa             122.51  23277  190
+ 117 Andrzej Rechowicz              Katowice             122.46  23635  193
+ 118 Jarosław Sobczak               Warszawa             122.42  15425  126
+ 119 Magdalena Kupczyńska           Szczecin             122.35   9666   79
+ 120 Paweł Kowalski                 Kutno                122.31  11008   90
+ 121 Joanna Jewtuch                 Warszawa             122.29  13085  107
+ 122 Rafał Wesołowski               Warszawa             122.06  23436  192
+ 123 Piotr Szałkiewicz              Wrocław              121.96   8781   72
+ 124 Aleksandra Kaczanowska         Szczecin             121.75  14854  122
+ 125 Michał Kolaj                   Ostróda              121.63  23232  191
+ 126 Andrzej Kwiatkowski            Warszawa             121.47  23322  192
+ 127 Tomasz Łapka                   Opole                121.40  23066  190
+ 128 Janusz Krupiński               Bytom                121.12   8115   67
+ 129 Piotr Adamczyk                 Tarnów               121.01   8592   71
+ 130 Marcin Kozyra                  Warszawa             120.89   4473   37
+ 131 Krzysztof Sporczyk             Piaseczno            120.79  24159  200
+ 132 Sławomir Piotrowski            Biała Podlaska       120.79  23071  191
+ 133 Agnieszka Goniowska            Wrocław              120.71  14847  123
+ 134 Leszek Stecuła                 Bytom                120.57   8199   68
+ 135 Marek Rogalski                 Warszawa             120.46   8191   68
+ 136 Małgorzata Szmuksta            Szczecin             120.44  12164  101
+ 137 Grzegorz Grzeszczuk            Racibórz             120.34  11553   96
+ 138 Adam Weremczuk                 Łódź                 120.33   4332   36
+ 139 Bogusław Książek               Szczecin             120.14  13456  112
+ 140 Eugeniusz Wróblewski           Inowrocław           120.08   7085   59
+ 141 Krzysztof Jaworski             Warszawa             119.90   9352   78
+ 142 Łukasz Baranowski              Reda                 119.89  22779  190
+ 143 Dorota Maciejuk                Warszawa             119.65  15555  130
+ 144 Bogusław Puchalski             Włocławek            119.44   5733   48
+ 145 Grażyna Wesołowska             Łódź                 119.34   8831   74
+ 146 Grzegorz Kwiecień              Kraków               119.30  17657  148
+ 147 Leokadia Litwinowicz           Gliwice              119.25  10852   91
+ 148 Grzegorz Pukniel               Lublin               119.24  23848  200
+ 149 Dorota Zielińska               Piaseczno            119.20   9417   79
+ 150 Barbara Łukaszewicz            Wrocław              119.10  22390  188
+ 151 Stanisław Gasik                Warszawa             118.99  11185   94
+ 152 Tadeusz Wiśniewski             Piła                 118.54   4149   35
+ 153 Grzegorz Wiączkowski           Wrocław              118.47  22273  188
+ 154 Patrycja Śliwińska             Szczecin             118.40  21431  181
+ 155 Walenty Siemaszko              Lipiany              118.18   7327   62
+ 156 Mikołaj Fidziński              Dębica               117.21   9377   80
+ 157 Czesław Grajewski              Choroszcz            117.19  21328  182
+ 158 Edward Stefaniak               Biała Podlaska       117.18   8554   73
+ 159 Krzysztof Leśniak              Kraków               117.12   7847   67
+ 160 Daniel Janus                   Wąchock              117.10  11710  100
+ 161 Jerzy Matyasik                 Kraków               117.01  21413  183
+ 162 Mariusz Orzeł                  Nowe Miasto Lubawsk  116.91  11574   99
+ 163 Mariola Osajda-Matczak         Milanówek            116.84  23135  198
+ 164 Michał  Borejko                Wrocław              116.58   5596   48
+ 165 Teresa Pawlik                  Lubin                116.52   3612   31
+ 166 Alina Białobrzewska            Gdynia               116.30  21864  188
+ 167 Zdzisław Szota                 Warszawa             116.29   5582   48
+ 168 Maciej Sancewicz               Gorzów Wielkopolski  116.23  12553  108
+ 169 Jarosław Michalak              Łódź                 116.22   6392   55
+ 170 Ireneusz Kurzok                Mikołów              115.82  11929  103
+ 171 Piotr Wierzchowski             Widuchowa            115.76   8798   76
+ 172 Lucyna Śniadach                Rumia                115.65  16654  144
+ 173 Magdalena Kublik               Warszawa             115.64  22666  196
+ 174 Joanna Ostrowska               Warszawa             115.57  22652  196
+ 175 Jacek Pietruszka               Kraków               115.47  14549  126
+ 176 Elżbieta Szuba                 Bytom Odrzański      115.25   5532   48
+ 177 Bogdan Kozłowski               Białystok            115.00  13225  115
+ 178 Aleksander Puzyna              Warszawa             114.79   4821   42
+ 179 Maciej Grąbczewski             Piła                 114.42  17621  154
+ 180 Mariusz Makuch                 Zator                113.84   5578   49
+ 181 Agata Kopta                    Wodzisław Śląski     113.79   9103   80
+ 182 Krystyna Augustyniak           Łódź                 113.77   3982   35
+ 183 Agata Kuć                      Stargard Szczeciński 113.30  17108  151
+ 184 Kazimierz Merklejn             Szczecin             113.27   9288   82
+ 185 Katarzyna Żuławska             Katowice             113.14   9956   88
+ 186 Anna Stefańska                 Łódź                 113.13  18554  164
+ 187 Andrzej Kroc                   Łódź                 113.12  22397  198
+ 188 Tomasz Ruta                    Warszawa             113.07   8028   71
+ 189 Jarosław Żuliński              Szczecin             113.02   5425   48
+ 190 Grzegorz Kulgawczuk            Biała Podlaska       112.88  11062   98
+ 191 Anna Niedzielko                Szczecin             112.88   9030   80
+ 192 Jerzy Tatarczuk                Warszawa             112.81   4061   36
+ 193 Piotr Broda                    Sandomierz           112.73  21983  195
+ 194 Małgorzata Supińska            Warszawa             112.71   3945   35
+ 195 Monika Gawron-Cieślik          Szczecin             112.69  18369  163
+ 196 Andrzej Tyczyno                Bydgoszcz            112.69  11382  101
+ 197 Beata Piotrowska               Łódź                 112.59  22406  199
+ 198 Małgorzata Jóźwiak             Iława                112.35  18762  167
+ 199 Łukasz Mycio                   Górowo Iławeckie     112.32   6627   59
+ 200 Monika Laskowska               Wrocław              112.29   5390   48
+ 201 Maciej Michalski               Łódź                 112.20   5161   46
+ 202 Stanisław Olsztyn              Olsztyn              112.16  10767   96
+ 203 Renata Andracka                Zwola                111.91  22159  198
+ 204 Adam Janicki                   Łódź                 111.86  22149  198
+ 205 Jerzy Luter                    Bytom                111.76  16093  144
+ 206 Jarosław Olek                  Warszawa             111.67   4020   36
+ 207 Joanna Żłobicka                Wrocław              111.56   7586   68
+ 208 Rafał Skibicki                 Lębork               111.51  11039   99
+ 209 Danuta Langiewicz              Ostróda              111.48  18952  170
+ 210 Halina Roszak                  Poznań               111.27  10237   92
+ 211 Małgorzata Sikora              Kraków               111.14   4001   36
+ 212 Mateusz Królikowski            Wrocław              111.03   9549   86
+ 213 Monika Dymek                   Ustka                111.03   6773   61
+ 214 Dariusz Nawrocki               Bydgoszcz            110.84  18510  167
+ 215 Jerzy Krzyżewski               Piasutno             110.82  21720  196
+ 216 Roman Figiel                   Zawichost            110.23   6283   57
+ 217 Łukasz Sornek                  Mikołów              110.10  19047  173
+ 218 Tomasz Siwiński                Zawiercie            110.02  21894  199
+ 219 Teresa Zalewska                Racibórz             109.96  15284  139
+ 220 Leszek Kacprzyk                Katowice             109.89   3956   36
+ 221 Remigiusz Skwarek              Bydgoszcz            109.82   4173   38
+ 222 Dorota Kuć                     Stargard Szczecińsk  109.80  20423  186
+ 223 Monika Sadurska                Warszawa             109.72  14263  130
+ 224 Joanna Brychcy                 Katowice             109.46  13354  122
+ 225 Dariusz  Jarosławski           Ełk                  109.33   5029   46
+ 226 Zbigniew Rybak                 Warszawa             109.08  21161  194
+ 227 Dorota Rudzińska               Warszawa             108.99  16239  149
+ 228 Małgorzata Sameryt             Warszawa             108.67   7824   72
+ 229 Ryszard Korpalski              Wójtowice            108.58  20196  186
+ 230 Mariusz Kubicki                Inowrocław           108.15   7354   68
+ 231 Anna Biegańska                 Białystok            108.14   4001   37
+ 232 Jarosław Karp                  Jędrzejów            108.10   4432   41
+ 233 Michał Kołodziejczyk           Warszawa             107.95   6477   60
+ 234 Magdalena Ambroszczyk          Łódź                 107.89   3884   36
+ 235 Piotr Madej                    Wrocław              107.88  11867  110
+ 236 Sławomir Zabawa                Wałcz                107.56   7852   73
+ 237 Maria Krzyżanowska             Władysławowo         107.47  19667  183
+ 238 Rafał Stachowski               Police               107.33  12021  112
+ 239 Natalia Ogierman               Katowice             107.27   5149   48
+ 240 Anna Arana                     Warszawa             107.14  16178  151
+ 241 Elżbieta Zębek                 Olsztyn              106.94   3850   36
+ 242 Grzegorz Bajer                 Łódź                 106.76   3950   37
+ 243 Wojciech Urbański              Warszawa             106.74   3309   31
+ 244 Jacek Wandzel                  Ząbkowice Śląskie    106.49   9052   85
+ 245 Bartosz Muszyński              Ustka                106.36   4999   47
+ 246 Maciej Kuczyński               Gdynia               106.21   8603   81
+ 247 Sławomir Długosz               Ostróda              106.20  14762  139
+ 248 Elżbieta Święcka               Białystok            105.75   3807   36
+ 249 Henryk Piotrowski              Lidzbark Warmiński   105.73   6978   66
+ 250 Marta Sztajnert                Wisła                105.48   5696   54
+ 251 Bartosz Pięta                  Swarzędz             104.93   5981   57
+ 252 Marcin Resler                  Września             104.64   4395   42
+ 253 Jacek Nowak                    Szczecin             104.51   5539   53
+ 254 Danuta Połomska                Ostrów Wlkp.         104.31   5007   48
+ 255 Wojciech Gołęcki               Inowrocław           104.12  20407  196
+ 256 Jerzy Ciesielski               Łódź                 103.90   4052   39
+ 257 Iza Kraj                       Warszawa             103.71   4356   42
+ 258 Dorota Stachowska              Wydartowo I          103.70  17422  168
+ 259 Ewa Fiszer-Włodarczyk          Wrocław              103.69   3733   36
+ 260 Anna Swoboda                   Wałbrzych            103.32   4133   40
+ 261 Daniel Tomczyk                 Piła                 103.32   9299   90
+ 262 Karol Posielski                Warszawa             103.22   3716   36
+ 263 Aleksandra Łukaszewicz         Wrocław              103.16   3817   37
+ 264 Marcin Ceglarek                Kraków               103.08   3814   37
+ 265 Hanna Gawłowska                Piła                 102.79   6887   67
+ 266 Przemysław Pawlic              Wrocław              102.76  11304  110
+ 267 Rafał Świątek                  Wrocław              102.72   8834   86
+ 268 Jan  Olek                      Warszawa             102.31   6241   61
+ 269 Urszula Solarska               Łódź                 101.99  20092  197
+ 270 Karol Rembiałkowski            Warszawa             101.90   3057   30
+ 271 Agnieszka Kozak                Gdynia               101.86  19047  187
+ 272 Marianna Kozłowska             Białystok            101.73  10275  101
+ 273 Ireneusz Kaczmarczyk           Gdańsk               101.72   7019   69
+ 274 Agnieszka Kaczkowska           Gdańsk               101.71   3153   31
+ 275 Leszek Kilian                  Jaworzno             101.57   3047   30
+ 276 Agnieszka Piotrowicz           Gdańsk               101.42   7809   77
+ 277 Jan Lisiewski                  Piasutno             101.12   5663   56
+ 278 Józef Wietecki                 Gorzów Wielkopolski  100.46  11352  113
+ 279 Bożena Guział                  Racibórz             100.42   4820   48
+ 280 Izabela  Potęga                Łódź                 100.14   5007   50
+ 281 Radosław Więch                 Warszawa              99.74   5685   57
+ 282 Anna Chybowska                 Sochaczew             99.70   3689   37
+ 283 Łukasz Wojciechowski           Łomża                 99.44   3580   36
+ 284 Julita Dygnas                  Jelenia Góra          99.39   6957   70
+ 285 Grażyna Kaczyńska              Łódź                  99.02   5347   54
+ 286 Anna  Bogucka                  Wrocław               98.71   4146   42
+ 287 Joanna Pawlińska               Bielany Wrocławskie   98.56   8378   85
+ 288 Robert Wagner                  Wrocław               98.31  10519  107
+ 289 Sławomir Rattay                Zgorzelec             98.16   4810   49
+ 290 Jakub Kraj                     Szczecin              98.10   5003   51
+ 291 Katarzyna Bogusławska          Piastów               97.81  18877  193
+ 292 Mieczysław Pastuszak           Gdynia                97.60   4685   48
+ 293 Ziemowit Pazda                 Wrocław               96.69   5705   59
+ 294 Tomasz Lewiński                Wejherowo             96.49   3377   35
+ 295 Katarzyna Dębska               Ostróda               96.36   9829  102
+ 296 Bartłomiej Dalecki             Rumia                 96.13   3749   39
+ 297 Danuta Wodecka                 Skrzyszów             96.05   8068   84
+ 298 Maria Pokorska                 Warszawa              95.30   3526   37
+ 299 Anna Lenartowska               Gdynia                94.85   5691   60
+ 300 Mariusz Michalski              Inowrocław            94.80   6257   66
+ 301 Marcin Radwański               Wrocław               94.80   9954  105
+ 302 Jacek Cichecki                 Józefów               94.78   3886   41
+ 303 Janina Grajewska               Choroszcz             94.67   8899   94
+ 304 Radosław Pastusiak             Sulęcin               94.41   5759   61
+ 305 Krzysztof Zawadzki             Sampława              93.96  18323  195
+ 306 Sławomir Wolski                Wrocław               93.79   4408   47
+ 307 Michał Wodecki                 Skrzyszów             93.55   4397   47
+ 308 Błażej Fidziński               Dębica                93.39   5510   59
+ 309 Andrzej Ciołek                 Bielsk Podlaski       92.95   4090   44
+ 310 Agata Nawrocka                 Bydgoszcz             92.25   4059   44
+ 311 Wojciech Obremski              Legnica               90.64   2991   33
+ 312 Piotr Morawski                 Gdańsk                90.48   2805   31
+ 313 Dariusz Zębek                  Olsztyn               90.22   2887   32
+ 314 Sylwia Buks                    Warszawa              89.78  17777  198
+ 315 Justyna Szymendera             Ostrów Wlkp           89.58   3225   36
+ 316 Mateusz Gołębiewski            Łódź                  89.26   4195   47
+ 317 Agata Pastusiak                Sulęcin               89.07   5433   61
+ 318 Grzegorz Cieplak               Warszawa              89.06   3028   34
+ 319 Maciej Kuć                     Stargard Szczeciński  88.83   5863   66
+ 320 Beata Sekuła                   Szczecin              88.33   2915   33
+ 321 Joanna Zacharewicz             Bydgoszcz             86.18   3275   38
+ 322 Jan Pawłowski                  Warszawa              84.80   2544   30
+ 323 Blanka Zwolińska               Skierdy               84.04   8908  106
+ 324 Marta Łęgowska                 Inowrocław            83.91   6377   76
+ 325 Natalia Połomska               Ostrów Wlkp           83.54   3843   46
+ 326 Maciej Sylwestrzuk             Gródek                83.03   2823   34
+ 327 Leszek Katyński                Słupsk                82.63   4710   57
+ 328 Paulina Naplocha               Racibórz              82.20  10439  127
+ 329 Małgorzata Baśko               Andrespol             77.68   2641   34
+ 330 Adam Kędzior                   Lublin                76.81   2381   31
+ 331 Magdalena Sulejewska           Kraków                75.90   6376   84
+ 332 Izabela Długosz                Ostróda               74.33   3791   51
+ 333 Karolina Długosz               Ostróda               71.38   2855   40
+ 334 Paweł Jankowski                Nowe Miasto Lubawsk   67.71   3724   55
+ 335 Mirosław Dejna                 Sampława              57.02  11062  194
+
+
+
+
+Poczekalnia na dzień 03-07-2010
+
+Lp.  Imię i nazwisko                Miasto               Rank.  Skalpy Gry
+---- ------------------------------ -------------------- ------ ------ ----
+   1 Michał Szymkowski              Wrocław              124.45   3609   29
+   2 Krzysztof Pypno                Gliwice              121.17   3514   29
+   3 Zygmunt Skwarek                Katowice              90.79   2633   29
+   4 Małgorzata Nowakowska          Pruszcz Gdański       80.10   2323   29
+   5 Krzysztof Bukowski             Milanówek            117.71   3296   28
+   6 Jacek Gigoła                   Gorzów Wielkopolski  106.29   2976   28
+   7 Agnieszka Biegańska            Białystok            103.61   2901   28
+   8 Dorota Patera                  Legnica               91.68   2567   28
+   9 Szymon Fidziński               Kobyłka              134.89   3642   27
+  10 Jędrzej Florek                 Bydgoszcz            131.85   3560   27
+  11 Jacek Dec                      Pszczew               93.33   2520   27
+  12 Anna Szyperska                 Poznań                93.96   2443   26
+  13 Wojciech Zieliński             Szczecin             128.28   3207   25
+  14 Maciej Bukowski                Szczecin             108.68   2717   25
+  15 Barbara Turbo                  Szczecin             102.56   2564   25
+  16 Dominika Brzezińska            Piła                  89.56   2239   25
+  17 Ewa Kondracka                  Warszawa             134.25   3222   24
+  18 Ryszard Żydaczewski            Lubin                125.96   3023   24
+  19 Ewa Żbikowska                  Warszawa             124.00   2976   24
+  20 Michał Trumpus                 Wrocław              123.79   2971   24
+  21 Mariusz Grodek                 Olsztyn              122.75   2946   24
+  22 Paweł Jędryka                  Tarnów               121.08   2906   24
+  23 Tomasz Lempart                 Kraków               119.92   2878   24
+  24 Maciej Chmielowski             Kraków               119.25   2862   24
+  25 Małgorzata Puternicka          Gdańsk               115.88   2781   24
+  26 Michał Puchowski               Izbicko              115.75   2778   24
+  27 Andrzej Stańczyk               Tarnów               115.17   2764   24
+  28 Ryszard Niżewski               Warszawa             114.96   2759   24
+  29 Beata Marynowicz               Racibórz             113.83   2732   24
+  30 Anna Krynicka                  Warszawa             109.58   2630   24
+  31 Marcin Żuchowski               Bydgoszcz            109.21   2621   24
+  32 Łukasz Moskal                  Kurzętnik            109.12   2619   24
+  33 Karolina Rubaszewska           Wrocław              107.83   2588   24
+  34 Marcela Wołowiec               Gdynia               106.50   2556   24
+  35 Paweł Michalski                Ksawerów             105.96   2543   24
+  36 Andrzej Zając                  Jaworzno             103.96   2495   24
+  37 Janusz Sojka                   Łódź                 100.33   2408   24
+  38 Joanna Regdos                  Kraków               100.25   2406   24
+  39 Józef Burzyński                Ełk                   99.67   2392   24
+  40 Lidia Szpakowska               Jaworzno              98.71   2369   24
+  41 Zdzisław Parnicki              Słupsk                98.25   2358   24
+  42 Jędrzej Krasnoborski           Węgorzewo             97.54   2341   24
+  43 Dominik Małocha                Demblin               95.75   2298   24
+  44 Wacław Sarek                   Jaworzno              94.83   2276   24
+  45 Mateusz Stańczyk               Tarnów                90.21   2165   24
+  46 Michał Dulat                   Kraków                89.67   2152   24
+  47 Zbigniew Skrzypczyk            Jawor                 85.21   2045   24
+  48 Marta Bożemska                 Ustka                 84.21   2021   24
+  49 Zofia Górka                    Łęczna               108.65   2499   23
+  50 Kamil Piecewicz                Nowe Miasto Lubawsk  104.39   2401   23
+  51 Grażyna Cieślikowska           Racibórz             103.39   2378   23
+  52 Mateusz Cygan                  Chorzów               96.22   2213   23
+  53 Tomasz Silny                   Gdynia                95.00   2185   23
+  54 Adam Graczyk                   Nowe Miasto Lubawsk   90.30   2077   23
+  55 Norbert Skrzyński              Warszawa              89.87   2067   23
+  56 Tomasz Szczodry                Łomża                 85.57   1968   23
+  57 Andrzej Stolot                 Zabrze                79.26   1823   23
+  58 Monika Szczyrzyca              Jaworzno              77.13   1774   23
+  59 Piotr Sadzyński                Jaworzno              70.83   1629   23
+  60 Grzegorz Wilk                  Kraków               120.27   2646   22
+  61 Artur Tomczyk                  Piła                 108.41   2385   22
+  62 Eugeniusz Tuszyński            Nowe Miasto Lubawsk   85.91   1890   22
+  63 Małgorzata Armknecht           Bydgoszcz             82.50   1815   22
+  64 Maciej Śliwa                   Zabrze               124.62   2617   21
+  65 Łukasz Szałkiewicz             Wrocław              116.05   2437   21
+  66 Robert Kurdziel                Katowice              92.14   1935   21
+  67 Maciej Rzychoń                 Katowice             138.60   2772   20
+  68 Grzegorz Miecugow              Warszawa             108.75   2175   20
+  69 Bartosz Boniecki               Elbląg               107.90   2158   20
+  70 Waldemar Kudliński             Bydgoszcz             98.60   1972   20
+  71 Grażyna Kula                   Sosnowiec            110.11   2092   19
+  72 Krzysztof Bonda                Białystok            109.58   2082   19
+  73 Agnieszka Jaśkiewicz           Czechowice-Dziedzice 108.74   2066   19
+  74 Piotr Sobociński               Inowrocław           108.74   2066   19
+  75 Bartosz Orłowski               Bytom                106.11   2016   19
+  76 Jarosław Kamienik              Słupsk               103.32   1963   19
+  77 Krzysztof Borodziuk            Kostrzyn              98.21   1866   19
+  78 Grzegorz Sęk                   Wrocław               96.84   1840   19
+  79 Alicja Bielecka                Poznań                88.16   1675   19
+  80 Sylwia Łada                    Inowrocław            85.74   1629   19
+  81 Alicja Kosińska                Szczecin             125.72   2263   18
+  82 Kamila Zacharuk                Zabrze                95.94   1727   18
+  83 Anna Kurpiel                   Warszawa              67.56   1216   18
+  84 Jan Ziółkowski                 Rumia                104.76   1781   17
+  85 Filip Dalecki                  Rumia                102.35   1740   17
+  86 Wojciech Kwaśniak              Częstochowa           94.65   1609   17
+  87 Marcin Łydka                   Jaworzno              57.76    982   17
+  88 Mirosław Dymkowski             Czechowice-Dziedzice  92.06   1473   16
+  89 Barbara Krawczyk               Warszawa              70.44   1127   16
+  90 Andrzej Przybyłowicz           Warszawa             138.60   2079   15
+  91 Krzysztof Usakiewicz           Warszawa             117.87   1768   15
+  92 Radosław Sowiński              Warszawa             112.27   1684   15
+  93 Mikołaj Przybyłowicz           Warszawa             111.13   1667   15
+  94 Piotr Chabowski                Piła                 107.33   1610   15
+  95 Wiesław Olewiński              Warszawa             106.33   1595   15
+  96 Jacek Gasik                    Warszawa             102.47   1537   15
+  97 Marek Swoboda                  Wałbrzych            100.53   1508   15
+  98 Władysław Zieliński            Białogard             93.53   1403   15
+  99 Marta Bołbot                   Bielsk Podlaski       84.47   1267   15
+ 100 Kinga Niżewska                 Warszawa              83.07   1246   15
+ 101 Agnieszka Kotlarz              Gdynia                69.00   1035   15
+ 102 Julia Solarska                 Łódź                  61.13    917   15
+ 103 Andrzej Puchalski              Łódź                 108.71   1522   14
+ 104 Andrzej Słapiński              Warszawa             105.86   1482   14
+ 105 Marek Antosik                  Nowy Dwór Mazowieck  105.57   1478   14
+ 106 Sandra Sekuła                  Szczecin              90.86   1272   14
+ 107 Tomasz Drewnowski              Warszawa              87.64   1227   14
+ 108 Elżbieta Hardej                Piaseczno             56.93    797   14
+ 109 Radosław Konca                 Warszawa             152.69   1985   13
+ 110 Paweł Łęcki                    Gorzów Wielkopolski  127.15   1653   13
+ 111 Łukasz Święcki                 Białystok            114.08   1483   13
+ 112 Krzysztof Chełstowski          Łomża                110.15   1432   13
+ 113 Alicja Tarczewska              Łomża                106.31   1382   13
+ 114 Marcin  Baniewski              Pełczyce             101.92   1325   13
+ 115 Mirosław Norwajszas            Szczecin             101.92   1325   13
+ 116 Przemysław Kaliszuk            Szczecin              95.23   1238   13
+ 117 Maurycy Machnio                Lipiany               90.46   1176   13
+ 118 Dorota Franków                 Gorzów Wielkopolski   88.54   1151   13
+ 119 Czesław Konopko                Szczecin              84.31   1096   13
+ 120 Waldemar Stankiewicz           Mieszkowice           84.23   1095   13
+ 121 Arkadiusz Kaliszuk             Szczecin              78.31   1018   13
+ 122 Krystyna Puchalska             Łódź                  73.38    954   13
+ 123 Robert Zabłocki                Łódź                 137.08   1645   12
+ 124 Bartłomiej Bęben               Jarosław             128.75   1545   12
+ 125 Krystian Wandzlewicz           Nowe Miasto Lubawsk  128.25   1539   12
+ 126 Paweł Zaręba                   Warszawa             127.92   1535   12
+ 127 Leszek Dobrowolski             Wrocław              125.75   1509   12
+ 128 Andrzej Grabiński              Suchedniów           123.42   1481   12
+ 129 Kinga Pruszak                  Bydgoszcz            119.33   1432   12
+ 130 Marek Róziecki                 Rybnik               118.92   1427   12
+ 131 Kamil Wereszczyński            Jastrzębie           115.50   1386   12
+ 132 Jarosław Krzemiński            Tuchów               114.25   1371   12
+ 133 Andrzej Czesław Kowalski       Wałbrzych            113.00   1356   12
+ 134 Paweł Subocz                   Szczecin             112.75   1353   12
+ 135 Anna Bilska                    Przecław             111.67   1340   12
+ 136 Jakub Nalepa                   Gliwice              111.08   1333   12
+ 137 Piotr Syta                     Puławy               110.00   1320   12
+ 138 Ewa Marek-Domagała             Jelenia Góra         109.67   1316   12
+ 139 Michał Garnowski               Pasłęk               109.17   1310   12
+ 140 Marta Szeliga-Frynia           Warszawa             108.75   1305   12
+ 141 Paweł Miczko                   Sandomierz           108.58   1303   12
+ 142 Marcin Skowron                 Zabrze               108.50   1302   12
+ 143 Monika Lewandowska             Warszawa             108.42   1301   12
+ 144 Rafał  Wagnerowski             Tarnów               107.92   1295   12
+ 145 Paulina Mech                   Kraków               107.83   1294   12
+ 146 Beata Błaszczyk                Łowicz               107.42   1289   12
+ 147 Maria Grzegorzewska            Nowe Miasto Lubawsk  105.58   1267   12
+ 148 Marcin Bertrand                Poznań               103.75   1245   12
+ 149 Konrad Sowula                  Kraków               103.25   1239   12
+ 150 Paweł Frynia                   Konstantynów Łódzki  103.08   1237   12
+ 151 Lucyna Korga                   Zabrze               102.75   1233   12
+ 152 Iwona Kucia                    Krosno               102.25   1227   12
+ 153 Andrzej Gostomski              Łódź                 101.92   1223   12
+ 154 Lidia Żywna                    Gdynia               101.92   1223   12
+ 155 Piotr Szutenberg               Ustka                101.83   1222   12
+ 156 Agata Brzezińska               Świebodzice          101.50   1218   12
+ 157 Lucyna Sapis                   Słupsk               101.00   1212   12
+ 158 Grzegorz Dudziński             Gdańsk               100.92   1211   12
+ 159 Justyna Wiśniewska             Stargard Szczeciński 100.33   1204   12
+ 160 Krzysztof Sojka                Łódź                  99.92   1199   12
+ 161 Andrzej Gronkiewicz            Gdańsk                99.33   1192   12
+ 162 Marta Świątkowska              Wrocław               98.75   1185   12
+ 163 Dorota Ziembowicz              Gliwice               96.17   1154   12
+ 164 Anna Szutenberg                Ustka                 95.50   1146   12
+ 165 Krystyna Borecka               Wałcz                 94.75   1137   12
+ 166 Marta Ćwiek                    Radomsko              94.75   1137   12
+ 167 Czesława Pawłowska             Wrocław               94.42   1133   12
+ 168 Agnieszka Lutkiewicz           Gdynia                93.50   1122   12
+ 169 Łukasz Sobierajski             Ostróda               93.08   1117   12
+ 170 Sandra Rykaczewska             Jaworzno              92.67   1112   12
+ 171 Jacek Jerzyński                Toruń                 92.50   1110   12
+ 172 Mariusz Niemczyk               Kraków                91.58   1099   12
+ 173 Anna Gabriela Kortońska        Kraków                91.50   1098   12
+ 174 Mariusz Bogdański              Łomża                 91.42   1097   12
+ 175 Maciej Zięba                   Wrocław               91.17   1094   12
+ 176 Piotr Ziętal                   Legnica               91.08   1093   12
+ 177 Kuba Wróblewski                Ustka                 90.83   1090   12
+ 178 Krzysztof Wychudzki            Ostróda               90.33   1084   12
+ 179 Barbara Belof                  Falkenberg (Szwecja   90.08   1081   12
+ 180 Jolanta Szabla                 Wrocław               90.08   1081   12
+ 181 Dariusz Szulc                  Legnica               89.83   1078   12
+ 182 Maciej Polak                   Warszawa              89.50   1074   12
+ 183 Maciej Stańczyk                Kraków                89.00   1068   12
+ 184 Dawid Rykaczewski              Jaworzno              87.42   1049   12
+ 185 Daniel Such                    Legnica               85.75   1029   12
+ 186 Kamil Tylmanowski              Brodnica              85.08   1021   12
+ 187 Sylwia Kozłowska               Białystok             83.33   1000   12
+ 188 Artur Jakimczyk                Olsztyn               82.75    993   12
+ 189 Edward Smołka                  Zabrze                82.67    992   12
+ 190 Paweł Łyszczarz                Gorzów Wielkopolski   82.08    985   12
+ 191 Danuta Zając                   Jaworzno              81.33    976   12
+ 192 Piotr Matyasik                 Kraków                79.42    953   12
+ 193 Ewa Bożemska                   Ustka                 79.25    951   12
+ 194 Szymon Jankowski               Nowe Miasto Lubawsk   78.17    938   12
+ 195 Grzegorz Kokot                 Ustka                 76.83    922   12
+ 196 Waldemar  Różanowski           Police                73.83    886   12
+ 197 Krzysztof Lelonek              Zabrze                72.00    864   12
+ 198 Paweł Skowron                  Legnica               70.92    851   12
+ 199 Dawid Hudzik                   Zabrze                67.00    804   12
+ 200 Daria Ząbik                    Legnica               61.08    733   12
+ 201 Zdzisław Stańkowski            Ostrzeszów           102.36   1126   11
+ 202 Mariusz  Chmiel                Puławy               100.91   1110   11
+ 203 Waldemar Kaniewski             Sochaczew             97.18   1069   11
+ 204 Paweł Maciejczuk               Białystok             94.55   1040   11
+ 205 Grzegorz Mazur                 Gorzów                93.91   1033   11
+ 206 Pawel Kulka                    Brodnica              92.73   1020   11
+ 207 Paweł Morga                    Warszawa              91.64   1008   11
+ 208 Ryszard Schwartz               Kąpino                89.00    979   11
+ 209 Aneta Szczyrzyca               Jaworzno              88.27    971   11
+ 210 Arkadiusz Florczak             Szczecin              87.64    964   11
+ 211 Julia Lutkiewicz               Gdynia                87.36    961   11
+ 212 Magdalena Jacak                Kraków                86.00    946   11
+ 213 Zuzanna Molak                  Warszawa              85.73    943   11
+ 214 Sławomir Grudziński            Ostróda               84.91    934   11
+ 215 Anna Straburzyńska             Bydgoszcz             84.91    934   11
+ 216 Barbara Rapacz                 Złotniki Kujawskie    83.09    914   11
+ 217 Kamil Kajfasz                  Spytkowice            81.73    899   11
+ 218 Barbara Żydaczewska            Lubin                 81.55    897   11
+ 219 Marta Musiał                   Zabrze                81.00    891   11
+ 220 Wojciech Kuć                   Stargard Szczecińsk   79.91    879   11
+ 221 Dariusz Zając                  Jaworzno              79.18    871   11
+ 222 Mateusz  Chojnacki             Bydgoszcz             76.36    840   11
+ 223 Katarzyna Sawuła               Police                75.91    835   11
+ 224 Janusz Kozieł                  Lublin                75.64    832   11
+ 225 Magda Wierzchowska             Widuchowa             74.45    819   11
+ 226 Agnieszka Niwelińska           Kraków                74.36    818   11
+ 227 Rafał Stachura                 Zator                 74.27    817   11
+ 228 Marta Armknecht                Bydgoszcz             73.82    812   11
+ 229 Sonia Cieślikowska             Racibórz              72.73    800   11
+ 230 Ewelina Modzelewska            Łomża                 72.45    797   11
+ 231 Paweł Jakubiak                 Ostróda               71.64    788   11
+ 232 Maria Jankowska                Gdynia                71.45    786   11
+ 233 Piotr Jankowski                Nowe Miasto Lubawsk   71.45    786   11
+ 234 Marcin Kołodziejski            Brodnica              71.36    785   11
+ 235 Martyna  Zaforemska            Jaworzno              71.18    783   11
+ 236 Lidia Beling                   Łódź                  66.18    728   11
+ 237 Daniel Stasik                  Gdynia                66.00    726   11
+ 238 Przemysław Mamoń               Spytkowice            65.18    717   11
+ 239 Mateusz Zawadzki               Sampław               65.18    717   11
+ 240 Anna Skudlarska                Wrocław               63.00    693   11
+ 241 Wiktoria Kliber                Ostrów Wielkopolski   62.45    687   11
+ 242 Włodzimierz Wapniarz           Milanówek             57.27    630   11
+ 243 Klaudia Zaforemska             Jaworzno              52.09    573   11
+ 244 Damian Motycki                 Łomża                 51.73    569   11
+ 245 Joanna Zadrożna                Szczecin             121.80   1218   10
+ 246 Marian Wiatr                   Warszawa              78.30    783   10
+ 247 Kinga Kunert                   Zelistrzewo           76.40    764   10
+ 248 Sebastian Orzelski             Bielsk Podlaski      116.78   1051    9
+ 249 Stanisław Książek              Skawina              105.56    950    9
+ 250 Andrzej Klich                  Jaworzno             102.67    924    9
+ 251 Jolanta Bednarska              Łódź                  67.44    607    9
+ 252 Waldemar Dębski                Ostróda               64.78    583    9
+ 253 Paweł Golubiński               Gdynia               102.75    822    8
+ 254 Marek Starostka                Olkusz               102.75    822    8
+ 255 Piotr Jasiński                 Szpetal Górny        101.38    811    8
+ 256 Karolina Alferowicz            Wrocław              100.38    803    8
+ 257 Grzegorz Mroczek               Puławy                98.88    791    8
+ 258 Maciej Pilc                    Poznań                97.50    780    8
+ 259 Andrzej Serafinowicz           Bydgoszcz             96.12    769    8
+ 260 Marzena Kasner                 Janikowo              94.62    757    8
+ 261 Leszek Kowalik                 Bydgoszcz             82.75    662    8
+ 262 Bernadetta Kudlińska           Bydgoszcz             79.25    634    8
+ 263 Natalia Tokajuk                Bielsk Podlaski       78.38    627    8
+ 264 Artur Rutkowski                Włocławek             69.50    556    8
+ 265 Marzena Mazur                  Warszawa             143.86   1007    7
+ 266 Leszek Nowak                   Myślibórz            128.86    902    7
+ 267 Bogdan Pokojski                Brwinów              128.29    898    7
+ 268 Andrzej Szmidtke               Bolszewo             125.71    880    7
+ 269 Zdzisław Figurski              Gryfów Śląski        121.86    853    7
+ 270 Michał Waszkiewicz             Warszawa             104.29    730    7
+ 271 Jarosław Baranowski            Lublin                98.43    689    7
+ 272 Małgorzata Szablowska          Wrocław               98.29    688    7
+ 273 Krzysztof Wysoczański          Kraków                98.14    687    7
+ 274 Justyna Woszczyna              Kraków                87.00    609    7
+ 275 Remigiusz Rydz                 Kochlice              86.29    604    7
+ 276 Grzegorz  Sarnacki             Piastów               85.86    601    7
+ 277 Rafał Daniluk                  Bielsk Podlaski       82.43    577    7
+ 278 Natalia Lis zz                 Trzebnica             81.86    573    7
+ 279 Łukasz Pałka                   Puławy                71.86    503    7
+ 280 Aleksandra Brzeska             Warszawa              70.71    495    7
+ 281 Jacek Czubak                   Legnica               69.71    488    7
+ 282 Barbara Pęska                  Nowy Dwór Mazowiecki  69.14    484    7
+ 283 Magda Dąbrowska                Bielsk Podlaski       68.86    482    7
+ 284 Marcin Wójcicki                Piastów               59.29    415    7
+ 285 Cezary Bureta                  Wrocław               54.14    379    7
+ 286 Izabela Wyłoga                 Lublin                99.33    596    6
+ 287 Barbara Sajna                  Nowy Dwór Mazowiecki  96.50    579    6
+ 288 Iwona  Szymańska               Września              94.83    569    6
+ 289 Marcin Ochal                   Dęblin                81.50    489    6
+ 290 Aldona Głośnicka               Ostróda               77.50    465    6
+ 291 Anna Kwaśniak                  Częstochowa           77.50    465    6
+ 292 Dorota Pastuszak               Lublin                77.33    464    6
+ 293 Barbara Mrowiec                Wadowice              75.83    455    6
+ 294 Robert Oleszczuk               Rowy                  74.50    447    6
+ 295 Mieczysław Karwowski           Nowy Dwór Mazowiecki  73.50    441    6
+ 296 Paweł Mroczkowski              Nowy Dwór Mazowiecki  64.00    384    6
+ 297 Karol Nitkowski                Szczytno              62.83    377    6
+ 298 Zuzanna Drażba                 Ełk                   56.00    336    6
+ 299 Kinga Drażba                   Ełk                   55.50    333    6
+ 300 Andrzej Gałuszka               Wadowice              55.50    333    6
+ 301 Maciej Gołaszewski             Wrocław               54.67    328    6
+ 302 Szymon Jachimek                Gdynia               136.00    680    5
+ 303 Marek Gutjar                   Starogard Gdański    105.60    528    5
+ 304 Monika Kowalik                 Kraków                90.00    450    5
+ 305 Anna Żyła                      Wrocław               84.20    421    5
+ 306 Marcin Kukuła                  Jelenia Góra          79.00    395    5
+ 307 Andrzej Matyasik               Kraków                72.40    362    5
+ 308 Agnieszka Wydra                Gorzów Wielkopolski   57.20    286    5
+ 309 Adam Sacharczuk                Łomża                 55.20    276    5
+ 310 Zenon Cichy                    Gorzów Wielkopolski   50.00    250    5
+ 311 Kinga Stecuła                  Bytom                125.00    500    4
+ 312 Anna Czarnecka                 Zgierz               106.75    427    4
+ 313 Iwona Bujak                    Tarnów                97.00    388    4
+ 314 Jarosław Wiśniewski            Gdańsk                81.75    327    4
+ 315 Joanna Żądło                   Wrocław               68.25    273    4
+ 316 Jacek Starzonek                Szczecin              62.25    249    4
+ 317 Izabela Borkiewicz             Kraków                57.25    229    4
+ 318 Patrycjusz Śliwiński           Wrocław               53.50    214    4
+ 319 Maria Gaca                     Bydgoszcz             50.00    200    4
+ 320 Maria Krawczuk                 Wrocław              118.67    356    3
+ 321 Małgorzata Deszczyńska         Milanówek            109.67    329    3
+ 322 Artur Koszel                   Warszawa              93.00    279    3
+ 323 Ewa Stypułkowska               Warszawa              90.00    270    3
+ 324 Joanna Zając                   Warszawa              71.00    213    3
+ 325 Grzegorz Głowacki              Piastów               62.67    188    3
+ 326 Anna Sroka                     Wrocław               57.67    173    3
+ 327 Elżbieta Nadolna               Ustka                 57.33    172    3
+ 328 Jerzy Stępniewski              Wrocław               57.00    171    3
+ 329 Dorota Kupiec                  Dęblin                56.33    169    3
+ 330 Olga Grabowska                 Łomża                 53.00    159    3
+ 331 Wojciech Wróbel                Zator                113.50    227    2
+ 332 Sylwia Chrobok                 Warszawa              82.00    164    2
+ 333 Filip Bielawski                Ełk                   80.50    161    2
+ 334 Małgorzata Michaluk            Łomża                 73.50    147    2
+ 335 Edward Kupiec                  Dęblin                65.50    131    2
+ 336 Barbara Diakow                 Zabrze                64.00    128    2
+ 337 Grzegorz Groszewski            Zławieś Mała          64.00    128    2
+ 338 Maria Kosińska                 Piła                  64.00    128    2
+ 339 Tadeusz Bach                   Wejherowo             62.00    124    2
+ 340 Michał Dzierżak                Wrocław               60.00    120    2
+ 341 Anna Krawiec                   Zabrze                51.50    103    2
+ 342 Katarzyna Dziwnik              Bydgoszcz             50.00    100    2
+ 343 Patrycja Chodyna               Grudziądz             73.00     73    1
+ 344 Krzysztof Kuźma                Osiek                 73.00     73    1
+ 345 Justyna Kuźma                  Osiek                 73.00     73    1
+ 346 Patrycja Luranc                Osiek                 71.00     71    1
+ 347 Jakub Michalski                Piastów               71.00     71    1
+ 348 Łukasz Musiał                  Wrocław               71.00     71    1
+ 349 Jakub Tlałka                   Osiek                 69.00     69    1
+ 350 Jan Staniewicz                 Lublin                64.00     64    1
+ 351 Marta Tralińska                Wrocław               62.00     62    1
+ 352 Bernadeta Zapała               Jaworzno              50.00     50    1
+</pre></div><div id='p_przebieg' class='page'>
+
+    </div><div style="clear:both;width:100%;" class="alignright">
+
+<script>
+<!--
+if ((document.getElementById("content").offsetHeight + document.getElementById("top").offsetHeight) > screen.height)
+    document.write("<br /><br /><a href='#top'>do góry</a>");
+-->
+</script>
+
+</div>
+</div>
+
+<div id="bottom">
+<ul id="bottomlinks">
+<div class='onleft'>
+ Osób on-line: 61</div>
+    <li><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+    <li><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+    <li><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+    <li><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+    <li><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+    <li><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+</ul>
+    SCRABBLE® jest zastrzeżonym znakiem towarowym J.W. Spears &amp; Sons&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://www.pfs.org.pl/prawaautorskie.php">© Prawa autorskie</a>
+</div>
+</body>
+</html>

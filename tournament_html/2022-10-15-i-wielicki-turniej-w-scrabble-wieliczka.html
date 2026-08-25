@@ -1,0 +1,2595 @@
+
+<html>
+<head>
+    <title>Polska Federacja Scrabble :: I Wielicki Turniej w Scrabble</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="files/img/favicon.ico" />
+    <link rel="stylesheet" href="files/css/style.css" type="text/css" />
+	<link rel="stylesheet" href="files/css/style-index.css" type="text/css" />
+    <!--[if IE]><link rel="stylesheet" type="text/css" href="files/css/styleie.css" /><![endif]-->
+    <!--[if lt IE 7.]><script defer type="text/javascript" src="files/js/pngfix.js"></script><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="files/js/minmax.js"></script><![endif]-->
+    <script type="text/javascript" src="files/js/jquery.js"></script>
+    <script type="text/javascript" src="files/js/jquery-bp.js"></script>
+    <script type="text/javascript" src="files/js/java.js"></script>
+    <script>jSubmenu ("turnieje","kalendarz");jKalendarz();</script>
+    <script>
+    var url, page;
+
+    page = 'info';
+    url  = document.location.toString();
+
+    if (url.match ('#')) {
+      page = url.split ('#')[1];
+      if ($.inArray (page, [ 'info', 'relacja', 'klasyfikacja', 'hh', 'rundy', 'ranking', 'przebieg' ]) == -1)
+        page = 'info';
+    }
+
+    $(document).ready(function(){
+        $('a#listaucz').bind('click', function(event){
+            $('div#lista').toggle();
+            event.preventDefault();
+        }).toggle(function() { $(this).text('schowaj listę uczestników'); }, function() { $(this).text("pokaż listę uczestników"); });
+        $('div#lista table tr:last td').css({"border-bottom" : "none"});
+
+        $("a.przycisk").click (function (e) {
+            if ($(this).attr ('href') !== '#')
+                return true;
+
+            e.preventDefault ();
+
+            id       = this.id;
+            this.id += 'tmp';
+            window.location.hash = id;
+            this.id  = id;
+
+            $(".page").hide ();
+            $(".page#p_" + id).show ();
+
+            $("a.przycisk").removeClass ('active');
+            $(this).addClass ('active');
+
+            return false;
+        });
+
+        $("a.przycisk#" + page).click ();
+        $('html, body').animate ({ scrollTop: 0 }, 0);
+    });
+    </script>
+  <style type="text/css">
+    .page {
+        display: none;
+    }
+    #szczegoly{
+        width: 100%;
+        border-spacing: 0;
+        margin-top: 30px;
+        text-align: left;
+        font-size: inherit;
+    }
+    #szczegoly td{
+        padding: 10px 20px 10px 0;
+        vertical-align: top;
+    }
+    #szczegoly td:first-child{
+        font-weight: bold;
+        width: 160px;
+    }
+    div#lista{
+        display:none;
+        margin-top: 15px;
+    }
+    div#lista table{
+        margin-top: 10px;
+        text-align: left;
+        font-size: inherit;
+    }
+    div#lista table td{
+        padding: 3px 8px;
+        border-bottom: 1px dashed #1576AE;
+    }
+    div#lista table th{
+        padding: 0px 5px 10px 5px;
+    }
+    div#lista table td.ptaszek{
+        text-align: center;
+        background: url('files/img/tick.png') no-repeat center center;
+    }
+    div#lista table th{
+        white-space: nowrap;
+        width: auto;
+    }
+    div#lista table td:first-child, div#lista table th:first-child{
+        text-align:right;
+        width: auto;
+    }
+    </style>
+</head>
+
+<body>
+
+<script type="text/javascript">setMenu();</script>
+
+<div id="top" onclick="location.href='https://www.pfs.org.pl'">
+</div>
+<div id="menu">
+
+    <div id="m_glowna">
+        <div class="tab"><a href="https://www.pfs.org.pl/index.php"></a></div>
+
+        <ul>
+            <li class="sublink" id="aktualnosci"><a href="https://www.pfs.org.pl">Aktualności</a></li>
+            <li class="sublink" id="nowy"><a href="https://www.pfs.org.pl/dlanowych.php">Jestem tu nowy</a></li>
+            <li class="sublink" id="anagramator"><a href="https://www.pfs.org.pl/osps_online.php?main=1">Słownik online</a></li>
+            <li class="sublink" id="siodemka"><a href="https://www.pfs.org.pl/siodemka.php?main=1">Siódemka tygodnia</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+            <li class="sublink" id="dlasponsorow"><a href="https://www.pfs.org.pl/dlasponsorow.php">Dla sponsorów</a></li>
+            <li class="sublink" id="kontakt"><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+        </ul>
+    </div>
+    <div id="m_turnieje">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kalendarz.php"></a></div>
+        <ul>
+            <li class="sublink" id="kalendarz"><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+            <li class="sublink" id="regulaminy"><a href="https://www.pfs.org.pl/regulaminy.php">Regulaminy</a></li>
+            <li class="sublink" id="sedziowie"><a href="https://www.pfs.org.pl/sedziowie.php">Sędziowie</a></li>
+            <li class="sublink" id="gp"><a href="https://www.pfs.org.pl/gp2026.php">Grand Prix</a></li>
+<!--            <li class="sublink" id="mr"><a href="https://www.pfs.org.pl/mr2020.php">Mistrzostwa Regionów</a></li>-->
+            <li class="sublink" id="archiwum"><a href="https://www.pfs.org.pl/archiwum.php">Historia</a></li>
+            <li class="sublink" id="galeria"><a href="https://www.pfs.org.pl/galeria.php">Zdjęcia</a></li>
+            <li class="sublink" id="rekordy"><a href="https://www.pfs.org.pl/rekordy.php">Rekordy</a></li>
+        </ul>
+    </div>
+    <div id="m_pfs">
+        <div  class="tab"><a href="https://www.pfs.org.pl/opfs.php"></a></div>
+        <ul>
+            <li class="sublink" id="opfs"><a href="https://www.pfs.org.pl/opfs.php">O PFS</a></li>
+            <li class="sublink" id="jakprzystapic"><a href="https://www.pfs.org.pl/jakprzystapic.php">Jak przystąpić</a></li>
+            <li class="sublink" id="dlaczlonkow"><a href="https://www.pfs.org.pl/dlaczlonkow.php">Dla członków</a></li>
+            <li class="sublink" id="wladze"><a href="https://www.pfs.org.pl/wladze.php">Władze</a></li>
+            <li class="sublink" id="komisje"><a href="https://www.pfs.org.pl/komisje.php">Komisje</a></li>
+            <li class="sublink" id="statut"><a href="https://www.pfs.org.pl/statut.php">Statut</a></li>
+            <li class="sublink" id="uchwaly"><a href="https://www.pfs.org.pl/uchwaly.php">Uchwały</a></li>
+            <li class="sublink" id="honorowi"><a href="https://www.pfs.org.pl/honorowi.php">Honorowi członkowie</a></li>
+            <li class="sublink" id="finanse"><a href="https://www.pfs.org.pl/finanse.php">Finanse</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabble">
+        <div  class="tab"><a href="https://www.pfs.org.pl/osps_online.php?desktop=1"></a></div>
+        <ul>
+            <li class="sublink" id="osps_online"><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+            <li class="sublink" id="zds"><a href="https://www.pfs.org.pl/zds2.php">ZDS</a></li>
+            <li class="sublink" id="osps"><a href="https://www.pfs.org.pl/osps.php">OSPS</a></li>
+            <li class="sublink" id="aktualizacje"><a href="https://www.pfs.org.pl/osps_aktualizacje.php">Aktualizacje</a></li>
+            <li class="sublink" id="dwojki"><a href="https://www.pfs.org.pl/dwojki.php">2-literówki</a></li>
+            <li class="sublink" id="trojki"><a href="https://www.pfs.org.pl/trojki.php">3-literówki</a></li>
+            <li class="sublink" id="siodemkat"><a href="https://www.pfs.org.pl/siodemka.php">Siódemka tygodnia</a></li>
+            <li class="sublink" id="slowneroznosci"><a href="https://www.pfs.org.pl/slowneroznosci.php">Słowne różności</a></li>
+        </ul>
+    </div>
+    <div id="m_ranking">
+        <div  class="tab"><a href="https://www.pfs.org.pl/ranking.php"></a></div>
+        <ul>
+            <li class="sublink" id="aktranking"><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+            <li class="sublink" id="medale"><a href="https://www.pfs.org.pl/medale.php">Klasyfikacja medalowa</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabblisci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/mistrzowiepolski.php"></a></div>
+        <ul>
+            <li class="sublink" id="mistrzowiepolski"><a href="https://www.pfs.org.pl/mistrzowiepolski.php">Mistrzowie Polski</a></li>
+            <li class="sublink" id="zdobywcypp"><a href="https://www.pfs.org.pl/zdobywcypp.php">Zdobywcy Pucharu Polski</a></li>
+            <li class="sublink" id="zwyciezcygp"><a href="https://www.pfs.org.pl/zwyciezcygp.php">Zwycięzcy Grand Prix</a></li>
+            <li class="sublink" id="liderzyrankingu"><a href="https://www.pfs.org.pl/liderzyrankingu.php">Liderzy rankingu</a></li>
+            <li class="sublink" id="zwyciezcylemans"><a href="https://www.pfs.org.pl/zwyciezcylemans.php">Zwycięzcy 24h Le Mans</a></li>
+            <li class="sublink" id="zwyciezcykmp"><a href="https://www.pfs.org.pl/zwyciezcykmp.php">KMP</a>
+        </ul>
+    </div>
+    <div id="m_kluby">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kluby.php"></a></div>
+        <ul>
+            <li class="sublink" id="rejestrklubow"><a href="https://www.pfs.org.pl/kluby.php">Rejestr klubów</a></li>
+            <li class="sublink" id="kmp"><a href="https://www.pfs.org.pl/kmp.php">KMP</a></li>
+            <li class="sublink" id="wiescizklubow"><a href="https://www.pfs.org.pl/wiescizklubow.php">Wieści z klubów</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/about.php">Statystyki klubowe</a></li>
+        </ul>
+    </div>
+    <div id="m_roznosci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/historia.php"></a></div>
+        <ul>
+            <li class="sublink" id="historia"><a href="https://www.pfs.org.pl/historia.php">Historia</a></li>
+            <li class="sublink" id="odmiany"><a href="https://www.pfs.org.pl/odmiany.php">Odmiany</a></li>
+            <li class="sublink" id="anegdoty"><a href="https://www.pfs.org.pl/anegdoty.php">Anegdoty</a></li>
+            <li class="sublink" id="scrabblealia"><a href="https://www.pfs.org.pl/scrabblealia.php">Scrabblealia</a></li>
+            <li class="sublink" id="scrabblenet"><a href="https://www.pfs.org.pl/scrabblenet.php">Scrabble w internecie</a></li>
+            <li class="sublink" id="programy"><a href="https://www.pfs.org.pl/programy.php">Programy</a></li>
+            <li class="sublink" id="download"><a href="https://www.pfs.org.pl/download.php">Do pobrania</a></li>
+            <li class="sublink" id="ksiazki"><a href="https://www.pfs.org.pl/ksiazki.php">Książki</a></li>
+            <li class="sublink" id="slowniczek"><a href="https://www.pfs.org.pl/slowniczek.php">Słowniczek</a></li>
+        </ul>
+    </div>
+    <div id="m_english">
+        <div  class="tab"><a href="https://www.pfs.org.pl/english.php"></a></div>
+        <ul>
+            <li class="sublink" id="about"><a href="https://www.pfs.org.pl/english.php">About Polish Scrabble</a></li>
+            <li class="sublink" id="news"><a href="https://www.pfs.org.pl/en_news.php">News</a></li>
+            <li class="sublink" id="bartek"><a href="https://www.pfs.org.pl/bartek.php">Bartek w Johor Bahru</a></li>
+            <li class="sublink" id="franko"><a href="https://www.pfs.org.pl/franko.php">Scrabble frankofońskie</a></li>
+        </ul>
+    </div>
+</div>
+
+<div id="submenu"></div>
+<div id="content">
+<div id='nextTours'>
+		<div class='nextTour' onclick='location.href="turniej.php?id=1224"'>
+			<div class='karteczka small1'>
+				<span class='miasto'>Nowe Miasto Lubawskie</span><span class='dzien'><span class='big'> 8</span><br />października</span></div>
+			<div class='kartka big1'>
+				<span class='miasto'>Nowe Miasto Lubawskie</span>
+				<span class='dzien'><b> 8- 9 października</b></span>
+				<span class='nazwaturnieju'>XXIV Mistrzostwa Warmii i Mazur w Scrabble</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=1227"'>
+			<div class='karteczka small2'>
+				<span class='miasto'>Wieliczka</span><span class='dzien'><span class='big'>15</span><br />października</span></div>
+			<div class='kartka big2'>
+				<span class='miasto'>Wieliczka</span>
+				<span class='dzien'><b>15-16 października</b></span>
+				<span class='nazwaturnieju'>I Wielicki Turniej w Scrabble</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=1240"'>
+			<div class='karteczka small3'>
+				<span class='miasto'>Milanówek</span><span class='dzien'><span class='big'> 6</span><br />listopada</span></div>
+			<div class='kartka big3'>
+				<span class='miasto'>Milanówek</span>
+				<span class='dzien'><b> 6 listopada</b></span>
+				<span class='nazwaturnieju'>Pięćsetka Matriksa – turniej jubileuszowy Klubu Matriks nr 500</span></div>
+		</div></div><div class='naglowekrelacji'><span class='tytul'>Konrad Sowula zwycięża w Wieliczce<span class='nazwa'>15 - 16 października 2022 —  I Wielicki Turniej w Scrabble</span></span><a href='#' id='info' class='przycisk'>Informacje</a><a href='#' id='relacja' class='przycisk'>Relacja</a><a href='#' id='klasyfikacja' class='przycisk'>Wyniki</a><a href='#' id='hh' class='przycisk'>HH</a><a href='#' id='rundy' class='przycisk'>Rundy</a><a href='#' id='ranking' class='przycisk'>Ranking</a><a href='live/index.php?id=1227' class='przycisk'>Przebieg</a><div class='galleries'><a href='https://www.facebook.com/media/set/?vanity=wielickiecentrumkultury&set=a.619462696512150'></a> <img src='files/img/gallery.png' style='visibility:hidden;' alt='galeria' /></div></div><h1 style='color:black; margin-top:0px; margin-bottom:30px; padding: 0px'>I Wielicki Turniej w Scrabble<span>Wieliczka, 15 - 16 października 2022</span></h1><div id='p_relacja' class='page'><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><div class='relacja' style='clear:both;'><figure style='display:inline-block;float:left;margin:5px'><img src='https://pfs.org.pl/foto_action.php?id=2594' alt='Konrad Sowula zwycięża w Wieliczce' /></figure><div>W miniony weekend 15-16 października, Scrabbliści przypuścili najazd na Wieliczkę. W sile 52 osób zjechali do miejscowości, która prawie wszystkim w naszym kraju kojarzy się ze słynną kopalnią soli. Tu tradycja została troszkę zmieniona i gospodarze powitali każdego koszulkowym prezentem i tabliczką mlecznej czekolady. Wśród tej liczby uczestników I Wielickiego Turnieju w Scrabble znalazło się czworo debiutantów. Pojawiło się też kilka osób dawno niewidzianych na turniejach. Rozgrywki były prowadzone w klimatycznej sali Wielickiego Centrum Kultury, przy Rynku Górnym, czyli w samym centrum tego pięknego miasta. Pierwszego dnia rozegraliśmy siedem rund przedzielonych przerwą na obiad i mały spacer po rynku. Na koniec dnia, na czele tabeli znalazło się aż 5 zawodników z Krakowa, a najwyżej z nich <b>Konrad Sowula</b>, który odniósł komplet zwycięstw. Jak się okazało później Konrad miał tego dnia urodziny i niektórzy przebąkiwali, że to takie prezenty z tej okazji. Nie było to jednak prawdą, a Konrad drugiego dnia dodatkowo rozprawił się z klątwą ”czarnej niedzieli”. Co prawda przegrał w 9 i 11 kolejce, ale w decydującej partii z <b>Dominikiem Urbackim</b> wygrał po zaciętym pojedynku i mógł cieszyć się z pierwszego zwycięskiego turnieju. Dominik musiał zadowolić się 2 miejscem. Na najniższym stopniu podium zameldował się <b>Kamil Górka</b>. Cała trójka otrzymała nagrody finansowe, puchary i książki o Transformacji Wieliczki autorstwa <b>Anny Batko</b>. Puchary trafiły też do najlepszej zawodniczki <b>Agnieszki Walas</b> i do <b>Wiktora Fejkiela</b>, który wywalczył tytuł najlepszego debiutanta i najlepszego zawodnika z gminy Wieliczka. <br><br>
+Wszyscy uczestnicy turnieju otrzymali dyplomy, okolicznościowe medale i pamiątki związane z Wieliczką (kubeczki i puzzle).<br><br>
+Tradycyjnie na koniec relacji dziękujemy wszystkim, którzy przyczynili się do organizacji turnieju: Burmistrzowi Wieliczki <b>Arturowi Koziołowi</b> za objęcie honorowym patronatem I Wielickiego Turnieju w Scrabble, <b>Wielickiemu Centrum Kultury</b> i sponsorom: <b>Gminie Wieliczka</b> i <b>Pulsowi Wieliczki</b>. <br><br>
+P.S. Na zakończenie turnieju zrobiliśmy sobie pamiątkowe zdjęcie, fajnie by było żebyśmy w przyszłym roku mogli sobie „pstryknąć” kolejne.</div><div class='autor'>relacja: Adam Janicki</div></div><div style='clear:both;'></div></div><div id='p_info' class='page'><br><p align='center'><center><b>Turniej pod patronatem Burmistrza Wieliczki Artura Kozioła</b></center></p><br><br><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><table id='szczegoly' class='ramkadolna'><tr><td>Rodzaj turnieju</td><td>otwarty (limit 56 miejsc)</td></tr><tr><td>Sposób rozgrywania</td><td>liczba rund: <b>12</b><br>
+system: połówkowy (rundy 1-11), duńczyk (runda 12)<br>
+20 minut dla gracza na partię</td></tr><tr><td>Miejsce rozgrywek</td><td>Wielickie Centrum Kultury<br>
+<br>
+Rynek Górny 6<br>
+32-020 Wieliczka</td></tr><tr><td>Sędzia</td><td>Adam Janicki</td></tr><tr><td>Harmonogram</td><td><b>Sobota, 15 października (7 rund)</b><br>
+11:00 — zapisy do turnieju<br>
+12:00 — rozpoczęcie turnieju<br>
+14:00-15:00 — przerwa obiadowa<br>
+20:00 — zakończenie gier<br><br>
+
+<b>Niedziela, 16 października (5 rund)</b><br>
+09:30 — rozpoczęcie drugiego dnia rozgrywek<br>
+14:30 — rozdanie nagród i zakończenie turnieju</td></tr><tr><td>Wpisowe</td><td>30 zł za dzień<br>
+członkowie PFS z aktualnie opłaconymi składkami — 20 zł za dzień<br>
+młodzież szkolna — 15 zł za dzień (do szkoły średniej włącznie)<br>
+debiutanci — bez opłat</td></tr><tr><td>Dojazd</td><td><a href ="https://wck.wieliczka.eu/contact/" target="_blank">https://wck.wieliczka.eu/contact/</a><br>
+<br>
+5 minut z przystanku PKP oraz przystanku autobusowego<br>
+<br>
+przyjazd pociągiem stacja Wieliczka Rynek Kopalnia (należy skręcić w lewo w ul. Edwarda Dembowskiego, następnie przejść aleją wzdłuż plant, po czym skręcić w prawo w ul. Zamkową w stronę Rynku Górnego. Budynek Wielickiego Centrum Kultury znajduje się po prawej stronie).<br>
+<br>
+autobus linia 304 przystanek Wieliczka Rynek Kopalnia<br>
+<br>
+należy kierować się w stronę wielickich plant, następnie przejść aleją wzdłuż parku, po czym skręcić w prawo w ul. Zamkową w stronę Rynku Górnego. Budynek Wielickiego Centrum Kultury znajduje się po prawej stronie).<br>
+<br>
+Ok 10 min samochodem z zjazdu autostrady A4. <br>
+Parkowanie w weekend w Wieliczce jest bezpłatne, jednak budynek WCK znajduje się w ścisłym centrum i może nie być łatwo znaleźć miejsce do zaparkowania w pobliżu.</td></tr><tr><td>Wyżywienie</td><td>Uwaga! Zapisy na obiad do poniedziałku 10 października do godz. 20.00 – wybór zestawów w formularzu zgłoszeniowym.<br>
+<br>
+Obiad dwudaniowy (vege lub standard) podany w miejscu rozgrywek w sobotę (15 października) o godz.14.00 / cena 30 zł:
+zestaw mięso — zupa pomidorowa, devolay, ziemniaki opiekane, surówka<br>
+zestaw wege — zupa pomidorowa, sałatka grecka<br>
+<br>
+Podczas trwania turnieju zapewniamy kawę, herbatę, wodę i drobne przekąski.<br>
+<br><br>
+W okolicy Rynku Górnego znajdują się:<br>
+1. Creperie – naleśnikarnia<br>
+Wieliczka ul. Mikołaja Kopernika 2, (znajduje się na terenie Rynku Górnego)<br>
+<a href="https://www.facebook.com/creperie.wieliczka/ " target="_blank">https://www.facebook.com/creperie.wieliczka/</a><br><br>
+2. Da Grasso – pizzeria<br>
+Wieliczka, ul. Mikołaja Kopernika 1,  (znajduje się na terenie Rynku Górnego)<br>
+<a href="https://www.dagrasso.pl/wieliczka" target="_blank">https://www.dagrasso.pl/wieliczka</a><br><br>
+3. Pierogarnia,,Dzień dobry’’ – pierogarnia<br>
+Wieliczka, Rynek Górny 1, (znajduje się na terenie Rynku Górnego)<br>
+<a href="https://pierogarnia-dzien-dobry.business.site/" target="_blank">https://pierogarnia-dzien-dobry.business.site/</a><br><br>
+4. Sztolnia Wieliczka – dania obiadowe, kuchnia regionalna<br>
+Wieliczka, ul Zamkowa 5, (ok. 60m w odległości od miejsca gry)<br>
+<a href="https://www.karczma-wieliczka.pl/wp-content/uploads/2020/08/Sztolnia_Menu_2020-08-13v3_-1.pdf" target="_blank">https://www.karczma-wieliczka.pl/wp-content/uploads/2020/08/Sztolnia_Menu_2020-08-13v3_-1.pdf</a><br><br>
+5. Restauracja Va banque – Wieliczka – kuchnia polska, pizza, burgery<br>
+Wieliczka, Władysława Sikorskiego 9, ( w odległości ok 160m od miejsca gry)<br>
+<a href="https://www.facebook.com/pizzavabanque/about" target="_blank">https://www.facebook.com/pizzavabanque/about</a><br><br>
+6. Stara Piekarnia – dania obiadowe<br>
+Wieliczka, ul. Seraf,  (w odległości ok 180 m od miejsca gry)<br>
+<a href="https://starapiekarnia.com/restauracja" target="_blank">https://starapiekarnia.com/restauracja</a><br><br>
+7. Warzelnia Smaków – dania kuchni polskiej<br>
+Wieliczka, ul. Daniłowicza 13,  (w odległości ok 400 m od miejsca gry)<br>
+<a href="https://warzelniasmakow.pl/wp-content/uploads/2022/03/Warzelnia-Smakow-Karta-Dzienna-A4-2022-04-www.pdf" target="_blank">https://warzelniasmakow.pl/wp-content/uploads/2022/03/Warzelnia-Smakow-Karta-Dzienna-A4-2022-04-www.pdf</a><br><br>
+8. Zajadalnia Wieliczka – Obiady, Domowe, Pierogi, Pizza, Sałatki<br>
+Wieliczka, ul. Stefana Batorego 9, (w odległości ok 210 m od miejsca gry)<br>
+<a href="https://directbistro.com/pl/zamow-online/zajadalnia-wieliczka-3199#/" target="_blank">https://directbistro.com/pl/zamow-online/zajadalnia-wieliczka-3199#/</a><br><br>
+9. Magnum Sal – kuchnia polska, kuchnia orientalna<br>
+Wieliczka, ul. Edwarda Dembowskiego 5,  (w odległości ok 400m od miejsca gry)<br>
+<a href="https://magnumsalwieliczka.pl/menu/" target="_blank">https://magnumsalwieliczka.pl/menu/</a></td></tr><tr><td>Noclegi</td><td>1. Hotel Grand Sal, Park Kingi 7 <br>
+<a href="https://www.grandsal.pl/" target="_blank">https://www.grandsal.pl/</a><br>
+pokoje 1, 2,3 oraz 4-osobowe, od 299 zł, tel. 12 289 81 10, (7 minut piechotą do miejsca gry)<br><br>
+2. Hotel Galicja, ul. Edwarda Dembowskiego 20,  <br>
+<a href="https://hotelgalicja.pl/" target="_blank">https://hotelgalicja.pl/</a><br>
+pokoje 1,2,3,4,5-osobowe; od 200 zł, tel.12 291 40 40, (9 minut piechotą do miejsca gry)<br><br>
+3. Turówka Hotel & Spa, ul. ul. Żeromskiego 1  <br>
+<a href="https://turowka.pl/" target="_blank">https://turowka.pl/</a><br>
+pokoje 1,2,3 osobowy od 359 zł, tel. 12 279 61 00, (10 minut piechotą do miejsca gry)<br><br>
+4. Hotel Galant, ul. Niepołomska 16  <br>
+<a href="http://www.galant.wel.pl/" target="_blank">http://www.galant.wel.pl/</a><br>
+pokoje 1,2,3,4 -osobowy od 130 zł, tel. 12 289 27 50, (20 minut piechotą do miejsca gry)<br><br>
+5. Motel General Holiday, ul. Dembowskiego 60  <br>
+<a href="https://motelgeneral.pl/" target="_blank">https://motelgeneral.pl/</a><br>
+pokoje 2,3,4 oraz 6 osobowe od 190 zł, tel. 501 458 453 (13 minut piechotą do miejsca gry)<br><br>
+6. Willa Relaks, ul. Niepołomska 22  <br>
+<a href="http://www.willarelaks.com.pl/pl" target="_blank">http://www.willarelaks.com.pl/pl</a><br>
+pokoje 2,3 oraz 4 osobowe cena od 150 zł tel. 12 278 12 91 (23 minuty piechotą do miejsca gry)<br></td></tr><tr><td>Nagrody</td><td>I miejsce — puchar + nagroda pieniężna<br>
+II miejsce — puchar + nagroda pieniężna<br>
+III miejsce — puchar + nagroda pieniężna<br>
+<br>
+Nagroda:<br>
+— dla najlepszego debiutanta<br>
+— dla najlepszej zawodniczki<br>
+— dla najlepszego mieszkańca Gminy Wieliczka<br>
+Pamiątkowy medal i upominek od Organizatora dla wszystkich uczestników.</td></tr><tr><td>Zgłoszenia uczestników</td><td><a href='' id='listaucz'>pokaż listę uczestników</a>
+            <div id='lista'>
+            <table width=100%><td width=5% >Lp.</td><td width=15% style='font-weight:bold;'>Imię i nazwisko</td><td width=15% style='font-weight:bold;border-left:#1576AE 1px dashed;'>Miasto</td><td width=10% style='font-weight:bold;border-left:#1576AE 1px dashed;'>Status uczestnika</td><td width=40% style='font-weight:bold;border-left:#1576AE 1px dashed;'>Dodatkowe opcje</td><td width=15% style='font-weight:bold;border-left:#1576AE 1px dashed;'>Data zgłoszenia</td><tr>
+					<td>1</td>
+					<td>Kamil Górka</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Kraków</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>mięso</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-09-16 11:48:14</td>
+                </tr><tr>
+					<td>2</td>
+					<td>Bartosz Bartczak</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Poznań</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>mięso</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-09-16 12:21:46</td>
+                </tr><tr>
+					<td>3</td>
+					<td>Karol Wyrębkiewicz</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Kraków</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>wege</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-09-16 12:44:11</td>
+                </tr><tr>
+					<td>4</td>
+					<td>Dominik Ulejczyk</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Będzin</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>mięso</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-09-16 16:30:09</td>
+                </tr><tr>
+					<td>5</td>
+					<td>Jacek Mańko</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Warszawa</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>mięso</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-09-17 01:25:17</td>
+                </tr><tr>
+					<td>6</td>
+					<td>Arkadiusz Łydka</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Jaworzno</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>mięso</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-09-17 04:20:21</td>
+                </tr><tr>
+					<td>7</td>
+					<td>Leszek Kilian</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Jaworzno</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>mięso</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-09-17 09:03:51</td>
+                </tr><tr>
+					<td>8</td>
+					<td>Zdzisław Stańkowski </td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Rząska </td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>mięso</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-09-18 06:58:24</td>
+                </tr><tr>
+					<td>9</td>
+					<td>Tomasz Lempart</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Kraków</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>mięso</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-09-19 06:54:05</td>
+                </tr><tr>
+					<td>10</td>
+					<td>Arkadiusz Kleniewski</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Dzierzążnia</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>mięso</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-09-19 13:28:23</td>
+                </tr><tr>
+					<td>11</td>
+					<td>Zbigniew Wietecki</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Gorzów Wielkopolski</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>mięso</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-09-19 17:32:29</td>
+                </tr><tr>
+					<td>12</td>
+					<td>Dariusz Sowula</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Kraków</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-09-19 17:47:53</td>
+                </tr><tr>
+					<td>13</td>
+					<td>Anna Maj</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Wieliczka</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>debiut</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-09-20 12:33:12</td>
+                </tr><tr>
+					<td>14</td>
+					<td>Artur Irzyk</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Strzyżów</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>mięso</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-09-20 13:37:35</td>
+                </tr><tr>
+					<td>15</td>
+					<td>Wojtek Wojtysiak</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Legionowo</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-09-22 11:14:32</td>
+                </tr><tr>
+					<td>16</td>
+					<td>Franek Walas</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Kraków</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>młodzież</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-09-22 17:44:20</td>
+                </tr><tr>
+					<td>17</td>
+					<td>Jan Walas</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Kraków</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-09-22 17:47:55</td>
+                </tr><tr>
+					<td>18</td>
+					<td>Marek Rogalski</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Warszawa</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-09-22 19:12:40</td>
+                </tr><tr>
+					<td>19</td>
+					<td>Marcin Kurowski</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Racibórz</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>mięso</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-09-23 14:29:38</td>
+                </tr><tr>
+					<td>20</td>
+					<td>Agnieszka Walas</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Kraków</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-09-24 11:01:16</td>
+                </tr><tr>
+					<td>21</td>
+					<td>Aneta Szczyrzyca</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Jaworzno</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>mięso</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-09-25 14:03:38</td>
+                </tr><tr>
+					<td>22</td>
+					<td>Piotr Broda</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Sandomierz</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>mięso</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-09-25 21:21:15</td>
+                </tr><tr>
+					<td>23</td>
+					<td>Przemysław Herdzina</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Kraków</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>mięso</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-09-25 22:43:46</td>
+                </tr><tr>
+					<td>24</td>
+					<td>Jakub Kowalski</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Kalwaria Zebrzydowska</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>mięso</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-09-27 13:55:15</td>
+                </tr><tr>
+					<td>25</td>
+					<td>Magdalena Parowicz</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Wrocław</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-09-27 17:15:38</td>
+                </tr><tr>
+					<td>26</td>
+					<td>Krzysztof Gibas</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Kraków</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-09-28 07:58:19</td>
+                </tr><tr>
+					<td>27</td>
+					<td>Małgorzata Pochopień</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Kraków</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-09-28 18:42:44</td>
+                </tr><tr>
+					<td>28</td>
+					<td>Mikołaj Cieplik</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Ostrzeszów</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-09-28 19:10:39</td>
+                </tr><tr>
+					<td>29</td>
+					<td>Konrad Sowula</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Kraków </td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-09-29 10:11:21</td>
+                </tr><tr>
+					<td>30</td>
+					<td>Barbara Grzesik</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Bochnia</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>debiut</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>mięso</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-09-30 11:42:29</td>
+                </tr><tr>
+					<td>31</td>
+					<td>Jerzy Matyasik</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Kraków</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-09-30 15:17:18</td>
+                </tr><tr>
+					<td>32</td>
+					<td>Teresa Zalewska</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Racibórz</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>wege</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-09-30 21:01:35</td>
+                </tr><tr>
+					<td>33</td>
+					<td>Dariusz Putoń</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>RUDA ŚLĄSKA</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-09-30 23:51:27</td>
+                </tr><tr>
+					<td>34</td>
+					<td>Rafał Wesołowski</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Warszawa</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-10-01 00:04:06</td>
+                </tr><tr>
+					<td>35</td>
+					<td>Jan Mrozowski</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Kraków</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>mięso</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-10-01 20:05:22</td>
+                </tr><tr>
+					<td>36</td>
+					<td>Jerzy Luter</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Bytom</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>mięso</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-10-03 02:06:17</td>
+                </tr><tr>
+					<td>37</td>
+					<td>Ewa Dunikowska</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Kraków</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>mięso</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-10-03 11:07:13</td>
+                </tr><tr>
+					<td>38</td>
+					<td>Łukasz Bobowski</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Suchedniów</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>mięso</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-10-03 13:56:05</td>
+                </tr><tr>
+					<td>39</td>
+					<td>Waldemar Wypchał</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Kraków</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-10-03 15:24:40</td>
+                </tr><tr>
+					<td>40</td>
+					<td>Marcin Ceglarek </td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Kraków </td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>mięso</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-10-03 22:53:09</td>
+                </tr><tr>
+					<td>41</td>
+					<td>Krzysztof Zawadzki</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Sampława</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-10-05 14:16:12</td>
+                </tr><tr>
+					<td>42</td>
+					<td>Dominik Urbacki</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Pruszków</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-10-05 20:55:10</td>
+                </tr><tr>
+					<td>43</td>
+					<td>Wiktor Fejkiel</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Wieliczka</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>debiut</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-10-06 11:31:29</td>
+                </tr><tr>
+					<td>44</td>
+					<td>Agata Kopta</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Wodzisław Śląski</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>mięso</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-10-06 14:20:13</td>
+                </tr><tr>
+					<td>45</td>
+					<td>Franek Łysek</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Warszawa</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-10-06 19:15:15</td>
+                </tr><tr>
+					<td>46</td>
+					<td>Maria Uryga</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Kraków </td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-10-06 19:56:54</td>
+                </tr><tr>
+					<td>47</td>
+					<td>Dorota Klęsk</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>wieliczka</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Debiutant</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-10-10 08:57:51</td>
+                </tr><tr>
+					<td>48</td>
+					<td>Andrzej Rakoczy </td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Kocmyrzów </td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-10-14 15:27:20</td>
+                </tr><tr>
+					<td>49</td>
+					<td>Zbigniew Stettner</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Kraków</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-10-14 22:41:17</td>
+                </tr><tr>
+					<td>50</td>
+					<td>Mariusz Wrześniewski</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Kraków</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2022-10-15 11:24:08</td>
+                </tr></table>
+				</div></td></tr><tr><td>Organizatorzy</td><td>Wielickie Centrum Kultury<br><br>
+ktuteja@wieliczka.eu, 512 727 659<br>
+k.gorka@pfs.org.pl, 602 443 800 (PFS)<br><br>
+<img src="rozne/wieliczka/wck.jpg"></td></tr><tr><td>Sponsorzy</td><td>Partnerzy:<br>
+Gmina Wieliczka<br>
+Puls Wieliczki<br><br>
+<img src="rozne/wieliczka/wieliczka.jpg"><img src="rozne/wieliczka/puls.jpg"></td></tr></table><br /><br /></div><div id='p_klasyfikacja' class='page'><pre>﻿Wyniki turnieju I Wielicki Turniej w Scrabble
+
+Lp. Imię            Nazwisko             Miasto               Ranking  Duże pkt Małe pkt Skalpy   Różn. MP
+--- --------------- -------------------- -------------------- -------- -------- -------- -------- --------
+  1 Konrad          Sowula               Kraków                 141.69     10.0     4703     2141      188
+  2 Dominik         Urbacki              Pruszków               166.77      9.0     5248     1980      873
+  3 Kamil           Górka                Kraków                 159.11      9.0     5093     1948      815
+  4 Jan             Mrozowski            Kraków                 154.65      9.0     4921     2000      407
+  5 Mariusz         Wrześniewski         Kraków                 147.48      8.0     4921     1943      334
+  6 Dominik         Ulejczyk             Będzin                 134.96      8.0     4888     1789      550
+  7 Jerzy           Luter                Bytom                  121.98      8.0     4710     1802      468
+  8 Artur           Irzyk                Strzyżów               140.73      8.0     4681     1824      231
+  9 Piotr           Broda                Sandomierz             137.46      8.0     4621     1768      505
+ 10 Franciszek      Łysek                Warszawa               148.67      7.0     4866     1697      495
+ 11 Łukasz          Bobowski             Suchedniów             156.79      7.0     4793     1634      640
+ 12 Mikołaj         Cieplik              Ostrzeszów             145.01      7.0     4776     1678      687
+ 13 Andrzej         Rakoczy              Kocmyrzów              137.55      7.0     4712     1653       13
+ 14 Rafał           Wesołowski           Warszawa               136.45      7.0     4611     1765      390
+ 15 Przemysław      Herdzina             Kraków                 149.74      7.0     4514     1675      -15
+ 16 Marek           Rogalski             Warszawa               130.59      7.0     4496     1624      122
+ 17 Karol           Wyrębkiewicz         Kraków                 155.74      6.0     4969     1622      262
+ 18 Zdzisław        Stańkowski           Rząska                 127.60      6.0     4943     1521      825
+ 19 Jacek           Mańko                Warszawa               138.30      6.0     4691     1575      118
+ 20 Marcin          Ceglarek             Kraków                 128.10      6.0     4662     1556      166
+ 21 Agnieszka       Walas                Kraków                 135.08      6.0     4501     1566     -246
+ 22 Zbigniew        Wietecki             Gorzów Wielkopolski    129.20      6.0     4495     1509     -108
+ 23 Teresa          Zalewska             Racibórz               120.46      6.0     4436     1541       77
+ 24 Arkadiusz       Łydka                Jaworzno               123.57      6.0     4397     1622     -182
+ 25 Bartosz         Bartczak             Poznań                 130.28      6.0     4312     1498     -119
+ 26 Jerzy           Matyasik             Kraków                 128.30      6.0     4289     1508      298
+ 27 Marcin          Kurowski             Racibórz               122.72      6.0     4233     1520      -73
+ 28 Waldemar        Wypchał              Kraków                 104.00      6.0     4108     1570     -123
+ 29 Dariusz         Sowula               Kraków                 122.40      6.0     4054     1515     -357
+ 30 Adam            Janicki              Wrocław                128.22      6.0     3066     1275      296
+ 31 Jakub M.        Kowalski             Kalwaria Zebrzydowska   104.50      5.5     4026     1498     -665
+ 32 Krzysztof       Gibas                Kraków                 139.76      5.0     4645     1357      241
+ 33 Magdalena       Parowicz             Wrocław                135.89      5.0     4451     1305      501
+ 34 Tomasz          Lempart              Kraków                 141.42      5.0     4377     1490       50
+ 35 Ewa             Dunikowska           Kraków                 136.19      5.0     4245     1332      269
+ 36 Krzysztof       Zawadzki             Sampława               115.09      5.0     4183     1346     -315
+ 37 Franciszek      Walas                Kraków                 100.00      5.0     4068     1395      -93
+ 38 Maria           Uryga                Kraków                 118.47      5.0     4048     1333     -156
+ 39 Wojciech        Wojtysiak            Warszawa               105.06      5.0     4029     1284      -23
+ 40 Dariusz         Putoń                Ruda Śląska            138.42      5.0     2708     1120      362
+ 41 Arkadiusz       Kleniewski           Dzierzążnia            127.01      4.0     4171     1277     -234
+ 42 Leszek          Kilian               Jaworzno               113.13      4.0     4150     1310     -337
+ 43 Małgorzata      Pochopień            Kraków                 114.11      4.0     4039     1371     -830
+ 44 Agata           Kopta                Wodzisław Śląski       122.13      4.0     3999     1230     -447
+ 45 Aneta           Szczyrzyca           Jaworzno               103.59      4.0     3870     1238     -370
+ 46 Janina          Sobala               Łęczna                 100.00      4.0     3801     1220     -538
+ 47 Zbigniew        Stettner             Bielsko Biała          100.00      4.0     2392      926     -160
+ 48 Wiktor          Fejkiel              Wieliczka              100.00      3.0     3335     1013     -678
+ 49 Dorota          Klęsk                Wieliczka              100.00      2.5     3403     1064     -933
+ 50 Jan             Walas                Kraków                 100.00      2.0     3027      905    -1365
+ 51 Barbara         Grzesik              Bochnia                100.00      2.0     1962      732     -753
+ 52 Anna            Maj                  Wieliczka              100.00      0.0      312      249    -1063
+</pre></div><div id='p_hh' class='page'><pre>﻿Wyniki poszczególnych graczy w turnieju I Wielicki Turniej w Scrabble
+
+
+
+	Dominik Urbacki 166.77 Pruszków
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Adam           Janicki               128.22 +  377: 372  178
+    2     6 Jacek          Mańko                 138.30 -  370: 423   88
+    3    13 Jerzy          Matyasik              128.30 +  390: 365  178
+    4     5 Mariusz        Wrześniewski          147.48 +  415: 362  197
+    5     3 Jan            Mrozowski             154.65 -  417: 466  105
+    6     9 Bartosz        Bartczak              130.28 +  431: 348  180
+    7     8 Tomasz         Lempart               141.42 +  423: 379  191
+    8     5 Przemysław     Herdzina              149.74 +  526: 345  200
+    9     1 Konrad         Sowula                141.69 +  478: 324  192
+   10     2 Artur          Irzyk                 140.73 +  528: 364  191
+   11     2 Andrzej        Rakoczy               137.55 +  565: 289  188
+   12     1 Konrad         Sowula                141.69 -  328: 338   92
+                                                          --------------- ---- ------
+                                                                    1980 / 12 165.00
+
+
+
+
+	Kamil Górka 159.11 Kraków
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Marcin         Ceglarek              128.10 +  464: 312  178
+    2     5 Ewa            Dunikowska            136.19 +  382: 353  186
+    3     7 Franciszek     Walas                 100.00 +  433: 288  159
+    4     4 Dominik        Ulejczyk              134.96 -  406: 421   85
+    5     6 Małgorzata     Pochopień             114.11 +  428: 367  164
+    6     3 Tomasz         Lempart               141.42 +  394: 362  191
+    7     3 Dariusz        Putoń                 138.42 +  376: 370  188
+    8     1 Konrad         Sowula                141.69 -  376: 396   92
+    9     3 Jan            Mrozowski             154.65 +  543: 275  205
+   10     3 Karol          Wyrębkiewicz          155.74 +  495: 378  206
+   11     3 Mariusz        Wrześniewski          147.48 -  327: 441   97
+   12     2 Mariusz        Wrześniewski          147.48 +  469: 315  197
+                                                          --------------- ---- ------
+                                                                    1948 / 12 162.33
+
+
+
+
+	Łukasz Bobowski 156.79 Suchedniów               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Zdzisław       Stańkowski            127.60 -  287: 439   78
+    2    18 Adam           Janicki               128.22 -  312: 409   78
+    3    24 Aneta          Szczyrzyca            103.59 +  423: 293  157
+    4    15 Franciszek     Walas                 100.00 +  409: 323  157
+    5    13 Piotr          Broda                 137.46 -  354: 388   87
+    6    19 Marcin         Kurowski              122.72 +  399: 309  173
+    7    11 Krzysztof      Gibas                 139.76 +  483: 263  190
+    8    12 Jakub M.       Kowalski              104.50 +  537: 305  157
+    9     5 Karol          Wyrębkiewicz          155.74 -  365: 412  106
+   10    10 Marek          Rogalski              130.59 -  365: 437   81
+   11    12 Tomasz         Lempart               141.42 +  374: 311  191
+   12     9 Zbigniew       Wietecki              129.20 +  485: 264  179
+                                                          --------------- ---- ------
+                                                                    1634 / 12 136.17
+
+
+
+
+	Karol Wyrębkiewicz 155.74 Kraków            
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Arkadiusz      Kleniewski            127.01 +  475: 473  177
+    2     4 Jerzy          Matyasik              128.30 +  412: 285  178
+    3     4 Małgorzata     Pochopień             114.11 +  486: 270  164
+    4     2 Tomasz         Lempart               141.42 -  335: 360   91
+    5     5 Rafał          Wesołowski            136.45 -  347: 392   86
+    6     7 Teresa         Zalewska              120.46 +  504: 232  170
+    7     4 Franciszek     Łysek                 148.67 +  487: 415  199
+    8     3 Artur          Irzyk                 140.73 -  422: 441   91
+    9     5 Łukasz         Bobowski              156.79 +  412: 365  207
+   10     3 Kamil          Górka                 159.11 -  378: 495  109
+   11     5 Jerzy          Luter                 121.98 -  401: 522   72
+   12     7 Adam           Janicki               128.22 -  310: 457   78
+                                                          --------------- ---- ------
+                                                                    1622 / 12 135.17
+
+
+
+
+	Jan Mrozowski 154.65 Kraków
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Arkadiusz      Łydka                 123.57 +  486: 378  174
+    2     3 Zbigniew       Wietecki              129.20 +  450: 308  179
+    3     2 Mikołaj        Cieplik               145.01 +  457: 338  195
+    4     1 Dariusz        Putoń                 138.42 -  358: 372   88
+    5     3 Dominik        Urbacki               166.77 +  466: 417  217
+    6     2 Przemysław     Herdzina              149.74 +  442: 297  200
+    7     2 Mariusz        Wrześniewski          147.48 -  273: 474   97
+    8     4 Rafał          Wesołowski            136.45 +  430: 349  186
+    9     3 Kamil          Górka                 159.11 -  275: 543  109
+   10     5 Jerzy          Luter                 121.98 +  381: 367  172
+   11     1 Konrad         Sowula                141.69 +  520: 316  192
+   12     3 Artur          Irzyk                 140.73 +  383: 355  191
+                                                          --------------- ---- ------
+                                                                    2000 / 12 166.67
+
+
+
+
+	Przemysław Herdzina 149.74 Kraków                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Marcin         Kurowski              122.72 -  354: 403   73
+    2    20 Wojciech       Wojtysiak             105.06 +  437: 258  155
+    3    10 Marcin         Ceglarek              128.10 +  521: 357  178
+    4     6 Jerzy          Luter                 121.98 +  407: 348  172
+    5     4 Arkadiusz      Łydka                 123.57 +  323: 298  174
+    6     2 Jan            Mrozowski             154.65 -  297: 442  105
+    7     6 Mikołaj        Cieplik               145.01 +  354: 338  195
+    8     5 Dominik        Urbacki               166.77 -  345: 526  117
+    9     9 Zdzisław       Stańkowski            127.60 +  411: 357  178
+   10     6 Piotr          Broda                 137.46 -  365: 397   87
+   11     8 Waldemar       Wypchał               104.00 +  386: 381  154
+   12     6 Piotr          Broda                 137.46 -  314: 424   87
+                                                          --------------- ---- ------
+                                                                    1675 / 12 139.58
+
+
+
+
+	Franciszek Łysek 148.67 Warszawa
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Dariusz        Sowula                122.40 +  356: 266  172
+    2     9 Mariusz        Wrześniewski          147.48 -  380: 475   97
+    3    19 Arkadiusz      Kleniewski            127.01 +  394: 322  177
+    4     7 Andrzej        Rakoczy               137.55 +  465: 334  188
+    5     8 Jakub M.       Kowalski              104.50 +  453: 247  155
+    6     5 Rafał          Wesołowski            136.45 -  315: 408   86
+    7     4 Karol          Wyrębkiewicz          155.74 -  415: 487  106
+    8     9 Arkadiusz      Łydka                 123.57 +  467: 336  174
+    9     4 Artur          Irzyk                 140.73 -  362: 427   91
+   10     9 Agnieszka      Walas                 135.08 +  452: 359  185
+   11     7 Marek          Rogalski              130.59 +  450: 316  181
+   12     4 Dominik        Ulejczyk              134.96 -  357: 394   85
+                                                          --------------- ---- ------
+                                                                    1697 / 12 141.42
+
+
+
+
+	Mariusz Wrześniewski 147.48 Kraków   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Agata          Kopta                 122.13 +  428: 363  172
+    2     9 Franciszek     Łysek                 148.67 +  475: 380  199
+    3     3 Konrad         Sowula                141.69 -  412: 414   92
+    4     5 Dominik        Urbacki               166.77 -  362: 415  117
+    5     9 Artur          Irzyk                 140.73 +  475: 372  191
+    6     4 Jacek          Mańko                 138.30 +  439: 435  188
+    7     2 Jan            Mrozowski             154.65 +  474: 273  205
+    8     2 Piotr          Broda                 137.46 +  392: 367  187
+    9     2 Andrzej        Rakoczy               137.55 -  358: 435   88
+   10     4 Rafał          Wesołowski            136.45 +  350: 337  186
+   11     3 Kamil          Górka                 159.11 +  441: 327  209
+   12     2 Kamil          Górka                 159.11 -  315: 469  109
+                                                          --------------- ---- ------
+                                                                    1943 / 12 161.92
+
+
+
+
+	Mikołaj Cieplik 145.01 Ostrzeszów
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Jerzy          Luter                 121.98 +  359: 342  172
+    2     8 Piotr          Broda                 137.46 +  464: 238  187
+    3     2 Jan            Mrozowski             154.65 -  338: 457  105
+    4    12 Rafał          Wesołowski            136.45 -  403: 454   86
+    5    12 Marcin         Kurowski              122.72 +  412: 294  173
+    6     8 Arkadiusz      Łydka                 123.57 +  506: 256  174
+    7     6 Przemysław     Herdzina              149.74 -  338: 354  100
+    8     7 Marek          Rogalski              130.59 -  359: 381   81
+    9    12 Małgorzata     Pochopień             114.11 +  460: 263  164
+   10     8 Adam           Janicki               128.22 -  359: 362   78
+   11    10 Teresa         Zalewska              120.46 +  387: 323  170
+   12     8 Jacek          Mańko                 138.30 +  391: 365  188
+                                                          --------------- ---- ------
+                                                                    1678 / 12 139.83
+
+
+
+
+	Konrad Sowula 141.69 Kraków
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Teresa         Zalewska              120.46 +  409: 383  170
+    2    11 Agnieszka      Walas                 135.08 +  400: 294  185
+    3     3 Mariusz        Wrześniewski          147.48 +  414: 412  197
+    4     3 Jacek          Mańko                 138.30 +  448: 327  188
+    5     1 Tomasz         Lempart               141.42 +  389: 349  191
+    6     1 Dariusz        Putoń                 138.42 +  395: 323  188
+    7     1 Rafał          Wesołowski            136.45 +  405: 358  186
+    8     1 Kamil          Górka                 159.11 +  396: 376  209
+    9     1 Dominik        Urbacki               166.77 -  324: 478  117
+   10     1 Andrzej        Rakoczy               137.55 +  469: 367  188
+   11     1 Jan            Mrozowski             154.65 -  316: 520  105
+   12     1 Dominik        Urbacki               166.77 +  338: 328  217
+                                                          --------------- ---- ------
+                                                                    2141 / 12 178.42
+
+
+
+
+	Tomasz Lempart 141.42 Kraków
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Maria          Uryga                 118.47 +  405: 341  168
+    2    13 Barbara        Grzesik               100.00 +  436: 245  150
+    3     1 Dominik        Ulejczyk              134.96 +  401: 360  185
+    4     2 Karol          Wyrębkiewicz          155.74 +  360: 335  206
+    5     1 Konrad         Sowula                141.69 -  349: 389   92
+    6     3 Kamil          Górka                 159.11 -  362: 394  109
+    7     8 Dominik        Urbacki               166.77 -  379: 423  117
+    8    11 Waldemar       Wypchał               104.00 -  313: 341   54
+    9    16 Marcin         Ceglarek              128.10 -  335: 435   78
+   10    14 Franciszek     Walas                 100.00 +  330: 292  150
+   11    12 Łukasz         Bobowski              156.79 -  311: 374  107
+   12    15 Arkadiusz      Łydka                 123.57 -  396: 398   74
+                                                          --------------- ---- ------
+                                                                    1490 / 12 124.17
+
+
+
+
+	Artur Irzyk 140.73 Strzyżów         
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    12 Krzysztof      Zawadzki              115.09 -  303: 408   65
+    2    14 Arkadiusz      Kleniewski            127.01 +  430: 372  177
+    3    20 Barbara        Grzesik               100.00 +  454: 276  150
+    4    10 Zbigniew       Wietecki              129.20 +  405: 380  179
+    5     9 Mariusz        Wrześniewski          147.48 -  372: 475   97
+    6    11 Waldemar       Wypchał               104.00 +  388: 258  154
+    7     5 Jacek          Mańko                 138.30 +  426: 283  188
+    8     3 Karol          Wyrębkiewicz          155.74 +  441: 422  206
+    9     4 Franciszek     Łysek                 148.67 +  427: 362  199
+   10     2 Dominik        Urbacki               166.77 -  364: 528  117
+   11     4 Piotr          Broda                 137.46 +  316: 303  187
+   12     3 Jan            Mrozowski             154.65 -  355: 383  105
+                                                          --------------- ---- ------
+                                                                    1824 / 12 152.00
+
+
+
+
+	Krzysztof Gibas 139.76 Kraków
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    13 Małgorzata     Pochopień             114.11 -  402: 427   64
+    2    15 Magdalena      Parowicz              135.89 +  399: 279  186
+    3     9 Maria          Uryga                 118.47 -  289: 401   68
+    4    16 Leszek         Kilian                113.13 -  348: 374   63
+    5    22 Dorota         Klęsk                 100.00 +  463: 229  150
+    6    15 Agata          Kopta                 122.13 +  535: 266  172
+    7    11 Łukasz         Bobowski              156.79 -  263: 483  107
+    8    14 Bartosz        Bartczak              130.28 +  485: 327  180
+    9    11 Franciszek     Walas                 100.00 +  365: 329  150
+   10    11 Waldemar       Wypchał               104.00 -  390: 399   54
+   11    11 Agnieszka      Walas                 135.08 -  351: 482   85
+   12    13 Marcin         Ceglarek              128.10 -  355: 408   78
+                                                          --------------- ---- ------
+                                                                    1357 / 12 113.08
+
+
+
+
+	Dariusz Putoń 138.42 Ruda Śląska            
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    14 Leszek         Kilian                113.13 +  503: 228  163
+    2     2 Bartosz        Bartczak              130.28 +  355: 341  180
+    3     6 Rafał          Wesołowski            136.45 +  414: 313  186
+    4     1 Jan            Mrozowski             154.65 +  372: 358  205
+    5     2 Dominik        Ulejczyk              134.96 +  371: 335  185
+    6     1 Konrad         Sowula                141.69 -  323: 395   92
+    7     3 Kamil          Górka                 159.11 -  370: 376  109
+                                                          --------------- ---- ------
+                                                                    1120 /  7 160.00
+
+
+
+
+	Jacek Mańko 138.30 Warszawa
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    15 Wojciech       Wojtysiak             105.06 +  441: 266  155
+    2     6 Dominik        Urbacki               166.77 +  423: 370  217
+    3     5 Krzysztof      Zawadzki              115.09 +  430: 360  165
+    4     3 Konrad         Sowula                141.69 -  327: 448   92
+    5     7 Waldemar       Wypchał               104.00 +  442: 326  154
+    6     4 Mariusz        Wrześniewski          147.48 -  435: 439   97
+    7     5 Artur          Irzyk                 140.73 -  283: 426   91
+    8     8 Agnieszka      Walas                 135.08 -  354: 400   85
+    9    13 Dariusz        Sowula                122.40 +  372: 324  172
+   10    12 Zdzisław       Stańkowski            127.60 -  392: 445   78
+   11    13 Arkadiusz      Łydka                 123.57 +  427: 378  174
+   12     8 Mikołaj        Cieplik               145.01 -  365: 391   95
+                                                          --------------- ---- ------
+                                                                    1575 / 12 131.25
+
+
+
+
+	Andrzej Rakoczy 137.55 Kocmyrzów       
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    16 Jakub M.       Kowalski              104.50 -  312: 354   55
+    2    25 Leszek         Kilian                113.13 +  429: 365  163
+    3    16 Dariusz        Sowula                122.40 +  489: 258  172
+    4     7 Franciszek     Łysek                 148.67 -  334: 465   99
+    5    11 Zbigniew       Wietecki              129.20 +  393: 348  179
+    6    12 Zbigniew       Stettner              100.00 +  461: 288  150
+    7     7 Jerzy          Luter                 121.98 +  398: 366  172
+    8     6 Dominik        Ulejczyk              134.96 +  475: 459  185
+    9     2 Mariusz        Wrześniewski          147.48 +  435: 358  197
+   10     1 Konrad         Sowula                141.69 -  367: 469   92
+   11     2 Dominik        Urbacki               166.77 -  289: 565  117
+   12     5 Jerzy          Luter                 121.98 -  330: 404   72
+                                                          --------------- ---- ------
+                                                                    1653 / 12 137.75
+
+
+
+
+	Piotr Broda 137.46 Sandomierz
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    17 Waldemar       Wypchał               104.00 +  428: 348  154
+    2     8 Mikołaj        Cieplik               145.01 -  238: 464   95
+    3    15 Teresa         Zalewska              120.46 -  372: 453   70
+    4    22 Barbara        Grzesik               100.00 +  500: 185  150
+    5    13 Łukasz         Bobowski              156.79 +  388: 354  207
+    6    14 Jakub M.       Kowalski              104.50 +  453: 277  155
+    7     9 Małgorzata     Pochopień             114.11 +  320: 319  164
+    8     2 Mariusz        Wrześniewski          147.48 -  367: 392   97
+    9     6 Agnieszka      Walas                 135.08 +  431: 329  185
+   10     6 Przemysław     Herdzina              149.74 +  397: 365  200
+   11     4 Artur          Irzyk                 140.73 -  303: 316   91
+   12     6 Przemysław     Herdzina              149.74 +  424: 314  200
+                                                          --------------- ---- ------
+                                                                    1768 / 12 147.33
+
+
+
+
+	Rafał Wesołowski 136.45 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    18 Aneta          Szczyrzyca            103.59 +  361: 238  154
+    2     7 Zdzisław       Stańkowski            127.60 +  390: 388  178
+    3     6 Dariusz        Putoń                 138.42 -  313: 414   88
+    4    12 Mikołaj        Cieplik               145.01 +  454: 403  195
+    5     5 Karol          Wyrębkiewicz          155.74 +  392: 347  206
+    6     5 Franciszek     Łysek                 148.67 +  408: 315  199
+    7     1 Konrad         Sowula                141.69 -  358: 405   92
+    8     4 Jan            Mrozowski             154.65 -  349: 430  105
+    9     8 Marek          Rogalski              130.59 +  440: 254  181
+   10     4 Mariusz        Wrześniewski          147.48 -  337: 350   97
+   11     6 Dominik        Ulejczyk              134.96 -  359: 371   85
+   12    10 Agnieszka      Walas                 135.08 +  450: 306  185
+                                                          --------------- ---- ------
+                                                                    1765 / 12 147.08
+
+
+
+
+	Ewa Dunikowska 136.19 Kraków
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    19 Wiktor         Fejkiel               100.00 +  383: 236  150
+    2     5 Kamil          Górka                 159.11 -  353: 382  109
+    3    18 Jakub M.       Kowalski              104.50 -  334: 339   55
+    4    17 Magdalena      Parowicz              135.89 +  453: 340  186
+    5    14 Maria          Uryga                 118.47 +  429: 314  168
+    6    13 Zdzisław       Stańkowski            127.60 -  324: 425   78
+    7    15 Zbigniew       Stettner              100.00 -  276: 344   50
+    8    19 Janina         Sobala                100.00 -  325: 352   50
+    9    18 Leszek         Kilian                113.13 +  349: 276  163
+   10    18 Marcin         Kurowski              122.72 -  262: 286   73
+   11    19 Agata          Kopta                 122.13 +  424: 299  172
+   12    16 Jerzy          Matyasik              128.30 -  333: 383   78
+                                                          --------------- ---- ------
+                                                                    1332 / 12 111.00
+
+
+
+
+	Magdalena Parowicz 135.89 Wrocław
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    20 Barbara        Grzesik               100.00 -  298: 326   50
+    2    15 Krzysztof      Gibas                 139.76 -  279: 399   90
+    3    26 Anna           Maj                   100.00 +  400:   1  150
+    4    17 Ewa            Dunikowska            136.19 -  340: 453   86
+    5    20 Marcin         Ceglarek              128.10 -  369: 393   78
+    6    23 Dorota         Klęsk                 100.00 +  425: 246  150
+    7    19 Leszek         Kilian                113.13 -  270: 441   63
+    8    22 Aneta          Szczyrzyca            103.59 +  449: 289  154
+    9    21 Agata          Kopta                 122.13 +  411: 269  172
+   10    17 Małgorzata     Pochopień             114.11 +  533: 338  164
+   11    16 Jerzy          Matyasik              128.30 -  336: 410   78
+   12    14 Teresa         Zalewska              120.46 -  341: 385   70
+                                                          --------------- ---- ------
+                                                                    1305 / 12 108.75
+
+
+
+
+	Agnieszka Walas 135.08 Kraków
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    21 Dorota         Klęsk                 100.00 +  348: 260  150
+    2    11 Konrad         Sowula                141.69 -  294: 400   92
+    3    17 Arkadiusz      Łydka                 123.57 -  282: 472   74
+    4    19 Marcin         Ceglarek              128.10 +  448: 390  178
+    5    17 Jerzy          Luter                 121.98 -  394: 432   72
+    6    20 Dariusz        Sowula                122.40 +  395: 358  172
+    7    12 Zdzisław       Stańkowski            127.60 +  464: 397  178
+    8     8 Jacek          Mańko                 138.30 +  400: 354  188
+    9     6 Piotr          Broda                 137.46 -  329: 431   87
+   10     9 Franciszek     Łysek                 148.67 -  359: 452   99
+   11    11 Krzysztof      Gibas                 139.76 +  482: 351  190
+   12    10 Rafał          Wesołowski            136.45 -  306: 450   86
+                                                          --------------- ---- ------
+                                                                    1566 / 12 130.50
+
+
+
+
+	Dominik Ulejczyk 134.96 Będzin
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    22 Anna           Maj                   100.00 +  580: 138  150
+    2     1 Marcin         Kurowski              122.72 +  409: 383  173
+    3     1 Tomasz         Lempart               141.42 -  360: 401   91
+    4     4 Kamil          Górka                 159.11 +  421: 406  209
+    5     2 Dariusz        Putoń                 138.42 -  335: 371   88
+    6     6 Jerzy          Luter                 121.98 -  360: 424   72
+    7    10 Bartosz        Bartczak              130.28 +  432: 312  180
+    8     6 Andrzej        Rakoczy               137.55 -  459: 475   88
+    9    10 Arkadiusz      Łydka                 123.57 +  372: 337  174
+   10     7 Zbigniew       Wietecki              129.20 +  395: 375  179
+   11     6 Rafał          Wesołowski            136.45 +  371: 359  186
+   12     4 Franciszek     Łysek                 148.67 +  394: 357  199
+                                                          --------------- ---- ------
+                                                                    1789 / 12 149.08
+
+
+
+
+	Marek Rogalski 130.59 Warszawa                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    23 Janina         Sobala                100.00 +  340: 295  150
+    2    12 Krzysztof      Zawadzki              115.09 -  327: 378   65
+    3    14 Bartosz        Bartczak              130.28 -  389: 424   80
+    4    20 Dariusz        Sowula                122.40 +  462: 320  172
+    5    15 Leszek         Kilian                113.13 +  447: 333  163
+    6    10 Małgorzata     Pochopień             114.11 -  332: 345   64
+    7    14 Teresa         Zalewska              120.46 +  368: 336  170
+    8     7 Mikołaj        Cieplik               145.01 +  381: 359  195
+    9     8 Rafał          Wesołowski            136.45 -  254: 440   86
+   10    10 Łukasz         Bobowski              156.79 +  437: 365  207
+   11     7 Franciszek     Łysek                 148.67 -  316: 450   99
+   12    11 Marcin         Kurowski              122.72 +  443: 329  173
+                                                          --------------- ---- ------
+                                                                    1624 / 12 135.33
+
+
+
+
+	Bartosz Bartczak 130.28 Poznań
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    24 Zbigniew       Stettner              100.00 +  402: 291  150
+    2     2 Dariusz        Putoń                 138.42 -  341: 355   88
+    3    14 Marek          Rogalski              130.59 +  424: 389  181
+    4    11 Waldemar       Wypchał               104.00 -  305: 369   54
+    5    18 Arkadiusz      Kleniewski            127.01 +  387: 349  177
+    6     9 Dominik        Urbacki               166.77 -  348: 431  117
+    7    10 Dominik        Ulejczyk              134.96 -  312: 432   85
+    8    14 Krzysztof      Gibas                 139.76 -  327: 485   90
+    9    20 Krzysztof      Zawadzki              115.09 +  357: 330  165
+   10    13 Marcin         Ceglarek              128.10 -  267: 438   78
+   11    20 Leszek         Kilian                113.13 +  411: 363  163
+   12    17 Franciszek     Walas                 100.00 +  431: 199  150
+                                                          --------------- ---- ------
+                                                                    1498 / 12 124.83
+
+
+
+
+	Zbigniew Wietecki 129.20 Gorzów Wielkopolski          
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    25 Franciszek     Walas                 100.00 +  393: 349  150
+    2     3 Jan            Mrozowski             154.65 -  308: 450  105
+    3    11 Marcin         Kurowski              122.72 +  376: 283  173
+    4    10 Artur          Irzyk                 140.73 -  380: 405   91
+    5    11 Andrzej        Rakoczy               137.55 -  348: 393   88
+    6    18 Leszek         Kilian                113.13 +  436: 306  163
+    7    16 Jakub M.       Kowalski              104.50 -  355: 479   55
+    8    17 Teresa         Zalewska              120.46 +  412: 404  170
+    9    15 Janina         Sobala                100.00 +  476: 318  150
+   10     7 Dominik        Ulejczyk              134.96 -  375: 395   85
+   11    15 Dariusz        Sowula                122.40 +  372: 336  172
+   12     9 Łukasz         Bobowski              156.79 -  264: 485  107
+                                                          --------------- ---- ------
+                                                                    1509 / 12 125.75
+
+
+
+
+	Jerzy Matyasik 128.30 Kraków                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    26 Jan            Walas                 100.00 +  391: 264  150
+    2     4 Karol          Wyrębkiewicz          155.74 -  285: 412  106
+    3    13 Dominik        Urbacki               166.77 -  365: 390  117
+    4    21 Dorota         Klęsk                 100.00 +  421: 246  150
+    5    10 Teresa         Zalewska              120.46 -  272: 291   70
+    6    17 Krzysztof      Zawadzki              115.09 -  347: 389   65
+    7    21 Dariusz        Sowula                122.40 -  356: 381   72
+    8    20 Wojciech       Wojtysiak             105.06 +  322: 306  155
+    9    17 Arkadiusz      Kleniewski            127.01 +  417: 275  177
+   10    16 Arkadiusz      Łydka                 123.57 -  320: 368   74
+   11    16 Magdalena      Parowicz              135.89 +  410: 336  186
+   12    16 Ewa            Dunikowska            136.19 +  383: 333  186
+                                                          --------------- ---- ------
+                                                                    1508 / 12 125.67
+
+
+
+
+	Adam Janicki 128.22 Wrocław             
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Dominik        Urbacki               166.77 -  372: 377  117
+    2    18 Łukasz         Bobowski              156.79 +  409: 312  207
+    3    12 Waldemar       Wypchał               104.00 -  306: 373   54
+    8    15 Leszek         Kilian                113.13 +  376: 284  163
+    9    14 Jakub M.       Kowalski              104.50 +  402: 374  155
+   10     8 Mikołaj        Cieplik               145.01 +  362: 359  195
+   11     9 Zdzisław       Stańkowski            127.60 +  382: 381  178
+   12     7 Karol          Wyrębkiewicz          155.74 +  457: 310  206
+                                                          --------------- ---- ------
+                                                                    1275 /  8 159.38
+
+
+
+
+	Marcin Ceglarek 128.10 Kraków
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Kamil          Górka                 159.11 -  312: 464  109
+    2    26 Anna           Maj                   100.00 +  395: 173  150
+    3    10 Przemysław     Herdzina              149.74 -  357: 521  100
+    4    19 Agnieszka      Walas                 135.08 -  390: 448   85
+    5    20 Magdalena      Parowicz              135.89 +  393: 369  186
+    6    16 Maria          Uryga                 118.47 +  477: 294  168
+    7    13 Arkadiusz      Łydka                 123.57 -  340: 454   74
+    8    16 Franciszek     Walas                 100.00 -  356: 414   50
+    9    16 Tomasz         Lempart               141.42 +  435: 335  191
+   10    13 Bartosz        Bartczak              130.28 +  438: 267  180
+   11    14 Marcin         Kurowski              122.72 -  361: 402   73
+   12    13 Krzysztof      Gibas                 139.76 +  408: 355  190
+                                                          --------------- ---- ------
+                                                                    1556 / 12 129.67
+
+
+
+
+	Zdzisław Stańkowski 127.60 Rząska
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Łukasz         Bobowski              156.79 +  439: 287  207
+    2     7 Rafał          Wesołowski            136.45 -  388: 390   86
+    3     8 Jerzy          Luter                 121.98 -  355: 409   72
+    4    14 Zbigniew       Stettner              100.00 -  334: 361   50
+    5    19 Janina         Sobala                100.00 +  464: 279  150
+    6    13 Ewa            Dunikowska            136.19 +  425: 324  186
+    7    12 Agnieszka      Walas                 135.08 -  397: 464   85
+    8    13 Krzysztof      Zawadzki              115.09 +  643: 136  165
+    9     9 Przemysław     Herdzina              149.74 -  357: 411  100
+   10    12 Jacek          Mańko                 138.30 +  445: 392  188
+   11     9 Adam           Janicki               128.22 -  381: 382   78
+   12    12 Waldemar       Wypchał               104.00 +  315: 283  154
+                                                          --------------- ---- ------
+                                                                    1521 / 12 126.75
+
+
+
+
+	Arkadiusz Kleniewski 127.01 Dzierzążnia
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Karol          Wyrębkiewicz          155.74 -  473: 475  106
+    2    14 Artur          Irzyk                 140.73 -  372: 430   91
+    3    19 Franciszek     Łysek                 148.67 -  322: 394   99
+    4    23 Wiktor         Fejkiel               100.00 +  357: 320  150
+    5    18 Bartosz        Bartczak              130.28 -  349: 387   80
+    6    21 Aneta          Szczyrzyca            103.59 +  375: 320  154
+    7    18 Agata          Kopta                 122.13 +  310: 302  172
+    8    18 Dariusz        Sowula                122.40 -  354: 362   72
+    9    17 Jerzy          Matyasik              128.30 -  275: 417   78
+   10    20 Wojciech       Wojtysiak             105.06 -  264: 367   55
+   11    18 Krzysztof      Zawadzki              115.09 +  413: 247  165
+   12    19 Jakub M.       Kowalski              104.50 -  307: 384   55
+                                                          --------------- ---- ------
+                                                                    1277 / 12 106.42
+
+
+
+
+	Arkadiusz Łydka 123.57 Jaworzno                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Jan            Mrozowski             154.65 -  378: 486  105
+    2    17 Zbigniew       Stettner              100.00 +  361: 342  150
+    3    17 Agnieszka      Walas                 135.08 +  472: 282  185
+    4     8 Maria          Uryga                 118.47 +  361: 318  168
+    5     4 Przemysław     Herdzina              149.74 -  298: 323  100
+    6     8 Mikołaj        Cieplik               145.01 -  256: 506   95
+    7    13 Marcin         Ceglarek              128.10 +  454: 340  178
+    8     9 Franciszek     Łysek                 148.67 -  336: 467   99
+    9    10 Dominik        Ulejczyk              134.96 -  337: 372   85
+   10    16 Jerzy          Matyasik              128.30 +  368: 320  178
+   11    13 Jacek          Mańko                 138.30 -  378: 427   88
+   12    15 Tomasz         Lempart               141.42 +  398: 396  191
+                                                          --------------- ---- ------
+                                                                    1622 / 12 135.17
+
+
+
+
+	Marcin Kurowski 122.72 Racibórz
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Przemysław     Herdzina              149.74 +  403: 354  200
+    2     1 Dominik        Ulejczyk              134.96 -  383: 409   85
+    3    11 Zbigniew       Wietecki              129.20 -  283: 376   79
+    4    18 Janina         Sobala                100.00 +  369: 365  150
+    5    12 Mikołaj        Cieplik               145.01 -  294: 412   95
+    6    19 Łukasz         Bobowski              156.79 -  309: 399  107
+    7    22 Aneta          Szczyrzyca            103.59 -  359: 394   54
+    8    21 Wiktor         Fejkiel               100.00 +  362: 257  150
+    9    22 Wojciech       Wojtysiak             105.06 +  454: 274  155
+   10    18 Ewa            Dunikowska            136.19 +  286: 262  186
+   11    14 Marcin         Ceglarek              128.10 +  402: 361  178
+   12    11 Marek          Rogalski              130.59 -  329: 443   81
+                                                          --------------- ---- ------
+                                                                    1520 / 12 126.67
+
+
+
+
+	Dariusz Sowula 122.40 Kraków
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Franciszek     Łysek                 148.67 -  266: 356   99
+    2    19 Agata          Kopta                 122.13 +  399: 382  172
+    3    16 Andrzej        Rakoczy               137.55 -  258: 489   88
+    4    20 Marek          Rogalski              130.59 -  320: 462   81
+    5    21 Franciszek     Walas                 100.00 +  338: 330  150
+    6    20 Agnieszka      Walas                 135.08 -  358: 395   85
+    7    21 Jerzy          Matyasik              128.30 +  381: 356  178
+    8    18 Arkadiusz      Kleniewski            127.01 +  362: 354  177
+    9    13 Jacek          Mańko                 138.30 -  324: 372   88
+   10    19 Janina         Sobala                100.00 +  382: 245  150
+   11    15 Zbigniew       Wietecki              129.20 -  336: 372   79
+   12    18 Maria          Uryga                 118.47 +  330: 298  168
+                                                          --------------- ---- ------
+                                                                    1515 / 12 126.25
+
+
+
+
+	Agata Kopta 122.13 Wodzisław Śląski         
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Mariusz        Wrześniewski          147.48 -  363: 428   97
+    2    19 Dariusz        Sowula                122.40 -  382: 399   72
+    3    21 Dorota         Klęsk                 100.00 -  300: 372   50
+    4    24 Aneta          Szczyrzyca            103.59 +  317: 316  154
+    5    23 Barbara        Grzesik               100.00 +  400: 294  150
+    6    15 Krzysztof      Gibas                 139.76 -  266: 535   90
+    7    18 Arkadiusz      Kleniewski            127.01 -  302: 310   77
+    8    24 Jan            Walas                 100.00 +  344: 254  150
+    9    21 Magdalena      Parowicz              135.89 -  269: 411   86
+   10    23 Maria          Uryga                 118.47 -  351: 362   68
+   11    19 Ewa            Dunikowska            136.19 -  299: 424   86
+   12    23 Dorota         Klęsk                 100.00 +  406: 341  150
+                                                          --------------- ---- ------
+                                                                    1230 / 12 102.50
+
+
+
+
+	Jerzy Luter 121.98 Bytom                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Mikołaj        Cieplik               145.01 -  342: 359   95
+    2    23 Aneta          Szczyrzyca            103.59 +  385: 278  154
+    3     8 Zdzisław       Stańkowski            127.60 +  409: 355  178
+    4     6 Przemysław     Herdzina              149.74 -  348: 407  100
+    5    17 Agnieszka      Walas                 135.08 +  432: 394  185
+    6     6 Dominik        Ulejczyk              134.96 +  424: 360  185
+    7     7 Andrzej        Rakoczy               137.55 -  366: 398   88
+    8    10 Małgorzata     Pochopień             114.11 +  344: 310  164
+    9     7 Waldemar       Wypchał               104.00 +  367: 269  154
+   10     5 Jan            Mrozowski             154.65 -  367: 381  105
+   11     5 Karol          Wyrębkiewicz          155.74 +  522: 401  206
+   12     5 Andrzej        Rakoczy               137.55 +  404: 330  188
+                                                          --------------- ---- ------
+                                                                    1802 / 12 150.17
+
+
+
+
+	Teresa Zalewska 120.46 Racibórz
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Konrad         Sowula                141.69 -  383: 409   92
+    2    16 Janina         Sobala                100.00 +  359: 338  150
+    3    15 Piotr          Broda                 137.46 +  453: 372  187
+    4     9 Małgorzata     Pochopień             114.11 -  388: 409   64
+    5    10 Jerzy          Matyasik              128.30 +  291: 272  178
+    6     7 Karol          Wyrębkiewicz          155.74 -  232: 504  106
+    7    14 Marek          Rogalski              130.59 -  336: 368   81
+    8    17 Zbigniew       Wietecki              129.20 -  404: 412   79
+    9    19 Maria          Uryga                 118.47 +  425: 270  168
+   10    15 Jakub M.       Kowalski              104.50 +  457: 277  155
+   11    10 Mikołaj        Cieplik               145.01 -  323: 387   95
+   12    14 Magdalena      Parowicz              135.89 +  385: 341  186
+                                                          --------------- ---- ------
+                                                                    1541 / 12 128.42
+
+
+
+
+	Maria Uryga 118.47 Kraków
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Tomasz         Lempart               141.42 -  341: 405   91
+    2    24 Wiktor         Fejkiel               100.00 +  369: 293  150
+    3     9 Krzysztof      Gibas                 139.76 +  401: 289  190
+    4     8 Arkadiusz      Łydka                 123.57 -  318: 361   74
+    5    14 Ewa            Dunikowska            136.19 -  314: 429   86
+    6    16 Marcin         Ceglarek              128.10 -  294: 477   78
+    7    23 Janina         Sobala                100.00 -  304: 374   50
+    8    23 Dorota         Klęsk                 100.00 +  364: 241  150
+    9    19 Teresa         Zalewska              120.46 -  270: 425   70
+   10    23 Agata          Kopta                 122.13 +  362: 351  172
+   11    22 Jan            Walas                 100.00 +  413: 229  150
+   12    18 Dariusz        Sowula                122.40 -  298: 330   72
+                                                          --------------- ---- ------
+                                                                    1333 / 12 111.08
+
+
+
+
+	Krzysztof Zawadzki 115.09 Sampława                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    12 Artur          Irzyk                 140.73 +  408: 303  191
+    2    12 Marek          Rogalski              130.59 +  378: 327  181
+    3     5 Jacek          Mańko                 138.30 -  360: 430   88
+    4    13 Jakub M.       Kowalski              104.50 -  359: 362   55
+    5    16 Zbigniew       Stettner              100.00 -  339: 380   50
+    6    17 Jerzy          Matyasik              128.30 +  389: 347  178
+    7    17 Waldemar       Wypchał               104.00 -  313: 415   54
+    8    13 Zdzisław       Stańkowski            127.60 -  136: 643   78
+    9    20 Bartosz        Bartczak              130.28 -  330: 357   80
+   10    22 Jan            Walas                 100.00 +  481: 233  150
+   11    18 Arkadiusz      Kleniewski            127.01 -  247: 413   77
+   12    20 Małgorzata     Pochopień             114.11 +  443: 288  164
+                                                          --------------- ---- ------
+                                                                    1346 / 12 112.17
+
+
+
+
+	Małgorzata Pochopień 114.11 Kraków
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    13 Krzysztof      Gibas                 139.76 +  427: 402  190
+    2    10 Jakub M.       Kowalski              104.50 +  382: 288  155
+    3     4 Karol          Wyrębkiewicz          155.74 -  270: 486  106
+    4     9 Teresa         Zalewska              120.46 +  409: 388  170
+    5     6 Kamil          Górka                 159.11 -  367: 428  109
+    6    10 Marek          Rogalski              130.59 +  345: 332  181
+    7     9 Piotr          Broda                 137.46 -  319: 320   87
+    8    10 Jerzy          Luter                 121.98 -  310: 344   72
+    9    12 Mikołaj        Cieplik               145.01 -  263: 460   95
+   10    17 Magdalena      Parowicz              135.89 -  338: 533   86
+   11    21 Wojciech       Wojtysiak             105.06 -  321: 445   55
+   12    20 Krzysztof      Zawadzki              115.09 -  288: 443   65
+                                                          --------------- ---- ------
+                                                                    1371 / 12 114.25
+
+
+
+
+	Leszek Kilian 113.13 Jaworzno                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    14 Dariusz        Putoń                 138.42 -  228: 503   88
+    2    25 Andrzej        Rakoczy               137.55 -  365: 429   88
+    3    25 Jan            Walas                 100.00 +  418: 208  150
+    4    16 Krzysztof      Gibas                 139.76 +  374: 348  190
+    5    15 Marek          Rogalski              130.59 -  333: 447   81
+    6    18 Zbigniew       Wietecki              129.20 -  306: 436   79
+    7    19 Magdalena      Parowicz              135.89 +  441: 270  186
+    8    15 Adam           Janicki               128.22 -  284: 376   78
+    9    18 Ewa            Dunikowska            136.19 -  276: 349   86
+   10    21 Aneta          Szczyrzyca            103.59 -  396: 423   54
+   11    20 Bartosz        Bartczak              130.28 -  363: 411   80
+   12    22 Janina         Sobala                100.00 +  366: 287  150
+                                                          --------------- ---- ------
+                                                                    1310 / 12 109.17
+
+
+
+
+	Wojciech Wojtysiak 105.06 Warszawa
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    15 Jacek          Mańko                 138.30 -  266: 441   88
+    2    20 Przemysław     Herdzina              149.74 -  258: 437  100
+    3    23 Zbigniew       Stettner              100.00 -  379: 386   50
+    4    25 Jan            Walas                 100.00 +  436: 194  150
+    5    24 Wiktor         Fejkiel               100.00 -  296: 308   50
+    6    24 Barbara        Grzesik               100.00 +  325: 252  150
+    7    20 Franciszek     Walas                 100.00 -  339: 356   50
+    8    20 Jerzy          Matyasik              128.30 -  306: 322   78
+    9    22 Marcin         Kurowski              122.72 -  274: 454   73
+   10    20 Arkadiusz      Kleniewski            127.01 +  367: 264  177
+   11    21 Małgorzata     Pochopień             114.11 +  445: 321  164
+   12    21 Aneta          Szczyrzyca            103.59 +  338: 317  154
+                                                          --------------- ---- ------
+                                                                    1284 / 12 107.00
+
+
+
+
+	Jakub M. Kowalski 104.50 Kalwaria Zebrzydowska
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    16 Andrzej        Rakoczy               137.55 +  354: 312  188
+    2    10 Małgorzata     Pochopień             114.11 -  288: 382   64
+    3    18 Ewa            Dunikowska            136.19 +  339: 334  186
+    4    13 Krzysztof      Zawadzki              115.09 +  362: 359  165
+    5     8 Franciszek     Łysek                 148.67 -  247: 453   99
+    6    14 Piotr          Broda                 137.46 -  277: 453   87
+    7    16 Zbigniew       Wietecki              129.20 +  479: 355  179
+    8    12 Łukasz         Bobowski              156.79 -  305: 537  105
+    9    14 Adam           Janicki               128.22 -  374: 402   78
+   10    15 Teresa         Zalewska              120.46 -  277: 457   70
+   11    23 Dorota         Klęsk                 100.00 =  340: 340  100
+   12    19 Arkadiusz      Kleniewski            127.01 +  384: 307  177
+                                                          --------------- ---- ------
+                                                                    1498 / 12 124.83
+
+
+
+
+	Waldemar Wypchał 104.00 Kraków
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    17 Piotr          Broda                 137.46 -  348: 428   87
+    2    22 Dorota         Klęsk                 100.00 +  346: 278  150
+    3    12 Adam           Janicki               128.22 +  373: 306  178
+    4    11 Bartosz        Bartczak              130.28 +  369: 305  180
+    5     7 Jacek          Mańko                 138.30 -  326: 442   88
+    6    11 Artur          Irzyk                 140.73 -  258: 388   91
+    7    17 Krzysztof      Zawadzki              115.09 +  415: 313  165
+    8    11 Tomasz         Lempart               141.42 +  341: 313  191
+    9     7 Jerzy          Luter                 121.98 -  269: 367   72
+   10    11 Krzysztof      Gibas                 139.76 +  399: 390  190
+   11     8 Przemysław     Herdzina              149.74 -  381: 386  100
+   12    12 Zdzisław       Stańkowski            127.60 -  283: 315   78
+                                                          --------------- ---- ------
+                                                                    1570 / 12 130.83
+
+
+
+
+	Aneta Szczyrzyca 103.59 Jaworzno
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    18 Rafał          Wesołowski            136.45 -  238: 361   86
+    2    23 Jerzy          Luter                 121.98 -  278: 385   72
+    3    24 Łukasz         Bobowski              156.79 -  293: 423  104
+    4    24 Agata          Kopta                 122.13 -  316: 317   72
+    5    25 Jan            Walas                 100.00 +  368: 266  150
+    6    21 Arkadiusz      Kleniewski            127.01 -  320: 375   77
+    7    22 Marcin         Kurowski              122.72 +  394: 359  173
+    8    22 Magdalena      Parowicz              135.89 -  289: 449   86
+    9    23 Dorota         Klęsk                 100.00 +  336: 267  150
+   10    21 Leszek         Kilian                113.13 +  423: 396  163
+   11    24 Wiktor         Fejkiel               100.00 -  298: 304   50
+   12    21 Wojciech       Wojtysiak             105.06 -  317: 338   55
+                                                          --------------- ---- ------
+                                                                    1238 / 12 103.17
+
+
+
+
+	Wiktor Fejkiel 100.00 Wieliczka
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    19 Ewa            Dunikowska            136.19 -  236: 383   86
+    2    24 Maria          Uryga                 118.47 -  293: 369   68
+    3    22 Janina         Sobala                100.00 -  306: 338   50
+    4    23 Arkadiusz      Kleniewski            127.01 -  320: 357   77
+    5    24 Wojciech       Wojtysiak             105.06 +  308: 296  155
+    6    22 Franciszek     Walas                 100.00 -  207: 332   50
+    7    24 Barbara        Grzesik               100.00 -  302: 384   50
+    8    21 Marcin         Kurowski              122.72 -  257: 362   73
+    9    24 Jan            Walas                 100.00 -  254: 336   50
+   10    24 Dorota         Klęsk                 100.00 -  302: 321   50
+   11    24 Aneta          Szczyrzyca            103.59 +  304: 298  154
+   12    24 Jan            Walas                 100.00 +  246: 237  150
+                                                          --------------- ---- ------
+                                                                    1013 / 12  84.42
+
+
+
+
+	Barbara Grzesik 100.00 Bochnia
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    20 Magdalena      Parowicz              135.89 +  326: 298  186
+    2    13 Tomasz         Lempart               141.42 -  245: 436   91
+    3    20 Artur          Irzyk                 140.73 -  276: 454   91
+    4    22 Piotr          Broda                 137.46 -  185: 500   87
+    5    23 Agata          Kopta                 122.13 -  294: 400   72
+    6    24 Wojciech       Wojtysiak             105.06 -  252: 325   55
+    7    24 Wiktor         Fejkiel               100.00 +  384: 302  150
+                                                          --------------- ---- ------
+                                                                     732 /  7 104.57
+
+
+
+
+	Dorota Klęsk 100.00 Wieliczka
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    21 Agnieszka      Walas                 135.08 -  260: 348   85
+    2    22 Waldemar       Wypchał               104.00 -  278: 346   54
+    3    21 Agata          Kopta                 122.13 +  372: 300  172
+    4    21 Jerzy          Matyasik              128.30 -  246: 421   78
+    5    22 Krzysztof      Gibas                 139.76 -  229: 463   90
+    6    23 Magdalena      Parowicz              135.89 -  246: 425   86
+    7    25 Jan            Walas                 100.00 -  262: 285   50
+    8    23 Maria          Uryga                 118.47 -  241: 364   68
+    9    23 Aneta          Szczyrzyca            103.59 -  267: 336   54
+   10    24 Wiktor         Fejkiel               100.00 +  321: 302  150
+   11    23 Jakub M.       Kowalski              104.50 =  340: 340  105
+   12    23 Agata          Kopta                 122.13 -  341: 406   72
+                                                          --------------- ---- ------
+                                                                    1064 / 12  88.67
+
+
+
+
+	Anna Maj 100.00 Wieliczka
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    22 Dominik        Ulejczyk              134.96 -  138: 580   85
+    2    26 Marcin         Ceglarek              128.10 -  173: 395   78
+    3    26 Magdalena      Parowicz              135.89 -    1: 400   86
+                                                          --------------- ---- ------
+                                                                     249 /  3  83.00
+
+
+
+
+	Janina Sobala 100.00 Łęczna
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    23 Marek          Rogalski              130.59 -  295: 340   81
+    2    16 Teresa         Zalewska              120.46 -  338: 359   70
+    3    22 Wiktor         Fejkiel               100.00 +  338: 306  150
+    4    18 Marcin         Kurowski              122.72 -  365: 369   73
+    5    19 Zdzisław       Stańkowski            127.60 -  279: 464   78
+    6    25 Jan            Walas                 100.00 +  297: 274  150
+    7    23 Maria          Uryga                 118.47 +  374: 304  168
+    8    19 Ewa            Dunikowska            136.19 +  352: 325  186
+    9    15 Zbigniew       Wietecki              129.20 -  318: 476   79
+   10    19 Dariusz        Sowula                122.40 -  245: 382   72
+   11    17 Franciszek     Walas                 100.00 -  313: 374   50
+   12    22 Leszek         Kilian                113.13 -  287: 366   63
+                                                          --------------- ---- ------
+                                                                    1220 / 12 101.67
+
+
+
+
+	Zbigniew Stettner 100.00 Bielsko Biała            
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    24 Bartosz        Bartczak              130.28 -  291: 402   80
+    2    17 Arkadiusz      Łydka                 123.57 -  342: 361   74
+    3    23 Wojciech       Wojtysiak             105.06 +  386: 379  155
+    4    14 Zdzisław       Stańkowski            127.60 +  361: 334  178
+    5    16 Krzysztof      Zawadzki              115.09 +  380: 339  165
+    6    12 Andrzej        Rakoczy               137.55 -  288: 461   88
+    7    15 Ewa            Dunikowska            136.19 +  344: 276  186
+                                                          --------------- ---- ------
+                                                                     926 /  7 132.29
+
+
+
+
+	Franciszek Walas 100.00 Kraków
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    25 Zbigniew       Wietecki              129.20 -  349: 393   79
+    2    21 Jan            Walas                 100.00 +  482: 247  150
+    3     7 Kamil          Górka                 159.11 -  288: 433  100
+    4    15 Łukasz         Bobowski              156.79 -  323: 409  100
+    5    21 Dariusz        Sowula                122.40 -  330: 338   72
+    6    22 Wiktor         Fejkiel               100.00 +  332: 207  150
+    7    20 Wojciech       Wojtysiak             105.06 +  356: 339  155
+    8    16 Marcin         Ceglarek              128.10 +  414: 356  178
+    9    11 Krzysztof      Gibas                 139.76 -  329: 365   90
+   10    14 Tomasz         Lempart               141.42 -  292: 330   91
+   11    17 Janina         Sobala                100.00 +  374: 313  150
+   12    17 Bartosz        Bartczak              130.28 -  199: 431   80
+                                                          --------------- ---- ------
+                                                                    1395 / 12 116.25
+
+
+
+
+	Jan Walas 100.00 Kraków
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    26 Jerzy          Matyasik              128.30 -  264: 391   78
+    2    21 Franciszek     Walas                 100.00 -  247: 482   50
+    3    25 Leszek         Kilian                113.13 -  208: 418   63
+    4    25 Wojciech       Wojtysiak             105.06 -  194: 436   55
+    5    25 Aneta          Szczyrzyca            103.59 -  266: 368   54
+    6    25 Janina         Sobala                100.00 -  274: 297   50
+    7    25 Dorota         Klęsk                 100.00 +  285: 262  150
+    8    24 Agata          Kopta                 122.13 -  254: 344   72
+    9    24 Wiktor         Fejkiel               100.00 +  336: 254  150
+   10    22 Krzysztof      Zawadzki              115.09 -  233: 481   65
+   11    22 Maria          Uryga                 118.47 -  229: 413   68
+   12    24 Wiktor         Fejkiel               100.00 -  237: 246   50
+                                                          --------------- ---- ------
+                                                                     905 / 12  75.42
+
+
+</pre></div><div id='p_rundy' class='page'><pre>﻿Wyniki poszczególnych rund turnieju I Wielicki Turniej w Scrabble
+
+
+
+Runda nr  1
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Dominik        Urbacki              - Adam           Janicki               377: 372
+   2 Marcin         Ceglarek             - Kamil          Górka                 312: 464
+   3 Łukasz         Bobowski             - Zdzisław       Stańkowski            287: 439
+   4 Arkadiusz      Kleniewski           - Karol          Wyrębkiewicz          473: 475
+   5 Jan            Mrozowski            - Arkadiusz      Łydka                 486: 378
+   6 Marcin         Kurowski             - Przemysław     Herdzina              403: 354
+   7 Franciszek     Łysek                - Dariusz        Sowula                356: 266
+   8 Agata          Kopta                - Mariusz        Wrześniewski          363: 428
+   9 Mikołaj        Cieplik              - Jerzy          Luter                 359: 342
+  10 Teresa         Zalewska             - Konrad         Sowula                383: 409
+  11 Tomasz         Lempart              - Maria          Uryga                 405: 341
+  12 Krzysztof      Zawadzki             - Artur          Irzyk                 408: 303
+  13 Krzysztof      Gibas                - Małgorzata     Pochopień             402: 427
+  14 Leszek         Kilian               - Dariusz        Putoń                 228: 503
+  15 Jacek          Mańko                - Wojciech       Wojtysiak             441: 266
+  16 Jakub M.       Kowalski             - Andrzej        Rakoczy               354: 312
+  17 Piotr          Broda                - Waldemar       Wypchał               428: 348
+  18 Aneta          Szczyrzyca           - Rafał          Wesołowski            238: 361
+  19 Ewa            Dunikowska           - Wiktor         Fejkiel               383: 236
+  20 Barbara        Grzesik              - Magdalena      Parowicz              326: 298
+  21 Agnieszka      Walas                - Dorota         Klęsk                 348: 260
+  22 Anna           Maj                  - Dominik        Ulejczyk              138: 580
+  23 Marek          Rogalski             - Janina         Sobala                340: 295
+  24 Zbigniew       Stettner             - Bartosz        Bartczak              291: 402
+  25 Zbigniew       Wietecki             - Franciszek     Walas                 393: 349
+  26 Jan            Walas                - Jerzy          Matyasik              264: 391
+
+
+Runda nr  2
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Dominik        Ulejczyk             - Marcin         Kurowski              409: 383
+   2 Dariusz        Putoń                - Bartosz        Bartczak              355: 341
+   3 Zbigniew       Wietecki             - Jan            Mrozowski             308: 450
+   4 Karol          Wyrębkiewicz         - Jerzy          Matyasik              412: 285
+   5 Kamil          Górka                - Ewa            Dunikowska            382: 353
+   6 Dominik        Urbacki              - Jacek          Mańko                 370: 423
+   7 Zdzisław       Stańkowski           - Rafał          Wesołowski            388: 390
+   8 Mikołaj        Cieplik              - Piotr          Broda                 464: 238
+   9 Mariusz        Wrześniewski         - Franciszek     Łysek                 475: 380
+  10 Małgorzata     Pochopień            - Jakub M.       Kowalski              382: 288
+  11 Konrad         Sowula               - Agnieszka      Walas                 400: 294
+  12 Krzysztof      Zawadzki             - Marek          Rogalski              378: 327
+  13 Barbara        Grzesik              - Tomasz         Lempart               245: 436
+  14 Artur          Irzyk                - Arkadiusz      Kleniewski            430: 372
+  15 Magdalena      Parowicz             - Krzysztof      Gibas                 279: 399
+  16 Janina         Sobala               - Teresa         Zalewska              338: 359
+  17 Arkadiusz      Łydka                - Zbigniew       Stettner              361: 342
+  18 Adam           Janicki              - Łukasz         Bobowski              409: 312
+  19 Dariusz        Sowula               - Agata          Kopta                 399: 382
+  20 Przemysław     Herdzina             - Wojciech       Wojtysiak             437: 258
+  21 Franciszek     Walas                - Jan            Walas                 482: 247
+  22 Dorota         Klęsk                - Waldemar       Wypchał               278: 346
+  23 Jerzy          Luter                - Aneta          Szczyrzyca            385: 278
+  24 Maria          Uryga                - Wiktor         Fejkiel               369: 293
+  25 Andrzej        Rakoczy              - Leszek         Kilian                429: 365
+  26 Anna           Maj                  - Marcin         Ceglarek              173: 395
+
+
+Runda nr  3
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Tomasz         Lempart              - Dominik        Ulejczyk              401: 360
+   2 Jan            Mrozowski            - Mikołaj        Cieplik               457: 338
+   3 Mariusz        Wrześniewski         - Konrad         Sowula                412: 414
+   4 Małgorzata     Pochopień            - Karol          Wyrębkiewicz          270: 486
+   5 Jacek          Mańko                - Krzysztof      Zawadzki              430: 360
+   6 Rafał          Wesołowski           - Dariusz        Putoń                 313: 414
+   7 Kamil          Górka                - Franciszek     Walas                 433: 288
+   8 Jerzy          Luter                - Zdzisław       Stańkowski            409: 355
+   9 Krzysztof      Gibas                - Maria          Uryga                 289: 401
+  10 Marcin         Ceglarek             - Przemysław     Herdzina              357: 521
+  11 Marcin         Kurowski             - Zbigniew       Wietecki              283: 376
+  12 Waldemar       Wypchał              - Adam           Janicki               373: 306
+  13 Jerzy          Matyasik             - Dominik        Urbacki               365: 390
+  14 Bartosz        Bartczak             - Marek          Rogalski              424: 389
+  15 Teresa         Zalewska             - Piotr          Broda                 453: 372
+  16 Dariusz        Sowula               - Andrzej        Rakoczy               258: 489
+  17 Agnieszka      Walas                - Arkadiusz      Łydka                 282: 472
+  18 Ewa            Dunikowska           - Jakub M.       Kowalski              334: 339
+  19 Arkadiusz      Kleniewski           - Franciszek     Łysek                 322: 394
+  20 Artur          Irzyk                - Barbara        Grzesik               454: 276
+  21 Agata          Kopta                - Dorota         Klęsk                 300: 372
+  22 Wiktor         Fejkiel              - Janina         Sobala                306: 338
+  23 Wojciech       Wojtysiak            - Zbigniew       Stettner              379: 386
+  24 Łukasz         Bobowski             - Aneta          Szczyrzyca            423: 293
+  25 Jan            Walas                - Leszek         Kilian                208: 418
+  26 Magdalena      Parowicz             - Anna           Maj                   400:   1
+
+
+Runda nr  4
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Dariusz        Putoń                - Jan            Mrozowski             372: 358
+   2 Karol          Wyrębkiewicz         - Tomasz         Lempart               335: 360
+   3 Konrad         Sowula               - Jacek          Mańko                 448: 327
+   4 Dominik        Ulejczyk             - Kamil          Górka                 421: 406
+   5 Dominik        Urbacki              - Mariusz        Wrześniewski          415: 362
+   6 Przemysław     Herdzina             - Jerzy          Luter                 407: 348
+   7 Franciszek     Łysek                - Andrzej        Rakoczy               465: 334
+   8 Arkadiusz      Łydka                - Maria          Uryga                 361: 318
+   9 Teresa         Zalewska             - Małgorzata     Pochopień             388: 409
+  10 Zbigniew       Wietecki             - Artur          Irzyk                 380: 405
+  11 Waldemar       Wypchał              - Bartosz        Bartczak              369: 305
+  12 Rafał          Wesołowski           - Mikołaj        Cieplik               454: 403
+  13 Jakub M.       Kowalski             - Krzysztof      Zawadzki              362: 359
+  14 Zbigniew       Stettner             - Zdzisław       Stańkowski            361: 334
+  15 Franciszek     Walas                - Łukasz         Bobowski              323: 409
+  16 Leszek         Kilian               - Krzysztof      Gibas                 374: 348
+  17 Ewa            Dunikowska           - Magdalena      Parowicz              453: 340
+  18 Janina         Sobala               - Marcin         Kurowski              365: 369
+  19 Marcin         Ceglarek             - Agnieszka      Walas                 390: 448
+  20 Marek          Rogalski             - Dariusz        Sowula                462: 320
+  21 Dorota         Klęsk                - Jerzy          Matyasik              246: 421
+  22 Piotr          Broda                - Barbara        Grzesik               500: 185
+  23 Wiktor         Fejkiel              - Arkadiusz      Kleniewski            320: 357
+  24 Aneta          Szczyrzyca           - Agata          Kopta                 316: 317
+  25 Wojciech       Wojtysiak            - Jan            Walas                 436: 194
+
+
+Runda nr  5
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Tomasz         Lempart              - Konrad         Sowula                349: 389
+   2 Dariusz        Putoń                - Dominik        Ulejczyk              371: 335
+   3 Jan            Mrozowski            - Dominik        Urbacki               466: 417
+   4 Arkadiusz      Łydka                - Przemysław     Herdzina              298: 323
+   5 Karol          Wyrębkiewicz         - Rafał          Wesołowski            347: 392
+   6 Kamil          Górka                - Małgorzata     Pochopień             428: 367
+   7 Jacek          Mańko                - Waldemar       Wypchał               442: 326
+   8 Jakub M.       Kowalski             - Franciszek     Łysek                 247: 453
+   9 Artur          Irzyk                - Mariusz        Wrześniewski          372: 475
+  10 Jerzy          Matyasik             - Teresa         Zalewska              272: 291
+  11 Andrzej        Rakoczy              - Zbigniew       Wietecki              393: 348
+  12 Mikołaj        Cieplik              - Marcin         Kurowski              412: 294
+  13 Łukasz         Bobowski             - Piotr          Broda                 354: 388
+  14 Maria          Uryga                - Ewa            Dunikowska            314: 429
+  15 Leszek         Kilian               - Marek          Rogalski              333: 447
+  16 Krzysztof      Zawadzki             - Zbigniew       Stettner              339: 380
+  17 Jerzy          Luter                - Agnieszka      Walas                 432: 394
+  18 Bartosz        Bartczak             - Arkadiusz      Kleniewski            387: 349
+  19 Zdzisław       Stańkowski           - Janina         Sobala                464: 279
+  20 Magdalena      Parowicz             - Marcin         Ceglarek              369: 393
+  21 Dariusz        Sowula               - Franciszek     Walas                 338: 330
+  22 Krzysztof      Gibas                - Dorota         Klęsk                 463: 229
+  23 Barbara        Grzesik              - Agata          Kopta                 294: 400
+  24 Wiktor         Fejkiel              - Wojciech       Wojtysiak             308: 296
+  25 Jan            Walas                - Aneta          Szczyrzyca            266: 368
+
+
+Runda nr  6
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Konrad         Sowula               - Dariusz        Putoń                 395: 323
+   2 Przemysław     Herdzina             - Jan            Mrozowski             297: 442
+   3 Kamil          Górka                - Tomasz         Lempart               394: 362
+   4 Mariusz        Wrześniewski         - Jacek          Mańko                 439: 435
+   5 Rafał          Wesołowski           - Franciszek     Łysek                 408: 315
+   6 Dominik        Ulejczyk             - Jerzy          Luter                 360: 424
+   7 Teresa         Zalewska             - Karol          Wyrębkiewicz          232: 504
+   8 Mikołaj        Cieplik              - Arkadiusz      Łydka                 506: 256
+   9 Bartosz        Bartczak             - Dominik        Urbacki               348: 431
+  10 Małgorzata     Pochopień            - Marek          Rogalski              345: 332
+  11 Waldemar       Wypchał              - Artur          Irzyk                 258: 388
+  12 Zbigniew       Stettner             - Andrzej        Rakoczy               288: 461
+  13 Zdzisław       Stańkowski           - Ewa            Dunikowska            425: 324
+  14 Piotr          Broda                - Jakub M.       Kowalski              453: 277
+  15 Agata          Kopta                - Krzysztof      Gibas                 266: 535
+  16 Maria          Uryga                - Marcin         Ceglarek              294: 477
+  17 Jerzy          Matyasik             - Krzysztof      Zawadzki              347: 389
+  18 Zbigniew       Wietecki             - Leszek         Kilian                436: 306
+  19 Marcin         Kurowski             - Łukasz         Bobowski              309: 399
+  20 Agnieszka      Walas                - Dariusz        Sowula                395: 358
+  21 Arkadiusz      Kleniewski           - Aneta          Szczyrzyca            375: 320
+  22 Franciszek     Walas                - Wiktor         Fejkiel               332: 207
+  23 Dorota         Klęsk                - Magdalena      Parowicz              246: 425
+  24 Wojciech       Wojtysiak            - Barbara        Grzesik               325: 252
+  25 Janina         Sobala               - Jan            Walas                 297: 274
+
+
+Runda nr  7
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Konrad         Sowula               - Rafał          Wesołowski            405: 358
+   2 Jan            Mrozowski            - Mariusz        Wrześniewski          273: 474
+   3 Dariusz        Putoń                - Kamil          Górka                 370: 376
+   4 Franciszek     Łysek                - Karol          Wyrębkiewicz          415: 487
+   5 Artur          Irzyk                - Jacek          Mańko                 426: 283
+   6 Przemysław     Herdzina             - Mikołaj        Cieplik               354: 338
+   7 Andrzej        Rakoczy              - Jerzy          Luter                 398: 366
+   8 Dominik        Urbacki              - Tomasz         Lempart               423: 379
+   9 Piotr          Broda                - Małgorzata     Pochopień             320: 319
+  10 Dominik        Ulejczyk             - Bartosz        Bartczak              432: 312
+  11 Łukasz         Bobowski             - Krzysztof      Gibas                 483: 263
+  12 Agnieszka      Walas                - Zdzisław       Stańkowski            464: 397
+  13 Marcin         Ceglarek             - Arkadiusz      Łydka                 340: 454
+  14 Marek          Rogalski             - Teresa         Zalewska              368: 336
+  15 Ewa            Dunikowska           - Zbigniew       Stettner              276: 344
+  16 Jakub M.       Kowalski             - Zbigniew       Wietecki              479: 355
+  17 Krzysztof      Zawadzki             - Waldemar       Wypchał               313: 415
+  18 Arkadiusz      Kleniewski           - Agata          Kopta                 310: 302
+  19 Leszek         Kilian               - Magdalena      Parowicz              441: 270
+  20 Franciszek     Walas                - Wojciech       Wojtysiak             356: 339
+  21 Dariusz        Sowula               - Jerzy          Matyasik              381: 356
+  22 Aneta          Szczyrzyca           - Marcin         Kurowski              394: 359
+  23 Janina         Sobala               - Maria          Uryga                 374: 304
+  24 Barbara        Grzesik              - Wiktor         Fejkiel               384: 302
+  25 Jan            Walas                - Dorota         Klęsk                 285: 262
+
+
+Runda nr  8
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Kamil          Górka                - Konrad         Sowula                376: 396
+   2 Mariusz        Wrześniewski         - Piotr          Broda                 392: 367
+   3 Karol          Wyrębkiewicz         - Artur          Irzyk                 422: 441
+   4 Rafał          Wesołowski           - Jan            Mrozowski             349: 430
+   5 Dominik        Urbacki              - Przemysław     Herdzina              526: 345
+   6 Andrzej        Rakoczy              - Dominik        Ulejczyk              475: 459
+   7 Marek          Rogalski             - Mikołaj        Cieplik               381: 359
+   8 Jacek          Mańko                - Agnieszka      Walas                 354: 400
+   9 Arkadiusz      Łydka                - Franciszek     Łysek                 336: 467
+  10 Jerzy          Luter                - Małgorzata     Pochopień             344: 310
+  11 Tomasz         Lempart              - Waldemar       Wypchał               313: 341
+  12 Łukasz         Bobowski             - Jakub M.       Kowalski              537: 305
+  13 Zdzisław       Stańkowski           - Krzysztof      Zawadzki              643: 136
+  14 Krzysztof      Gibas                - Bartosz        Bartczak              485: 327
+  15 Adam           Janicki              - Leszek         Kilian                376: 284
+  16 Marcin         Ceglarek             - Franciszek     Walas                 356: 414
+  17 Teresa         Zalewska             - Zbigniew       Wietecki              404: 412
+  18 Dariusz        Sowula               - Arkadiusz      Kleniewski            362: 354
+  19 Ewa            Dunikowska           - Janina         Sobala                325: 352
+  20 Jerzy          Matyasik             - Wojciech       Wojtysiak             322: 306
+  21 Wiktor         Fejkiel              - Marcin         Kurowski              257: 362
+  22 Magdalena      Parowicz             - Aneta          Szczyrzyca            449: 289
+  23 Dorota         Klęsk                - Maria          Uryga                 241: 364
+  24 Agata          Kopta                - Jan            Walas                 344: 254
+
+
+Runda nr  9
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Konrad         Sowula               - Dominik        Urbacki               324: 478
+   2 Mariusz        Wrześniewski         - Andrzej        Rakoczy               358: 435
+   3 Jan            Mrozowski            - Kamil          Górka                 275: 543
+   4 Franciszek     Łysek                - Artur          Irzyk                 362: 427
+   5 Karol          Wyrębkiewicz         - Łukasz         Bobowski              412: 365
+   6 Piotr          Broda                - Agnieszka      Walas                 431: 329
+   7 Waldemar       Wypchał              - Jerzy          Luter                 269: 367
+   8 Rafał          Wesołowski           - Marek          Rogalski              440: 254
+   9 Przemysław     Herdzina             - Zdzisław       Stańkowski            411: 357
+  10 Dominik        Ulejczyk             - Arkadiusz      Łydka                 372: 337
+  11 Franciszek     Walas                - Krzysztof      Gibas                 329: 365
+  12 Małgorzata     Pochopień            - Mikołaj        Cieplik               263: 460
+  13 Jacek          Mańko                - Dariusz        Sowula                372: 324
+  14 Jakub M.       Kowalski             - Adam           Janicki               374: 402
+  15 Zbigniew       Wietecki             - Janina         Sobala                476: 318
+  16 Tomasz         Lempart              - Marcin         Ceglarek              335: 435
+  17 Arkadiusz      Kleniewski           - Jerzy          Matyasik              275: 417
+  18 Leszek         Kilian               - Ewa            Dunikowska            276: 349
+  19 Maria          Uryga                - Teresa         Zalewska              270: 425
+  20 Bartosz        Bartczak             - Krzysztof      Zawadzki              357: 330
+  21 Agata          Kopta                - Magdalena      Parowicz              269: 411
+  22 Marcin         Kurowski             - Wojciech       Wojtysiak             454: 274
+  23 Aneta          Szczyrzyca           - Dorota         Klęsk                 336: 267
+  24 Jan            Walas                - Wiktor         Fejkiel               336: 254
+
+
+Runda nr 10
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Andrzej        Rakoczy              - Konrad         Sowula                367: 469
+   2 Artur          Irzyk                - Dominik        Urbacki               364: 528
+   3 Kamil          Górka                - Karol          Wyrębkiewicz          495: 378
+   4 Mariusz        Wrześniewski         - Rafał          Wesołowski            350: 337
+   5 Jerzy          Luter                - Jan            Mrozowski             367: 381
+   6 Przemysław     Herdzina             - Piotr          Broda                 365: 397
+   7 Dominik        Ulejczyk             - Zbigniew       Wietecki              395: 375
+   8 Mikołaj        Cieplik              - Adam           Janicki               359: 362
+   9 Agnieszka      Walas                - Franciszek     Łysek                 359: 452
+  10 Marek          Rogalski             - Łukasz         Bobowski              437: 365
+  11 Krzysztof      Gibas                - Waldemar       Wypchał               390: 399
+  12 Zdzisław       Stańkowski           - Jacek          Mańko                 445: 392
+  13 Bartosz        Bartczak             - Marcin         Ceglarek              267: 438
+  14 Franciszek     Walas                - Tomasz         Lempart               292: 330
+  15 Teresa         Zalewska             - Jakub M.       Kowalski              457: 277
+  16 Jerzy          Matyasik             - Arkadiusz      Łydka                 320: 368
+  17 Magdalena      Parowicz             - Małgorzata     Pochopień             533: 338
+  18 Marcin         Kurowski             - Ewa            Dunikowska            286: 262
+  19 Janina         Sobala               - Dariusz        Sowula                245: 382
+  20 Wojciech       Wojtysiak            - Arkadiusz      Kleniewski            367: 264
+  21 Aneta          Szczyrzyca           - Leszek         Kilian                423: 396
+  22 Krzysztof      Zawadzki             - Jan            Walas                 481: 233
+  23 Maria          Uryga                - Agata          Kopta                 362: 351
+  24 Wiktor         Fejkiel              - Dorota         Klęsk                 302: 321
+
+
+Runda nr 11
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Konrad         Sowula               - Jan            Mrozowski             316: 520
+   2 Dominik        Urbacki              - Andrzej        Rakoczy               565: 289
+   3 Kamil          Górka                - Mariusz        Wrześniewski          327: 441
+   4 Piotr          Broda                - Artur          Irzyk                 303: 316
+   5 Karol          Wyrębkiewicz         - Jerzy          Luter                 401: 522
+   6 Rafał          Wesołowski           - Dominik        Ulejczyk              359: 371
+   7 Franciszek     Łysek                - Marek          Rogalski              450: 316
+   8 Waldemar       Wypchał              - Przemysław     Herdzina              381: 386
+   9 Adam           Janicki              - Zdzisław       Stańkowski            382: 381
+  10 Mikołaj        Cieplik              - Teresa         Zalewska              387: 323
+  11 Agnieszka      Walas                - Krzysztof      Gibas                 482: 351
+  12 Łukasz         Bobowski             - Tomasz         Lempart               374: 311
+  13 Arkadiusz      Łydka                - Jacek          Mańko                 378: 427
+  14 Marcin         Ceglarek             - Marcin         Kurowski              361: 402
+  15 Dariusz        Sowula               - Zbigniew       Wietecki              336: 372
+  16 Magdalena      Parowicz             - Jerzy          Matyasik              336: 410
+  17 Janina         Sobala               - Franciszek     Walas                 313: 374
+  18 Arkadiusz      Kleniewski           - Krzysztof      Zawadzki              413: 247
+  19 Ewa            Dunikowska           - Agata          Kopta                 424: 299
+  20 Leszek         Kilian               - Bartosz        Bartczak              363: 411
+  21 Małgorzata     Pochopień            - Wojciech       Wojtysiak             321: 445
+  22 Jan            Walas                - Maria          Uryga                 229: 413
+  23 Dorota         Klęsk                - Jakub M.       Kowalski              340: 340
+  24 Wiktor         Fejkiel              - Aneta          Szczyrzyca            304: 298
+
+
+Runda nr 12
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Dominik        Urbacki              - Konrad         Sowula                328: 338
+   2 Mariusz        Wrześniewski         - Kamil          Górka                 315: 469
+   3 Jan            Mrozowski            - Artur          Irzyk                 383: 355
+   4 Franciszek     Łysek                - Dominik        Ulejczyk              357: 394
+   5 Jerzy          Luter                - Andrzej        Rakoczy               404: 330
+   6 Przemysław     Herdzina             - Piotr          Broda                 314: 424
+   7 Adam           Janicki              - Karol          Wyrębkiewicz          457: 310
+   8 Jacek          Mańko                - Mikołaj        Cieplik               365: 391
+   9 Zbigniew       Wietecki             - Łukasz         Bobowski              264: 485
+  10 Rafał          Wesołowski           - Agnieszka      Walas                 450: 306
+  11 Marek          Rogalski             - Marcin         Kurowski              443: 329
+  12 Zdzisław       Stańkowski           - Waldemar       Wypchał               315: 283
+  13 Krzysztof      Gibas                - Marcin         Ceglarek              355: 408
+  14 Teresa         Zalewska             - Magdalena      Parowicz              385: 341
+  15 Tomasz         Lempart              - Arkadiusz      Łydka                 396: 398
+  16 Jerzy          Matyasik             - Ewa            Dunikowska            383: 333
+  17 Bartosz        Bartczak             - Franciszek     Walas                 431: 199
+  18 Maria          Uryga                - Dariusz        Sowula                298: 330
+  19 Jakub M.       Kowalski             - Arkadiusz      Kleniewski            384: 307
+  20 Krzysztof      Zawadzki             - Małgorzata     Pochopień             443: 288
+  21 Wojciech       Wojtysiak            - Aneta          Szczyrzyca            338: 317
+  22 Leszek         Kilian               - Janina         Sobala                366: 287
+  23 Agata          Kopta                - Dorota         Klęsk                 406: 341
+  24 Jan            Walas                - Wiktor         Fejkiel               237: 246
+</pre></div><div id='p_ranking' class='page'><pre>﻿Lista rankingowa na dzień 17-10-2022
+
+Lp.  Imię i nazwisko                Miasto               Rank.  Skalpy Gry
+---- ------------------------------ -------------------- ------ ------ ----
+   1 Kacper Zegadło                 Warszawa             171.44  13544   79
+   2 Dariusz Kosz                   Nysa                 168.93   5068   30
+   3 Dominik Urbacki                Pruszków             166.59  19824  119
+   4 Michał Alabrudziński           Włocławek            159.75  17413  109
+   5 Kamil Górka                    Kraków               159.35  25974  163
+   6 Maciej Czupryniak              Milanówek            158.02  13432   85
+   7 Jan Mrozowski                  Kraków               158.00   6794   43
+   8 Mirosław Uglik                 Warszawa             157.67   4730   30
+   9 Marek Reda                     Warszawa             155.40   8858   57
+  10 Grzegorz Kurowski              Warszawa             155.40  22999  148
+  11 Krzysztof Mówka                Warszawa             155.37  17246  111
+  12 Dawid Adamczyk                 Inowrocław           154.79   6501   42
+  13 Łukasz Bobowski                Suchedniów           154.62  17627  114
+  14 Mariusz Skrobosz               Warszawa             154.27  30545  198
+  15 Karol Wyrębkiewicz             Kraków               154.21  24828  161
+  16 Alicja Grąbczewska             Szczecin             154.15   7399   48
+  17 Kazimierz Merklejn             Warszawa             153.91   9850   64
+  18 Łukasz Tuszyński               Szczecin             152.33  19194  126
+  19 Miłosz Wrzałek                 Warszawa             152.19  29981  197
+  20 Dawid Pikul                    Poznań               152.02   8209   54
+  21 Jakub Zaryński                 Świnoujście          150.94  15547  103
+  22 Dariusz Ulatowski              Tuchola              149.70   9132   61
+  23 Maciej Kuczyński               Gdynia               149.40  12699   85
+  24 Franciszek Łysek               Warszawa             149.35  28525  191
+  25 Wojciech Usakiewicz            Warszawa             149.26   6269   42
+  26 Mariusz Wrześniewski           Kraków               148.97  28454  191
+  27 Konrad Sowula                  Kraków               148.81   5357   36
+  28 Przemysław Herdzina            Kraków               148.29  12456   84
+  29 Janusz Krupiński               Bytom                147.56  21986  149
+  30 Szymon Płachta                 Warszawa             147.48  10766   73
+  31 Szymon Dąbrowski               Warszawa             147.20  26938  183
+  32 Adrian Ziemniewicz             Białystok            146.29  12142   83
+  33 Marek Dudkiewicz               Milanówek            145.53  27650  190
+  34 Michał Waszkiewicz             Białystok            145.13  22059  152
+  35 Marcin Rogala                  Warszawa             145.11  28007  193
+  36 Bartłomiej Pawlak              Stary Szwarocin      144.41   5343   37
+  37 Mikołaj Cieplik                Ostrzeszów           144.33  28578  198
+  38 Tomasz Nasiłowski              Siedlce              144.26  15580  108
+  39 Natalia Woźniak                Dziwnówek            144.13  11098   77
+  40 Maciej Skrzypczak              Kędzierzyn-Koźle     143.25  17477  122
+  41 Justyna Górka                  Kraków               143.22  14322  100
+  42 Maciej Sancewicz               Gorzów Wielkopolski  142.23   6116   43
+  43 Rafał Błaszkiewicz             Milanówek            142.10  19184  135
+  44 Artur Irzyk                    Strzyżów             141.84  17304  122
+  45 Marcin Mroziuk                 Warszawa             140.82   6337   45
+  46 Tomasz Lempart                 Kraków               139.87  18743  134
+  47 Dariusz Putoń                  Ruda Śląska          139.71  16346  117
+  48 Andrzej Kowalski               Gdańsk               139.37  16028  115
+  49 Jakub Onoszko                  Gdynia               138.50  22576  163
+  50 Piotr Broda                    Sandomierz           138.14  24037  174
+  51 Jakub Błażejewski              Poznań               138.08  15465  112
+  52 Maciej Nawrocki                Babimost             137.84  23985  174
+  53 Robert Kamiński                Warszawa             137.76  12536   91
+  54 Rafał Wesołowski               Warszawa             137.38  18821  137
+  55 Justyna Sławińska-Budzich      Kolnik               137.36  11538   84
+  56 Jacek Mańko                    Warszawa             137.26  11118   81
+  57 Paweł Mazurek                  Polanica-Zdrój       137.22   4940   36
+  58 Tomasz Zwoliński               Skierdy              137.17  14128  103
+  59 Konrad Mikusek                 Milanówek            136.80  12449   91
+  60 Adam Sternik                   Kętrzyn              136.79   8481   62
+  61 Piotr Domański                 Lublin               136.68   6014   44
+  62 Maciej Grąbczewski             Szczecin             136.63   6558   48
+  63 Krzysztof Kałuża               Sosnowiec            136.45  14327  105
+  64 Marcin Orzechowski             Warszawa             136.30   6270   46
+  65 Szymon Stępień                 Bytom                136.05   5034   37
+  66 Dominik Ulejczyk               Będzin               135.96  23113  170
+  67 Sławomir Piotrowski            Deszczno             135.82  17249  127
+  68 Jakub Hassa                    Lutol Suchy          135.79  14937  110
+  69 Marta Szcześniak               Krzyków              135.35   5008   37
+  70 Agnieszka Walas                Kraków               135.22   5544   41
+  71 Irena Sołdan                   Warszawa             135.07  26204  194
+  72 Adam Grzelec                   Poznań               134.81   4314   32
+  73 Andrzej Kroc                   Łódź                 134.73  14012  104
+  74 Sylwia Łada                    Inowrocław           134.46   4975   37
+  75 Krzysztof Kodzis               Bydgoszcz            133.90   6963   52
+  76 Krzysztof Gibas                Kraków               133.83   7227   54
+  77 Andrzej Rechowicz              Katowice             133.60  16834  126
+  78 Jarosław Puchalski             Chrzanów Mały        133.52   6142   46
+  79 Mariusz Orzeł                  Nowe Miasto Lubawski 133.42  13742  103
+  80 Andrzej Kwiatkowski            Warszawa             133.02  25141  189
+  81 Wojciech Sołdan                Gdynia               132.97   9574   72
+  82 Joanna Juszczak                Warszawa             132.96  10105   76
+  83 Magdalena Parowicz             Wrocław              132.90  14486  109
+  84 Agnieszka Matus                Milanówek            132.86  21789  164
+  85 Małgorzata Deszczyńska         Warszawa             132.50   6360   48
+  86 Natalia Ogierman               Katowice             131.74  12911   98
+  87 Ewa Dunikowska                 Kraków               131.15   7869   60
+  88 Krzysztof Sporczyk             Piaseczno            131.14  26228  200
+  89 Adam Janicki                   Wrocław              130.99  11789   90
+  90 Marek Rogalski                 Warszawa             130.90  23824  182
+  91 Dariusz Kuć                    Stargard             130.68   6142   47
+  92 Paweł Maciejczuk               Białystok            130.64  24430  187
+  93 Tomasz Sehnal                  Warszawa             129.67  24638  190
+  94 Dariusz Białobrzewski          Gdynia               129.24   5299   41
+  95 Zbigniew Wietecki              Gorzów Wielkopolski  128.93  19210  149
+  96 Łukasz Barbuziński             Wrocław              128.93  19210  149
+  97 Ewa Madejczyk                  Katowice             128.60   6430   50
+  98 Marcin Ceglarek                Kraków               128.42   7705   60
+  99 Jerzy Matyasik                 Kraków               128.09  19213  150
+ 100 Karolina Urbańska              Biedrusko            127.81  15848  124
+ 101 Zdzisław Stańkowski            Rząska               127.48  10836   85
+ 102 Błażej Ochocki                 Przeźmierowo         127.47  22180  174
+ 103 Zuzanna Cichoń                 Gdańsk               127.42  14399  113
+ 104 Zbigniew Rybak                 Warszawa             127.23  10687   84
+ 105 Maciej Sylwestrzuk             Gródek               127.18   4197   33
+ 106 Bartosz Bartczak               Poznań               127.01  22607  178
+ 107 Ryszard Korpalski              Wójtowice            127.00   5080   40
+ 108 Igor Kabalewski                Podkowa Leśna        126.67  19127  151
+ 109 Adam Ziemniewicz               Białystok            126.25  19442  154
+ 110 Marta Bajorek                  Warszawa             125.99   9575   76
+ 111 Sławomir Wolski                Wrocław              125.95  19523  155
+ 112 Arkadiusz Kleniewski           Dzierzążnia          125.95  24812  197
+ 113 Katarzyna Kowalska             Katowice             125.61   6155   49
+ 114 Dorota Rudzińska               Warszawa             125.12   6131   49
+ 115 Małgorzata Szczygieł           Radwanice            125.09   6630   53
+ 116 Jerzy Luter                    Bytom                124.65  24805  199
+ 117 Dariusz Buławko                Warszawa             124.60   7476   60
+ 118 Arkadiusz Łydka                Jaworzno             124.49  18798  151
+ 119 Michał Szorc                   Białystok            124.44  14062  113
+ 120 Grzegorz Pukniel               Łódź                 124.17  14279  115
+ 121 Maciej Onoszko                 Warszawa             123.67  15953  129
+ 122 Bogdan Kozłowski               Białystok            123.54  13713  111
+ 123 Marcin Kurowski                Racibórz             123.01  19928  162
+ 124 Dariusz Sowula                 Kraków               122.95  10328   84
+ 125 Urszula Rechowicz              Katowice             122.49  11759   96
+ 126 Sławomir Wiśniowski            Jaworzno             122.37  10279   84
+ 127 Maciej Dąbrowski               Warszawa             121.98  13906  114
+ 128 Joanna Ostrowska               Warszawa             121.68  16548  136
+ 129 Ireneusz Kurzok                Mikołów              121.57   5957   49
+ 130 Anita Bruska                   Gdynia               121.42  12021   99
+ 131 Teresa Zalewska                Racibórz             121.04  19730  163
+ 132 Jacek Baltyn                   Suchedniów           120.59   5909   49
+ 133 Tomasz Siwiński                Zawiercie            120.24   4449   37
+ 134 Bożena Guział                  Racibórz             120.18   7451   62
+ 135 Marcin Radwański               Nowa Wieś Wrocławska 120.11   5285   44
+ 136 Stanisław Gasik                Warszawa             120.11   6846   57
+ 137 Ala Białobrzewska              Gdynia               119.25   8586   72
+ 138 Sławomir Długosz               Ostróda              119.18   8819   74
+ 139 Marta Świątkowska              Wrocław              118.65  22780  192
+ 140 Beata Stelmach                 Warszawa             118.42  17171  145
+ 141 Czesław Grajewski              Białystok            118.27   7806   66
+ 142 Stanisław Olsztyn              Olsztyn              117.56   7289   62
+ 143 Andrzej Bednaruk               Gdańsk               117.49  19151  163
+ 144 Marta Sztajnert                Międzyświeć          117.39   5752   49
+ 145 Agata Kopta                    Wodzisław Śląski     116.89   4325   37
+ 146 Zofia Górka                    Łęczna               115.86   4171   36
+ 147 Marta Majewska                 Wadowice             115.58  12714  110
+ 148 Jerzy Krzyżewski               Piasutno             115.31   3690   32
+ 149 Krzysztof Zawadzki             Sampława             115.20  22118  192
+ 150 Lucyna Śniadach                Rumia                114.52  10078   88
+ 151 Magdalena Cichoń               Korsze               114.27   5485   48
+ 152 Anna Arana                     Kołobrzeg            114.10   8101   71
+ 153 Marianna Kozłowska             Białystok            113.98  13906  122
+ 154 Katarzyna Dębska               Ostróda              113.60   6816   60
+ 155 Iwona Wieluńska                Kołobrzeg            113.56   4088   36
+ 156 Leszek Kilian                  Jaworzno             112.81  16922  150
+ 157 Tomasz A. Praga                Białystok            112.78   4173   37
+ 158 Joanna Brychcy                 Katowice             112.63   5519   49
+ 159 Teresa Radziewicz              Juchnowiec Górny     112.22   6509   58
+ 160 Barbara Wiśniewska             Gdańsk               110.55   5417   49
+ 161 Jakub M. Kowalski              Kalwaria Zebrzydowsk 109.58   5260   48
+ 162 Waldemar Kudliński             Osielsko             108.34  14193  131
+ 163 Waldemar Wypchał               Kraków               107.43  10098   94
+ 164 Józef Burzyński                Ełk                  106.52  15446  145
+ 165 Bartłomiej Dalecki             Rumia                106.20   3717   35
+ 166 Bernadeta Kudlińska            Osielsko             105.66  14158  134
+ 167 Marek Cecot                    Kołobrzeg            105.40   8221   78
+ 168 Małgorzata Jóźwiak             Iława                105.09   5570   53
+ 169 Wojciech Wojtysiak             Warszawa             104.92  20880  199
+ 170 Franciszek Walas               Kraków               104.69   3769   36
+ 171 Halina Cecot                   Kołobrzeg            104.65  11825  113
+ 172 Wojciech Łysek                 Warszawa             103.57  18643  180
+ 173 Aneta Szczyrzyca               Jaworzno             103.54   9422   91
+ 174 Wojciech Wąs                   Warszawa             103.29   5681   55
+ 175 Grażyna Chłopek                Jaworzno             103.10   8867   86
+ 176 Zuzanna Semenov                Wrocław              101.11   4752   47
+ 177 Jolanta Olczak                 Kołobrzeg            101.02   4546   45
+ 178 Jakub Tyczyński                Kraków               100.41   3414   34
+ 179 Marcin Taraszewski             Góra Kalwaria        100.41   9539   95
+ 180 Zygmunt Skwarek                Katowice             100.33   5819   58
+ 181 Teresa Balewska                Reda                 100.20  15731  157
+ 182 Katarzyna Rożany               Tczew                 99.98   4699   47
+ 183 Agnieszka Dawid                Kraków                99.84   3095   31
+ 184 Marcin Stachowiak              Poznań                99.40   3479   35
+ 185 Agnieszka Wiśniewska           Inowrocław            99.19   3670   37
+ 186 Daniel Taraszewski             Góra Kalwaria         98.18   9523   97
+ 187 Krzysztof Nasiłowski           Siedlce               97.11   6312   65
+ 188 Janina Sobala                  Łęczna                94.69   3314   35
+ 189 Agnieszka Antos                Racibórz              94.02   4137   44
+ 190 Roman Błoszyński               Rumejki               92.53   3331   36
+ 191 Ewa Tymińska                   Gdańsk                92.49   4347   47
+ 192 Andrzej Klich                  Jaworzno              92.33   9418  102
+ 193 Łukasz Soliwoda                Wrocław               89.88   5932   66
+ 194 Bernadeta Zapała               Jaworzno              89.03   5164   58
+ 195 Krystyna Perekitko             Ciechanowiec          87.50   6125   70
+ 196 Krzysztof Listowski            Szczecin              84.46   4730   56
+ 197 Elżbieta Zdankowska            Olsztyn               80.44   2735   34
+ 198 Marian Zdankowski              Olsztyn               80.43   4665   58
+ 199 Katarzyna Czarnecka            Kraków                76.62   2605   34
+ 200 Dawid Węgrzyński               Zabrze                72.56   3483   48
+
+
+
+
+Poczekalnia na dzień 17-10-2022
+
+Lp.  Imię i nazwisko                Miasto               Rank.  Skalpy Gry
+---- ------------------------------ -------------------- ------ ------ ----
+   1 Maciej Śliwa                   Zabrze               122.36   3426   28
+   2 Michał Mikołajczyk             Gdańsk               129.19   3488   27
+   3 Paweł Kamiński                 Gdańsk               125.62   3266   26
+   4 Zdzisław Szota                 Warszawa             126.92   3173   25
+   5 Marta Wajzner                  Łomianki             121.32   3033   25
+   6 Daniel Janus                   Wąchock              118.88   2972   25
+   7 Jarosław Michalak              Łódź                 114.00   2850   25
+   8 Janina Dąbrowska               Rybnik               106.16   2654   25
+   9 Julia Orłowska                 Warszawa              79.12   1978   25
+  10 Bartosz Morawski               Wrocław              161.17   3868   24
+  11 Rafał Lenartowski              Gdynia               154.08   3698   24
+  12 Maciej Perzyński               Piła                 147.58   3542   24
+  13 Aleksander Puchalski           Włocławek            138.75   3330   24
+  14 Zofia Gajewska                 Jelenia Góra         135.83   3260   24
+  15 Agata Kuć                      Stargard             133.67   3208   24
+  16 Tomasz Górka                   Kraków               132.75   3186   24
+  17 Małgorzata Sulejewska          Kraków               131.67   3160   24
+  18 Rafał Dąbrowski                Ostróda              129.50   3108   24
+  19 Dorota Kuć                     Stargard             126.79   3043   24
+  20 Michał Dąbrowski               Warszawa             119.63   2871   24
+  21 Klara Wigier                   Milanówek            119.42   2866   24
+  22 Małgorzata Pochopień           Kraków               115.21   2765   24
+  23 Maria Uryga                    Kraków               115.08   2762   24
+  24 Jarosław Józik                 Brzeszcze            115.04   2761   24
+  25 Tomasz Lewiński                Wejherowo            114.33   2744   24
+  26 Jacek Nowak                    Szczecin             113.79   2731   24
+  27 Rafał Stachowski               Police               111.29   2671   24
+  28 Iwona Duźniak                  Dębica               110.79   2659   24
+  29 Dorota Gwiazdoń                Nowa Wieś            110.63   2655   24
+  30 Maria Krzyżanowska             Władysławowo         108.17   2596   24
+  31 Przemysław Woiński             Łódź                 102.13   2451   24
+  32 Mariusz Michalski              Inowrocław            95.71   2297   24
+  33 Grzegorz Włodarczyk            Pabianice             93.38   2241   24
+  34 Jan Walas                      Kraków                71.83   1724   24
+  35 Andrzej Rakoczy                Kocmyrzów            136.78   3146   23
+  36 Marcin Stachowski              Wydartowo I          132.04   3037   23
+  37 Waldemar Czerwoniec            Warszawa             126.48   2909   23
+  38 Dorota Stachowska              Wydartowo I          121.83   2802   23
+  39 Maciej Kuć                     Stargard             121.17   2787   23
+  40 Łukasz Moskal                  Kurzętnik            109.83   2526   23
+  41 Beata Kiżewska                 Świnoujście          109.43   2517   23
+  42 Przemysław Chlebicz            Pruszcz Gdański       92.70   2132   23
+  43 Marzena Skrzypczak             Kędzierzyn-Koźle      90.48   2081   23
+  44 Waldemar Dębski                Ostróda               85.96   1977   23
+  45 Eugeniusz Tuszyński            Nowe Miasto Lubawski  80.61   1854   23
+  46 Bartosz Szalewski              Gdańsk                77.61   1785   23
+  47 Lidia Żywna                    Gdynia               103.95   2287   22
+  48 Adam Graczyk                   Nowe Miasto Lubawski  88.77   1953   22
+  49 Krystyna Czajkowska            Kołobrzeg             88.14   1939   22
+  50 Paweł Jankowski                Nowe Miasto Lubawski  58.86   1295   22
+  51 Michał Młodyszewski            Grodzisk Mazowiecki  134.40   2688   20
+  52 Łukasz Pudło                   Gdańsk                89.15   1783   20
+  53 Agnieszka Kłosowska            Warszawa              82.25   1645   20
+  54 Michał Makowski                Warszawa             157.47   2992   19
+  55 Krzysztof Obremski             Legnica              142.89   2715   19
+  56 Przemysław Rybicki             Otwock               116.63   2216   19
+  57 Wiktor Górnicki                Warszawa              77.37   1470   19
+  58 Olga Swarcewicz                Warszawa             116.83   2103   18
+  59 Małgorzata Wesołowska          Kołobrzeg            108.29   1841   17
+  60 Anna Olszak-Jurek              Jaworzno              63.65   1082   17
+  61 Grzegorz Piotrkiewicz          Warszawa             117.38   1878   16
+  62 Elżbieta Fitał                 Kołobrzeg             83.69   1339   16
+  63 Anna Zadrożna                  Warszawa             107.27   1609   15
+  64 Andrzej Stańczyk               Tarnów                99.36   1391   14
+  65 Barbara Obremska               Wrocław              158.69   2063   13
+  66 Andrzej Grabiński              Suchedniów           127.15   1653   13
+  67 Agnieszka Dymkowska            Bielsko-Biała        125.31   1629   13
+  68 Łucja Kodzis                   Bydgoszcz            124.69   1621   13
+  69 Aleksandra Łukaszewicz         Wrocław              123.69   1608   13
+  70 Michał Szymkowski              Wrocław              123.23   1602   13
+  71 Katarzyna Matuszek             Bielsko-Biała        113.15   1471   13
+  72 Grażyna Smereka                Racibórz             112.31   1460   13
+  73 Sławomir Żmij                  Wisła Wielka         101.62   1321   13
+  74 Michał Sztajnert               Wisła                 90.15   1172   13
+  75 Krzysztof Napierski            Mława                 74.54    969   13
+  76 Anna Piasecka                  Mława                 69.08    898   13
+  77 Monika Olszewska               Mława                 68.69    893   13
+  78 Bronisław Parada               Polanica-Zdrój       157.67   1892   12
+  79 Iwona Kucia                    Krosno               150.92   1811   12
+  80 Ireneusz Moralewicz            Goleniów             149.17   1790   12
+  81 Krystian Wandzlewicz           Nowe Miasto Lubawski 145.17   1742   12
+  82 Paweł Jackowski                Warszawa             143.58   1723   12
+  83 Sławomir Kucia                 Krosno               141.75   1701   12
+  84 Tomasz Suchanek                Wrocław              140.75   1689   12
+  85 Adam Klimont                   Gdańsk               139.83   1678   12
+  86 Paweł Janaś                    Piła                 135.25   1623   12
+  87 Jolanta Chłopińska             Wałcz                132.33   1588   12
+  88 Marek Roszak                   Poznań               131.58   1579   12
+  89 Michał Kolaj                   Ostróda              128.58   1543   12
+  90 Mariusz Sylwestrzuk            Kobyłka              127.92   1535   12
+  91 Artur Wawrzynowski             Żukowo               127.92   1535   12
+  92 Michał Borejko                 Wrocław              126.00   1512   12
+  93 Weronika Rudnicka              Szczecin             124.75   1497   12
+  94 Marta Szeliga-Frynia           Rąbień AB            124.50   1494   12
+  95 Halina Roszak                  Poznań               124.42   1493   12
+  96 Adrian Gerula                  Przemyśl             123.50   1482   12
+  97 Monika Gawron-Cieślik          Szczecin             123.17   1478   12
+  98 Piotr Maciejczak               Poznań               120.83   1450   12
+  99 Paweł Wdziękoński              Świnoujście          120.75   1449   12
+ 100 Anna Demczyszyn                Bystra               119.92   1439   12
+ 101 Samir Chakrar                  Poznań               119.75   1437   12
+ 102 Robert Młynarski               Siedlce              119.67   1436   12
+ 103 Sławomir Radzymiński           Kraków               119.58   1435   12
+ 104 Dorota Zielińska               Piaseczno            118.83   1426   12
+ 105 Małgorzata Szmuksta            Szczecin             118.42   1421   12
+ 106 Dorota Ostrowska               Białystok            115.00   1380   12
+ 107 Łukasz Przyszlak               Świnoujście          114.33   1372   12
+ 108 Sylwia Sobiecka                Płock                113.58   1363   12
+ 109 Aleksandra Brzeska             Piastów              113.00   1356   12
+ 110 Jan Pawłowski                  Warszawa             112.92   1355   12
+ 111 Artur Sztandera                Gdańsk               112.92   1355   12
+ 112 Paweł Frynia                   Rąbień AB            111.92   1343   12
+ 113 Jadwiga Szczurowska            Świnoujście          111.33   1336   12
+ 114 Robert Wagner                  Wrocław              109.67   1316   12
+ 115 Łukasz Wojciechowski           Świrydy              108.75   1305   12
+ 116 Lidia Szpakowska               Jaworzno             108.50   1302   12
+ 117 Dorota Modrzyńska              Gdańsk               108.00   1296   12
+ 118 Elżbieta Napiórkowska          Gorzów Wielkopolski  107.33   1288   12
+ 119 Monika Siemaszko               Lipiany              107.17   1286   12
+ 120 Maria Skutela                  Warszawa             106.75   1281   12
+ 121 Katarzyna Szachowicz           Unieszewo            106.08   1273   12
+ 122 Łukasz Grajewski               Iława                105.42   1265   12
+ 123 Sławomir Nowak                 Jaworzno             102.83   1234   12
+ 124 Ewa Matuszek                   Bielsko-Biała        102.33   1228   12
+ 125 Walenty Siemaszko              Lipiany               98.50   1182   12
+ 126 Anna Penska                    Mrągowo               98.00   1176   12
+ 127 Marta Sikorska                 Poznań                98.00   1176   12
+ 128 Dariusz Urbanik                Kraków                97.17   1166   12
+ 129 Alicja Klebba                  Gdynia                95.33   1144   12
+ 130 Oliwia Jaszewska               Warszawa              95.17   1142   12
+ 131 Michał Nowak                   Nakło nad Notecią     95.17   1142   12
+ 132 Alina Krasowska                Olsztyn               94.17   1130   12
+ 133 Dorota Klęsk                   Wieliczka             88.67   1064   12
+ 134 Adam Dziwoki                   Rybnik                86.92   1043   12
+ 135 Zofia Osierda                  Warszawa              85.50   1026   12
+ 136 Wiktor Fejkiel                 Wieliczka             84.42   1013   12
+ 137 Teresa Dziemiańczuk            Białystok             78.17    938   12
+ 138 Aleksander Szewczyk            Warszawa              73.33    880   12
+ 139 Anna Batko                     Kraków                72.58    871   12
+ 140 Jakub Szymczak                 Łódź                 164.36   1808   11
+ 141 Andrzej Gostomski              Starowa Góra         120.27   1323   11
+ 142 Juliusz Czupryniak             Warszawa             111.09   1222   11
+ 143 Jerzy Ciesielski               Łódź                 104.18   1146   11
+ 144 Adam Artych                    Szczytno              97.27   1070   11
+ 145 Nikodem Halek                  Kraków                96.18   1058   11
+ 146 Elżbieta Salamon               Wrocław               95.45   1050   11
+ 147 Agnieszka Putkiewicz           Warszawa              91.36   1005   11
+ 148 Eulalia Halek                  Konary                90.00    990   11
+ 149 Alicja Bielecka-Żabierek       Gdańsk                89.64    986   11
+ 150 Paweł Mleczak                  Poznań                87.91    967   11
+ 151 Anna Zawadzka                  Gdańsk                86.45    951   11
+ 152 Tadeusz Kondej                 Świnoujście           84.18    926   11
+ 153 Marek Popczyk                  Tychy                 84.00    924   11
+ 154 Beata Bachmura                 Olsztyn               81.82    900   11
+ 155 Ewelina Zborowska              Poznań                79.09    870   11
+ 156 Magdalena Maternicka           Gdynia                78.55    864   11
+ 157 Jakub Augustyn                 Kołobrzeg             78.27    861   11
+ 158 Jacek Kukułka                  Jaworzno              77.36    851   11
+ 159 Szymon Jankowski               Nowe Miasto Lubawski  76.00    836   11
+ 160 Wojciech Grabiński             Poznań                75.64    832   11
+ 161 Sławomir Gędoś                 Jaworzno              75.09    826   11
+ 162 Krystyna Kuczyńska             Olsztyn               73.18    805   11
+ 163 Małgorzata Gędoś               Kraków                68.27    751   11
+ 164 Ewa Milej                      Białystok             60.36    664   11
+ 165 Norbert Zborowski              Poznań                55.73    613   11
+ 166 Mateusz Gołębiewski            Łódź                 115.00   1150   10
+ 167 Robert Schellner               Kołobrzeg             67.20    672   10
+ 168 Grzegorz Abraham               Warszawa              54.30    543   10
+ 169 Serena Podgórska               Kołobrzeg             53.70    537   10
+ 170 Krzysztof Jaworski             Warszawa             122.63    981    8
+ 171 Maria Wieczorek                Kołobrzeg            103.00    824    8
+ 172 Piotr Kozak                    Racibórz              94.25    754    8
+ 173 Sławomir Rosochacz             Lublin               132.71    929    7
+ 174 Andrzej Ciołek                 Bielsk Podlaski      132.43    927    7
+ 175 Zbigniew Stettner              Bielsko Biała        132.29    926    7
+ 176 Marcin Resler                  Września             130.14    911    7
+ 177 Andrzej Pastor                 Warszawa             123.00    861    7
+ 178 Piotr Pietuchowski             Białystok            122.00    854    7
+ 179 Hanna Siemionow                Białystok            118.57    830    7
+ 180 Michał Kozłowski               Warszawa             116.14    813    7
+ 181 Barbara Grzesik                Bochnia              104.57    732    7
+ 182 Piotr Knapik                   Jaworzno              73.57    515    7
+ 183 Arleta Maciaś                  Jaworzno              64.00    448    7
+ 184 Liliana Dąbrowska              Warszawa             112.17    673    6
+ 185 Natalia Mówka                  Warszawa             105.00    630    6
+ 186 Anna Chybowska                 Sochaczew             90.33    542    6
+ 187 Jakub Aksamit                  Sochaczew             67.50    405    6
+ 188 Jolanta Dąbrowska              Żory                  67.50    405    6
+ 189 Szymon Jachimek                Mosty                101.80    509    5
+ 190 Sebastian Orzelski             Bielsk Podlaski       89.20    446    5
+ 191 Jana Jachimek                  Mosty                 60.00    300    5
+ 192 Magdalena Bochan-Jachimek      Mosty                 55.80    279    5
+ 193 Tomasz Kłosowski               Kraków                52.40    262    5
+ 194 Paweł Augustyn                 Kołobrzeg             69.75    279    4
+ 195 Bartłomiej Rutkowski           Warszawa              50.75    203    4
+ 196 Anna Maj                       Wieliczka             83.00    249    3
+ 197 Michał Sak                     Lublin               130.50    261    2
+ 198 Andrzej Słapiński              Warszawa             118.00    236    2
+ 199 Paweł Ziółkowski               Kołobrzeg             82.00    164    2
+ 200 Anna Niewiadomska              Kołobrzeg             70.50    141    2
+ 201 Tymon Jachimek                 Mosty                 93.00     93    1
+ 202 Jakub Kowalski                 Piaseczno             82.00     82    1
+ 203 Aleksandra Lembas              Kraków                82.00     82    1
+ 204 Michał Adamus                  Częstochowa           79.00     79    1
+ 205 Jan Dzierżko                   Warszawa              72.00     72    1
+ 206 Agnieszka Olkiewicz            Toruń                 72.00     72    1
+ 207 Dawid Rykaczewski              Jaworzno              67.00     67    1
+ 208 Olga Żukowicz                  Gdynia                53.00     53    1
+</pre></div><div id='p_przebieg' class='page'>
+
+    </div><div style="clear:both;width:100%;" class="alignright">
+
+<script>
+<!--
+if ((document.getElementById("content").offsetHeight + document.getElementById("top").offsetHeight) > screen.height)
+    document.write("<br /><br /><a href='#top'>do góry</a>");
+-->
+</script>
+
+</div>
+</div>
+
+<div id="bottom">
+<ul id="bottomlinks">
+<div class='onleft'>
+ Osób on-line: 64</div>
+    <li><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+    <li><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+    <li><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+    <li><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+    <li><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+    <li><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+</ul>
+    SCRABBLE® jest zastrzeżonym znakiem towarowym J.W. Spears &amp; Sons&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://www.pfs.org.pl/prawaautorskie.php">© Prawa autorskie</a>
+</div>
+</body>
+</html>

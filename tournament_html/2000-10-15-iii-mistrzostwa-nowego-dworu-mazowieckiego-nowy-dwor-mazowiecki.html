@@ -1,0 +1,826 @@
+
+<html>
+<head>
+    <title>Polska Federacja Scrabble :: III Mistrzostwa Nowego Dworu Mazowieckiego</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="files/img/favicon.ico" />
+    <link rel="stylesheet" href="files/css/style.css" type="text/css" />
+	<link rel="stylesheet" href="files/css/style-index.css" type="text/css" />
+    <!--[if IE]><link rel="stylesheet" type="text/css" href="files/css/styleie.css" /><![endif]-->
+    <!--[if lt IE 7.]><script defer type="text/javascript" src="files/js/pngfix.js"></script><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="files/js/minmax.js"></script><![endif]-->
+    <script type="text/javascript" src="files/js/jquery.js"></script>
+    <script type="text/javascript" src="files/js/jquery-bp.js"></script>
+    <script type="text/javascript" src="files/js/java.js"></script>
+    <script>jSubmenu ("turnieje","kalendarz");jKalendarz();</script>
+    <script>
+    var url, page;
+
+    page = 'info';
+    url  = document.location.toString();
+
+    if (url.match ('#')) {
+      page = url.split ('#')[1];
+      if ($.inArray (page, [ 'info', 'relacja', 'klasyfikacja', 'hh', 'rundy', 'ranking', 'przebieg' ]) == -1)
+        page = 'info';
+    }
+
+    $(document).ready(function(){
+        $('a#listaucz').bind('click', function(event){
+            $('div#lista').toggle();
+            event.preventDefault();
+        }).toggle(function() { $(this).text('schowaj listę uczestników'); }, function() { $(this).text("pokaż listę uczestników"); });
+        $('div#lista table tr:last td').css({"border-bottom" : "none"});
+
+        $("a.przycisk").click (function (e) {
+            if ($(this).attr ('href') !== '#')
+                return true;
+
+            e.preventDefault ();
+
+            id       = this.id;
+            this.id += 'tmp';
+            window.location.hash = id;
+            this.id  = id;
+
+            $(".page").hide ();
+            $(".page#p_" + id).show ();
+
+            $("a.przycisk").removeClass ('active');
+            $(this).addClass ('active');
+
+            return false;
+        });
+
+        $("a.przycisk#" + page).click ();
+        $('html, body').animate ({ scrollTop: 0 }, 0);
+    });
+    </script>
+  <style type="text/css">
+    .page {
+        display: none;
+    }
+    #szczegoly{
+        width: 100%;
+        border-spacing: 0;
+        margin-top: 30px;
+        text-align: left;
+        font-size: inherit;
+    }
+    #szczegoly td{
+        padding: 10px 20px 10px 0;
+        vertical-align: top;
+    }
+    #szczegoly td:first-child{
+        font-weight: bold;
+        width: 160px;
+    }
+    div#lista{
+        display:none;
+        margin-top: 15px;
+    }
+    div#lista table{
+        margin-top: 10px;
+        text-align: left;
+        font-size: inherit;
+    }
+    div#lista table td{
+        padding: 3px 8px;
+        border-bottom: 1px dashed #1576AE;
+    }
+    div#lista table th{
+        padding: 0px 5px 10px 5px;
+    }
+    div#lista table td.ptaszek{
+        text-align: center;
+        background: url('files/img/tick.png') no-repeat center center;
+    }
+    div#lista table th{
+        white-space: nowrap;
+        width: auto;
+    }
+    div#lista table td:first-child, div#lista table th:first-child{
+        text-align:right;
+        width: auto;
+    }
+    </style>
+</head>
+
+<body>
+
+<script type="text/javascript">setMenu();</script>
+
+<div id="top" onclick="location.href='https://www.pfs.org.pl'">
+</div>
+<div id="menu">
+
+    <div id="m_glowna">
+        <div class="tab"><a href="https://www.pfs.org.pl/index.php"></a></div>
+
+        <ul>
+            <li class="sublink" id="aktualnosci"><a href="https://www.pfs.org.pl">Aktualności</a></li>
+            <li class="sublink" id="nowy"><a href="https://www.pfs.org.pl/dlanowych.php">Jestem tu nowy</a></li>
+            <li class="sublink" id="anagramator"><a href="https://www.pfs.org.pl/osps_online.php?main=1">Słownik online</a></li>
+            <li class="sublink" id="siodemka"><a href="https://www.pfs.org.pl/siodemka.php?main=1">Siódemka tygodnia</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+            <li class="sublink" id="dlasponsorow"><a href="https://www.pfs.org.pl/dlasponsorow.php">Dla sponsorów</a></li>
+            <li class="sublink" id="kontakt"><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+        </ul>
+    </div>
+    <div id="m_turnieje">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kalendarz.php"></a></div>
+        <ul>
+            <li class="sublink" id="kalendarz"><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+            <li class="sublink" id="regulaminy"><a href="https://www.pfs.org.pl/regulaminy.php">Regulaminy</a></li>
+            <li class="sublink" id="sedziowie"><a href="https://www.pfs.org.pl/sedziowie.php">Sędziowie</a></li>
+            <li class="sublink" id="gp"><a href="https://www.pfs.org.pl/gp2026.php">Grand Prix</a></li>
+<!--            <li class="sublink" id="mr"><a href="https://www.pfs.org.pl/mr2020.php">Mistrzostwa Regionów</a></li>-->
+            <li class="sublink" id="archiwum"><a href="https://www.pfs.org.pl/archiwum.php">Historia</a></li>
+            <li class="sublink" id="galeria"><a href="https://www.pfs.org.pl/galeria.php">Zdjęcia</a></li>
+            <li class="sublink" id="rekordy"><a href="https://www.pfs.org.pl/rekordy.php">Rekordy</a></li>
+        </ul>
+    </div>
+    <div id="m_pfs">
+        <div  class="tab"><a href="https://www.pfs.org.pl/opfs.php"></a></div>
+        <ul>
+            <li class="sublink" id="opfs"><a href="https://www.pfs.org.pl/opfs.php">O PFS</a></li>
+            <li class="sublink" id="jakprzystapic"><a href="https://www.pfs.org.pl/jakprzystapic.php">Jak przystąpić</a></li>
+            <li class="sublink" id="dlaczlonkow"><a href="https://www.pfs.org.pl/dlaczlonkow.php">Dla członków</a></li>
+            <li class="sublink" id="wladze"><a href="https://www.pfs.org.pl/wladze.php">Władze</a></li>
+            <li class="sublink" id="komisje"><a href="https://www.pfs.org.pl/komisje.php">Komisje</a></li>
+            <li class="sublink" id="statut"><a href="https://www.pfs.org.pl/statut.php">Statut</a></li>
+            <li class="sublink" id="uchwaly"><a href="https://www.pfs.org.pl/uchwaly.php">Uchwały</a></li>
+            <li class="sublink" id="honorowi"><a href="https://www.pfs.org.pl/honorowi.php">Honorowi członkowie</a></li>
+            <li class="sublink" id="finanse"><a href="https://www.pfs.org.pl/finanse.php">Finanse</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabble">
+        <div  class="tab"><a href="https://www.pfs.org.pl/osps_online.php?desktop=1"></a></div>
+        <ul>
+            <li class="sublink" id="osps_online"><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+            <li class="sublink" id="zds"><a href="https://www.pfs.org.pl/zds2.php">ZDS</a></li>
+            <li class="sublink" id="osps"><a href="https://www.pfs.org.pl/osps.php">OSPS</a></li>
+            <li class="sublink" id="aktualizacje"><a href="https://www.pfs.org.pl/osps_aktualizacje.php">Aktualizacje</a></li>
+            <li class="sublink" id="dwojki"><a href="https://www.pfs.org.pl/dwojki.php">2-literówki</a></li>
+            <li class="sublink" id="trojki"><a href="https://www.pfs.org.pl/trojki.php">3-literówki</a></li>
+            <li class="sublink" id="siodemkat"><a href="https://www.pfs.org.pl/siodemka.php">Siódemka tygodnia</a></li>
+            <li class="sublink" id="slowneroznosci"><a href="https://www.pfs.org.pl/slowneroznosci.php">Słowne różności</a></li>
+        </ul>
+    </div>
+    <div id="m_ranking">
+        <div  class="tab"><a href="https://www.pfs.org.pl/ranking.php"></a></div>
+        <ul>
+            <li class="sublink" id="aktranking"><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+            <li class="sublink" id="medale"><a href="https://www.pfs.org.pl/medale.php">Klasyfikacja medalowa</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabblisci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/mistrzowiepolski.php"></a></div>
+        <ul>
+            <li class="sublink" id="mistrzowiepolski"><a href="https://www.pfs.org.pl/mistrzowiepolski.php">Mistrzowie Polski</a></li>
+            <li class="sublink" id="zdobywcypp"><a href="https://www.pfs.org.pl/zdobywcypp.php">Zdobywcy Pucharu Polski</a></li>
+            <li class="sublink" id="zwyciezcygp"><a href="https://www.pfs.org.pl/zwyciezcygp.php">Zwycięzcy Grand Prix</a></li>
+            <li class="sublink" id="liderzyrankingu"><a href="https://www.pfs.org.pl/liderzyrankingu.php">Liderzy rankingu</a></li>
+            <li class="sublink" id="zwyciezcylemans"><a href="https://www.pfs.org.pl/zwyciezcylemans.php">Zwycięzcy 24h Le Mans</a></li>
+            <li class="sublink" id="zwyciezcykmp"><a href="https://www.pfs.org.pl/zwyciezcykmp.php">KMP</a>
+        </ul>
+    </div>
+    <div id="m_kluby">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kluby.php"></a></div>
+        <ul>
+            <li class="sublink" id="rejestrklubow"><a href="https://www.pfs.org.pl/kluby.php">Rejestr klubów</a></li>
+            <li class="sublink" id="kmp"><a href="https://www.pfs.org.pl/kmp.php">KMP</a></li>
+            <li class="sublink" id="wiescizklubow"><a href="https://www.pfs.org.pl/wiescizklubow.php">Wieści z klubów</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/about.php">Statystyki klubowe</a></li>
+        </ul>
+    </div>
+    <div id="m_roznosci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/historia.php"></a></div>
+        <ul>
+            <li class="sublink" id="historia"><a href="https://www.pfs.org.pl/historia.php">Historia</a></li>
+            <li class="sublink" id="odmiany"><a href="https://www.pfs.org.pl/odmiany.php">Odmiany</a></li>
+            <li class="sublink" id="anegdoty"><a href="https://www.pfs.org.pl/anegdoty.php">Anegdoty</a></li>
+            <li class="sublink" id="scrabblealia"><a href="https://www.pfs.org.pl/scrabblealia.php">Scrabblealia</a></li>
+            <li class="sublink" id="scrabblenet"><a href="https://www.pfs.org.pl/scrabblenet.php">Scrabble w internecie</a></li>
+            <li class="sublink" id="programy"><a href="https://www.pfs.org.pl/programy.php">Programy</a></li>
+            <li class="sublink" id="download"><a href="https://www.pfs.org.pl/download.php">Do pobrania</a></li>
+            <li class="sublink" id="ksiazki"><a href="https://www.pfs.org.pl/ksiazki.php">Książki</a></li>
+            <li class="sublink" id="slowniczek"><a href="https://www.pfs.org.pl/slowniczek.php">Słowniczek</a></li>
+        </ul>
+    </div>
+    <div id="m_english">
+        <div  class="tab"><a href="https://www.pfs.org.pl/english.php"></a></div>
+        <ul>
+            <li class="sublink" id="about"><a href="https://www.pfs.org.pl/english.php">About Polish Scrabble</a></li>
+            <li class="sublink" id="news"><a href="https://www.pfs.org.pl/en_news.php">News</a></li>
+            <li class="sublink" id="bartek"><a href="https://www.pfs.org.pl/bartek.php">Bartek w Johor Bahru</a></li>
+            <li class="sublink" id="franko"><a href="https://www.pfs.org.pl/franko.php">Scrabble frankofońskie</a></li>
+        </ul>
+    </div>
+</div>
+
+<div id="submenu"></div>
+<div id="content">
+<div id='nextTours'>
+		<div class='nextTour' onclick='location.href="turniej.php?id=304"'>
+			<div class='karteczka small1'>
+				<span class='miasto'>Bielsko-Biała</span><span class='dzien'><span class='big'>30</span><br />września</span></div>
+			<div class='kartka big1'>
+				<span class='miasto'>Bielsko-Biała</span>
+				<span class='dzien'><b>30- 1 października</b></span>
+				<span class='nazwaturnieju'>III Mistrzostwa Podbeskidzia</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=303"'>
+			<div class='karteczka small2'>
+				<span class='miasto'>Nowy Dwór Mazowiecki</span><span class='dzien'><span class='big'>15</span><br />października</span></div>
+			<div class='kartka big2'>
+				<span class='miasto'>Nowy Dwór Mazowiecki</span>
+				<span class='dzien'><b>15 października</b></span>
+				<span class='nazwaturnieju'>III Mistrzostwa Nowego Dworu Mazowieckiego</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=302"'>
+			<div class='karteczka small3'>
+				<span class='miasto'>Szczecin</span><span class='dzien'><span class='big'>21</span><br />października</span></div>
+			<div class='kartka big3'>
+				<span class='miasto'>Szczecin</span>
+				<span class='dzien'><b>21-22 października</b></span>
+				<span class='nazwaturnieju'>IV Mistrzostwa Szczecina</span></div>
+		</div></div><div class='naglowekrelacji'><span class='tytul'>III Mistrzostwa Nowego Dworu Mazowieckiego<span class='nazwa'>15 października 2000 —  III Mistrzostwa Nowego Dworu Mazowieckiego</span></span><a href='#' id='info' class='przycisk'>Informacje</a><a href='#' id='relacja' class='przycisk'>Relacja</a><a href='#' id='klasyfikacja' class='przycisk'>Wyniki</a><a href='#' id='hh' class='przycisk'>HH</a><div class='galleries'><img src='files/img/gallery.png' style='visibility:hidden;' alt='galeria' /></div></div><h1 style='color:black; margin-top:0px; margin-bottom:30px; padding: 0px'>III Mistrzostwa Nowego Dworu Mazowieckiego<span>Nowy Dwór Mazowiecki, 15 października 2000</span></h1><div id='p_relacja' class='page'><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><div class='relacja' style='clear:both;'><div><pre>
+ 1. Wojciech Usakiewicz (Warszawa) 6.0 2530
+ 2. Marcin Mroziuk (Strzegom) 5.0 2256
+ 3. Mariola Osajda-Matczak (Pruszków) 4.5 2176
+ 4. Tomasz Zwoliński (Warszawa) 4.0 2580
+ 5. Krzysztof Bukowski (Warszawa) 4.0 2309
+ 6. Mateusz Żbikowski (Warszawa) 4.0 2269
+ 7. Rafał Matczak (Pruszków) 4.0 2232
+ 8. Andrzej Kwiatkowski (Warszawa) 4.0 2169
+ 9. Zdzisław Szota (Warszawa) 4.0 2158
+ 10. Mariusz Skrobosz (Warszawa) 4.0 2094
+
+ 31 uczestników, 6 rund 
+</pre></div><div class='autor'></div></div><div style='clear:both;'></div></div><div id='p_info' class='page'><br><p align='center'></p><br><br><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br>Zobacz, jak było na poprzednich turniejach:<br><a href='turniej.php?id=328'>II Otwarte Mistrzostwa Nowego Dworu Mazowieckiego</a><br><a href='turniej.php?id=357'>I Otwarte Mistrzostwa Nowego Dworu Mazowieckiego &#8222;Turniej Ostatniej Szansy&#8221;</a><br><table id='szczegoly' class='ramkadolna'></table><br /><br /></div><div id='p_klasyfikacja' class='page'><pre>Wyniki turnieju III Mistrzostwa Nowego Dworu Mazow.
+
+Lp. Imię            Nazwisko             Miasto               Ranking  Duże pkt Małe pkt Skalpy   Różn. MP
+--- --------------- -------------------- -------------------- -------- -------- -------- -------- --------
+  1 Wojciech        Usakiewicz           Warszawa               131.36      6.0     2530     1073      687
+  2 Marcin          Mroziuk              Warszawa               130.73      5.0     2256      932      298
+  3 Mariola         Osajda-Matczak       Pruszków               103.45      4.5     2176      845       88
+  4 Tomasz          Zwoliński            Warszawa               142.48      4.0     2580      805      462
+  5 Krzysztof       Bukowski             Milanówek              118.49      4.0     2309      789      212
+  6 Mateusz         Żbikowski            Warszawa               124.47      4.0     2269      857     -109
+  7 Rafał           Matczak              Pruszków               114.32      4.0     2232      814      100
+  8 Andrzej         Kwiatkowski          Warszawa               118.57      4.0     2169      774      291
+  9 Zdzisław        Szota                Warszawa               129.94      4.0     2158      779      138
+ 10 Mariusz         Skrobosz             Warszawa               135.40      4.0     2094      774       -7
+ 11 Stanisław       Rydzik               Warszawa               123.55      4.0     2031      805       35
+ 12 Radosław        Konca                Warszawa               107.33      3.5     2007      605      295
+ 13 Dariusz         Banaszek             Warszawa               144.86      3.0     2243      688      149
+ 14 Krzysztof       Usakiewicz           Warszawa               118.08      3.0     2174      650      -48
+ 15 Piotr           Jachimowicz          Warszawa               105.03      3.0     2171      722      -34
+ 16 Maciej          Grabowski            Warszawa               106.90      3.0     2164      732      115
+ 17 Mariusz         Wrześniewski         Warszawa               100.83      3.0     2095      730     -137
+ 18 Andrzej         Szmidtke             Bolszewo               100.00      3.0     2027      650       51
+ 19 Karol           Wyrębkiewicz         Łódź                   111.58      3.0     2021      705     -183
+ 20 Magdalena       Merklejn             Szczecin               109.00      2.5     2064      514      298
+ 21 Tomasz          Żbikowski            Warszawa               104.98      2.5     1965      645     -333
+ 22 Paweł           Stanosz              Warszawa               133.56      2.0     2152      587      -31
+ 23 Wiesław         Olewiński            Warszawa               106.58      2.0     2128      566      -20
+ 24 Wojciech        Zemło                Łódź                   114.75      2.0     2091      581      -70
+ 25 Adam            Słapiński            Warszawa               101.97      2.0     2080      565     -161
+ 26 Marek           Dudkiewicz           Milanówek              100.00      2.0     1925      587     -237
+ 27 Maciej          Gałecki              Łódź                   106.73      1.5     2007      413      105
+ 28 Andrzej         Słapiński            Warszawa               113.31      1.5     1968      441      173
+ 29 Jagoda          Żbikowska            Warszawa               100.00      1.5     1839      416       12
+ 30 Aleksandra      Merklejn-Kaczanowska Szczecin               110.57      1.0     2104      503     -248
+ 31 Marek           Antosik              Nowy Dwór Mazowiecki   119.09      0.5     1836      326      -91
+</pre></div><div id='p_hh' class='page'><pre>Wyniki poszczególnych graczy w turnieju III Mistrzostwa Nowego Dworu Mazow.
+
+
+
+	Dariusz Banaszek 144.86 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Andrzej        Słapiński             113.31 +  418: 318  163
+    2     2 Mariusz        Wrześniewski          100.83 +  372: 347  151
+    3     2 Marcin         Mroziuk               130.73 -  352: 370   81
+    4     4 Piotr          Jachimowicz           105.03 +  444: 312  155
+    5     3 Rafał          Matczak               114.32 -  323: 409   64
+    6     4 Mateusz        Żbikowski             124.47 -  334: 338   74
+                                                          --------------- ---- ------
+                                                                     688  /  6 114.67
+
+
+
+
+	Tomasz Zwoliński 142.48 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Karol          Wyrębkiewicz          111.58 -  353: 398   62
+    2    11 Marek          Antosik               119.09 +  396: 304  169
+    3     6 Mariusz        Wrześniewski          100.83 +  441: 353  151
+    4     3 Krzysztof      Bukowski              118.49 +  409: 327  168
+    5     2 Mateusz        Żbikowski             124.47 +  575: 287  174
+    6     1 Wojciech       Usakiewicz            131.36 -  406: 449   81
+                                                          --------------- ---- ------
+                                                                     805  /  6 134.17
+
+
+
+
+	Mariusz Skrobosz 135.40 Warszawa               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Aleksandra     Merklejn-Kaczanowska  110.57 +  390: 383  161
+    2     4 Stanisław      Rydzik                123.55 +  358: 338  174
+    3     3 Wojciech       Usakiewicz            131.36 -  261: 432   81
+    4     7 Marek          Dudkiewicz            100.00 +  375: 315  150
+    5     5 Mariola        Osajda-Matczak        103.45 -  274: 358   53
+    6     8 Tomasz         Żbikowski             104.98 +  436: 275  155
+                                                          --------------- ---- ------
+                                                                     774  /  6 129.00
+
+
+
+
+	Paweł Stanosz 133.56 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Magdalena      Merklejn              109.00 +  383: 379  159
+    2     5 Wojciech       Usakiewicz            131.36 -  345: 379   81
+    3     7 Stanisław      Rydzik                123.55 -  333: 342   74
+    4    11 Maciej         Grabowski             106.90 -  336: 340   57
+    5    13 Aleksandra     Merklejn-Kaczanowska  110.57 +  427: 408  161
+    6    10 Piotr          Jachimowicz           105.03 -  328: 335   55
+                                                          --------------- ---- ------
+                                                                     587  /  6  97.83
+
+
+
+
+	Wojciech Usakiewicz 131.36 Warszawa               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Radosław       Konca                 107.33 +  380: 253  157
+    2     5 Paweł          Stanosz               133.56 +  379: 345  184
+    3     3 Mariusz        Skrobosz              135.40 +  432: 261  185
+    4     1 Mateusz        Żbikowski             124.47 +  548: 320  174
+    5     1 Marcin         Mroziuk               130.73 +  342: 258  181
+    6     1 Tomasz         Zwoliński             142.48 +  449: 406  192
+                                                          --------------- ---- ------
+                                                                    1073  /  6 178.83
+
+
+
+
+	Marcin Mroziuk 130.73 Warszawa
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Maciej         Grabowski             106.90 +  365: 304  157
+    2     7 Tomasz         Żbikowski             104.98 +  398: 316  155
+    3     2 Dariusz        Banaszek              144.86 +  370: 352  195
+    4     2 Zdzisław       Szota                 129.94 +  401: 389  180
+    5     1 Wojciech       Usakiewicz            131.36 -  258: 342   81
+    6     2 Rafał          Matczak               114.32 +  464: 255  164
+                                                          --------------- ---- ------
+                                                                     932  /  6 155.33
+
+
+
+
+	Zdzisław Szota 129.94 Warszawa               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Maciej         Gałecki               106.73 +  379: 334  157
+    2     6 Wojciech       Zemło                 114.75 +  322: 309  165
+    3     4 Jagoda         Żbikowska             100.00 +  365: 257  150
+    4     2 Marcin         Mroziuk               130.73 -  389: 401   81
+    5     4 Andrzej        Kwiatkowski           118.57 -  293: 361   69
+    6     6 Maciej         Grabowski             106.90 +  410: 358  157
+                                                          --------------- ---- ------
+                                                                     779  /  6 129.83
+
+
+
+
+	Mateusz Żbikowski 124.47 Warszawa         
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Wiesław        Olewiński             106.58 +  473: 362  157
+    2     1 Rafał          Matczak               114.32 +  412: 215  164
+    3     1 Krzysztof      Bukowski              118.49 +  439: 344  168
+    4     1 Wojciech       Usakiewicz            131.36 -  320: 548   81
+    5     2 Tomasz         Zwoliński             142.48 -  287: 575   92
+    6     4 Dariusz        Banaszek              144.86 +  338: 334  195
+                                                          --------------- ---- ------
+                                                                     857  /  6 142.83
+
+
+
+
+	Stanisław Rydzik 123.55 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Piotr          Jachimowicz           105.03 +  391: 339  155
+    2     4 Mariusz        Skrobosz              135.40 -  338: 358   85
+    3     7 Paweł          Stanosz               133.56 +  342: 333  184
+    4     6 Andrzej        Kwiatkowski           118.57 -  290: 335   69
+    5    10 Marek          Dudkiewicz            100.00 +  328: 320  150
+    6     7 Karol          Wyrębkiewicz          111.58 +  342: 311  162
+                                                          --------------- ---- ------
+                                                                     805  /  6 134.17
+
+
+
+
+	Marek Antosik 119.09 Nowy Dwór Mazowiecki          
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Tomasz         Żbikowski             104.98 -  349: 371   55
+    2    11 Tomasz         Zwoliński             142.48 -  304: 396   92
+    3    15 Maciej         Grabowski             106.90 -  261: 421   57
+    4    16 PAUZA
+    5    15 Magdalena      Merklejn              109.00 -  336: 371   59
+    6    15 Andrzej        Słapiński             113.31 -  286: 368   63
+                                                          --------------- ---- ------
+                                                                     326  /  5  65.20
+
+
+
+
+	Andrzej Kwiatkowski 118.57 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    12 Adam           Słapiński             101.97 +  355: 305  152
+    2     8 Jagoda         Żbikowska             100.00 -  331: 380   50
+    3    10 Wojciech       Zemło                 114.75 +  409: 222  165
+    4     6 Stanisław      Rydzik                123.55 +  335: 290  174
+    5     4 Zdzisław       Szota                 129.94 +  361: 293  180
+    6     3 Mariola        Osajda-Matczak        103.45 -  378: 388   53
+                                                          --------------- ---- ------
+                                                                     774  /  6 129.00
+
+
+
+
+	Krzysztof Bukowski 118.49 Milanówek
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Mariola        Osajda-Matczak        103.45 +  404: 323  153
+    2     3 Karol          Wyrębkiewicz          111.58 +  435: 364  162
+    3     1 Mateusz        Żbikowski             124.47 -  344: 439   74
+    4     3 Tomasz         Zwoliński             142.48 -  327: 409   92
+    5     6 Wiesław        Olewiński             106.58 +  370: 306  157
+    6     5 Mariusz        Wrześniewski          100.83 +  429: 256  151
+                                                          --------------- ---- ------
+                                                                     789  /  6 131.50
+
+
+
+
+	Krzysztof Usakiewicz 118.08 Warszawa               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    13 Mariusz        Wrześniewski          100.83 -  322: 408   51
+    2    13 Mariola        Osajda-Matczak        103.45 -  372: 374   53
+    3    13 Andrzej        Słapiński             113.31 +  345: 321  163
+    4    12 Aleksandra     Merklejn-Kaczanowska  110.57 +  407: 346  161
+    5     8 Maciej         Grabowski             106.90 -  311: 382   57
+    6    11 Wojciech       Zemło                 114.75 +  417: 391  165
+                                                          --------------- ---- ------
+                                                                     650  /  6 108.33
+
+
+
+
+	Wojciech Zemło 114.75 Łódź                     
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    14 Andrzej        Szmidtke              100.00 +  371: 357  150
+    2     6 Zdzisław       Szota                 129.94 -  309: 322   80
+    3    10 Andrzej        Kwiatkowski           118.57 -  222: 409   69
+    4    14 Radosław       Konca                 107.33 -  319: 333   57
+    5    14 Maciej         Gałecki               106.73 +  479: 323  157
+    6    11 Krzysztof      Usakiewicz            118.08 -  391: 417   68
+                                                          --------------- ---- ------
+                                                                     581  /  6  96.83
+
+
+
+
+	Rafał Matczak 114.32 Pruszków                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    15 Marek          Dudkiewicz            100.00 +  432: 260  150
+    2     1 Mateusz        Żbikowski             124.47 -  215: 412   74
+    3    11 Adam           Słapiński             101.97 +  487: 404  152
+    4     5 Karol          Wyrębkiewicz          111.58 +  434: 269  162
+    5     3 Dariusz        Banaszek              144.86 +  409: 323  195
+    6     2 Marcin         Mroziuk               130.73 -  255: 464   81
+                                                          --------------- ---- ------
+                                                                     814  /  6 135.67
+
+
+
+
+	Andrzej Słapiński 113.31 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Dariusz        Banaszek              144.86 -  318: 418   95
+    2    14 Adam           Słapiński             101.97 -  326: 380   52
+    3    13 Krzysztof      Usakiewicz            118.08 -  321: 345   68
+    4    15 Maciej         Gałecki               106.73 -  335: 366   57
+    5    16 PAUZA
+    6    15 Marek          Antosik               119.09 +  368: 286  169
+                                                          --------------- ---- ------
+                                                                     441  /  5  88.20
+
+
+
+
+	Karol Wyrębkiewicz 111.58 Łódź              
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Tomasz         Zwoliński             142.48 +  398: 353  192
+    2     3 Krzysztof      Bukowski              118.49 -  364: 435   68
+    3     5 Wiesław        Olewiński             106.58 +  374: 351  157
+    4     5 Rafał          Matczak               114.32 -  269: 434   64
+    5     9 Andrzej        Szmidtke              100.00 +  305: 289  150
+    6     7 Stanisław      Rydzik                123.55 -  311: 342   74
+                                                          --------------- ---- ------
+                                                                     705  /  6 117.50
+
+
+
+
+	Aleksandra Merklejn-Kaczanowska 110.57 Szczecin                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Mariusz        Skrobosz              135.40 -  383: 390   85
+    2     9 Magdalena      Merklejn              109.00 +  340: 338  159
+    3     8 Piotr          Jachimowicz           105.03 -  322: 465   55
+    4    12 Krzysztof      Usakiewicz            118.08 -  346: 407   68
+    5    13 Paweł          Stanosz               133.56 -  408: 427   84
+    6    14 Adam           Słapiński             101.97 -  305: 325   52
+                                                          --------------- ---- ------
+                                                                     503  /  6  83.83
+
+
+
+
+	Magdalena Merklejn 109.00 Szczecin               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Paweł          Stanosz               133.56 -  379: 383   84
+    2     9 Aleksandra     Merklejn-Kaczanowska  110.57 -  338: 340   61
+    3    16 PAUZA
+    4    13 Andrzej        Szmidtke              100.00 -  286: 389   50
+    5    15 Marek          Antosik               119.09 +  371: 336  169
+    6    13 Jagoda         Żbikowska             100.00 +  390: 318  150
+                                                          --------------- ---- ------
+                                                                     514  /  5 102.80
+
+
+
+
+	Radosław Konca 107.33 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Wojciech       Usakiewicz            131.36 -  253: 380   81
+    2    16 PAUZA
+    3    12 Marek          Dudkiewicz            100.00 -  324: 382   50
+    4    14 Wojciech       Zemło                 114.75 +  333: 319  165
+    5    12 Adam           Słapiński             101.97 +  400: 346  152
+    6     9 Wiesław        Olewiński             106.58 +  397: 285  157
+                                                          --------------- ---- ------
+                                                                     605  /  5 121.00
+
+
+
+
+	Maciej Grabowski 106.90 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Marcin         Mroziuk               130.73 -  304: 365   81
+    2    15 Marek          Dudkiewicz            100.00 -  359: 366   50
+    3    15 Marek          Antosik               119.09 +  421: 261  169
+    4    11 Paweł          Stanosz               133.56 +  340: 336  184
+    5     8 Krzysztof      Usakiewicz            118.08 +  382: 311  168
+    6     6 Zdzisław       Szota                 129.94 -  358: 410   80
+                                                          --------------- ---- ------
+                                                                     732  /  6 122.00
+
+
+
+
+	Maciej Gałecki 106.73 Łódź                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Zdzisław       Szota                 129.94 -  334: 379   80
+    2    12 Piotr          Jachimowicz           105.03 -  357: 372   55
+    3    14 Andrzej        Szmidtke              100.00 -  327: 337   50
+    4    15 Andrzej        Słapiński             113.31 +  366: 335  163
+    5    14 Wojciech       Zemło                 114.75 -  323: 479   65
+    6    16 PAUZA
+                                                          --------------- ---- ------
+                                                                     413  /  5  82.60
+
+
+
+
+	Wiesław Olewiński 106.58 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Mateusz        Żbikowski             124.47 -  362: 473   74
+    2    10 Andrzej        Szmidtke              100.00 +  405: 311  150
+    3     5 Karol          Wyrębkiewicz          111.58 -  351: 374   62
+    4     9 Tomasz         Żbikowski             104.98 +  419: 223  155
+    5     6 Krzysztof      Bukowski              118.49 -  306: 370   68
+    6     9 Radosław       Konca                 107.33 -  285: 397   57
+                                                          --------------- ---- ------
+                                                                     566  /  6  94.33
+
+
+
+
+	Piotr Jachimowicz 105.03 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Stanisław      Rydzik                123.55 -  339: 391   74
+    2    12 Maciej         Gałecki               106.73 +  372: 357  157
+    3     8 Aleksandra     Merklejn-Kaczanowska  110.57 +  465: 322  161
+    4     4 Dariusz        Banaszek              144.86 -  312: 444   95
+    5     7 Mariusz        Wrześniewski          100.83 -  348: 363   51
+    6    10 Paweł          Stanosz               133.56 +  335: 328  184
+                                                          --------------- ---- ------
+                                                                     722  /  6 120.33
+
+
+
+
+	Tomasz Żbikowski 104.98 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Marek          Antosik               119.09 +  371: 349  169
+    2     7 Marcin         Mroziuk               130.73 -  316: 398   81
+    3     9 Mariola        Osajda-Matczak        103.45 =  386: 386  103
+    4     9 Wiesław        Olewiński             106.58 -  223: 419   57
+    5    11 Jagoda         Żbikowska             100.00 +  394: 310  150
+    6     8 Mariusz        Skrobosz              135.40 -  275: 436   85
+                                                          --------------- ---- ------
+                                                                     645  /  6 107.50
+
+
+
+
+	Mariola Osajda-Matczak 103.45 Pruszków                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Krzysztof      Bukowski              118.49 -  323: 404   68
+    2    13 Krzysztof      Usakiewicz            118.08 +  374: 372  168
+    3     9 Tomasz         Żbikowski             104.98 =  386: 386  105
+    4     8 Jagoda         Żbikowska             100.00 +  347: 274  150
+    5     5 Mariusz        Skrobosz              135.40 +  358: 274  185
+    6     3 Andrzej        Kwiatkowski           118.57 +  388: 378  169
+                                                          --------------- ---- ------
+                                                                     845  /  6 140.83
+
+
+
+
+	Adam Słapiński 101.97 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    12 Andrzej        Kwiatkowski           118.57 -  305: 355   69
+    2    14 Andrzej        Słapiński             113.31 +  380: 326  163
+    3    11 Rafał          Matczak               114.32 -  404: 487   64
+    4    10 Mariusz        Wrześniewski          100.83 -  320: 368   51
+    5    12 Radosław       Konca                 107.33 -  346: 400   57
+    6    14 Aleksandra     Merklejn-Kaczanowska  110.57 +  325: 305  161
+                                                          --------------- ---- ------
+                                                                     565  /  6  94.17
+
+
+
+
+	Mariusz Wrześniewski 100.83 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    13 Krzysztof      Usakiewicz            118.08 +  408: 322  168
+    2     2 Dariusz        Banaszek              144.86 -  347: 372   95
+    3     6 Tomasz         Zwoliński             142.48 -  353: 441   92
+    4    10 Adam           Słapiński             101.97 +  368: 320  152
+    5     7 Piotr          Jachimowicz           105.03 +  363: 348  155
+    6     5 Krzysztof      Bukowski              118.49 -  256: 429   68
+                                                          --------------- ---- ------
+                                                                     730  /  6 121.67
+
+
+
+
+	Marek Dudkiewicz 100.00 Milanówek               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    15 Rafał          Matczak               114.32 -  260: 432   64
+    2    15 Maciej         Grabowski             106.90 +  366: 359  157
+    3    12 Radosław       Konca                 107.33 +  382: 324  157
+    4     7 Mariusz        Skrobosz              135.40 -  315: 375   85
+    5    10 Stanisław      Rydzik                123.55 -  320: 328   74
+    6    12 Andrzej        Szmidtke              100.00 -  282: 344   50
+                                                          --------------- ---- ------
+                                                                     587  /  6  97.83
+
+
+
+
+	Andrzej Szmidtke 100.00 Bolszewo                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    14 Wojciech       Zemło                 114.75 -  357: 371   65
+    2    10 Wiesław        Olewiński             106.58 -  311: 405   57
+    3    14 Maciej         Gałecki               106.73 +  337: 327  157
+    4    13 Magdalena      Merklejn              109.00 +  389: 286  159
+    5     9 Karol          Wyrębkiewicz          111.58 -  289: 305   62
+    6    12 Marek          Dudkiewicz            100.00 +  344: 282  150
+                                                          --------------- ---- ------
+                                                                     650  /  6 108.33
+
+
+
+
+	Jagoda Żbikowska 100.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    16 PAUZA
+    2     8 Andrzej        Kwiatkowski           118.57 +  380: 331  169
+    3     4 Zdzisław       Szota                 129.94 -  257: 365   80
+    4     8 Mariola        Osajda-Matczak        103.45 -  274: 347   53
+    5    11 Tomasz         Żbikowski             104.98 -  310: 394   55
+    6    13 Magdalena      Merklejn              109.00 -  318: 390   59
+                                                          --------------- ---- ------
+                                                                     416  /  5  83.20
+
+
+</pre></div><div id='p_rundy' class='page'><pre></pre></div><div id='p_ranking' class='page'><pre></pre></div><div id='p_przebieg' class='page'>
+
+    </div><div style="clear:both;width:100%;" class="alignright">
+
+<script>
+<!--
+if ((document.getElementById("content").offsetHeight + document.getElementById("top").offsetHeight) > screen.height)
+    document.write("<br /><br /><a href='#top'>do góry</a>");
+-->
+</script>
+
+</div>
+</div>
+
+<div id="bottom">
+<ul id="bottomlinks">
+<div class='onleft'>
+ Osób on-line: 54</div>
+    <li><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+    <li><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+    <li><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+    <li><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+    <li><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+    <li><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+</ul>
+    SCRABBLE® jest zastrzeżonym znakiem towarowym J.W. Spears &amp; Sons&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://www.pfs.org.pl/prawaautorskie.php">© Prawa autorskie</a>
+</div>
+</body>
+</html>

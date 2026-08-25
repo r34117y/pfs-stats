@@ -1,0 +1,640 @@
+
+<html>
+<head>
+    <title>Polska Federacja Scrabble :: I Otwarty Turniej Bałtyku</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="files/img/favicon.ico" />
+    <link rel="stylesheet" href="files/css/style.css" type="text/css" />
+	<link rel="stylesheet" href="files/css/style-index.css" type="text/css" />
+    <!--[if IE]><link rel="stylesheet" type="text/css" href="files/css/styleie.css" /><![endif]-->
+    <!--[if lt IE 7.]><script defer type="text/javascript" src="files/js/pngfix.js"></script><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="files/js/minmax.js"></script><![endif]-->
+    <script type="text/javascript" src="files/js/jquery.js"></script>
+    <script type="text/javascript" src="files/js/jquery-bp.js"></script>
+    <script type="text/javascript" src="files/js/java.js"></script>
+    <script>jSubmenu ("turnieje","kalendarz");jKalendarz();</script>
+    <script>
+    var url, page;
+
+    page = 'info';
+    url  = document.location.toString();
+
+    if (url.match ('#')) {
+      page = url.split ('#')[1];
+      if ($.inArray (page, [ 'info', 'relacja', 'klasyfikacja', 'hh', 'rundy', 'ranking', 'przebieg' ]) == -1)
+        page = 'info';
+    }
+
+    $(document).ready(function(){
+        $('a#listaucz').bind('click', function(event){
+            $('div#lista').toggle();
+            event.preventDefault();
+        }).toggle(function() { $(this).text('schowaj listę uczestników'); }, function() { $(this).text("pokaż listę uczestników"); });
+        $('div#lista table tr:last td').css({"border-bottom" : "none"});
+
+        $("a.przycisk").click (function (e) {
+            if ($(this).attr ('href') !== '#')
+                return true;
+
+            e.preventDefault ();
+
+            id       = this.id;
+            this.id += 'tmp';
+            window.location.hash = id;
+            this.id  = id;
+
+            $(".page").hide ();
+            $(".page#p_" + id).show ();
+
+            $("a.przycisk").removeClass ('active');
+            $(this).addClass ('active');
+
+            return false;
+        });
+
+        $("a.przycisk#" + page).click ();
+        $('html, body').animate ({ scrollTop: 0 }, 0);
+    });
+    </script>
+  <style type="text/css">
+    .page {
+        display: none;
+    }
+    #szczegoly{
+        width: 100%;
+        border-spacing: 0;
+        margin-top: 30px;
+        text-align: left;
+        font-size: inherit;
+    }
+    #szczegoly td{
+        padding: 10px 20px 10px 0;
+        vertical-align: top;
+    }
+    #szczegoly td:first-child{
+        font-weight: bold;
+        width: 160px;
+    }
+    div#lista{
+        display:none;
+        margin-top: 15px;
+    }
+    div#lista table{
+        margin-top: 10px;
+        text-align: left;
+        font-size: inherit;
+    }
+    div#lista table td{
+        padding: 3px 8px;
+        border-bottom: 1px dashed #1576AE;
+    }
+    div#lista table th{
+        padding: 0px 5px 10px 5px;
+    }
+    div#lista table td.ptaszek{
+        text-align: center;
+        background: url('files/img/tick.png') no-repeat center center;
+    }
+    div#lista table th{
+        white-space: nowrap;
+        width: auto;
+    }
+    div#lista table td:first-child, div#lista table th:first-child{
+        text-align:right;
+        width: auto;
+    }
+    </style>
+</head>
+
+<body>
+
+<script type="text/javascript">setMenu();</script>
+
+<div id="top" onclick="location.href='https://www.pfs.org.pl'">
+</div>
+<div id="menu">
+
+    <div id="m_glowna">
+        <div class="tab"><a href="https://www.pfs.org.pl/index.php"></a></div>
+
+        <ul>
+            <li class="sublink" id="aktualnosci"><a href="https://www.pfs.org.pl">Aktualności</a></li>
+            <li class="sublink" id="nowy"><a href="https://www.pfs.org.pl/dlanowych.php">Jestem tu nowy</a></li>
+            <li class="sublink" id="anagramator"><a href="https://www.pfs.org.pl/osps_online.php?main=1">Słownik online</a></li>
+            <li class="sublink" id="siodemka"><a href="https://www.pfs.org.pl/siodemka.php?main=1">Siódemka tygodnia</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+            <li class="sublink" id="dlasponsorow"><a href="https://www.pfs.org.pl/dlasponsorow.php">Dla sponsorów</a></li>
+            <li class="sublink" id="kontakt"><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+        </ul>
+    </div>
+    <div id="m_turnieje">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kalendarz.php"></a></div>
+        <ul>
+            <li class="sublink" id="kalendarz"><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+            <li class="sublink" id="regulaminy"><a href="https://www.pfs.org.pl/regulaminy.php">Regulaminy</a></li>
+            <li class="sublink" id="sedziowie"><a href="https://www.pfs.org.pl/sedziowie.php">Sędziowie</a></li>
+            <li class="sublink" id="gp"><a href="https://www.pfs.org.pl/gp2026.php">Grand Prix</a></li>
+<!--            <li class="sublink" id="mr"><a href="https://www.pfs.org.pl/mr2020.php">Mistrzostwa Regionów</a></li>-->
+            <li class="sublink" id="archiwum"><a href="https://www.pfs.org.pl/archiwum.php">Historia</a></li>
+            <li class="sublink" id="galeria"><a href="https://www.pfs.org.pl/galeria.php">Zdjęcia</a></li>
+            <li class="sublink" id="rekordy"><a href="https://www.pfs.org.pl/rekordy.php">Rekordy</a></li>
+        </ul>
+    </div>
+    <div id="m_pfs">
+        <div  class="tab"><a href="https://www.pfs.org.pl/opfs.php"></a></div>
+        <ul>
+            <li class="sublink" id="opfs"><a href="https://www.pfs.org.pl/opfs.php">O PFS</a></li>
+            <li class="sublink" id="jakprzystapic"><a href="https://www.pfs.org.pl/jakprzystapic.php">Jak przystąpić</a></li>
+            <li class="sublink" id="dlaczlonkow"><a href="https://www.pfs.org.pl/dlaczlonkow.php">Dla członków</a></li>
+            <li class="sublink" id="wladze"><a href="https://www.pfs.org.pl/wladze.php">Władze</a></li>
+            <li class="sublink" id="komisje"><a href="https://www.pfs.org.pl/komisje.php">Komisje</a></li>
+            <li class="sublink" id="statut"><a href="https://www.pfs.org.pl/statut.php">Statut</a></li>
+            <li class="sublink" id="uchwaly"><a href="https://www.pfs.org.pl/uchwaly.php">Uchwały</a></li>
+            <li class="sublink" id="honorowi"><a href="https://www.pfs.org.pl/honorowi.php">Honorowi członkowie</a></li>
+            <li class="sublink" id="finanse"><a href="https://www.pfs.org.pl/finanse.php">Finanse</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabble">
+        <div  class="tab"><a href="https://www.pfs.org.pl/osps_online.php?desktop=1"></a></div>
+        <ul>
+            <li class="sublink" id="osps_online"><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+            <li class="sublink" id="zds"><a href="https://www.pfs.org.pl/zds2.php">ZDS</a></li>
+            <li class="sublink" id="osps"><a href="https://www.pfs.org.pl/osps.php">OSPS</a></li>
+            <li class="sublink" id="aktualizacje"><a href="https://www.pfs.org.pl/osps_aktualizacje.php">Aktualizacje</a></li>
+            <li class="sublink" id="dwojki"><a href="https://www.pfs.org.pl/dwojki.php">2-literówki</a></li>
+            <li class="sublink" id="trojki"><a href="https://www.pfs.org.pl/trojki.php">3-literówki</a></li>
+            <li class="sublink" id="siodemkat"><a href="https://www.pfs.org.pl/siodemka.php">Siódemka tygodnia</a></li>
+            <li class="sublink" id="slowneroznosci"><a href="https://www.pfs.org.pl/slowneroznosci.php">Słowne różności</a></li>
+        </ul>
+    </div>
+    <div id="m_ranking">
+        <div  class="tab"><a href="https://www.pfs.org.pl/ranking.php"></a></div>
+        <ul>
+            <li class="sublink" id="aktranking"><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+            <li class="sublink" id="medale"><a href="https://www.pfs.org.pl/medale.php">Klasyfikacja medalowa</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabblisci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/mistrzowiepolski.php"></a></div>
+        <ul>
+            <li class="sublink" id="mistrzowiepolski"><a href="https://www.pfs.org.pl/mistrzowiepolski.php">Mistrzowie Polski</a></li>
+            <li class="sublink" id="zdobywcypp"><a href="https://www.pfs.org.pl/zdobywcypp.php">Zdobywcy Pucharu Polski</a></li>
+            <li class="sublink" id="zwyciezcygp"><a href="https://www.pfs.org.pl/zwyciezcygp.php">Zwycięzcy Grand Prix</a></li>
+            <li class="sublink" id="liderzyrankingu"><a href="https://www.pfs.org.pl/liderzyrankingu.php">Liderzy rankingu</a></li>
+            <li class="sublink" id="zwyciezcylemans"><a href="https://www.pfs.org.pl/zwyciezcylemans.php">Zwycięzcy 24h Le Mans</a></li>
+            <li class="sublink" id="zwyciezcykmp"><a href="https://www.pfs.org.pl/zwyciezcykmp.php">KMP</a>
+        </ul>
+    </div>
+    <div id="m_kluby">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kluby.php"></a></div>
+        <ul>
+            <li class="sublink" id="rejestrklubow"><a href="https://www.pfs.org.pl/kluby.php">Rejestr klubów</a></li>
+            <li class="sublink" id="kmp"><a href="https://www.pfs.org.pl/kmp.php">KMP</a></li>
+            <li class="sublink" id="wiescizklubow"><a href="https://www.pfs.org.pl/wiescizklubow.php">Wieści z klubów</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/about.php">Statystyki klubowe</a></li>
+        </ul>
+    </div>
+    <div id="m_roznosci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/historia.php"></a></div>
+        <ul>
+            <li class="sublink" id="historia"><a href="https://www.pfs.org.pl/historia.php">Historia</a></li>
+            <li class="sublink" id="odmiany"><a href="https://www.pfs.org.pl/odmiany.php">Odmiany</a></li>
+            <li class="sublink" id="anegdoty"><a href="https://www.pfs.org.pl/anegdoty.php">Anegdoty</a></li>
+            <li class="sublink" id="scrabblealia"><a href="https://www.pfs.org.pl/scrabblealia.php">Scrabblealia</a></li>
+            <li class="sublink" id="scrabblenet"><a href="https://www.pfs.org.pl/scrabblenet.php">Scrabble w internecie</a></li>
+            <li class="sublink" id="programy"><a href="https://www.pfs.org.pl/programy.php">Programy</a></li>
+            <li class="sublink" id="download"><a href="https://www.pfs.org.pl/download.php">Do pobrania</a></li>
+            <li class="sublink" id="ksiazki"><a href="https://www.pfs.org.pl/ksiazki.php">Książki</a></li>
+            <li class="sublink" id="slowniczek"><a href="https://www.pfs.org.pl/slowniczek.php">Słowniczek</a></li>
+        </ul>
+    </div>
+    <div id="m_english">
+        <div  class="tab"><a href="https://www.pfs.org.pl/english.php"></a></div>
+        <ul>
+            <li class="sublink" id="about"><a href="https://www.pfs.org.pl/english.php">About Polish Scrabble</a></li>
+            <li class="sublink" id="news"><a href="https://www.pfs.org.pl/en_news.php">News</a></li>
+            <li class="sublink" id="bartek"><a href="https://www.pfs.org.pl/bartek.php">Bartek w Johor Bahru</a></li>
+            <li class="sublink" id="franko"><a href="https://www.pfs.org.pl/franko.php">Scrabble frankofońskie</a></li>
+        </ul>
+    </div>
+</div>
+
+<div id="submenu"></div>
+<div id="content">
+<div id='nextTours'>
+		<div class='nextTour' onclick='location.href="turniej.php?id=335"'>
+			<div class='karteczka small1'>
+				<span class='miasto'>Tczew</span><span class='dzien'><span class='big'> 7</span><br />sierpnia</span></div>
+			<div class='kartka big1'>
+				<span class='miasto'>Tczew</span>
+				<span class='dzien'><b> 7- 8 sierpnia</b></span>
+				<span class='nazwaturnieju'>II Otwarte Mistrzostwa Tczewa</span><span class='gp'>Grand&nbsp;Prix&nbsp;1999</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=334"'>
+			<div class='karteczka small2'>
+				<span class='miasto'>Mielno</span><span class='dzien'><span class='big'>21</span><br />sierpnia</span></div>
+			<div class='kartka big2'>
+				<span class='miasto'>Mielno</span>
+				<span class='dzien'><b>21-22 sierpnia</b></span>
+				<span class='nazwaturnieju'>I Otwarty Turniej Bałtyku</span><span class='gp'>Grand&nbsp;Prix&nbsp;1999</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=333"'>
+			<div class='karteczka small3'>
+				<span class='miasto'>Sudomie</span><span class='dzien'><span class='big'>12</span><br />września</span></div>
+			<div class='kartka big3'>
+				<span class='miasto'>Sudomie</span>
+				<span class='dzien'><b>12 września</b></span>
+				<span class='nazwaturnieju'>II Turniej Złotego Prawdziwka</span></div>
+		</div></div><div class='naglowekrelacji'><span class='tytul'>I Otwarty Turniej Bałtyku<span class='nazwa'>21 - 22 sierpnia 1999 —  I Otwarty Turniej Bałtyku</span></span><a href='#' id='info' class='przycisk'>Informacje</a><a href='#' id='relacja' class='przycisk'>Relacja</a><a href='#' id='klasyfikacja' class='przycisk'>Wyniki</a><a href='#' id='hh' class='przycisk'>HH</a><div class='galleries'><img src='files/img/gallery.png' style='visibility:hidden;' alt='galeria' /></div></div><h1 style='color:black; margin-top:0px; margin-bottom:30px; padding: 0px'>I Otwarty Turniej Bałtyku<span><img src='files/img/map-2.png' style='vertical-align: bottom;' title='Grand Prix'> Mielno, 21 - 22 sierpnia 1999 <br>Grand&nbsp;Prix&nbsp;1999</span></h1><div id='p_relacja' class='page'><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><div class='relacja' style='clear:both;'><div><pre>
+ 1. Mariusz Orzeł (Nowe Miasto Lubawskie)
+ 2. Andrzej Kwiatkowski (Warszawa)
+ 3. Tomasz Zwoliński (Warszawa)
+ 4. Krzysztof Usakiewicz (Warszawa)
+ 5. Wojciech Usakiewicz (Warszawa)
+ 6. Grzegorz Kulawiak (Warszawa)
+ 7. Bogdan Witek (Koszalin)
+ 8. Kazimierz M. Merklejn (Szczecin)
+ 9. Magdalena Merklejn (Szczecin)
+ 10. Aleksandra Merklejn (Szczecin) 
+
+17 uczestników, 12 rund 
+</pre></div><div class='autor'></div></div><div style='clear:both;'></div></div><div id='p_info' class='page'><br><p align='center'></p><br><br><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><table id='szczegoly' class='ramkadolna'></table><br /><br /></div><div id='p_klasyfikacja' class='page'><pre>Wyniki turnieju I Otwarte Mistrzostwa Bałtyku
+
+Lp. Imię            Nazwisko             Miasto               Ranking  Duże pkt Małe pkt Skalpy   Różn. MP
+--- --------------- -------------------- -------------------- -------- -------- -------- -------- --------
+  1 Mariusz         Orzeł                Nowe Miasto Lubawskie   127.43      9.0     4744     1659      772
+  2 Andrzej         Kwiatkowski          Warszawa               115.45      9.0     4619     1695      426
+  3 Tomasz          Zwoliński            Warszawa               143.80      8.0     4532     1576      700
+  4 Krzysztof       Usakiewicz           Warszawa               108.42      7.0     4231     1450      182
+  5 Wojciech        Usakiewicz           Warszawa               131.90      6.0     4402     1416      242
+  6 Grzegorz        Kulawiak             Warszawa               107.52      6.0     4016     1334      -35
+  7 Bogdan          Witek                Koszalin               100.00      6.0     3944     1352      -83
+  8 Kazimierz.J     Merklejn             Szczecin               109.83      6.0     3584     1232      369
+  9 Magdalena       Merklejn             Szczecin               105.54      5.0     4241     1248      237
+ 10 Aleksandra      Merklejn-Kaczanowska Szczecin               105.67      5.0     4055     1250     -184
+ 11 Andrzej         Lożyński             Piastów                104.41      5.0     2361      898       47
+ 12 Jacek           Marcinkowski         ¦wieszyno              100.00      4.0     3657     1077     -459
+ 13 Zbigniew        Kryszczulas          Kołobrzeg              100.00      3.5     3587      897     -461
+ 14 Małgorzata      Szmat                Koszalin               100.00      1.5     2809      736     -838
+ 15 Mirosław        Tokarski             Koszalin               100.00      0.0      135       60     -315
+ 16 Halina          Roszak               Poznań                 112.66      0.0        0        0        0
+ 17 Marek           Roszak               Poznań                 123.03      0.0        0        0        0
+</pre></div><div id='p_hh' class='page'><pre>Wyniki poszczególnych graczy w turnieju I Otwarte Mistrzostwa Bałtyku
+
+
+
+	Tomasz Zwoliński 143.80 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Magdalena      Merklejn              105.54 -  317: 410   56
+    2     4 Bogdan         Witek                 100.00 +  372: 317  150
+    3     4 Aleksandra     Merklejn-Kaczanowska  105.67 +  445: 264  156
+    4     3 Grzegorz       Kulawiak              107.52 +  482: 214  158
+    5     2 Wojciech       Usakiewicz            131.90 -  296: 449   82
+    6     1 Mariusz        Orzeł                 127.43 -  362: 374   77
+    7     3 Andrzej        Kwiatkowski           115.45 +  395: 332  165
+    8     4 Kazimierz.J    Merklejn              109.83 +  334: 312  160
+    9     4 Krzysztof      Usakiewicz            108.42 -  374: 376   58
+   10     4 Małgorzata     Szmat                 100.00 +  327: 230  150
+   11     2 Wojciech       Usakiewicz            131.90 +  449: 309  182
+   12     2 Wojciech       Usakiewicz            131.90 +  379: 245  182
+                                                          --------------- ---- ------
+                                                                    1576  / 12 131.33
+
+
+
+
+	Wojciech Usakiewicz 131.90 Warszawa               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Aleksandra     Merklejn-Kaczanowska  105.67 +  397: 284  156
+    2     3 Krzysztof      Usakiewicz            108.42 +  480: 263  158
+    3     1 Mariusz        Orzeł                 127.43 +  354: 306  177
+    4     1 Andrzej        Kwiatkowski           115.45 -  381: 393   65
+    5     2 Tomasz         Zwoliński             143.80 +  449: 296  194
+    6     2 Bogdan         Witek                 100.00 +  318: 282  150
+    7     2 Kazimierz.J    Merklejn              109.83 -  297: 442   60
+    8     2 Grzegorz       Kulawiak              107.52 +  437: 274  158
+    9     2 Magdalena      Merklejn              105.54 -  370: 390   56
+   10     3 Andrzej        Lożyński              104.41 -  365: 402   54
+   11     2 Tomasz         Zwoliński             143.80 -  309: 449   94
+   12     2 Tomasz         Zwoliński             143.80 -  245: 379   94
+                                                          --------------- ---- ------
+                                                                    1416  / 12 118.00
+
+
+
+
+	Mariusz Orzeł 127.43 Nowe Miasto Lubawskie       
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Jacek          Marcinkowski          100.00 +  549: 228  150
+    2     1 Kazimierz.J    Merklejn              109.83 +  467: 268  160
+    3     1 Wojciech       Usakiewicz            131.90 -  306: 354   82
+    4     2 Krzysztof      Usakiewicz            108.42 +  368: 345  158
+    5     1 Andrzej        Kwiatkowski           115.45 +  395: 339  165
+    6     1 Tomasz         Zwoliński             143.80 +  374: 362  194
+    7     1 Magdalena      Merklejn              105.54 +  391: 309  156
+    8     1 Aleksandra     Merklejn-Kaczanowska  105.67 +  425: 370  156
+    9     1 Grzegorz       Kulawiak              107.52 +  420: 290  158
+   10     1 Bogdan         Witek                 100.00 -  327: 376   50
+   11     1 Andrzej        Kwiatkowski           115.45 +  414: 336  165
+   12     1 Andrzej        Kwiatkowski           115.45 -  308: 395   65
+                                                          --------------- ---- ------
+                                                                    1659  / 12 138.25
+
+
+
+
+	Marek Roszak 123.03 Poznań                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+
+
+	Andrzej Kwiatkowski 115.45 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Zbigniew       Kryszczulas           100.00 +  449: 270  150
+    2     2 Magdalena      Merklejn              105.54 +  364: 322  156
+    3     2 Kazimierz.J    Merklejn              109.83 +  390: 360  160
+    4     1 Wojciech       Usakiewicz            131.90 +  393: 381  182
+    5     1 Mariusz        Orzeł                 127.43 -  339: 395   77
+    6     3 Krzysztof      Usakiewicz            108.42 +  376: 263  158
+    7     3 Tomasz         Zwoliński             143.80 -  332: 395   94
+    8     3 Bogdan         Witek                 100.00 +  366: 325  150
+    9     3 Aleksandra     Merklejn-Kaczanowska  105.67 +  422: 327  156
+   10     2 Grzegorz       Kulawiak              107.52 +  457: 433  158
+   11     1 Mariusz        Orzeł                 127.43 -  336: 414   77
+   12     1 Mariusz        Orzeł                 127.43 +  395: 308  177
+                                                          --------------- ---- ------
+                                                                    1695  / 12 141.25
+
+
+
+
+	Halina Roszak 112.66 Poznań                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+
+
+	Kazimierz.J Merklejn 109.83 Szczecin               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Mirosław       Tokarski              100.00 +  450: 135  150
+    2     1 Mariusz        Orzeł                 127.43 -  268: 467   77
+    3     2 Andrzej        Kwiatkowski           115.45 -  360: 390   65
+    4     4 Bogdan         Witek                 100.00 +  367: 324  150
+    5     4 Aleksandra     Merklejn-Kaczanowska  105.67 -  322: 456   56
+    6     5 Małgorzata     Szmat                 100.00 +  346: 215  150
+    7     2 Wojciech       Usakiewicz            131.90 +  442: 297  182
+    8     4 Tomasz         Zwoliński             143.80 -  312: 334   94
+    9     5 Jacek          Marcinkowski          100.00 +  327: 308  150
+   10     6 Krzysztof      Usakiewicz            108.42 +  390: 289  158
+                                                          --------------- ---- ------
+                                                                    1232  / 10 123.20
+
+
+
+
+	Krzysztof Usakiewicz 108.42 Warszawa               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Małgorzata     Szmat                 100.00 +  347: 240  150
+    2     3 Wojciech       Usakiewicz            131.90 -  263: 480   82
+    3     5 Zbigniew       Kryszczulas           100.00 +  571: 290  150
+    4     2 Mariusz        Orzeł                 127.43 -  345: 368   77
+    5     3 Magdalena      Merklejn              105.54 +  311: 274  156
+    6     3 Andrzej        Kwiatkowski           115.45 -  263: 376   65
+    7     4 Andrzej        Lożyński              104.41 -  326: 400   54
+    8     6 Jacek          Marcinkowski          100.00 +  429: 176  150
+    9     4 Tomasz         Zwoliński             143.80 +  376: 374  194
+   10     6 Kazimierz.J    Merklejn              109.83 -  289: 390   60
+   11     3 Magdalena      Merklejn              105.54 +  343: 331  156
+   12     3 Magdalena      Merklejn              105.54 +  368: 350  156
+                                                          --------------- ---- ------
+                                                                    1450  / 12 120.83
+
+
+
+
+	Grzegorz Kulawiak 107.52 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Bogdan         Witek                 100.00 -  310: 346   50
+    2     5 Aleksandra     Merklejn-Kaczanowska  105.67 -  351: 366   56
+    3     6 Andrzej        Lożyński              104.41 +  457: 161  154
+    4     3 Tomasz         Zwoliński             143.80 -  214: 482   94
+    5     6 Małgorzata     Szmat                 100.00 +  347: 208  150
+    6     6 Jacek          Marcinkowski          100.00 +  350: 269  150
+    7     6 Zbigniew       Kryszczulas           100.00 +  308: 277  150
+    8     2 Wojciech       Usakiewicz            131.90 -  274: 437   82
+    9     1 Mariusz        Orzeł                 127.43 -  290: 420   77
+   10     2 Andrzej        Kwiatkowski           115.45 -  433: 457   65
+   11     5 Jacek          Marcinkowski          100.00 +  338: 313  150
+   12     4 Aleksandra     Merklejn-Kaczanowska  105.67 +  344: 315  156
+                                                          --------------- ---- ------
+                                                                    1334  / 12 111.17
+
+
+
+
+	Aleksandra Merklejn-Kaczanowska 105.67 Szczecin                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Wojciech       Usakiewicz            131.90 -  284: 397   82
+    2     5 Grzegorz       Kulawiak              107.52 +  366: 351  158
+    3     4 Tomasz         Zwoliński             143.80 -  264: 445   94
+    4     6 Jacek          Marcinkowski          100.00 +  399: 284  150
+    5     4 Kazimierz.J    Merklejn              109.83 +  456: 322  160
+    6     4 Magdalena      Merklejn              105.54 -  330: 338   56
+    7     5 Małgorzata     Szmat                 100.00 +  289: 191  150
+    8     1 Mariusz        Orzeł                 127.43 -  370: 425   77
+    9     3 Andrzej        Kwiatkowski           115.45 -  327: 422   65
+   10     7 Zbigniew       Kryszczulas           100.00 -  316: 423   50
+   11     4 Bogdan         Witek                 100.00 +  339: 297  150
+   12     4 Grzegorz       Kulawiak              107.52 -  315: 344   58
+                                                          --------------- ---- ------
+                                                                    1250  / 12 104.17
+
+
+
+
+	Magdalena Merklejn 105.54 Szczecin               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Tomasz         Zwoliński             143.80 +  410: 317  194
+    2     2 Andrzej        Kwiatkowski           115.45 -  322: 364   65
+    3     3 Bogdan         Witek                 100.00 -  297: 332   50
+    4     5 Zbigniew       Kryszczulas           100.00 +  524: 346  150
+    5     3 Krzysztof      Usakiewicz            108.42 -  274: 311   58
+    6     4 Aleksandra     Merklejn-Kaczanowska  105.67 +  338: 330  156
+    7     1 Mariusz        Orzeł                 127.43 -  309: 391   77
+    8     5 Małgorzata     Szmat                 100.00 +  392: 213  150
+    9     2 Wojciech       Usakiewicz            131.90 +  390: 370  182
+   10     5 Jacek          Marcinkowski          100.00 -  304: 319   50
+   11     3 Krzysztof      Usakiewicz            108.42 -  331: 343   58
+   12     3 Krzysztof      Usakiewicz            108.42 -  350: 368   58
+                                                          --------------- ---- ------
+                                                                    1248  / 12 104.00
+
+
+
+
+	Andrzej Lożyński 104.41 Piastów                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    2     7 Jacek          Marcinkowski          100.00 +  358: 321  150
+    3     6 Grzegorz       Kulawiak              107.52 -  161: 457   58
+    4     7 Małgorzata     Szmat                 100.00 +  320: 261  150
+    5     5 Bogdan         Witek                 100.00 -  322: 343   50
+    6     7 Zbigniew       Kryszczulas           100.00 +  398: 241  150
+    7     4 Krzysztof      Usakiewicz            108.42 +  400: 326  158
+   10     3 Wojciech       Usakiewicz            131.90 +  402: 365  182
+                                                          --------------- ---- ------
+                                                                     898  /  7 128.29
+
+
+
+
+	Zbigniew Kryszczulas 100.00 Kołobrzeg                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Andrzej        Kwiatkowski           115.45 -  270: 449   65
+    2     6 Małgorzata     Szmat                 100.00 +  379: 190  150
+    3     5 Krzysztof      Usakiewicz            108.42 -  290: 571   58
+    4     5 Magdalena      Merklejn              105.54 -  346: 524   56
+    5     7 Jacek          Marcinkowski          100.00 -  204: 387   50
+    6     7 Andrzej        Lożyński              104.41 -  241: 398   54
+    7     6 Grzegorz       Kulawiak              107.52 -  277: 308   58
+    8     7 PAUZA
+    9     6 Bogdan         Witek                 100.00 -  284: 346   50
+   10     7 Aleksandra     Merklejn-Kaczanowska  105.67 +  423: 316  156
+   11     6 Małgorzata     Szmat                 100.00 +  298: 263  150
+   12     6 Małgorzata     Szmat                 100.00 -  275: 296   50
+                                                          --------------- ---- ------
+                                                                     897  / 11  81.55
+
+
+
+
+	Jacek Marcinkowski 100.00 ¦wieszyno                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Mariusz        Orzeł                 127.43 -  228: 549   77
+    2     7 Andrzej        Lożyński              104.41 -  321: 358   54
+    3     7 Małgorzata     Szmat                 100.00 +  327: 202  150
+    4     6 Aleksandra     Merklejn-Kaczanowska  105.67 -  284: 399   56
+    5     7 Zbigniew       Kryszczulas           100.00 +  387: 204  150
+    6     6 Grzegorz       Kulawiak              107.52 -  269: 350   58
+    7     7 Bogdan         Witek                 100.00 +  366: 257  150
+    8     6 Krzysztof      Usakiewicz            108.42 -  176: 429   58
+    9     5 Kazimierz.J    Merklejn              109.83 -  308: 327   60
+   10     5 Magdalena      Merklejn              105.54 +  319: 304  156
+   11     5 Grzegorz       Kulawiak              107.52 -  313: 338   58
+   12     5 Bogdan         Witek                 100.00 -  359: 399   50
+                                                          --------------- ---- ------
+                                                                    1077  / 12  89.75
+
+
+
+
+	Małgorzata Szmat 100.00 Koszalin                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Krzysztof      Usakiewicz            108.42 -  240: 347   58
+    2     6 Zbigniew       Kryszczulas           100.00 -  190: 379   50
+    3     7 Jacek          Marcinkowski          100.00 -  202: 327   50
+    4     7 Andrzej        Lożyński              104.41 -  261: 320   54
+    5     6 Grzegorz       Kulawiak              107.52 -  208: 347   58
+    6     5 Kazimierz.J    Merklejn              109.83 -  215: 346   60
+    7     5 Aleksandra     Merklejn-Kaczanowska  105.67 -  191: 289   56
+    8     5 Magdalena      Merklejn              105.54 -  213: 392   56
+    9     7 PAUZA
+   10     4 Tomasz         Zwoliński             143.80 -  230: 327   94
+   11     6 Zbigniew       Kryszczulas           100.00 -  263: 298   50
+   12     6 Zbigniew       Kryszczulas           100.00 +  296: 275  150
+                                                          --------------- ---- ------
+                                                                     736  / 11  66.91
+
+
+
+
+	Mirosław Tokarski 100.00 Koszalin                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Kazimierz.J    Merklejn              109.83 -  135: 450   60
+                                                          --------------- ---- ------
+                                                                      60  /  1  60.00
+
+
+
+
+	Bogdan Witek 100.00 Koszalin                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Grzegorz       Kulawiak              107.52 +  346: 310  158
+    2     4 Tomasz         Zwoliński             143.80 -  317: 372   94
+    3     3 Magdalena      Merklejn              105.54 +  332: 297  156
+    4     4 Kazimierz.J    Merklejn              109.83 -  324: 367   60
+    5     5 Andrzej        Lożyński              104.41 +  343: 322  154
+    6     2 Wojciech       Usakiewicz            131.90 -  282: 318   82
+    7     7 Jacek          Marcinkowski          100.00 -  257: 366   50
+    8     3 Andrzej        Kwiatkowski           115.45 -  325: 366   65
+    9     6 Zbigniew       Kryszczulas           100.00 +  346: 284  150
+   10     1 Mariusz        Orzeł                 127.43 +  376: 327  177
+   11     4 Aleksandra     Merklejn-Kaczanowska  105.67 -  297: 339   56
+   12     5 Jacek          Marcinkowski          100.00 +  399: 359  150
+                                                          --------------- ---- ------
+                                                                    1352  / 12 112.67
+
+
+</pre></div><div id='p_rundy' class='page'><pre></pre></div><div id='p_ranking' class='page'><pre></pre></div><div id='p_przebieg' class='page'>
+
+    </div><div style="clear:both;width:100%;" class="alignright">
+
+<script>
+<!--
+if ((document.getElementById("content").offsetHeight + document.getElementById("top").offsetHeight) > screen.height)
+    document.write("<br /><br /><a href='#top'>do góry</a>");
+-->
+</script>
+
+</div>
+</div>
+
+<div id="bottom">
+<ul id="bottomlinks">
+<div class='onleft'>
+ Osób on-line: 54</div>
+    <li><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+    <li><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+    <li><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+    <li><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+    <li><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+    <li><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+</ul>
+    SCRABBLE® jest zastrzeżonym znakiem towarowym J.W. Spears &amp; Sons&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://www.pfs.org.pl/prawaautorskie.php">© Prawa autorskie</a>
+</div>
+</body>
+</html>

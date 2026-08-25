@@ -1,0 +1,864 @@
+
+<html>
+<head>
+    <title>Polska Federacja Scrabble :: IV Mistrzostwa Polski Nauczycieli</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="files/img/favicon.ico" />
+    <link rel="stylesheet" href="files/css/style.css" type="text/css" />
+	<link rel="stylesheet" href="files/css/style-index.css" type="text/css" />
+    <!--[if IE]><link rel="stylesheet" type="text/css" href="files/css/styleie.css" /><![endif]-->
+    <!--[if lt IE 7.]><script defer type="text/javascript" src="files/js/pngfix.js"></script><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="files/js/minmax.js"></script><![endif]-->
+    <script type="text/javascript" src="files/js/jquery.js"></script>
+    <script type="text/javascript" src="files/js/jquery-bp.js"></script>
+    <script type="text/javascript" src="files/js/java.js"></script>
+    <script>jSubmenu ("turnieje","kalendarz");jKalendarz();</script>
+    <script>
+    var url, page;
+
+    page = 'info';
+    url  = document.location.toString();
+
+    if (url.match ('#')) {
+      page = url.split ('#')[1];
+      if ($.inArray (page, [ 'info', 'relacja', 'klasyfikacja', 'hh', 'rundy', 'ranking', 'przebieg' ]) == -1)
+        page = 'info';
+    }
+
+    $(document).ready(function(){
+        $('a#listaucz').bind('click', function(event){
+            $('div#lista').toggle();
+            event.preventDefault();
+        }).toggle(function() { $(this).text('schowaj listę uczestników'); }, function() { $(this).text("pokaż listę uczestników"); });
+        $('div#lista table tr:last td').css({"border-bottom" : "none"});
+
+        $("a.przycisk").click (function (e) {
+            if ($(this).attr ('href') !== '#')
+                return true;
+
+            e.preventDefault ();
+
+            id       = this.id;
+            this.id += 'tmp';
+            window.location.hash = id;
+            this.id  = id;
+
+            $(".page").hide ();
+            $(".page#p_" + id).show ();
+
+            $("a.przycisk").removeClass ('active');
+            $(this).addClass ('active');
+
+            return false;
+        });
+
+        $("a.przycisk#" + page).click ();
+        $('html, body').animate ({ scrollTop: 0 }, 0);
+    });
+    </script>
+  <style type="text/css">
+    .page {
+        display: none;
+    }
+    #szczegoly{
+        width: 100%;
+        border-spacing: 0;
+        margin-top: 30px;
+        text-align: left;
+        font-size: inherit;
+    }
+    #szczegoly td{
+        padding: 10px 20px 10px 0;
+        vertical-align: top;
+    }
+    #szczegoly td:first-child{
+        font-weight: bold;
+        width: 160px;
+    }
+    div#lista{
+        display:none;
+        margin-top: 15px;
+    }
+    div#lista table{
+        margin-top: 10px;
+        text-align: left;
+        font-size: inherit;
+    }
+    div#lista table td{
+        padding: 3px 8px;
+        border-bottom: 1px dashed #1576AE;
+    }
+    div#lista table th{
+        padding: 0px 5px 10px 5px;
+    }
+    div#lista table td.ptaszek{
+        text-align: center;
+        background: url('files/img/tick.png') no-repeat center center;
+    }
+    div#lista table th{
+        white-space: nowrap;
+        width: auto;
+    }
+    div#lista table td:first-child, div#lista table th:first-child{
+        text-align:right;
+        width: auto;
+    }
+    </style>
+</head>
+
+<body>
+
+<script type="text/javascript">setMenu();</script>
+
+<div id="top" onclick="location.href='https://www.pfs.org.pl'">
+</div>
+<div id="menu">
+
+    <div id="m_glowna">
+        <div class="tab"><a href="https://www.pfs.org.pl/index.php"></a></div>
+
+        <ul>
+            <li class="sublink" id="aktualnosci"><a href="https://www.pfs.org.pl">Aktualności</a></li>
+            <li class="sublink" id="nowy"><a href="https://www.pfs.org.pl/dlanowych.php">Jestem tu nowy</a></li>
+            <li class="sublink" id="anagramator"><a href="https://www.pfs.org.pl/osps_online.php?main=1">Słownik online</a></li>
+            <li class="sublink" id="siodemka"><a href="https://www.pfs.org.pl/siodemka.php?main=1">Siódemka tygodnia</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+            <li class="sublink" id="dlasponsorow"><a href="https://www.pfs.org.pl/dlasponsorow.php">Dla sponsorów</a></li>
+            <li class="sublink" id="kontakt"><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+        </ul>
+    </div>
+    <div id="m_turnieje">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kalendarz.php"></a></div>
+        <ul>
+            <li class="sublink" id="kalendarz"><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+            <li class="sublink" id="regulaminy"><a href="https://www.pfs.org.pl/regulaminy.php">Regulaminy</a></li>
+            <li class="sublink" id="sedziowie"><a href="https://www.pfs.org.pl/sedziowie.php">Sędziowie</a></li>
+            <li class="sublink" id="gp"><a href="https://www.pfs.org.pl/gp2026.php">Grand Prix</a></li>
+<!--            <li class="sublink" id="mr"><a href="https://www.pfs.org.pl/mr2020.php">Mistrzostwa Regionów</a></li>-->
+            <li class="sublink" id="archiwum"><a href="https://www.pfs.org.pl/archiwum.php">Historia</a></li>
+            <li class="sublink" id="galeria"><a href="https://www.pfs.org.pl/galeria.php">Zdjęcia</a></li>
+            <li class="sublink" id="rekordy"><a href="https://www.pfs.org.pl/rekordy.php">Rekordy</a></li>
+        </ul>
+    </div>
+    <div id="m_pfs">
+        <div  class="tab"><a href="https://www.pfs.org.pl/opfs.php"></a></div>
+        <ul>
+            <li class="sublink" id="opfs"><a href="https://www.pfs.org.pl/opfs.php">O PFS</a></li>
+            <li class="sublink" id="jakprzystapic"><a href="https://www.pfs.org.pl/jakprzystapic.php">Jak przystąpić</a></li>
+            <li class="sublink" id="dlaczlonkow"><a href="https://www.pfs.org.pl/dlaczlonkow.php">Dla członków</a></li>
+            <li class="sublink" id="wladze"><a href="https://www.pfs.org.pl/wladze.php">Władze</a></li>
+            <li class="sublink" id="komisje"><a href="https://www.pfs.org.pl/komisje.php">Komisje</a></li>
+            <li class="sublink" id="statut"><a href="https://www.pfs.org.pl/statut.php">Statut</a></li>
+            <li class="sublink" id="uchwaly"><a href="https://www.pfs.org.pl/uchwaly.php">Uchwały</a></li>
+            <li class="sublink" id="honorowi"><a href="https://www.pfs.org.pl/honorowi.php">Honorowi członkowie</a></li>
+            <li class="sublink" id="finanse"><a href="https://www.pfs.org.pl/finanse.php">Finanse</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabble">
+        <div  class="tab"><a href="https://www.pfs.org.pl/osps_online.php?desktop=1"></a></div>
+        <ul>
+            <li class="sublink" id="osps_online"><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+            <li class="sublink" id="zds"><a href="https://www.pfs.org.pl/zds2.php">ZDS</a></li>
+            <li class="sublink" id="osps"><a href="https://www.pfs.org.pl/osps.php">OSPS</a></li>
+            <li class="sublink" id="aktualizacje"><a href="https://www.pfs.org.pl/osps_aktualizacje.php">Aktualizacje</a></li>
+            <li class="sublink" id="dwojki"><a href="https://www.pfs.org.pl/dwojki.php">2-literówki</a></li>
+            <li class="sublink" id="trojki"><a href="https://www.pfs.org.pl/trojki.php">3-literówki</a></li>
+            <li class="sublink" id="siodemkat"><a href="https://www.pfs.org.pl/siodemka.php">Siódemka tygodnia</a></li>
+            <li class="sublink" id="slowneroznosci"><a href="https://www.pfs.org.pl/slowneroznosci.php">Słowne różności</a></li>
+        </ul>
+    </div>
+    <div id="m_ranking">
+        <div  class="tab"><a href="https://www.pfs.org.pl/ranking.php"></a></div>
+        <ul>
+            <li class="sublink" id="aktranking"><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+            <li class="sublink" id="medale"><a href="https://www.pfs.org.pl/medale.php">Klasyfikacja medalowa</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabblisci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/mistrzowiepolski.php"></a></div>
+        <ul>
+            <li class="sublink" id="mistrzowiepolski"><a href="https://www.pfs.org.pl/mistrzowiepolski.php">Mistrzowie Polski</a></li>
+            <li class="sublink" id="zdobywcypp"><a href="https://www.pfs.org.pl/zdobywcypp.php">Zdobywcy Pucharu Polski</a></li>
+            <li class="sublink" id="zwyciezcygp"><a href="https://www.pfs.org.pl/zwyciezcygp.php">Zwycięzcy Grand Prix</a></li>
+            <li class="sublink" id="liderzyrankingu"><a href="https://www.pfs.org.pl/liderzyrankingu.php">Liderzy rankingu</a></li>
+            <li class="sublink" id="zwyciezcylemans"><a href="https://www.pfs.org.pl/zwyciezcylemans.php">Zwycięzcy 24h Le Mans</a></li>
+            <li class="sublink" id="zwyciezcykmp"><a href="https://www.pfs.org.pl/zwyciezcykmp.php">KMP</a>
+        </ul>
+    </div>
+    <div id="m_kluby">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kluby.php"></a></div>
+        <ul>
+            <li class="sublink" id="rejestrklubow"><a href="https://www.pfs.org.pl/kluby.php">Rejestr klubów</a></li>
+            <li class="sublink" id="kmp"><a href="https://www.pfs.org.pl/kmp.php">KMP</a></li>
+            <li class="sublink" id="wiescizklubow"><a href="https://www.pfs.org.pl/wiescizklubow.php">Wieści z klubów</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/about.php">Statystyki klubowe</a></li>
+        </ul>
+    </div>
+    <div id="m_roznosci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/historia.php"></a></div>
+        <ul>
+            <li class="sublink" id="historia"><a href="https://www.pfs.org.pl/historia.php">Historia</a></li>
+            <li class="sublink" id="odmiany"><a href="https://www.pfs.org.pl/odmiany.php">Odmiany</a></li>
+            <li class="sublink" id="anegdoty"><a href="https://www.pfs.org.pl/anegdoty.php">Anegdoty</a></li>
+            <li class="sublink" id="scrabblealia"><a href="https://www.pfs.org.pl/scrabblealia.php">Scrabblealia</a></li>
+            <li class="sublink" id="scrabblenet"><a href="https://www.pfs.org.pl/scrabblenet.php">Scrabble w internecie</a></li>
+            <li class="sublink" id="programy"><a href="https://www.pfs.org.pl/programy.php">Programy</a></li>
+            <li class="sublink" id="download"><a href="https://www.pfs.org.pl/download.php">Do pobrania</a></li>
+            <li class="sublink" id="ksiazki"><a href="https://www.pfs.org.pl/ksiazki.php">Książki</a></li>
+            <li class="sublink" id="slowniczek"><a href="https://www.pfs.org.pl/slowniczek.php">Słowniczek</a></li>
+        </ul>
+    </div>
+    <div id="m_english">
+        <div  class="tab"><a href="https://www.pfs.org.pl/english.php"></a></div>
+        <ul>
+            <li class="sublink" id="about"><a href="https://www.pfs.org.pl/english.php">About Polish Scrabble</a></li>
+            <li class="sublink" id="news"><a href="https://www.pfs.org.pl/en_news.php">News</a></li>
+            <li class="sublink" id="bartek"><a href="https://www.pfs.org.pl/bartek.php">Bartek w Johor Bahru</a></li>
+            <li class="sublink" id="franko"><a href="https://www.pfs.org.pl/franko.php">Scrabble frankofońskie</a></li>
+        </ul>
+    </div>
+</div>
+
+<div id="submenu"></div>
+<div id="content">
+<div id='nextTours'>
+		<div class='nextTour' onclick='location.href="turniej.php?id=29"'>
+			<div class='karteczka small1'>
+				<span class='miasto'>Słupsk</span><span class='dzien'><span class='big'> 9</span><br />sierpnia</span></div>
+			<div class='kartka big1'>
+				<span class='miasto'>Słupsk</span>
+				<span class='dzien'><b> 9-10 sierpnia</b></span>
+				<span class='nazwaturnieju'>XII Mistrzostwa Ziemi Słupskiej</span><span class='gp'>Grand&nbsp;Prix&nbsp;2008</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=30"'>
+			<div class='karteczka small2'>
+				<span class='miasto'>Wałcz</span><span class='dzien'><span class='big'>15</span><br />sierpnia</span></div>
+			<div class='kartka big2'>
+				<span class='miasto'>Wałcz</span>
+				<span class='dzien'><b>15 sierpnia</b></span>
+				<span class='nazwaturnieju'>IV Mistrzostwa Polski Nauczycieli</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=31"'>
+			<div class='karteczka small3'>
+				<span class='miasto'>Wałcz</span><span class='dzien'><span class='big'>16</span><br />sierpnia</span></div>
+			<div class='kartka big3'>
+				<span class='miasto'>Wałcz</span>
+				<span class='dzien'><b>16-17 sierpnia</b></span>
+				<span class='nazwaturnieju'>IV Mistrzostwa Wałcza &#8222;Wałeckie Scrabblobranie&#8221;</span><span class='gp'>Grand&nbsp;Prix&nbsp;2008</span></div>
+		</div></div><div class='naglowekrelacji'><span class='tytul'>Emocje, walka i złoto dla Oli Merklejn w Mistrzostwach Nauczycieli<span class='nazwa'>15 sierpnia 2008 —  IV Mistrzostwa Polski Nauczycieli</span></span><a href='#' id='info' class='przycisk'>Informacje</a><a href='#' id='relacja' class='przycisk'>Relacja</a><a href='#' id='klasyfikacja' class='przycisk'>Wyniki</a><a href='#' id='hh' class='przycisk'>HH</a><a href='#' id='rundy' class='przycisk'>Rundy</a><div class='galleries'><a href='http://picasaweb.google.com/111288975904311020713/MPN2008#'></a> <img src='files/img/gallery.png' style='visibility:hidden;' alt='galeria' /></div></div><h1 style='color:black; margin-top:0px; margin-bottom:30px; padding: 0px'>IV Mistrzostwa Polski Nauczycieli<span>Wałcz, 15 sierpnia 2008 <br>turniej&nbsp;nierankingowy</span></h1><div id='p_relacja' class='page'><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><div class='relacja' style='clear:both;'><figure style='display:inline-block;float:left;margin:5px'><img src='https://pfs.org.pl/foto_action.php?id=513' alt='Emocje, walka i złoto dla Oli Merklejn w Mistrzostwach Nauczycieli' /></figure><div>Już po raz czwarty długi sierpniowy weekend skupił uwagę wszystkich scrabblistów na <b>Wałcz</b>, i po raz czwarty były to niesamowite
+zawody, zarówno pod względem sportowym, jak i organizacyjnym. Dzięki licznemu gronu sponsorów oraz organizatorom — <b>Gimnazjum
+nr 2</b> w Wałczu z <b>Jolą Chłopińską</b> na czele i <b>Urzędowi Miasta</b> w Wałczu tak właśnie wygląda <b>"Wałeckie Scrabblowanie"</b>. Wysokie
+nagrody pieniężne dla zwycięzców, nagrody rzeczowe dla wszystkich uczestników, a ponadto wyborne strawy i napoje, które
+pozwalały regenerować siły do kolejnych partii wszystkim graczom przez cały weekend w Wałczu. To wszystko sprawia, że
+niezależnie od odległości do Wałcza, uczestnicy przyjeżdżają chętnie, nie licząc kilometrów, jakie mają do pokonania. W tych perfekcyjnych
+warunkach w piątkowe popołudnie rozpoczęli zmagania nauczyciele z całej Polski. 22 belfrów toczyło zażarte boje w 7-rundowych
+mistrzostwach. Na rundę przed końcem teoretyczne szanse na zwycięstwo miała trójka graczy: <b>Sławomir Kucia</b> (musiał wygrać ostatnią partię),
+
+
+<b>Ola Merklejn-Kaczanowska</b> (musiała wygrać partię i liczyć na potknięcie Sławka) oraz <b>Magdalena Rusak</b> (wysoko wygrać i liczyć na niski wynik i potknięcie Sławka).
+Sławek przegrał swoją partię z <b>Tomaszem Ciejką</b> (obrońcą tytułu sprzed roku), jednak ugrał dużo małych punktów i szansę na końcowy tryumf miała już tylko
+Ola. Po emocjonującej i zaciętej końcówce pokonała Magdę i dzięki temu została nowym <b>Mistrzem Polski Nauczycieli</b>.
+Srebro przypadło Sławkowi, a brąz — <b>Mariuszowi Orłowi</b>, który wykorzystał swoją szansę na medal w ostatniej rundzie.<br>
+
+
+</div><div class='autor'></div></div><div style='clear:both;'></div></div><div id='p_info' class='page'><br><p align='center'></p><br><br><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br>Zobacz, jak było na poprzednich turniejach:<br><a href='turniej.php?id=89'>III Mistrzostwa Polski Nauczycieli</a><br><a href='turniej.php?id=121'>II Mistrzostwa Polski Nauczycieli</a><br><a href='turniej.php?id=153'>I Mistrzostwa Polski Nauczycieli</a><br><table id='szczegoly' class='ramkadolna'><tr><td>Rodzaj turnieju</td><td>zamknięty - W IV MPN mogą wziąć udział nauczyciele czynni oraz nauczyciele emerytowani i renciści.</td></tr><tr><td>Sposób rozgrywania</td><td>- liczba rund: 7<br> 
+ - system: szwajcarski</td></tr><tr><td>Miejsce rozgrywek</td><td>Hala widowiskowo - sportowa Gimnazjum nr 2 w Wałczu,<br>ul. M.Konopnickiej 2</td></tr><tr><td>Obrońca tytułu</td><td>Tomasz Ciejka</td></tr><tr><td>Sędzia</td><td>Karol Wyrębkiewicz</td></tr><tr><td>Strona www turnieju</td><td><a href="http://www.g2walcz.com">http://www.g2walcz.com</a></td></tr><tr><td>Harmonogram</td><td><b>15.08.08 (piątek, 7 rund)</b><br> 
+- od&nbsp;11:30 Potwierdzenia przybycia zawodników na&nbsp;miejsce rozgrywek, zapisy<br> 
+ &mdash; 11:55 Zamknięcie listy startowej<br> 
+ &mdash; 12:00 Początek turnieju (Rundy I&nbsp;&mdash; III)<br> 
+ &mdash; ok. 15:00 Przerwa obiadowa<br> 
+ &mdash; ok. 16:00 Rundy (IV &mdash; VII)<br> 
+ &mdash; ok. 20:00 Zakończenie turnieju &mdash; wręczenie nagród przewidywane jest w&nbsp;dniu 17 sierpnia, po&nbsp;zakończeniu
+ turnieju Wałeckie Scrabblobranie. W&nbsp;przypadku, gdy ktoś z&nbsp;pierwszej trójki nie zechce wziąć udziału
+ w&nbsp;Mistrzostwach Wałcza, nagrody zostaną wręczone 15 sierpnia.<br> 
+ &mdash; po&nbsp;20:00 Kolacja</td></tr><tr><td>Wpisowe</td><td>- 13 zł<br>- 8 zł dla członków PFS</td></tr><tr><td>Dojazd</td><td>Hala widowiskowo &mdash; sportowa Gimnazjum nr 2 w&nbsp;Wałczu, ul. M.Konopnickiej 2 (blisko centrum Wałcza)
+ <br><a href="http://www.g2.i365.pl/scrabble/mapa/mapa.html">MAPKA</a><br> 
+ Dla zainteresowanych pomoc z&nbsp;dojazdem uzyskać można pod nr telefonu 502 563 852</td></tr><tr><td>Wyżywienie</td><td>Bufet na&nbsp;stołówce szkolnej &mdash; śniadanie, obiad i&nbsp;kolacja
+ (śniadanie i&nbsp;kolacja po&nbsp;6,50, obiad 12 &mdash; całość 25 zł)<br> 
+Napoje i&nbsp;przekąski non stop podczas turnieju gratis!</td></tr><tr><td>Noclegi</td><td>1.dla nauczycieli noclegi w&nbsp;szkole<br> 
+ 2. dla pozostałych chętnych 35 noclegów blisko szkoły w&nbsp;bardzo dobrych warunkach &mdash; niezbędny kontakt
+ z&nbsp;Jolą Chłopińską w&nbsp;tej sprawie<br> 
+ 3. pozostałe noclegi na&nbsp;stronie: <a href="http://um.walcz.pl/content.php?cms_id=73&#12296;=pl">http://um.walcz.pl/content.php?cms_id=73&#12296;=pl</a></td></tr><tr><td>Nagrody</td><td>- za&nbsp;I miejsce puchar i&nbsp;tytuł Mistrza Polski Nauczycieli w&nbsp;Scrabble<br> 
+- Nagrody pieniężne za&nbsp;I, II i&nbsp;III miejsce<br> 
+- Puchary za&nbsp;miejsca II-III<br> 
+- Nagrody rzeczowe i&nbsp;upominki dla uczestników<br> 
+- Nagrody niespodzianki</td></tr><tr><td>Dodatkowe atrakcje</td><td>- na&nbsp;okrągło gratisowe napoje i&nbsp;przekąski dla uczestników turnieju</td></tr><tr><td>Organizatorzy</td><td>Wszelkich informacji udziela: <span style="font-size: 9pt; font-family: Arial">Jolanta
+ Chłopińska, tel. 502 563 852 lub (067) 258 47 28 szkoła</span><br> 
+ Gimnazjum nr 2 w&nbsp;Wałczu<br> 
+ Związek Nauczycielstwa Polskiego<br> 
+ Urząd Miasta w&nbsp;Wałczu</td></tr></table><br /><br /><b><a name="regulamin"></a>Regulamin IV Mistrzostw Polski Nauczycieli:</b><br>
+1. IV Mistrzostwa Polski Nauczycieli w&nbsp;Scrabble (IV MPN) rozegrane zostaną w&nbsp;dniu
+15 sierpnia 2008 r. w&nbsp;Wałczu.<br> 
+2. Organizatorami MPN są: Gimnazjum nr 2 w&nbsp;Wałczu, Związek Nauczycielstwa Polskiego i&nbsp;Urząd Miasta Wałcz.<br> 
+3. Turniej składa się z&nbsp;7-rund rozgrywanych systemem szwajcarskim (czas partii: 20 min na&nbsp;gracza).<br> 
+4. Turniej nie jest turniejem rankingowym PFS.<br> 
+5. Wpisowe do&nbsp;MPN wynosi 13 zł (członkowie PFS &mdash; 8 zł).<br> 
+6. W&nbsp;turnieju mogą wziąć udział nauczyciele czynni oraz nauczyciele emerytowani i
+renciści. Przez nauczyciela rozumie się pracownika pedagogicznego zatrudnionego
+w przedszkolu, szkole dowolnego typu, wyższej uczelni lub innej placówce objętej
+systemem oświaty w&nbsp;Polsce (wymienionej w&nbsp;ustawie o&nbsp;systemie oświaty z&nbsp;dn. 7
+września 1991 r. (tekst jednolity: Dz. U. z&nbsp;1996 r. Nr 67, poz. 329, zmiana: Dz.
+U. Nr 106, poz. 496).<br> 
+7. Uczestnik turnieju zobowiązany jest w&nbsp;formularzu zgłoszeniowym podać miejsce
+pracy (nauczyciele czynni aktualne, emeryci / renciści &#8211; ostatnie) oraz
+zajmowane stanowisko.<br> 
+8. Organizator turnieju zastrzega sobie prawo do&nbsp;sprawdzenia prawdziwości
+podanych danych.<br> 
+9. Zwycięzca turnieju otrzymuje tytuł Mistrza Polski Nauczycieli w&nbsp;Scrabble, puchar oraz nagrodę pieniężną.<br> 
+10. Zdobywcy miejsc 2, 3 otrzymują puchary i&nbsp;nagrody pieniężne.<br> 
+11. Przewiduje się drobne nagrody rzeczowe dla zdobywców dalszych lokat oraz nagrody niespodzianki.</div><div id='p_klasyfikacja' class='page'><pre>Wyniki turnieju IV Mistrzostwa Polski Nauczycieli
+
+Lp. Imię            Nazwisko             Miasto               Ranking  Duże pkt Małe pkt Skalpy   Różn. MP
+--- --------------- -------------------- -------------------- -------- -------- -------- -------- --------
+  1 Aleksandra      Merklejn-Kaczanowska Szczecin               121.09      6.0     2811     1074      583
+  2 Sławomir        Kucia                Krosno                 139.40      5.5     2818     1034      557
+  3 Mariusz         Orzeł                Nowe Miasto Lubawskie   118.00      5.0     2899      998      401
+  4 Tomasz          Ciejka               Kraków                 131.94      5.0     2836      990      264
+  5 Rafał           Stachowski           Police                 106.79      5.0     2488     1004      -23
+  6 Magdalena.Maja  Rusak                Poznań                 116.75      4.5     2440      901       41
+  7 Marek           Gutjar               Starogard Gdański      100.00      4.0     2584      822       23
+  8 Maciej          ¦liwa                Zabrze                 112.37      4.0     2550      902      -43
+  9 Zofia           Gajewska             Jelenia Góra           119.43      4.0     2535      832       88
+ 10 Joanna          Brychcy              Katowice               113.83      4.0     2489      829       69
+ 11 Danuta          Połomska             Ostrów Wlkp.           100.00      4.0     2268      818      -82
+ 12 Dariusz         Maciejuk             Warszawa               124.98      3.0     2741      755      177
+ 13 Dorota          Maciejuk             Warszawa               118.32      3.0     2701      736      225
+ 14 Ewa             Ciszewska            Katowice               125.48      3.0     2603      756       -6
+ 15 Iwona           Kucia                Krosno                 116.51      3.0     2578      705      -94
+ 16 Jolanta         Chłopińska           Wałcz                  118.39      3.0     2389      725     -206
+ 17 Anna            Swoboda              Wałbrzych              104.34      3.0     2342      721     -144
+ 18 Jacek           Gigoła               Gorzów Wielkopolski    114.00      2.0     2506      650     -224
+ 19 Magdalena       Kupczyńska           Szczecin               111.32      2.0     2478      705     -258
+ 20 Katarzyna       Bogusławska          Piastów                100.00      2.0     2131      655     -576
+ 21 Lucyna          ¦niadach             Rumia                  114.03      1.0     2414      525     -337
+ 22 Justyna         Szymendera           Ostrów Wlkp            100.00      1.0     2378      538     -435
+</pre></div><div id='p_hh' class='page'><pre>Wyniki poszczególnych graczy w turnieju IV Mistrzostwa Polski Nauczycieli
+
+
+
+	Sławomir Kucia 139.40 Krosno
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Lucyna         ¦niadach              114.03 +  505: 284  164
+    2     1 Mariusz        Orzeł                 118.00 +  420: 328  168
+    3     2 Rafał          Stachowski            106.79 +  420: 224  157
+    4     1 Aleksandra     Merklejn-Kaczanowska  121.09 +  326: 284  171
+    5     1 Dariusz        Maciejuk              124.98 +  378: 360  175
+    6     1 Magdalena.Maja Rusak                 116.75 =  345: 345  117
+    7     1 Tomasz         Ciejka                131.94 -  424: 436   82
+                                                          --------------- ---- ------
+                                                                    1034  /  7 147.71
+
+
+
+
+	Tomasz Ciejka 131.94 Kraków
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Jacek          Gigoła                114.00 +  476: 347  164
+    2     2 Ewa            Ciszewska             125.48 +  452: 255  175
+    3     1 Aleksandra     Merklejn-Kaczanowska  121.09 -  273: 422   71
+    4     3 Mariusz        Orzeł                 118.00 -  335: 450   68
+    5     5 Magdalena      Kupczyńska            111.32 +  432: 361  161
+    6     4 Maciej         ¦liwa                 112.37 +  432: 313  162
+    7     1 Sławomir       Kucia                 139.40 +  436: 424  189
+                                                          --------------- ---- ------
+                                                                     990  /  7 141.43
+
+
+
+
+	Ewa Ciszewska 125.48 Katowice                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Joanna         Brychcy               113.83 +  463: 318  164
+    2     2 Tomasz         Ciejka                131.94 -  255: 452   82
+    3     6 Jacek          Gigoła                114.00 +  430: 386  164
+    4     4 Maciej         ¦liwa                 112.37 -  349: 407   62
+    5     6 Zofia          Gajewska              119.43 -  357: 361   69
+    6     8 Anna           Swoboda               104.34 -  324: 397   54
+    7     9 Magdalena      Kupczyńska            111.32 +  425: 288  161
+                                                          --------------- ---- ------
+                                                                     756  /  7 108.00
+
+
+
+
+	Dariusz Maciejuk 124.98 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Maciej         ¦liwa                 112.37 -  377: 385   62
+    2     7 Justyna        Szymendera            100.00 +  472: 274  150
+    3     4 Magdalena      Kupczyńska            111.32 +  396: 326  161
+    4     2 Dorota         Maciejuk              118.32 +  392: 379  168
+    5     1 Sławomir       Kucia                 139.40 -  360: 378   89
+    6     3 Mariusz        Orzeł                 118.00 -  379: 427   68
+    7     4 Rafał          Stachowski            106.79 -  365: 395   57
+                                                          --------------- ---- ------
+                                                                     755  /  7 107.86
+
+
+
+
+	Aleksandra Merklejn-Kaczanowska 121.09 Szczecin                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Magdalena      Kupczyńska            111.32 +  435: 385  161
+    2     3 Katarzyna      Bogusławska           100.00 +  516: 249  150
+    3     1 Tomasz         Ciejka                131.94 +  422: 273  182
+    4     1 Sławomir       Kucia                 139.40 -  284: 326   89
+    5     2 Mariusz        Orzeł                 118.00 +  397: 345  168
+    6     2 Rafał          Stachowski            106.79 +  374: 314  157
+    7     2 Magdalena.Maja Rusak                 116.75 +  383: 336  167
+                                                          --------------- ---- ------
+                                                                    1074  /  7 153.43
+
+
+
+
+	Zofia Gajewska 119.43 Jelenia Góra             
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Rafał          Stachowski            106.79 -  349: 368   57
+    2     8 Jacek          Gigoła                114.00 -  337: 398   64
+    3     9 Danuta         Połomska              100.00 +  408: 239  150
+    4     8 Jolanta        Chłopińska            118.39 +  422: 270  168
+    5     6 Ewa            Ciszewska             125.48 +  361: 357  175
+    6     5 Marek          Gutjar                100.00 +  350: 338  150
+    7     3 Mariusz        Orzeł                 118.00 -  308: 477   68
+                                                          --------------- ---- ------
+                                                                     832  /  7 118.86
+
+
+
+
+	Jolanta Chłopińska 118.39 Wałcz
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Anna           Swoboda               104.34 +  361: 309  154
+    2     5 Rafał          Stachowski            106.79 -  319: 431   57
+    3     7 Magdalena.Maja Rusak                 116.75 -  352: 400   67
+    4     8 Zofia          Gajewska              119.43 -  270: 422   69
+    5    10 Joanna         Brychcy               113.83 -  313: 357   64
+    6    11 Lucyna         ¦niadach              114.03 +  399: 339  164
+    7    10 Justyna        Szymendera            100.00 +  375: 337  150
+                                                          --------------- ---- ------
+                                                                     725  /  7 103.57
+
+
+
+
+	Dorota Maciejuk 118.32 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Katarzyna      Bogusławska           100.00 -  336: 420   50
+    2     9 Joanna         Brychcy               113.83 +  421: 267  164
+    3     5 Iwona          Kucia                 116.51 +  519: 348  167
+    4     2 Dariusz        Maciejuk              124.98 -  379: 392   75
+    5     4 Rafał          Stachowski            106.79 -  345: 388   57
+    6     6 Magdalena      Kupczyńska            111.32 +  348: 304  161
+    7     5 Maciej         ¦liwa                 112.37 -  353: 357   62
+                                                          --------------- ---- ------
+                                                                     736  /  7 105.14
+
+
+
+
+	Mariusz Orzeł 118.00 Nowe Miasto Lubawskie       
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Marek          Gutjar                100.00 +  498: 317  150
+    2     1 Sławomir       Kucia                 139.40 -  328: 420   89
+    3     3 Maciej         ¦liwa                 112.37 +  374: 342  162
+    4     3 Tomasz         Ciejka                131.94 +  450: 335  182
+    5     2 Aleksandra     Merklejn-Kaczanowska  121.09 -  345: 397   71
+    6     3 Dariusz        Maciejuk              124.98 +  427: 379  175
+    7     3 Zofia          Gajewska              119.43 +  477: 308  169
+                                                          --------------- ---- ------
+                                                                     998  /  7 142.57
+
+
+
+
+	Magdalena.Maja Rusak 116.75 Poznań                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Danuta         Połomska              100.00 +  350: 314  150
+    2     6 Magdalena      Kupczyńska            111.32 -  325: 412   61
+    3     7 Jolanta        Chłopińska            118.39 +  400: 352  168
+    4     5 Katarzyna      Bogusławska           100.00 +  342: 255  150
+    5     3 Maciej         ¦liwa                 112.37 +  342: 338  162
+    6     1 Sławomir       Kucia                 139.40 =  345: 345  139
+    7     2 Aleksandra     Merklejn-Kaczanowska  121.09 -  336: 383   71
+                                                          --------------- ---- ------
+                                                                     901  /  7 128.71
+
+
+
+
+	Iwona Kucia 116.51 Krosno                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Justyna        Szymendera            100.00 +  417: 357  150
+    2     4 Maciej         ¦liwa                 112.37 -  366: 408   62
+    3     5 Dorota         Maciejuk              118.32 -  348: 519   68
+    4     7 Magdalena      Kupczyńska            111.32 -  375: 402   61
+    5     8 Katarzyna      Bogusławska           100.00 +  376: 259  150
+    6     7 Jacek          Gigoła                114.00 +  389: 311  164
+    7     6 Marek          Gutjar                100.00 -  307: 416   50
+                                                          --------------- ---- ------
+                                                                     705  /  7 100.71
+
+
+
+
+	Lucyna ¦niadach 114.03 Rumia                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Sławomir       Kucia                 139.40 -  284: 505   89
+    2    11 Anna           Swoboda               104.34 -  342: 349   54
+    3    11 Joanna         Brychcy               113.83 -  258: 415   64
+    4    11 Justyna        Szymendera            100.00 -  391: 404   50
+    5    11 Danuta         Połomska              100.00 -  345: 368   50
+    6    11 Jolanta        Chłopińska            118.39 -  339: 399   68
+    7    11 Katarzyna      Bogusławska           100.00 +  455: 311  150
+                                                          --------------- ---- ------
+                                                                     525  /  7  75.00
+
+
+
+
+	Jacek Gigoła 114.00 Gorzów Wielkopolski        
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Tomasz         Ciejka                131.94 -  347: 476   82
+    2     8 Zofia          Gajewska              119.43 +  398: 337  169
+    3     6 Ewa            Ciszewska             125.48 -  386: 430   75
+    4     6 Rafał          Stachowski            106.79 -  339: 368   57
+    5     9 Justyna        Szymendera            100.00 +  416: 354  150
+    6     7 Iwona          Kucia                 116.51 -  311: 389   67
+    7     8 Danuta         Połomska              100.00 -  309: 376   50
+                                                          --------------- ---- ------
+                                                                     650  /  7  92.86
+
+
+
+
+	Joanna Brychcy 113.83 Katowice                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Ewa            Ciszewska             125.48 -  318: 463   75
+    2     9 Dorota         Maciejuk              118.32 -  267: 421   68
+    3    11 Lucyna         ¦niadach              114.03 +  415: 258  164
+    4     9 Marek          Gutjar                100.00 -  390: 397   50
+    5    10 Jolanta        Chłopińska            118.39 +  357: 313  168
+    6     9 Katarzyna      Bogusławska           100.00 +  355: 259  150
+    7     7 Anna           Swoboda               104.34 +  387: 309  154
+                                                          --------------- ---- ------
+                                                                     829  /  7 118.43
+
+
+
+
+	Maciej ¦liwa 112.37 Zabrze                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Dariusz        Maciejuk              124.98 +  385: 377  175
+    2     4 Iwona          Kucia                 116.51 +  408: 366  167
+    3     3 Mariusz        Orzeł                 118.00 -  342: 374   68
+    4     4 Ewa            Ciszewska             125.48 +  407: 349  175
+    5     3 Magdalena.Maja Rusak                 116.75 -  338: 342   67
+    6     4 Tomasz         Ciejka                131.94 -  313: 432   82
+    7     5 Dorota         Maciejuk              118.32 +  357: 353  168
+                                                          --------------- ---- ------
+                                                                     902  /  7 128.86
+
+
+
+
+	Magdalena Kupczyńska 111.32 Szczecin               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Aleksandra     Merklejn-Kaczanowska  121.09 -  385: 435   71
+    2     6 Magdalena.Maja Rusak                 116.75 +  412: 325  167
+    3     4 Dariusz        Maciejuk              124.98 -  326: 396   75
+    4     7 Iwona          Kucia                 116.51 +  402: 375  167
+    5     5 Tomasz         Ciejka                131.94 -  361: 432   82
+    6     6 Dorota         Maciejuk              118.32 -  304: 348   68
+    7     9 Ewa            Ciszewska             125.48 -  288: 425   75
+                                                          --------------- ---- ------
+                                                                     705  /  7 100.71
+
+
+
+
+	Rafał Stachowski 106.79 Police
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Zofia          Gajewska              119.43 +  368: 349  169
+    2     5 Jolanta        Chłopińska            118.39 +  431: 319  168
+    3     2 Sławomir       Kucia                 139.40 -  224: 420   89
+    4     6 Jacek          Gigoła                114.00 +  368: 339  164
+    5     4 Dorota         Maciejuk              118.32 +  388: 345  168
+    6     2 Aleksandra     Merklejn-Kaczanowska  121.09 -  314: 374   71
+    7     4 Dariusz        Maciejuk              124.98 +  395: 365  175
+                                                          --------------- ---- ------
+                                                                    1004  /  7 143.43
+
+
+
+
+	Anna Swoboda 104.34 Wałbrzych                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Jolanta        Chłopińska            118.39 -  309: 361   68
+    2    11 Lucyna         ¦niadach              114.03 +  349: 342  164
+    3     8 Katarzyna      Bogusławska           100.00 -  327: 378   50
+    4    10 Danuta         Połomska              100.00 +  322: 293  150
+    5     7 Marek          Gutjar                100.00 -  329: 401   50
+    6     8 Ewa            Ciszewska             125.48 +  397: 324  175
+    7     7 Joanna         Brychcy               113.83 -  309: 387   64
+                                                          --------------- ---- ------
+                                                                     721  /  7 103.00
+
+
+
+
+	Katarzyna Bogusławska 100.00 Piastów
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Dorota         Maciejuk              118.32 +  420: 336  168
+    2     3 Aleksandra     Merklejn-Kaczanowska  121.09 -  249: 516   71
+    3     8 Anna           Swoboda               104.34 +  378: 327  154
+    4     5 Magdalena.Maja Rusak                 116.75 -  255: 342   67
+    5     8 Iwona          Kucia                 116.51 -  259: 376   67
+    6     9 Joanna         Brychcy               113.83 -  259: 355   64
+    7    11 Lucyna         ¦niadach              114.03 -  311: 455   64
+                                                          --------------- ---- ------
+                                                                     655  /  7  93.57
+
+
+
+
+	Marek Gutjar 100.00 Starogard Gdański
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Mariusz        Orzeł                 118.00 -  317: 498   68
+    2    10 Danuta         Połomska              100.00 -  322: 329   50
+    3    10 Justyna        Szymendera            100.00 +  393: 358  150
+    4     9 Joanna         Brychcy               113.83 +  397: 390  164
+    5     7 Anna           Swoboda               104.34 +  401: 329  154
+    6     5 Zofia          Gajewska              119.43 -  338: 350   69
+    7     6 Iwona          Kucia                 116.51 +  416: 307  167
+                                                          --------------- ---- ------
+                                                                     822  /  7 117.43
+
+
+
+
+	Danuta Połomska 100.00 Ostrów Wlkp.             
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Magdalena.Maja Rusak                 116.75 -  314: 350   67
+    2    10 Marek          Gutjar                100.00 +  329: 322  150
+    3     9 Zofia          Gajewska              119.43 -  239: 408   69
+    4    10 Anna           Swoboda               104.34 -  293: 322   54
+    5    11 Lucyna         ¦niadach              114.03 +  368: 345  164
+    6    10 Justyna        Szymendera            100.00 +  349: 294  150
+    7     8 Jacek          Gigoła                114.00 +  376: 309  164
+                                                          --------------- ---- ------
+                                                                     818  /  7 116.86
+
+
+
+
+	Justyna Szymendera 100.00 Ostrów Wlkp              
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Iwona          Kucia                 116.51 -  357: 417   67
+    2     7 Dariusz        Maciejuk              124.98 -  274: 472   75
+    3    10 Marek          Gutjar                100.00 -  358: 393   50
+    4    11 Lucyna         ¦niadach              114.03 +  404: 391  164
+    5     9 Jacek          Gigoła                114.00 -  354: 416   64
+    6    10 Danuta         Połomska              100.00 -  294: 349   50
+    7    10 Jolanta        Chłopińska            118.39 -  337: 375   68
+                                                          --------------- ---- ------
+                                                                     538  /  7  76.86
+
+
+</pre></div><div id='p_rundy' class='page'><pre>Wyniki poszczególnych rund turnieju IV Mistrzostwa Polski Nauczycieli
+
+
+
+Runda nr  1
+-----------
+Stół Gospodarz                             Go¶ć                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Sławomir       Kucia                - Lucyna         ¦niadach              505: 284
+   2 Jacek          Gigoła               - Tomasz         Ciejka                347: 476
+   3 Ewa            Ciszewska            - Joanna         Brychcy               463: 318
+   4 Maciej         ¦liwa                - Dariusz        Maciejuk              385: 377
+   5 Aleksandra     Merklejn-Kaczanowska - Magdalena      Kupczyńska            435: 385
+   6 Rafał          Stachowski           - Zofia          Gajewska              368: 349
+   7 Jolanta        Chłopińska           - Anna           Swoboda               361: 309
+   8 Katarzyna      Bogusławska          - Dorota         Maciejuk              420: 336
+   9 Mariusz        Orzeł                - Marek          Gutjar                498: 317
+  10 Danuta         Połomska             - Magdalena.Maja Rusak                 314: 350
+  11 Iwona          Kucia                - Justyna        Szymendera            417: 357
+
+
+Runda nr  2
+-----------
+Stół Gospodarz                             Go¶ć                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Mariusz        Orzeł                - Sławomir       Kucia                 328: 420
+   2 Tomasz         Ciejka               - Ewa            Ciszewska             452: 255
+   3 Aleksandra     Merklejn-Kaczanowska - Katarzyna      Bogusławska           516: 249
+   4 Maciej         ¦liwa                - Iwona          Kucia                 408: 366
+   5 Jolanta        Chłopińska           - Rafał          Stachowski            319: 431
+   6 Magdalena.Maja Rusak                - Magdalena      Kupczyńska            325: 412
+   7 Dariusz        Maciejuk             - Justyna        Szymendera            472: 274
+   8 Zofia          Gajewska             - Jacek          Gigoła                337: 398
+   9 Joanna         Brychcy              - Dorota         Maciejuk              267: 421
+  10 Marek          Gutjar               - Danuta         Połomska              322: 329
+  11 Lucyna         ¦niadach             - Anna           Swoboda               342: 349
+
+
+Runda nr  3
+-----------
+Stół Gospodarz                             Go¶ć                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Tomasz         Ciejka               - Aleksandra     Merklejn-Kaczanowska  273: 422
+   2 Rafał          Stachowski           - Sławomir       Kucia                 224: 420
+   3 Maciej         ¦liwa                - Mariusz        Orzeł                 342: 374
+   4 Magdalena      Kupczyńska           - Dariusz        Maciejuk              326: 396
+   5 Dorota         Maciejuk             - Iwona          Kucia                 519: 348
+   6 Ewa            Ciszewska            - Jacek          Gigoła                430: 386
+   7 Magdalena.Maja Rusak                - Jolanta        Chłopińska            400: 352
+   8 Anna           Swoboda              - Katarzyna      Bogusławska           327: 378
+   9 Zofia          Gajewska             - Danuta         Połomska              408: 239
+  10 Justyna        Szymendera           - Marek          Gutjar                358: 393
+  11 Joanna         Brychcy              - Lucyna         ¦niadach              415: 258
+
+
+Runda nr  4
+-----------
+Stół Gospodarz                             Go¶ć                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Sławomir       Kucia                - Aleksandra     Merklejn-Kaczanowska  326: 284
+   2 Dariusz        Maciejuk             - Dorota         Maciejuk              392: 379
+   3 Mariusz        Orzeł                - Tomasz         Ciejka                450: 335
+   4 Ewa            Ciszewska            - Maciej         ¦liwa                 349: 407
+   5 Katarzyna      Bogusławska          - Magdalena.Maja Rusak                 255: 342
+   6 Jacek          Gigoła               - Rafał          Stachowski            339: 368
+   7 Iwona          Kucia                - Magdalena      Kupczyńska            375: 402
+   8 Zofia          Gajewska             - Jolanta        Chłopińska            422: 270
+   9 Marek          Gutjar               - Joanna         Brychcy               397: 390
+  10 Danuta         Połomska             - Anna           Swoboda               293: 322
+  11 Justyna        Szymendera           - Lucyna         ¦niadach              404: 391
+
+
+Runda nr  5
+-----------
+Stół Gospodarz                             Go¶ć                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Dariusz        Maciejuk             - Sławomir       Kucia                 360: 378
+   2 Aleksandra     Merklejn-Kaczanowska - Mariusz        Orzeł                 397: 345
+   3 Magdalena.Maja Rusak                - Maciej         ¦liwa                 342: 338
+   4 Dorota         Maciejuk             - Rafał          Stachowski            345: 388
+   5 Magdalena      Kupczyńska           - Tomasz         Ciejka                361: 432
+   6 Ewa            Ciszewska            - Zofia          Gajewska              357: 361
+   7 Anna           Swoboda              - Marek          Gutjar                329: 401
+   8 Iwona          Kucia                - Katarzyna      Bogusławska           376: 259
+   9 Justyna        Szymendera           - Jacek          Gigoła                354: 416
+  10 Joanna         Brychcy              - Jolanta        Chłopińska            357: 313
+  11 Lucyna         ¦niadach             - Danuta         Połomska              345: 368
+
+
+Runda nr  6
+-----------
+Stół Gospodarz                             Go¶ć                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Sławomir       Kucia                - Magdalena.Maja Rusak                 345: 345
+   2 Rafał          Stachowski           - Aleksandra     Merklejn-Kaczanowska  314: 374
+   3 Mariusz        Orzeł                - Dariusz        Maciejuk              427: 379
+   4 Tomasz         Ciejka               - Maciej         ¦liwa                 432: 313
+   5 Marek          Gutjar               - Zofia          Gajewska              338: 350
+   6 Magdalena      Kupczyńska           - Dorota         Maciejuk              304: 348
+   7 Jacek          Gigoła               - Iwona          Kucia                 311: 389
+   8 Anna           Swoboda              - Ewa            Ciszewska             397: 324
+   9 Katarzyna      Bogusławska          - Joanna         Brychcy               259: 355
+  10 Danuta         Połomska             - Justyna        Szymendera            349: 294
+  11 Lucyna         ¦niadach             - Jolanta        Chłopińska            339: 399
+
+
+Runda nr  7
+-----------
+Stół Gospodarz                             Go¶ć                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Sławomir       Kucia                - Tomasz         Ciejka                424: 436
+   2 Aleksandra     Merklejn-Kaczanowska - Magdalena.Maja Rusak                 383: 336
+   3 Zofia          Gajewska             - Mariusz        Orzeł                 308: 477
+   4 Rafał          Stachowski           - Dariusz        Maciejuk              395: 365
+   5 Dorota         Maciejuk             - Maciej         ¦liwa                 353: 357
+   6 Marek          Gutjar               - Iwona          Kucia                 416: 307
+   7 Joanna         Brychcy              - Anna           Swoboda               387: 309
+   8 Danuta         Połomska             - Jacek          Gigoła                376: 309
+   9 Magdalena      Kupczyńska           - Ewa            Ciszewska             288: 425
+  10 Jolanta        Chłopińska           - Justyna        Szymendera            375: 337
+  11 Lucyna         ¦niadach             - Katarzyna      Bogusławska           455: 311
+</pre></div><div id='p_ranking' class='page'><pre></pre></div><div id='p_przebieg' class='page'>
+
+    </div><div style="clear:both;width:100%;" class="alignright">
+
+<script>
+<!--
+if ((document.getElementById("content").offsetHeight + document.getElementById("top").offsetHeight) > screen.height)
+    document.write("<br /><br /><a href='#top'>do góry</a>");
+-->
+</script>
+
+</div>
+</div>
+
+<div id="bottom">
+<ul id="bottomlinks">
+<div class='onleft'>
+ Osób on-line: 59</div>
+    <li><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+    <li><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+    <li><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+    <li><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+    <li><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+    <li><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+</ul>
+    SCRABBLE® jest zastrzeżonym znakiem towarowym J.W. Spears &amp; Sons&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://www.pfs.org.pl/prawaautorskie.php">© Prawa autorskie</a>
+</div>
+</body>
+</html>

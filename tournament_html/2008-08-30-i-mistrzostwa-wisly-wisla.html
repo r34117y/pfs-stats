@@ -1,0 +1,867 @@
+
+<html>
+<head>
+    <title>Polska Federacja Scrabble :: I Mistrzostwa Wisły</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="files/img/favicon.ico" />
+    <link rel="stylesheet" href="files/css/style.css" type="text/css" />
+	<link rel="stylesheet" href="files/css/style-index.css" type="text/css" />
+    <!--[if IE]><link rel="stylesheet" type="text/css" href="files/css/styleie.css" /><![endif]-->
+    <!--[if lt IE 7.]><script defer type="text/javascript" src="files/js/pngfix.js"></script><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="files/js/minmax.js"></script><![endif]-->
+    <script type="text/javascript" src="files/js/jquery.js"></script>
+    <script type="text/javascript" src="files/js/jquery-bp.js"></script>
+    <script type="text/javascript" src="files/js/java.js"></script>
+    <script>jSubmenu ("turnieje","kalendarz");jKalendarz();</script>
+    <script>
+    var url, page;
+
+    page = 'info';
+    url  = document.location.toString();
+
+    if (url.match ('#')) {
+      page = url.split ('#')[1];
+      if ($.inArray (page, [ 'info', 'relacja', 'klasyfikacja', 'hh', 'rundy', 'ranking', 'przebieg' ]) == -1)
+        page = 'info';
+    }
+
+    $(document).ready(function(){
+        $('a#listaucz').bind('click', function(event){
+            $('div#lista').toggle();
+            event.preventDefault();
+        }).toggle(function() { $(this).text('schowaj listę uczestników'); }, function() { $(this).text("pokaż listę uczestników"); });
+        $('div#lista table tr:last td').css({"border-bottom" : "none"});
+
+        $("a.przycisk").click (function (e) {
+            if ($(this).attr ('href') !== '#')
+                return true;
+
+            e.preventDefault ();
+
+            id       = this.id;
+            this.id += 'tmp';
+            window.location.hash = id;
+            this.id  = id;
+
+            $(".page").hide ();
+            $(".page#p_" + id).show ();
+
+            $("a.przycisk").removeClass ('active');
+            $(this).addClass ('active');
+
+            return false;
+        });
+
+        $("a.przycisk#" + page).click ();
+        $('html, body').animate ({ scrollTop: 0 }, 0);
+    });
+    </script>
+  <style type="text/css">
+    .page {
+        display: none;
+    }
+    #szczegoly{
+        width: 100%;
+        border-spacing: 0;
+        margin-top: 30px;
+        text-align: left;
+        font-size: inherit;
+    }
+    #szczegoly td{
+        padding: 10px 20px 10px 0;
+        vertical-align: top;
+    }
+    #szczegoly td:first-child{
+        font-weight: bold;
+        width: 160px;
+    }
+    div#lista{
+        display:none;
+        margin-top: 15px;
+    }
+    div#lista table{
+        margin-top: 10px;
+        text-align: left;
+        font-size: inherit;
+    }
+    div#lista table td{
+        padding: 3px 8px;
+        border-bottom: 1px dashed #1576AE;
+    }
+    div#lista table th{
+        padding: 0px 5px 10px 5px;
+    }
+    div#lista table td.ptaszek{
+        text-align: center;
+        background: url('files/img/tick.png') no-repeat center center;
+    }
+    div#lista table th{
+        white-space: nowrap;
+        width: auto;
+    }
+    div#lista table td:first-child, div#lista table th:first-child{
+        text-align:right;
+        width: auto;
+    }
+    </style>
+</head>
+
+<body>
+
+<script type="text/javascript">setMenu();</script>
+
+<div id="top" onclick="location.href='https://www.pfs.org.pl'">
+</div>
+<div id="menu">
+
+    <div id="m_glowna">
+        <div class="tab"><a href="https://www.pfs.org.pl/index.php"></a></div>
+
+        <ul>
+            <li class="sublink" id="aktualnosci"><a href="https://www.pfs.org.pl">Aktualności</a></li>
+            <li class="sublink" id="nowy"><a href="https://www.pfs.org.pl/dlanowych.php">Jestem tu nowy</a></li>
+            <li class="sublink" id="anagramator"><a href="https://www.pfs.org.pl/osps_online.php?main=1">Słownik online</a></li>
+            <li class="sublink" id="siodemka"><a href="https://www.pfs.org.pl/siodemka.php?main=1">Siódemka tygodnia</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+            <li class="sublink" id="dlasponsorow"><a href="https://www.pfs.org.pl/dlasponsorow.php">Dla sponsorów</a></li>
+            <li class="sublink" id="kontakt"><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+        </ul>
+    </div>
+    <div id="m_turnieje">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kalendarz.php"></a></div>
+        <ul>
+            <li class="sublink" id="kalendarz"><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+            <li class="sublink" id="regulaminy"><a href="https://www.pfs.org.pl/regulaminy.php">Regulaminy</a></li>
+            <li class="sublink" id="sedziowie"><a href="https://www.pfs.org.pl/sedziowie.php">Sędziowie</a></li>
+            <li class="sublink" id="gp"><a href="https://www.pfs.org.pl/gp2026.php">Grand Prix</a></li>
+<!--            <li class="sublink" id="mr"><a href="https://www.pfs.org.pl/mr2020.php">Mistrzostwa Regionów</a></li>-->
+            <li class="sublink" id="archiwum"><a href="https://www.pfs.org.pl/archiwum.php">Historia</a></li>
+            <li class="sublink" id="galeria"><a href="https://www.pfs.org.pl/galeria.php">Zdjęcia</a></li>
+            <li class="sublink" id="rekordy"><a href="https://www.pfs.org.pl/rekordy.php">Rekordy</a></li>
+        </ul>
+    </div>
+    <div id="m_pfs">
+        <div  class="tab"><a href="https://www.pfs.org.pl/opfs.php"></a></div>
+        <ul>
+            <li class="sublink" id="opfs"><a href="https://www.pfs.org.pl/opfs.php">O PFS</a></li>
+            <li class="sublink" id="jakprzystapic"><a href="https://www.pfs.org.pl/jakprzystapic.php">Jak przystąpić</a></li>
+            <li class="sublink" id="dlaczlonkow"><a href="https://www.pfs.org.pl/dlaczlonkow.php">Dla członków</a></li>
+            <li class="sublink" id="wladze"><a href="https://www.pfs.org.pl/wladze.php">Władze</a></li>
+            <li class="sublink" id="komisje"><a href="https://www.pfs.org.pl/komisje.php">Komisje</a></li>
+            <li class="sublink" id="statut"><a href="https://www.pfs.org.pl/statut.php">Statut</a></li>
+            <li class="sublink" id="uchwaly"><a href="https://www.pfs.org.pl/uchwaly.php">Uchwały</a></li>
+            <li class="sublink" id="honorowi"><a href="https://www.pfs.org.pl/honorowi.php">Honorowi członkowie</a></li>
+            <li class="sublink" id="finanse"><a href="https://www.pfs.org.pl/finanse.php">Finanse</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabble">
+        <div  class="tab"><a href="https://www.pfs.org.pl/osps_online.php?desktop=1"></a></div>
+        <ul>
+            <li class="sublink" id="osps_online"><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+            <li class="sublink" id="zds"><a href="https://www.pfs.org.pl/zds2.php">ZDS</a></li>
+            <li class="sublink" id="osps"><a href="https://www.pfs.org.pl/osps.php">OSPS</a></li>
+            <li class="sublink" id="aktualizacje"><a href="https://www.pfs.org.pl/osps_aktualizacje.php">Aktualizacje</a></li>
+            <li class="sublink" id="dwojki"><a href="https://www.pfs.org.pl/dwojki.php">2-literówki</a></li>
+            <li class="sublink" id="trojki"><a href="https://www.pfs.org.pl/trojki.php">3-literówki</a></li>
+            <li class="sublink" id="siodemkat"><a href="https://www.pfs.org.pl/siodemka.php">Siódemka tygodnia</a></li>
+            <li class="sublink" id="slowneroznosci"><a href="https://www.pfs.org.pl/slowneroznosci.php">Słowne różności</a></li>
+        </ul>
+    </div>
+    <div id="m_ranking">
+        <div  class="tab"><a href="https://www.pfs.org.pl/ranking.php"></a></div>
+        <ul>
+            <li class="sublink" id="aktranking"><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+            <li class="sublink" id="medale"><a href="https://www.pfs.org.pl/medale.php">Klasyfikacja medalowa</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabblisci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/mistrzowiepolski.php"></a></div>
+        <ul>
+            <li class="sublink" id="mistrzowiepolski"><a href="https://www.pfs.org.pl/mistrzowiepolski.php">Mistrzowie Polski</a></li>
+            <li class="sublink" id="zdobywcypp"><a href="https://www.pfs.org.pl/zdobywcypp.php">Zdobywcy Pucharu Polski</a></li>
+            <li class="sublink" id="zwyciezcygp"><a href="https://www.pfs.org.pl/zwyciezcygp.php">Zwycięzcy Grand Prix</a></li>
+            <li class="sublink" id="liderzyrankingu"><a href="https://www.pfs.org.pl/liderzyrankingu.php">Liderzy rankingu</a></li>
+            <li class="sublink" id="zwyciezcylemans"><a href="https://www.pfs.org.pl/zwyciezcylemans.php">Zwycięzcy 24h Le Mans</a></li>
+            <li class="sublink" id="zwyciezcykmp"><a href="https://www.pfs.org.pl/zwyciezcykmp.php">KMP</a>
+        </ul>
+    </div>
+    <div id="m_kluby">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kluby.php"></a></div>
+        <ul>
+            <li class="sublink" id="rejestrklubow"><a href="https://www.pfs.org.pl/kluby.php">Rejestr klubów</a></li>
+            <li class="sublink" id="kmp"><a href="https://www.pfs.org.pl/kmp.php">KMP</a></li>
+            <li class="sublink" id="wiescizklubow"><a href="https://www.pfs.org.pl/wiescizklubow.php">Wieści z klubów</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/about.php">Statystyki klubowe</a></li>
+        </ul>
+    </div>
+    <div id="m_roznosci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/historia.php"></a></div>
+        <ul>
+            <li class="sublink" id="historia"><a href="https://www.pfs.org.pl/historia.php">Historia</a></li>
+            <li class="sublink" id="odmiany"><a href="https://www.pfs.org.pl/odmiany.php">Odmiany</a></li>
+            <li class="sublink" id="anegdoty"><a href="https://www.pfs.org.pl/anegdoty.php">Anegdoty</a></li>
+            <li class="sublink" id="scrabblealia"><a href="https://www.pfs.org.pl/scrabblealia.php">Scrabblealia</a></li>
+            <li class="sublink" id="scrabblenet"><a href="https://www.pfs.org.pl/scrabblenet.php">Scrabble w internecie</a></li>
+            <li class="sublink" id="programy"><a href="https://www.pfs.org.pl/programy.php">Programy</a></li>
+            <li class="sublink" id="download"><a href="https://www.pfs.org.pl/download.php">Do pobrania</a></li>
+            <li class="sublink" id="ksiazki"><a href="https://www.pfs.org.pl/ksiazki.php">Książki</a></li>
+            <li class="sublink" id="slowniczek"><a href="https://www.pfs.org.pl/slowniczek.php">Słowniczek</a></li>
+        </ul>
+    </div>
+    <div id="m_english">
+        <div  class="tab"><a href="https://www.pfs.org.pl/english.php"></a></div>
+        <ul>
+            <li class="sublink" id="about"><a href="https://www.pfs.org.pl/english.php">About Polish Scrabble</a></li>
+            <li class="sublink" id="news"><a href="https://www.pfs.org.pl/en_news.php">News</a></li>
+            <li class="sublink" id="bartek"><a href="https://www.pfs.org.pl/bartek.php">Bartek w Johor Bahru</a></li>
+            <li class="sublink" id="franko"><a href="https://www.pfs.org.pl/franko.php">Scrabble frankofońskie</a></li>
+        </ul>
+    </div>
+</div>
+
+<div id="submenu"></div>
+<div id="content">
+<div id='nextTours'>
+		<div class='nextTour' onclick='location.href="turniej.php?id=32"'>
+			<div class='karteczka small1'>
+				<span class='miasto'>Wisła</span><span class='dzien'><span class='big'>23</span><br />sierpnia</span></div>
+			<div class='kartka big1'>
+				<span class='miasto'>Wisła</span>
+				<span class='dzien'><b>23-30 sierpnia</b></span>
+				<span class='nazwaturnieju'>Wakacyjne wczasy skrabblowe</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=33"'>
+			<div class='karteczka small2'>
+				<span class='miasto'>Wisła</span><span class='dzien'><span class='big'>30</span><br />sierpnia</span></div>
+			<div class='kartka big2'>
+				<span class='miasto'>Wisła</span>
+				<span class='dzien'><b>30 sierpnia</b></span>
+				<span class='nazwaturnieju'>I Mistrzostwa Wisły</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=34"'>
+			<div class='karteczka small3'>
+				<span class='miasto'>Bydgoszcz</span><span class='dzien'><span class='big'>30</span><br />sierpnia</span></div>
+			<div class='kartka big3'>
+				<span class='miasto'>Bydgoszcz</span>
+				<span class='dzien'><b>30-31 sierpnia</b></span>
+				<span class='nazwaturnieju'>VI Mistrzostwa Bydgoszczy</span></div>
+		</div></div><div class='naglowekrelacji'><span class='tytul'>Pierwszy, pierwsza, pierwsze...<span class='nazwa'>30 sierpnia 2008 —  I Mistrzostwa Wisły</span></span><a href='#' id='info' class='przycisk'>Informacje</a><a href='#' id='relacja' class='przycisk'>Relacja</a><a href='#' id='klasyfikacja' class='przycisk'>Wyniki</a><a href='#' id='hh' class='przycisk'>HH</a><a href='#' id='rundy' class='przycisk'>Rundy</a><div class='galleries'><a href='http://picasaweb.google.pl/rwesolowski/20080830_Wisla_turniej'></a> <img src='files/img/gallery.png' style='visibility:hidden;' alt='galeria' /></div></div><h1 style='color:black; margin-top:0px; margin-bottom:30px; padding: 0px'>I Mistrzostwa Wisły<span>Wisła, 30 sierpnia 2008</span></h1><div id='p_relacja' class='page'><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><div class='relacja' style='clear:both;'><figure style='display:inline-block;float:left;margin:5px'><img src='https://pfs.org.pl/foto_action.php?id=584' alt='Pierwszy, pierwsza, pierwsze...' /></figure><div>W pierwszych <b>Mistrzostwach Wisły</b> po raz pierwszy na najwyższym miejscu podium stanął <b>Andrzej Rechowicz</b> z Katowic.
+Po raz pierwszy w grupie medalistów stanęli za nim kolejno <b>Arkadiusz Łydka</b> z Jaworzna i <b>Rafał Wesołowski</b> z Warszawy.
+Po raz pierwszy też w turnieju PFS liczba kobiet zrównała się z liczbą męskich graczy. Za tym trendem nie nadąża OSPS,
+który nie uznaje słowa "graczka" — ten patriarchalny charakter słownika odczuła dotkliwie <b>Marta Sztajnert</b>
+
+z Wisły (najlepsza debiutantka), która za położenie tego słowa została ukarana stratą. Uczestniczące w turnieju 26
+osób otrzymało nagrody w wielu różnych kategoriach. Mistrzostwa zwieńczyły trwające tydzień "wczasy scrabblowe",
+w trakcie których m. in. siedmioro nauczycielek i nauczycieli doskonaliło swe umiejętności w ramach programu
+<b>"Scrabble w szkole"</b>. Wszystko to odbyło się dzięki wielkiemu wysiłkowi <b>Anny Arany</b> i <b>Mariusza Sylwestrzuka</b>, za co
+na ich ręce należy złożyć olbrzymie podziękowania. Kończę relację, bo już płonie pożegnalne ognisko, na którym
+kończymy tegoroczny scrabblowy pobyt w <b>Domu Wypoczynkowym "Bruclik"</b>.
+</div><div class='autor'>relacja: Maciej Śliwa</div></div><div style='clear:both;'></div></div><div id='p_info' class='page'><br><p align='center'></p><br><br><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><table id='szczegoly' class='ramkadolna'><tr><td>Rodzaj turnieju</td><td>otwarty</td></tr><tr><td>Sposób rozgrywania</td><td>- liczba rund: 6<br> 
+ - system: połówkowy (rundy 1-5), duńczyk (runda 6)</td></tr><tr><td>Miejsce rozgrywek</td><td>DW Bruclik<br> 
+ Wisła Kozińce 13<BR> 
+	<a href="http://www.bruclik.wbeskidy.pl"> 
+ www.bruclik.wbeskidy.pl</a></td></tr><tr><td>Sędzia</td><td>Maciej Śliwa</td></tr><tr><td>Harmonogram</td><td><b>30.08.08 (sobota)</b><br> 
+ &mdash; do&nbsp;10:45 &mdash; przyjmowanie zapisów<br> 
+		- 11:00 &mdash; rozpoczęcie turnieju<br> 
+ &mdash; ok. 14:00 do&nbsp;15:00 &mdash; przerwa obiadowa<br> 
+ &mdash; ok. 18:00 &mdash; zakończenie turnieju</td></tr><tr><td>Wpisowe</td><td>- 13 zł (12 zł + 1 zł na&nbsp;cele statutowe PFS) za&nbsp;dzień<br> 
+ &mdash; członkowie PFS z&nbsp;aktualnie opłaconymi składkami &mdash; 8 zł za&nbsp;dzień<br> 
+ &mdash; młodzież szkolna &mdash; 4 zł za&nbsp;dzień (do liceum włącznie)<br> 
+ &mdash; debiutanci &mdash; bez opłat</td></tr><tr><td>Dojazd</td><td><a href="http://www.koncept.pl/modules/content/mapka_bruclik.gif"> 
+ Mapa</a></td></tr><tr><td>Wyżywienie</td><td>na miejscu<br> 
+ obiad: 18,00 zł<BR> 
+	śniadanie, kolacja: po&nbsp;9,00 zł</td></tr><tr><td>Noclegi</td><td>na miejscu w&nbsp;miarę wolnych miejsc<br> 
+koszt: 20 &mdash; 30 zł od&nbsp;osoby<br><BR> 
+<a href="http://www.wbeskidy.pl">Inne noclegi</a></td></tr><tr><td>Nagrody</td><td>- pobyt weekendowy w&nbsp;DW Bruclik w&nbsp;dowolnie wybranym terminie<BR> 
+	- książkowe<BR> 
+	- inne w&nbsp;przypadku pozyskania dalszych sponsorów</td></tr><tr><td>Dodatkowe atrakcje</td><td>- konkurs wiedzy o&nbsp;Wiśle<BR> 
+	- składkowa impreza integracyjna po&nbsp;zakończeniu turnieju<BR> 
+	- <a href="http://www.wisla.pl/imprezy_wydarzenia/X_Beskidzki_Piknik_Country_,496.html" target="_blank">X Beskidzki Piknik Country</a></td></tr><tr><td>Organizatorzy</td><td>Mariusz Sylwestrzuk &mdash; e-mail: <a href="mailto:msylwest@gmail.com" target="_blank">msylwest@gmail.com</a><br> 
+Anna Arana &mdash; gg: 1231530</a> </td></tr><tr><td>Sponsorzy</td><td>Urząd Miasta Wisła<br> 
+	DW Bruclik<BR> 
+ 
+	Honorowy patronat: Pan Andrzeja Molina &mdash; Burmistrz Wisły</td></tr></table><br /><br /></div><div id='p_klasyfikacja' class='page'><pre>Wyniki turnieju I Mistrzostwa Wisły
+
+Lp. Imię            Nazwisko             Miasto               Ranking  Duże pkt Małe pkt Skalpy   Różn. MP
+--- --------------- -------------------- -------------------- -------- -------- -------- -------- --------
+  1 Andrzej         Rechowicz            Katowice               126.36      6.0     2441      986      543
+  2 Arkadiusz       Łydka                Jaworzno               107.33      5.0     2423      901      601
+  3 Rafał           Wesołowski           Warszawa               121.93      4.0     2520      799      475
+  4 Ewa             Ciszewska            Katowice               125.72      4.0     2390      725      391
+  5 Tomasz          Zwoliński            Skierdy                142.46      4.0     2388      770      323
+  6 Leokadia        Litwinowicz          Gliwice                119.63      4.0     2192      716      403
+  7 Marta           Sztajnert            Wisła                  100.00      4.0     2095      820       -6
+  8 Tomasz          Siwiński             Zawiercie              106.64      4.0     2063      783      -12
+  9 Dorota          Zielińska            Piaseczno              123.15      3.5     2331      712      -13
+ 10 Joanna          Brychcy              Katowice               114.29      3.5     2070      730      -44
+ 11 Jerzy           Luter                Bytom                  108.44      3.0     2172      676      -49
+ 12 Anna            Chybowska            Sochaczew              100.00      3.0     2159      647       62
+ 13 Agnieszka       Ja¶kiewicz           Czechowice-Dziedzice   111.30      3.0     1943      636       62
+ 14 Anna            Bogucka              Wrocław                100.00      3.0     1917      694     -113
+ 15 Jarosław        Karp                 Jędrzejów              103.32      3.0     1798      598      122
+ 16 Anna            Arana                Warszawa               100.51      2.0     2227      596      224
+ 17 Mariusz         Sylwestrzuk          Warszawa               122.61      2.0     2151      544      -19
+ 18 Alicja          Bielecka             Poznań                 100.00      2.0     2002      529      126
+ 19 Leszek          Kilian               Jaworzno               100.00      2.0     1904      559       99
+ 20 Mirosław        Dymkowski            Czechowice-Dziedzice   100.00      2.0     1766      544     -397
+ 21 Krzysztof       Le¶niak              Kraków                 114.48      2.0     1731      496      -61
+ 22 Blanka          Zwolińska            Skierdy                100.00      2.0     1658      536     -661
+ 23 Małgorzata      Nowakowska           Pruszcz Gdański        100.00      2.0     1512      508     -322
+ 24 Ewa             Stypułkowska         Warszawa               100.00      1.0      702      270     -244
+ 25 Marcin          Łydka                Jaworzno               100.00      0.0     1029      318     -948
+ 26 Elżbieta        Hardej               Piaseczno              100.00      0.0      650      172     -542
+</pre></div><div id='p_hh' class='page'><pre>Wyniki poszczególnych graczy w turnieju I Mistrzostwa Wisły
+
+
+
+	Tomasz Zwoliński 142.46 Skierdy         
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Anna           Arana                 100.51 +  369: 327  151
+    2     3 Rafał          Wesołowski            121.93 +  506: 338  172
+    3     2 Andrzej        Rechowicz             126.36 -  403: 416   76
+    4     3 Krzysztof      Le¶niak               114.48 +  406: 297  164
+    5     3 Marta          Sztajnert             100.00 +  401: 264  150
+    6     2 Arkadiusz      Łydka                 107.33 -  303: 423   57
+                                                          --------------- ---- ------
+                                                                     770  /  6 128.33
+
+
+
+
+	Andrzej Rechowicz 126.36 Katowice               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Alicja         Bielecka              100.00 +  350: 298  150
+    2     5 Joanna         Brychcy               114.29 +  392: 326  164
+    3     2 Tomasz         Zwoliński             142.46 +  416: 403  192
+    4     2 Anna           Arana                 100.51 +  372: 340  151
+    5     1 Tomasz         Siwiński              106.64 +  459: 230  157
+    6     1 Rafał          Wesołowski            121.93 +  452: 301  172
+                                                          --------------- ---- ------
+                                                                     986  /  6 164.33
+
+
+
+
+	Ewa Ciszewska 125.72 Katowice                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Anna           Bogucka               100.00 +  388: 304  150
+    2     1 Arkadiusz      Łydka                 107.33 -  376: 392   57
+    3     9 Blanka         Zwolińska             100.00 +  434: 206  150
+    4     4 Marta          Sztajnert             100.00 -  391: 426   50
+    5     6 Agnieszka      Ja¶kiewicz            111.30 +  346: 342  161
+    6     3 Tomasz         Siwiński              106.64 +  455: 329  157
+                                                          --------------- ---- ------
+                                                                     725  /  6 120.83
+
+
+
+
+	Dorota Zielińska 123.15 Piaseczno               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Anna           Chybowska             100.00 +  487: 358  150
+    2     2 Mariusz        Sylwestrzuk           122.61 -  383: 454   73
+    3     5 Joanna         Brychcy               114.29 =  369: 369  114
+    4     6 Rafał          Wesołowski            121.93 -  265: 520   72
+    5     9 Jarosław       Karp                  103.32 +  381: 359  153
+    6     6 Anna           Bogucka               100.00 +  446: 284  150
+                                                          --------------- ---- ------
+                                                                     712  /  6 118.67
+
+
+
+
+	Mariusz Sylwestrzuk 122.61 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Mirosław       Dymkowski             100.00 +  374: 260  150
+    2     2 Dorota         Zielińska             123.15 +  454: 383  173
+    3     3 Tomasz         Siwiński              106.64 -  316: 432   57
+    4     7 Joanna         Brychcy               114.29 -  339: 340   64
+    5     7 Anna           Bogucka               100.00 -  295: 380   50
+    6     8 Anna           Chybowska             100.00 -  373: 375   50
+                                                          --------------- ---- ------
+                                                                     544  /  6  90.67
+
+
+
+
+	Rafał Wesołowski 121.93 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Elżbieta       Hardej                100.00 +  421: 239  150
+    2     3 Tomasz         Zwoliński             142.46 -  338: 506   92
+    3    10 Anna           Bogucka               100.00 +  419: 268  150
+    4     6 Dorota         Zielińska             123.15 +  520: 265  173
+    5     2 Jerzy          Luter                 108.44 +  521: 315  158
+    6     1 Andrzej        Rechowicz             126.36 -  301: 452   76
+                                                          --------------- ---- ------
+                                                                     799  /  6 133.17
+
+
+
+
+	Leokadia Litwinowicz 119.63 Gliwice
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Ewa            Stypułkowska          100.00 +  414: 226  150
+    2     4 Jerzy          Luter                 108.44 -  378: 423   58
+    3     6 Marta          Sztajnert             100.00 -  324: 338   50
+    4     8 Leszek         Kilian                100.00 +  332: 263  150
+    5     8 Mirosław       Dymkowski             100.00 +  390: 263  150
+    6     4 Jerzy          Luter                 108.44 +  354: 276  158
+                                                          --------------- ---- ------
+                                                                     716  /  6 119.33
+
+
+
+
+	Krzysztof Le¶niak 114.48 Kraków                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    2     7 Jarosław       Karp                  103.32 -  379: 416   53
+    3     8 Leszek         Kilian                100.00 +  341: 335  150
+    4     3 Tomasz         Zwoliński             142.46 -  297: 406   92
+    5     5 Anna           Arana                 100.51 +  370: 272  151
+    6     5 Marta          Sztajnert             100.00 -  344: 363   50
+                                                          --------------- ---- ------
+                                                                     496  /  5  99.20
+
+
+
+
+	Joanna Brychcy 114.29 Katowice                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Leszek         Kilian                100.00 +  407: 305  150
+    2     5 Andrzej        Rechowicz             126.36 -  326: 392   76
+    3     5 Dorota         Zielińska             123.15 =  369: 369  123
+    4     7 Mariusz        Sylwestrzuk           122.61 +  340: 339  173
+    5     4 Arkadiusz      Łydka                 107.33 -  304: 393   57
+    6     7 Anna           Arana                 100.51 +  324: 316  151
+                                                          --------------- ---- ------
+                                                                     730  /  6 121.67
+
+
+
+
+	Agnieszka Ja¶kiewicz 111.30 Czechowice-Dziedzice
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Marta          Sztajnert             100.00 -  301: 395   50
+    2    12 Marcin         Łydka                 100.00 +  369: 164  150
+    3     7 Jarosław       Karp                  103.32 +  353: 272  153
+    4     5 Arkadiusz      Łydka                 107.33 -  244: 424   57
+    5     6 Ewa            Ciszewska             125.72 -  342: 346   76
+    6    10 Leszek         Kilian                100.00 +  334: 280  150
+                                                          --------------- ---- ------
+                                                                     636  /  6 106.00
+
+
+
+
+	Jerzy Luter 108.44 Bytom                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Małgorzata     Nowakowska            100.00 +  369: 281  150
+    2     4 Leokadia       Litwinowicz           119.63 +  423: 378  170
+    3     1 Arkadiusz      Łydka                 107.33 +  433: 292  157
+    4     1 Tomasz         Siwiński              106.64 -  356: 395   57
+    5     2 Rafał          Wesołowski            121.93 -  315: 521   72
+    6     4 Leokadia       Litwinowicz           119.63 -  276: 354   70
+                                                          --------------- ---- ------
+                                                                     676  /  6 112.67
+
+
+
+
+	Arkadiusz Łydka 107.33 Jaworzno                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Blanka         Zwolińska             100.00 +  499: 162  150
+    2     1 Ewa            Ciszewska             125.72 +  392: 376  176
+    3     1 Jerzy          Luter                 108.44 -  292: 433   58
+    4     5 Agnieszka      Ja¶kiewicz            111.30 +  424: 244  161
+    5     4 Joanna         Brychcy               114.29 +  393: 304  164
+    6     2 Tomasz         Zwoliński             142.46 +  423: 303  192
+                                                          --------------- ---- ------
+                                                                     901  /  6 150.17
+
+
+
+
+	Tomasz Siwiński 106.64 Zawiercie                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    12 Marcin         Łydka                 100.00 +  337: 180  150
+    2     6 Marta          Sztajnert             100.00 +  340: 309  150
+    3     3 Mariusz        Sylwestrzuk           122.61 +  432: 316  173
+    4     1 Jerzy          Luter                 108.44 +  395: 356  158
+    5     1 Andrzej        Rechowicz             126.36 -  230: 459   76
+    6     3 Ewa            Ciszewska             125.72 -  329: 455   76
+                                                          --------------- ---- ------
+                                                                     783  /  6 130.50
+
+
+
+
+	Jarosław Karp 103.32 Jędrzejów                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    2     7 Krzysztof      Le¶niak               114.48 +  416: 379  164
+    3     7 Agnieszka      Ja¶kiewicz            111.30 -  272: 353   61
+    4    11 Blanka         Zwolińska             100.00 +  363: 285  150
+    5     9 Dorota         Zielińska             123.15 -  359: 381   73
+    6     9 Alicja         Bielecka              100.00 +  388: 278  150
+                                                          --------------- ---- ------
+                                                                     598  /  5 119.60
+
+
+
+
+	Anna Arana 100.51 Warszawa
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Tomasz         Zwoliński             142.46 -  327: 369   92
+    2     9 Mirosław       Dymkowski             100.00 +  551: 225  150
+    3     4 Anna           Chybowska             100.00 +  421: 343  150
+    4     2 Andrzej        Rechowicz             126.36 -  340: 372   76
+    5     5 Krzysztof      Le¶niak               114.48 -  272: 370   64
+    6     7 Joanna         Brychcy               114.29 -  316: 324   64
+                                                          --------------- ---- ------
+                                                                     596  /  6  99.33
+
+
+
+
+	Alicja Bielecka 100.00 Poznań
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Andrzej        Rechowicz             126.36 -  298: 350   76
+    2    13 Blanka         Zwolińska             100.00 -  389: 400   50
+    3    11 Małgorzata     Nowakowska            100.00 +  373: 253  150
+    4    10 Anna           Bogucka               100.00 -  241: 369   50
+    5    11 Marcin         Łydka                 100.00 +  423: 116  150
+    6     9 Jarosław       Karp                  103.32 -  278: 388   53
+                                                          --------------- ---- ------
+                                                                     529  /  6  88.17
+
+
+
+
+	Anna  Bogucka 100.00 Wrocław
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Ewa            Ciszewska             125.72 -  304: 388   76
+    2    11 Ewa            Stypułkowska          100.00 +  312: 241  150
+    3    10 Rafał          Wesołowski            121.93 -  268: 419   72
+    4    10 Alicja         Bielecka              100.00 +  369: 241  150
+    5     7 Mariusz        Sylwestrzuk           122.61 +  380: 295  173
+    6     6 Dorota         Zielińska             123.15 -  284: 446   73
+                                                          --------------- ---- ------
+                                                                     694  /  6 115.67
+
+
+
+
+	Anna Chybowska 100.00 Sochaczew
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Dorota         Zielińska             123.15 -  358: 487   73
+    2     8 Małgorzata     Nowakowska            100.00 +  386: 178  150
+    3     4 Anna           Arana                 100.51 -  343: 421   51
+    4     9 Mirosław       Dymkowski             100.00 -  314: 360   50
+    5    10 Blanka         Zwolińska             100.00 +  383: 278  150
+    6     8 Mariusz        Sylwestrzuk           122.61 +  375: 373  173
+                                                          --------------- ---- ------
+                                                                     647  /  6 107.83
+
+
+
+
+	Mirosław Dymkowski 100.00 Czechowice-Dziedzice
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Mariusz        Sylwestrzuk           122.61 -  260: 374   73
+    2     9 Anna           Arana                 100.51 -  225: 551   51
+    3    12 Elżbieta       Hardej                100.00 +  407: 207  150
+    4     9 Anna           Chybowska             100.00 +  360: 314  150
+    5     8 Leokadia       Litwinowicz           119.63 -  263: 390   70
+    6    11 Blanka         Zwolińska             100.00 -  251: 327   50
+                                                          --------------- ---- ------
+                                                                     544  /  6  90.67
+
+
+
+
+	Elżbieta Hardej 100.00 Piaseczno
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Rafał          Wesołowski            121.93 -  239: 421   72
+    2    10 Leszek         Kilian                100.00 -  204: 364   50
+    3    12 Mirosław       Dymkowski             100.00 -  207: 407   50
+                                                          --------------- ---- ------
+                                                                     172  /  3  57.33
+
+
+
+
+	Leszek Kilian 100.00 Jaworzno                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Joanna         Brychcy               114.29 -  305: 407   64
+    2    10 Elżbieta       Hardej                100.00 +  364: 204  150
+    3     8 Krzysztof      Le¶niak               114.48 -  335: 341   64
+    4     8 Leokadia       Litwinowicz           119.63 -  263: 332   70
+    5    12 Małgorzata     Nowakowska            100.00 +  357: 187  150
+    6    10 Agnieszka      Ja¶kiewicz            111.30 -  280: 334   61
+                                                          --------------- ---- ------
+                                                                     559  /  6  93.17
+
+
+
+
+	Małgorzata Nowakowska 100.00 Pruszcz Gdański
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Jerzy          Luter                 108.44 -  281: 369   58
+    2     8 Anna           Chybowska             100.00 -  178: 386   50
+    3    11 Alicja         Bielecka              100.00 -  253: 373   50
+    4    12 Marcin         Łydka                 100.00 +  288: 208  150
+    5    12 Leszek         Kilian                100.00 -  187: 357   50
+    6    12 Marcin         Łydka                 100.00 +  325: 141  150
+                                                          --------------- ---- ------
+                                                                     508  /  6  84.67
+
+
+
+
+	Ewa Stypułkowska 100.00 Warszawa
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Leokadia       Litwinowicz           119.63 -  226: 414   70
+    2    11 Anna           Bogucka               100.00 -  241: 312   50
+    3    13 Marcin         Łydka                 100.00 +  235: 220  150
+                                                          --------------- ---- ------
+                                                                     270  /  3  90.00
+
+
+
+
+	Marta Sztajnert 100.00 Wisła
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Agnieszka      Ja¶kiewicz            111.30 +  395: 301  161
+    2     6 Tomasz         Siwiński              106.64 -  309: 340   57
+    3     6 Leokadia       Litwinowicz           119.63 +  338: 324  170
+    4     4 Ewa            Ciszewska             125.72 +  426: 391  176
+    5     3 Tomasz         Zwoliński             142.46 -  264: 401   92
+    6     5 Krzysztof      Le¶niak               114.48 +  363: 344  164
+                                                          --------------- ---- ------
+                                                                     820  /  6 136.67
+
+
+
+
+	Blanka Zwolińska 100.00 Skierdy
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Arkadiusz      Łydka                 107.33 -  162: 499   57
+    2    13 Alicja         Bielecka              100.00 +  400: 389  150
+    3     9 Ewa            Ciszewska             125.72 -  206: 434   76
+    4    11 Jarosław       Karp                  103.32 -  285: 363   53
+    5    10 Anna           Chybowska             100.00 -  278: 383   50
+    6    11 Mirosław       Dymkowski             100.00 +  327: 251  150
+                                                          --------------- ---- ------
+                                                                     536  /  6  89.33
+
+
+
+
+	Marcin Łydka 100.00 Jaworzno
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    12 Tomasz         Siwiński              106.64 -  180: 337   57
+    2    12 Agnieszka      Ja¶kiewicz            111.30 -  164: 369   61
+    3    13 Ewa            Stypułkowska          100.00 -  220: 235   50
+    4    12 Małgorzata     Nowakowska            100.00 -  208: 288   50
+    5    11 Alicja         Bielecka              100.00 -  116: 423   50
+    6    12 Małgorzata     Nowakowska            100.00 -  141: 325   50
+                                                          --------------- ---- ------
+                                                                     318  /  6  53.00
+
+
+</pre></div><div id='p_rundy' class='page'><pre>Wyniki poszczególnych rund turnieju I Mistrzostwa Wisły
+
+
+
+Runda nr  1
+-----------
+Stół Gospodarz                             Go¶ć                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Tomasz         Zwoliński            - Anna           Arana                 369: 327
+   2 Alicja         Bielecka             - Andrzej        Rechowicz             298: 350
+   3 Ewa            Ciszewska            - Anna           Bogucka               388: 304
+   4 Anna           Chybowska            - Dorota         Zielińska             358: 487
+   5 Mariusz        Sylwestrzuk          - Mirosław       Dymkowski             374: 260
+   6 Elżbieta       Hardej               - Rafał          Wesołowski            239: 421
+   7 Leokadia       Litwinowicz          - Ewa            Stypułkowska          414: 226
+   8 Leszek         Kilian               - Joanna         Brychcy               305: 407
+   9 Agnieszka      Ja¶kiewicz           - Marta          Sztajnert             301: 395
+  10 Małgorzata     Nowakowska           - Jerzy          Luter                 281: 369
+  11 Arkadiusz      Łydka                - Blanka         Zwolińska             499: 162
+  12 Marcin         Łydka                - Tomasz         Siwiński              180: 337
+
+
+Runda nr  2
+-----------
+Stół Gospodarz                             Go¶ć                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Ewa            Ciszewska            - Arkadiusz      Łydka                 376: 392
+   2 Dorota         Zielińska            - Mariusz        Sylwestrzuk           383: 454
+   3 Rafał          Wesołowski           - Tomasz         Zwoliński             338: 506
+   4 Jerzy          Luter                - Leokadia       Litwinowicz           423: 378
+   5 Joanna         Brychcy              - Andrzej        Rechowicz             326: 392
+   6 Marta          Sztajnert            - Tomasz         Siwiński              309: 340
+   7 Krzysztof      Le¶niak              - Jarosław       Karp                  379: 416
+   8 Anna           Chybowska            - Małgorzata     Nowakowska            386: 178
+   9 Mirosław       Dymkowski            - Anna           Arana                 225: 551
+  10 Leszek         Kilian               - Elżbieta       Hardej                364: 204
+  11 Anna           Bogucka              - Ewa            Stypułkowska          312: 241
+  12 Agnieszka      Ja¶kiewicz           - Marcin         Łydka                 369: 164
+  13 Blanka         Zwolińska            - Alicja         Bielecka              400: 389
+
+
+Runda nr  3
+-----------
+Stół Gospodarz                             Go¶ć                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Jerzy          Luter                - Arkadiusz      Łydka                 433: 292
+   2 Andrzej        Rechowicz            - Tomasz         Zwoliński             416: 403
+   3 Tomasz         Siwiński             - Mariusz        Sylwestrzuk           432: 316
+   4 Anna           Arana                - Anna           Chybowska             421: 343
+   5 Joanna         Brychcy              - Dorota         Zielińska             369: 369
+   6 Leokadia       Litwinowicz          - Marta          Sztajnert             324: 338
+   7 Jarosław       Karp                 - Agnieszka      Ja¶kiewicz            272: 353
+   8 Krzysztof      Le¶niak              - Leszek         Kilian                341: 335
+   9 Blanka         Zwolińska            - Ewa            Ciszewska             206: 434
+  10 Rafał          Wesołowski           - Anna           Bogucka               419: 268
+  11 Alicja         Bielecka             - Małgorzata     Nowakowska            373: 253
+  12 Elżbieta       Hardej               - Mirosław       Dymkowski             207: 407
+  13 Ewa            Stypułkowska         - Marcin         Łydka                 235: 220
+
+
+Runda nr  4
+-----------
+Stół Gospodarz                             Go¶ć                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Tomasz         Siwiński             - Jerzy          Luter                 395: 356
+   2 Anna           Arana                - Andrzej        Rechowicz             340: 372
+   3 Tomasz         Zwoliński            - Krzysztof      Le¶niak               406: 297
+   4 Marta          Sztajnert            - Ewa            Ciszewska             426: 391
+   5 Arkadiusz      Łydka                - Agnieszka      Ja¶kiewicz            424: 244
+   6 Dorota         Zielińska            - Rafał          Wesołowski            265: 520
+   7 Mariusz        Sylwestrzuk          - Joanna         Brychcy               339: 340
+   8 Leszek         Kilian               - Leokadia       Litwinowicz           263: 332
+   9 Mirosław       Dymkowski            - Anna           Chybowska             360: 314
+  10 Anna           Bogucka              - Alicja         Bielecka              369: 241
+  11 Jarosław       Karp                 - Blanka         Zwolińska             363: 285
+  12 Małgorzata     Nowakowska           - Marcin         Łydka                 288: 208
+
+
+Runda nr  5
+-----------
+Stół Gospodarz                             Go¶ć                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Andrzej        Rechowicz            - Tomasz         Siwiński              459: 230
+   2 Jerzy          Luter                - Rafał          Wesołowski            315: 521
+   3 Tomasz         Zwoliński            - Marta          Sztajnert             401: 264
+   4 Arkadiusz      Łydka                - Joanna         Brychcy               393: 304
+   5 Anna           Arana                - Krzysztof      Le¶niak               272: 370
+   6 Ewa            Ciszewska            - Agnieszka      Ja¶kiewicz            346: 342
+   7 Anna           Bogucka              - Mariusz        Sylwestrzuk           380: 295
+   8 Leokadia       Litwinowicz          - Mirosław       Dymkowski             390: 263
+   9 Jarosław       Karp                 - Dorota         Zielińska             359: 381
+  10 Anna           Chybowska            - Blanka         Zwolińska             383: 278
+  11 Marcin         Łydka                - Alicja         Bielecka              116: 423
+  12 Małgorzata     Nowakowska           - Leszek         Kilian                187: 357
+
+
+Runda nr  6
+-----------
+Stół Gospodarz                             Go¶ć                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Rafał          Wesołowski           - Andrzej        Rechowicz             301: 452
+   2 Arkadiusz      Łydka                - Tomasz         Zwoliński             423: 303
+   3 Tomasz         Siwiński             - Ewa            Ciszewska             329: 455
+   4 Jerzy          Luter                - Leokadia       Litwinowicz           276: 354
+   5 Krzysztof      Le¶niak              - Marta          Sztajnert             344: 363
+   6 Dorota         Zielińska            - Anna           Bogucka               446: 284
+   7 Joanna         Brychcy              - Anna           Arana                 324: 316
+   8 Mariusz        Sylwestrzuk          - Anna           Chybowska             373: 375
+   9 Alicja         Bielecka             - Jarosław       Karp                  278: 388
+  10 Agnieszka      Ja¶kiewicz           - Leszek         Kilian                334: 280
+  11 Mirosław       Dymkowski            - Blanka         Zwolińska             251: 327
+  12 Marcin         Łydka                - Małgorzata     Nowakowska            141: 325
+</pre></div><div id='p_ranking' class='page'><pre></pre></div><div id='p_przebieg' class='page'>
+
+    </div><div style="clear:both;width:100%;" class="alignright">
+
+<script>
+<!--
+if ((document.getElementById("content").offsetHeight + document.getElementById("top").offsetHeight) > screen.height)
+    document.write("<br /><br /><a href='#top'>do góry</a>");
+-->
+</script>
+
+</div>
+</div>
+
+<div id="bottom">
+<ul id="bottomlinks">
+<div class='onleft'>
+ Osób on-line: 59</div>
+    <li><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+    <li><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+    <li><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+    <li><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+    <li><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+    <li><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+</ul>
+    SCRABBLE® jest zastrzeżonym znakiem towarowym J.W. Spears &amp; Sons&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://www.pfs.org.pl/prawaautorskie.php">© Prawa autorskie</a>
+</div>
+</body>
+</html>

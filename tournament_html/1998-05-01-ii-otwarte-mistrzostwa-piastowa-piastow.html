@@ -1,0 +1,1449 @@
+
+<html>
+<head>
+    <title>Polska Federacja Scrabble :: II Otwarte Mistrzostwa Piastowa</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="files/img/favicon.ico" />
+    <link rel="stylesheet" href="files/css/style.css" type="text/css" />
+	<link rel="stylesheet" href="files/css/style-index.css" type="text/css" />
+    <!--[if IE]><link rel="stylesheet" type="text/css" href="files/css/styleie.css" /><![endif]-->
+    <!--[if lt IE 7.]><script defer type="text/javascript" src="files/js/pngfix.js"></script><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="files/js/minmax.js"></script><![endif]-->
+    <script type="text/javascript" src="files/js/jquery.js"></script>
+    <script type="text/javascript" src="files/js/jquery-bp.js"></script>
+    <script type="text/javascript" src="files/js/java.js"></script>
+    <script>jSubmenu ("turnieje","kalendarz");jKalendarz();</script>
+    <script>
+    var url, page;
+
+    page = 'info';
+    url  = document.location.toString();
+
+    if (url.match ('#')) {
+      page = url.split ('#')[1];
+      if ($.inArray (page, [ 'info', 'relacja', 'klasyfikacja', 'hh', 'rundy', 'ranking', 'przebieg' ]) == -1)
+        page = 'info';
+    }
+
+    $(document).ready(function(){
+        $('a#listaucz').bind('click', function(event){
+            $('div#lista').toggle();
+            event.preventDefault();
+        }).toggle(function() { $(this).text('schowaj listę uczestników'); }, function() { $(this).text("pokaż listę uczestników"); });
+        $('div#lista table tr:last td').css({"border-bottom" : "none"});
+
+        $("a.przycisk").click (function (e) {
+            if ($(this).attr ('href') !== '#')
+                return true;
+
+            e.preventDefault ();
+
+            id       = this.id;
+            this.id += 'tmp';
+            window.location.hash = id;
+            this.id  = id;
+
+            $(".page").hide ();
+            $(".page#p_" + id).show ();
+
+            $("a.przycisk").removeClass ('active');
+            $(this).addClass ('active');
+
+            return false;
+        });
+
+        $("a.przycisk#" + page).click ();
+        $('html, body').animate ({ scrollTop: 0 }, 0);
+    });
+    </script>
+  <style type="text/css">
+    .page {
+        display: none;
+    }
+    #szczegoly{
+        width: 100%;
+        border-spacing: 0;
+        margin-top: 30px;
+        text-align: left;
+        font-size: inherit;
+    }
+    #szczegoly td{
+        padding: 10px 20px 10px 0;
+        vertical-align: top;
+    }
+    #szczegoly td:first-child{
+        font-weight: bold;
+        width: 160px;
+    }
+    div#lista{
+        display:none;
+        margin-top: 15px;
+    }
+    div#lista table{
+        margin-top: 10px;
+        text-align: left;
+        font-size: inherit;
+    }
+    div#lista table td{
+        padding: 3px 8px;
+        border-bottom: 1px dashed #1576AE;
+    }
+    div#lista table th{
+        padding: 0px 5px 10px 5px;
+    }
+    div#lista table td.ptaszek{
+        text-align: center;
+        background: url('files/img/tick.png') no-repeat center center;
+    }
+    div#lista table th{
+        white-space: nowrap;
+        width: auto;
+    }
+    div#lista table td:first-child, div#lista table th:first-child{
+        text-align:right;
+        width: auto;
+    }
+    </style>
+</head>
+
+<body>
+
+<script type="text/javascript">setMenu();</script>
+
+<div id="top" onclick="location.href='https://www.pfs.org.pl'">
+</div>
+<div id="menu">
+
+    <div id="m_glowna">
+        <div class="tab"><a href="https://www.pfs.org.pl/index.php"></a></div>
+
+        <ul>
+            <li class="sublink" id="aktualnosci"><a href="https://www.pfs.org.pl">Aktualności</a></li>
+            <li class="sublink" id="nowy"><a href="https://www.pfs.org.pl/dlanowych.php">Jestem tu nowy</a></li>
+            <li class="sublink" id="anagramator"><a href="https://www.pfs.org.pl/osps_online.php?main=1">Słownik online</a></li>
+            <li class="sublink" id="siodemka"><a href="https://www.pfs.org.pl/siodemka.php?main=1">Siódemka tygodnia</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+            <li class="sublink" id="dlasponsorow"><a href="https://www.pfs.org.pl/dlasponsorow.php">Dla sponsorów</a></li>
+            <li class="sublink" id="kontakt"><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+        </ul>
+    </div>
+    <div id="m_turnieje">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kalendarz.php"></a></div>
+        <ul>
+            <li class="sublink" id="kalendarz"><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+            <li class="sublink" id="regulaminy"><a href="https://www.pfs.org.pl/regulaminy.php">Regulaminy</a></li>
+            <li class="sublink" id="sedziowie"><a href="https://www.pfs.org.pl/sedziowie.php">Sędziowie</a></li>
+            <li class="sublink" id="gp"><a href="https://www.pfs.org.pl/gp2026.php">Grand Prix</a></li>
+<!--            <li class="sublink" id="mr"><a href="https://www.pfs.org.pl/mr2020.php">Mistrzostwa Regionów</a></li>-->
+            <li class="sublink" id="archiwum"><a href="https://www.pfs.org.pl/archiwum.php">Historia</a></li>
+            <li class="sublink" id="galeria"><a href="https://www.pfs.org.pl/galeria.php">Zdjęcia</a></li>
+            <li class="sublink" id="rekordy"><a href="https://www.pfs.org.pl/rekordy.php">Rekordy</a></li>
+        </ul>
+    </div>
+    <div id="m_pfs">
+        <div  class="tab"><a href="https://www.pfs.org.pl/opfs.php"></a></div>
+        <ul>
+            <li class="sublink" id="opfs"><a href="https://www.pfs.org.pl/opfs.php">O PFS</a></li>
+            <li class="sublink" id="jakprzystapic"><a href="https://www.pfs.org.pl/jakprzystapic.php">Jak przystąpić</a></li>
+            <li class="sublink" id="dlaczlonkow"><a href="https://www.pfs.org.pl/dlaczlonkow.php">Dla członków</a></li>
+            <li class="sublink" id="wladze"><a href="https://www.pfs.org.pl/wladze.php">Władze</a></li>
+            <li class="sublink" id="komisje"><a href="https://www.pfs.org.pl/komisje.php">Komisje</a></li>
+            <li class="sublink" id="statut"><a href="https://www.pfs.org.pl/statut.php">Statut</a></li>
+            <li class="sublink" id="uchwaly"><a href="https://www.pfs.org.pl/uchwaly.php">Uchwały</a></li>
+            <li class="sublink" id="honorowi"><a href="https://www.pfs.org.pl/honorowi.php">Honorowi członkowie</a></li>
+            <li class="sublink" id="finanse"><a href="https://www.pfs.org.pl/finanse.php">Finanse</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabble">
+        <div  class="tab"><a href="https://www.pfs.org.pl/osps_online.php?desktop=1"></a></div>
+        <ul>
+            <li class="sublink" id="osps_online"><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+            <li class="sublink" id="zds"><a href="https://www.pfs.org.pl/zds2.php">ZDS</a></li>
+            <li class="sublink" id="osps"><a href="https://www.pfs.org.pl/osps.php">OSPS</a></li>
+            <li class="sublink" id="aktualizacje"><a href="https://www.pfs.org.pl/osps_aktualizacje.php">Aktualizacje</a></li>
+            <li class="sublink" id="dwojki"><a href="https://www.pfs.org.pl/dwojki.php">2-literówki</a></li>
+            <li class="sublink" id="trojki"><a href="https://www.pfs.org.pl/trojki.php">3-literówki</a></li>
+            <li class="sublink" id="siodemkat"><a href="https://www.pfs.org.pl/siodemka.php">Siódemka tygodnia</a></li>
+            <li class="sublink" id="slowneroznosci"><a href="https://www.pfs.org.pl/slowneroznosci.php">Słowne różności</a></li>
+        </ul>
+    </div>
+    <div id="m_ranking">
+        <div  class="tab"><a href="https://www.pfs.org.pl/ranking.php"></a></div>
+        <ul>
+            <li class="sublink" id="aktranking"><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+            <li class="sublink" id="medale"><a href="https://www.pfs.org.pl/medale.php">Klasyfikacja medalowa</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabblisci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/mistrzowiepolski.php"></a></div>
+        <ul>
+            <li class="sublink" id="mistrzowiepolski"><a href="https://www.pfs.org.pl/mistrzowiepolski.php">Mistrzowie Polski</a></li>
+            <li class="sublink" id="zdobywcypp"><a href="https://www.pfs.org.pl/zdobywcypp.php">Zdobywcy Pucharu Polski</a></li>
+            <li class="sublink" id="zwyciezcygp"><a href="https://www.pfs.org.pl/zwyciezcygp.php">Zwycięzcy Grand Prix</a></li>
+            <li class="sublink" id="liderzyrankingu"><a href="https://www.pfs.org.pl/liderzyrankingu.php">Liderzy rankingu</a></li>
+            <li class="sublink" id="zwyciezcylemans"><a href="https://www.pfs.org.pl/zwyciezcylemans.php">Zwycięzcy 24h Le Mans</a></li>
+            <li class="sublink" id="zwyciezcykmp"><a href="https://www.pfs.org.pl/zwyciezcykmp.php">KMP</a>
+        </ul>
+    </div>
+    <div id="m_kluby">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kluby.php"></a></div>
+        <ul>
+            <li class="sublink" id="rejestrklubow"><a href="https://www.pfs.org.pl/kluby.php">Rejestr klubów</a></li>
+            <li class="sublink" id="kmp"><a href="https://www.pfs.org.pl/kmp.php">KMP</a></li>
+            <li class="sublink" id="wiescizklubow"><a href="https://www.pfs.org.pl/wiescizklubow.php">Wieści z klubów</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/about.php">Statystyki klubowe</a></li>
+        </ul>
+    </div>
+    <div id="m_roznosci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/historia.php"></a></div>
+        <ul>
+            <li class="sublink" id="historia"><a href="https://www.pfs.org.pl/historia.php">Historia</a></li>
+            <li class="sublink" id="odmiany"><a href="https://www.pfs.org.pl/odmiany.php">Odmiany</a></li>
+            <li class="sublink" id="anegdoty"><a href="https://www.pfs.org.pl/anegdoty.php">Anegdoty</a></li>
+            <li class="sublink" id="scrabblealia"><a href="https://www.pfs.org.pl/scrabblealia.php">Scrabblealia</a></li>
+            <li class="sublink" id="scrabblenet"><a href="https://www.pfs.org.pl/scrabblenet.php">Scrabble w internecie</a></li>
+            <li class="sublink" id="programy"><a href="https://www.pfs.org.pl/programy.php">Programy</a></li>
+            <li class="sublink" id="download"><a href="https://www.pfs.org.pl/download.php">Do pobrania</a></li>
+            <li class="sublink" id="ksiazki"><a href="https://www.pfs.org.pl/ksiazki.php">Książki</a></li>
+            <li class="sublink" id="slowniczek"><a href="https://www.pfs.org.pl/slowniczek.php">Słowniczek</a></li>
+        </ul>
+    </div>
+    <div id="m_english">
+        <div  class="tab"><a href="https://www.pfs.org.pl/english.php"></a></div>
+        <ul>
+            <li class="sublink" id="about"><a href="https://www.pfs.org.pl/english.php">About Polish Scrabble</a></li>
+            <li class="sublink" id="news"><a href="https://www.pfs.org.pl/en_news.php">News</a></li>
+            <li class="sublink" id="bartek"><a href="https://www.pfs.org.pl/bartek.php">Bartek w Johor Bahru</a></li>
+            <li class="sublink" id="franko"><a href="https://www.pfs.org.pl/franko.php">Scrabble frankofońskie</a></li>
+        </ul>
+    </div>
+</div>
+
+<div id="submenu"></div>
+<div id="content">
+<div id='nextTours'>
+		<div class='nextTour' onclick='location.href="turniej.php?id=374"'>
+			<div class='karteczka small1'>
+				<span class='miasto'>Szczecin</span><span class='dzien'><span class='big'>25</span><br />kwietnia</span></div>
+			<div class='kartka big1'>
+				<span class='miasto'>Szczecin</span>
+				<span class='dzien'><b>25-26 kwietnia</b></span>
+				<span class='nazwaturnieju'>II Otwarte Mistrzostwa Ziemi Szczecińskiej</span><span class='gp'>Grand&nbsp;Prix&nbsp;1998</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=373"'>
+			<div class='karteczka small2'>
+				<span class='miasto'>Piastów</span><span class='dzien'><span class='big'> 1</span><br />maja</span></div>
+			<div class='kartka big2'>
+				<span class='miasto'>Piastów</span>
+				<span class='dzien'><b> 1- 2 maja</b></span>
+				<span class='nazwaturnieju'>II Otwarte Mistrzostwa Piastowa</span><span class='gp'>Grand&nbsp;Prix&nbsp;1998</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=372"'>
+			<div class='karteczka small3'>
+				<span class='miasto'>Chorzów</span><span class='dzien'><span class='big'>16</span><br />maja</span></div>
+			<div class='kartka big3'>
+				<span class='miasto'>Chorzów</span>
+				<span class='dzien'><b>16-17 maja</b></span>
+				<span class='nazwaturnieju'>Turniej Frustratów IV Pucharu Polski</span></div>
+		</div></div><div class='naglowekrelacji'><span class='tytul'>II Otwarte Mistrzostwa Piastowa<span class='nazwa'>01 - 02 maja 1998 —  II Otwarte Mistrzostwa Piastowa</span></span><a href='#' id='info' class='przycisk'>Informacje</a><a href='#' id='relacja' class='przycisk'>Relacja</a><a href='#' id='klasyfikacja' class='przycisk'>Wyniki</a><a href='#' id='hh' class='przycisk'>HH</a><div class='galleries'><img src='files/img/gallery.png' style='visibility:hidden;' alt='galeria' /></div></div><h1 style='color:black; margin-top:0px; margin-bottom:30px; padding: 0px'>II Otwarte Mistrzostwa Piastowa<span><img src='files/img/map-2.png' style='vertical-align: bottom;' title='Grand Prix'> Piastów, 01 - 02 maja 1998 <br>Grand&nbsp;Prix&nbsp;1998</span></h1><div id='p_relacja' class='page'><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><div class='relacja' style='clear:both;'><div><pre>
+ 1. Wojciech Usakiewicz (Warszawa)
+ 2. Tomasz Zwoliński (Warszawa)
+ 3. Dariusz Banaszek (Sokołów Podlaski)
+ 4. Mariusz Skrobosz (Warszawa)
+ 5. Paweł Stefaniak (Biała Podlaska)
+ 6. Sławomir Nosek (Mielec)
+ 7. Michał Derlacki (Warszawa)
+ 8. Mariusz Orzeł (Nowe Miasto Lubawskie)
+ 9. Jolanta Hoffmann (Warszawa)
+ 10. Paweł Stanosz (Warszawa) 
+
+53 uczestników, 12 rund 
+</pre></div><div class='autor'></div></div><div style='clear:both;'></div></div><div id='p_info' class='page'><br><p align='center'></p><br><br><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br>Zobacz, jak było na poprzednich turniejach:<br><a href='turniej.php?id=387'>I Otwarte Mistrzostwa Piastowa</a><br><table id='szczegoly' class='ramkadolna'></table><br /><br /></div><div id='p_klasyfikacja' class='page'><pre>Wyniki turnieju II Otwarte Mistrzostwa Piastowa
+
+Lp. Imię            Nazwisko             Miasto               Ranking  Duże pkt Małe pkt Skalpy   Różn. MP
+--- --------------- -------------------- -------------------- -------- -------- -------- -------- --------
+  1 Wojciech        Usakiewicz           Warszawa               116.00     10.0     4582     1886      586
+  2 Tomasz          Zwoliński            Skierdy                138.00      9.0     4674     1799      564
+  3 Dariusz         Banaszek             Warszawa               140.00      9.0     4505     1764      381
+  4 Mariusz         Skrobosz             Warszawa               114.00      9.0     4403     1786      431
+  5 Paweł           Stefaniak            Biała Podlaska         139.00      8.0     4427     1654      221
+  6 Sławomir        Nosek                Mielec                 120.00      8.0     4409     1566      528
+  7 Michał          Derlacki             Warszawa               138.00      8.0     4371     1640       33
+  8 Mariusz         Orzeł                Nowe Miasto Lubawskie   120.00      7.5     4506     1644      590
+  9 Jolanta         Hoffmann             Kraków                 123.00      7.0     4509     1508      576
+ 10 Paweł           Stanosz              Warszawa               138.00      7.0     4430     1567      288
+ 11 Edward          Stefaniak            Biała Podlaska         123.00      7.0     4428     1442      554
+ 12 Zdzisław        Szota                Warszawa               128.00      7.0     4372     1554       46
+ 13 Stefan          Dawidson             Częstochowa            120.00      7.0     4322     1512      203
+ 14 Andrzej         Chmielewski          Warszawa               100.00      7.0     4247     1476      216
+ 15 Waldemar        Czerwoniec           Warszawa               121.00      7.0     4240     1516      193
+ 16 Grzegorz        Święcki              Białystok              135.00      7.0     4235     1468     -110
+ 17 Rafał           Matczak              Milanówek               79.00      7.0     3815     1328     -121
+ 18 Małgorzata      Kania                Milanówek              126.00      6.5     4399     1522      426
+ 19 Grzegorz        Wiączkowski          Wrocław                117.00      6.0     4347     1370      431
+ 20 Andrzej         Kwiatkowski          Warszawa               102.00      6.0     4306     1303       49
+ 21 Andrzej         Rechowicz            Katowice               111.00      6.0     4305     1456      -46
+ 22 Maciej          Czupryniak           Milanówek              124.00      6.0     4263     1317      287
+ 23 Tomasz          Szymański            Gorzów Wielkopolski    121.00      6.0     4233     1306      184
+ 24 Mariusz         Gancarczyk           Mielec                 112.00      6.0     4148     1225       73
+ 25 Wiesław         Olewiński            Warszawa               108.00      6.0     4117     1314      -57
+ 26 Marcin          Skrzyniarz           Warszawa               123.00      6.0     4009     1333       94
+ 27 Stanisław       Ochot                Katowice               100.00      6.0     3910     1199      138
+ 28 Krzysztof       Usakiewicz           Warszawa                90.00      6.0     3886     1187       47
+ 29 Grzegorz        Kulawiak             Warszawa               106.00      6.0     3856     1254     -374
+ 30 Mateusz         Żbikowski            Warszawa                98.00      6.0     3772     1270     -171
+ 31 Ryszard         Żydaczewski          Lubin                  117.00      5.0     4133     1227       22
+ 32 Marcin          Mroziuk              Warszawa               104.00      5.0     4113     1308      203
+ 33 Józef           Burzyński            Ełk                    111.00      5.0     4107     1194      -13
+ 34 Stanisław       Gasik                Warszawa               110.00      5.0     4023     1217      246
+ 35 Leszek          Stecuła              Bytom                  114.00      5.0     4009     1279     -230
+ 36 Krzysztof       Bukowski             Milanówek               99.00      5.0     3963     1171     -329
+ 37 Katarzyna       Żuławska             Katowice               100.00      5.0     3873     1134      -42
+ 38 Mariola         Osajda-Matczak       Milanówek               83.00      5.0     3854     1221     -213
+ 39 Bogdan          Pokojski             Piastów                100.00      5.0     3594     1178     -297
+ 40 Irena           Ficak                Mielec                  90.00      4.0     3797     1129     -439
+ 41 Magdalena       Ochot                Katowice               100.00      3.5     3318      949     -421
+ 42 Ewa             Czerwoniec           Warszawa               104.00      3.5     3082      911     -524
+ 43 Ziemowit        Pazda                Wrocław                 84.00      3.0     2875      820     -507
+ 44 Marcin          Kamiński             Warszawa               110.00      3.0     2005      632      110
+ 45 Maria           Glegoła-Szczap       Warszawa               100.00      3.0     1793      600     -109
+ 46 Jerzy           Ługowski             Piastów                100.00      2.0     2519      751    -1177
+ 47 Marek           Dubek                Warszawa                96.00      2.0     1767      539      -76
+ 48 Paweł           Tomaszewski          Pruszków               100.00      1.0     2591      649    -1075
+ 49 Mateusz         Dubek                Warszawa                78.00      1.0     1370      346     -184
+ 50 Zygmunt         Sołtysiak            Piastów                112.00      1.0     1028      258      -64
+ 51 Barbara         Żydaczewska          Lubin                  100.00      1.0      776      250     -137
+ 52 Michał          Siedlecki            Piastów                100.00      0.0      308      140     -720
+ 53 Małgorzata      Jakubowska           Piastów                100.00      0.0       22       50     -284
+</pre></div><div id='p_hh' class='page'><pre>Wyniki poszczególnych graczy w turnieju II Otwarte Mistrzostwa Piastowa
+
+
+
+	Dariusz Banaszek 140.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Andrzej        Rechowicz             111.00 -  296: 532   61
+    2    20 Krzysztof      Bukowski               99.00 +  485: 265  149
+    3    10 Paweł          Stanosz               138.00 +  446: 319  188
+    4     5 Leszek         Stecuła               114.00 +  357: 305  164
+    5     4 Paweł          Stefaniak             139.00 +  422: 319  189
+    6     2 Małgorzata     Kania                 126.00 +  331: 326  176
+    7     2 Wojciech       Usakiewicz            116.00 +  406: 346  166
+    8     1 Tomasz         Zwoliński             138.00 +  357: 317  188
+    9     1 Mariusz        Orzeł                 120.00 -  367: 423   70
+   10     3 Zdzisław       Szota                 128.00 +  326: 284  178
+   11     2 Waldemar       Czerwoniec            121.00 +  368: 283  171
+   12     2 Mariusz        Skrobosz              114.00 -  344: 405   64
+                                                          --------------- ---- ------
+                                                                    1764  / 12 147.00
+
+
+
+
+	Paweł Stefaniak 139.00 Biała Podlaska           
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Marcin         Kamiński              110.00 +  341: 271  160
+    2    12 Bogdan         Pokojski              100.00 +  430: 237  150
+    3     4 Mariusz        Skrobosz              114.00 +  384: 266  164
+    4     2 Wojciech       Usakiewicz            116.00 -  373: 383   66
+    5     4 Dariusz        Banaszek              140.00 -  319: 422   90
+    6     8 Stanisław      Gasik                 110.00 +  366: 327  160
+    7     5 Zdzisław       Szota                 128.00 +  412: 348  178
+    8     4 Stefan         Dawidson              120.00 +  369: 362  170
+    9     3 Michał         Derlacki              138.00 +  422: 366  188
+   10     1 Tomasz         Zwoliński             138.00 -  341: 439   88
+   11     4 Mariusz        Orzeł                 120.00 +  352: 333  170
+   12     4 Sławomir       Nosek                 120.00 -  318: 452   70
+                                                          --------------- ---- ------
+                                                                    1654  / 12 137.83
+
+
+
+
+	Michał Derlacki 138.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Stanisław      Gasik                 110.00 +  345: 291  160
+    2    10 Marcin         Mroziuk               104.00 +  376: 340  154
+    3     5 Waldemar       Czerwoniec            121.00 +  384: 359  171
+    4     3 Sławomir       Nosek                 120.00 +  374: 299  170
+    5     2 Tomasz         Zwoliński             138.00 -  276: 386   88
+    6     5 Jolanta        Hoffmann              123.00 +  383: 364  173
+    7     4 Grzegorz       Wiączkowski           117.00 -  344: 398   67
+    8     6 Andrzej        Rechowicz             111.00 +  459: 362  161
+    9     3 Paweł          Stefaniak             139.00 -  366: 422   89
+   10     5 Mariusz        Skrobosz              114.00 -  284: 423   64
+   11     7 Marcin         Skrzyniarz            123.00 +  382: 348  173
+   12     5 Mariusz        Orzeł                 120.00 +  398: 346  170
+                                                          --------------- ---- ------
+                                                                    1640  / 12 136.67
+
+
+
+
+	Paweł Stanosz 138.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Wiesław        Olewiński             108.00 +  475: 272  158
+    2     2 Józef          Burzyński             111.00 -  307: 352   61
+    3    10 Dariusz        Banaszek              140.00 -  319: 446   90
+    4    15 Ryszard        Żydaczewski           117.00 +  345: 338  167
+    5    12 Tomasz         Szymański             121.00 +  431: 279  171
+    6     6 Andrzej        Rechowicz             111.00 +  327: 323  161
+    7     6 Grzegorz       Święcki               135.00 +  507: 273  185
+    8     2 Małgorzata     Kania                 126.00 +  353: 327  176
+    9     2 Tomasz         Zwoliński             138.00 -  311: 438   88
+   10     4 Wojciech       Usakiewicz            116.00 -  370: 396   66
+   11     5 Jolanta        Hoffmann              123.00 -  345: 359   73
+   12     6 Waldemar       Czerwoniec            121.00 +  340: 339  171
+                                                          --------------- ---- ------
+                                                                    1567  / 12 130.58
+
+
+
+
+	Tomasz Zwoliński 138.00 Skierdy         
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Grzegorz       Kulawiak              106.00 +  451: 317  156
+    2     4 Małgorzata     Kania                 126.00 +  390: 379  176
+    3     2 Leszek         Stecuła               114.00 +  455: 355  164
+    4     1 Stefan         Dawidson              120.00 -  389: 401   70
+    5     2 Michał         Derlacki              138.00 +  386: 276  188
+    6     1 Wojciech       Usakiewicz            116.00 +  373: 371  166
+    7     1 Mariusz        Orzeł                 120.00 +  342: 326  170
+    8     1 Dariusz        Banaszek              140.00 -  317: 357   90
+    9     2 Paweł          Stanosz               138.00 +  438: 311  188
+   10     1 Paweł          Stefaniak             139.00 +  439: 341  189
+   11     1 Mariusz        Skrobosz              114.00 -  297: 311   64
+   12     3 Zdzisław       Szota                 128.00 +  397: 365  178
+                                                          --------------- ---- ------
+                                                                    1799  / 12 149.92
+
+
+
+
+	Grzegorz Święcki 135.00 Białystok                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Marcin         Mroziuk               104.00 -  311: 353   54
+    2    17 Grzegorz       Kulawiak              106.00 +  346: 311  156
+    3    14 Maciej         Czupryniak            124.00 +  355: 339  174
+    4    10 Zdzisław       Szota                 128.00 +  470: 393  178
+    5     5 Mariusz        Orzeł                 120.00 -  338: 446   70
+    6    10 Andrzej        Chmielewski           100.00 +  378: 269  150
+    7     6 Paweł          Stanosz               138.00 -  273: 507   88
+    8     9 Marcin         Skrzyniarz            123.00 -  336: 370   73
+    9    12 Mariola        Osajda-Matczak         83.00 +  326: 271  133
+   10    10 Sławomir       Nosek                 120.00 -  331: 415   70
+   11    12 Leszek         Stecuła               114.00 +  363: 315  164
+   12    11 Wiesław        Olewiński             108.00 +  408: 356  158
+                                                          --------------- ---- ------
+                                                                    1468  / 12 122.33
+
+
+
+
+	Zdzisław Szota 128.00 Warszawa               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Ewa            Czerwoniec            104.00 +  371: 319  154
+    2     8 Mariusz        Skrobosz              114.00 -  299: 401   64
+    3    13 Irena          Ficak                  90.00 +  368: 322  140
+    4    10 Grzegorz       Święcki               135.00 -  393: 470   85
+    5    13 Marcin         Mroziuk               104.00 +  391: 300  154
+    6     9 Marcin         Skrzyniarz            123.00 +  429: 364  173
+    7     5 Paweł          Stefaniak             139.00 -  348: 412   89
+    8     8 Edward         Stefaniak             123.00 +  374: 358  173
+    9     6 Stefan         Dawidson              120.00 +  426: 343  170
+   10     3 Dariusz        Banaszek              140.00 -  284: 326   90
+   11     6 Maciej         Czupryniak            124.00 +  324: 314  174
+   12     3 Tomasz         Zwoliński             138.00 -  365: 397   88
+                                                          --------------- ---- ------
+                                                                    1554  / 12 129.50
+
+
+
+
+	Małgorzata Kania 126.00 Milanówek                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Andrzej        Kwiatkowski           102.00 +  443: 350  152
+    2     4 Tomasz         Zwoliński             138.00 -  379: 390   88
+    3     8 Marcin         Skrzyniarz            123.00 +  427: 232  173
+    4     4 Jolanta        Hoffmann              123.00 +  396: 334  173
+    5     3 Andrzej        Rechowicz             111.00 +  369: 283  161
+    6     2 Dariusz        Banaszek              140.00 -  326: 331   90
+    7     3 Waldemar       Czerwoniec            121.00 +  361: 297  171
+    8     2 Paweł          Stanosz               138.00 -  327: 353   88
+    9     5 Grzegorz       Wiączkowski           117.00 +  411: 263  167
+   10     2 Mariusz        Orzeł                 120.00 =  342: 342  120
+   11     3 Wojciech       Usakiewicz            116.00 -  275: 446   66
+   12     7 Edward         Stefaniak             123.00 -  343: 352   73
+                                                          --------------- ---- ------
+                                                                    1522  / 12 126.83
+
+
+
+
+	Maciej Czupryniak 124.00 Milanówek                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Bogdan         Pokojski              100.00 -  311: 329   50
+    2    18 Marek          Dubek                  96.00 +  348: 232  146
+    3    14 Grzegorz       Święcki               135.00 -  339: 355   85
+    4    18 Marcin         Mroziuk               104.00 -  272: 406   54
+    5    21 Katarzyna      Żuławska              100.00 -  342: 373   50
+    6    22 Andrzej        Kwiatkowski           102.00 +  398: 290  152
+    7    18 Irena          Ficak                  90.00 +  459: 313  140
+    8    14 Leszek         Stecuła               114.00 +  378: 295  164
+    9    11 Andrzej        Rechowicz             111.00 +  425: 311  161
+   10     9 Grzegorz       Wiączkowski           117.00 +  378: 356  167
+   11     6 Zdzisław       Szota                 128.00 -  314: 324   78
+   12     9 Stefan         Dawidson              120.00 -  299: 392   70
+                                                          --------------- ---- ------
+                                                                    1317  / 12 109.75
+
+
+
+
+	Jolanta Hoffmann 123.00 Kraków                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Michał         Siedlecki             100.00 +  544: 140  150
+    2     1 Andrzej        Rechowicz             111.00 +  427: 306  161
+    3     1 Stefan         Dawidson              120.00 -  328: 336   70
+    4     4 Małgorzata     Kania                 126.00 -  334: 396   76
+    5     8 Mateusz        Żbikowski              98.00 +  339: 244  148
+    6     5 Michał         Derlacki              138.00 -  364: 383   88
+    7    10 Ryszard        Żydaczewski           117.00 +  364: 304  167
+    8     7 Waldemar       Czerwoniec            121.00 -  371: 406   71
+    9    10 Edward         Stefaniak             123.00 +  398: 378  173
+   10     7 Andrzej        Chmielewski           100.00 +  371: 348  150
+   11     5 Paweł          Stanosz               138.00 +  359: 345  188
+   12     1 Wojciech       Usakiewicz            116.00 -  310: 347   66
+                                                          --------------- ---- ------
+                                                                    1508  / 12 125.67
+
+
+
+
+	Marcin Skrzyniarz 123.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    12 Andrzej        Chmielewski           100.00 -  298: 343   50
+    2    19 Ziemowit       Pazda                  84.00 +  531: 185  134
+    3     8 Małgorzata     Kania                 126.00 -  232: 427   76
+    5    11 Józef          Burzyński             111.00 +  341: 330  161
+    6     9 Zdzisław       Szota                 128.00 -  364: 429   78
+    7    11 Stanisław      Gasik                 110.00 +  381: 359  160
+    8     9 Grzegorz       Święcki               135.00 +  370: 336  185
+    9     7 Mariusz        Skrobosz              114.00 -  358: 428   64
+   10     8 Stefan         Dawidson              120.00 +  354: 326  170
+   11     7 Michał         Derlacki              138.00 -  348: 382   88
+   12     8 Grzegorz       Wiączkowski           117.00 +  432: 370  167
+                                                          --------------- ---- ------
+                                                                    1333  / 11 121.18
+
+
+
+
+	Edward Stefaniak 123.00 Biała Podlaska           
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Paweł          Tomaszewski           100.00 +  388: 200  150
+    2     7 Sławomir       Nosek                 120.00 -  293: 317   70
+    3    12 Marcin         Mroziuk               104.00 +  383: 284  154
+    4     8 Mariusz        Orzeł                 120.00 -  316: 393   70
+    5    14 Irena          Ficak                  90.00 +  360: 297  140
+    6    11 Mariusz        Gancarczyk            112.00 -  361: 402   62
+    7    12 Wiesław        Olewiński             108.00 +  426: 252  158
+    8     8 Zdzisław       Szota                 128.00 -  358: 374   78
+    9    10 Jolanta        Hoffmann              123.00 -  378: 398   73
+   10    13 Andrzej        Rechowicz             111.00 +  466: 285  161
+   11     9 Andrzej        Chmielewski           100.00 +  347: 329  150
+   12     7 Małgorzata     Kania                 126.00 +  352: 343  176
+                                                          --------------- ---- ------
+                                                                    1442  / 12 120.17
+
+
+
+
+	Waldemar Czerwoniec 121.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    13 Stanisław      Ochot                 100.00 +  365: 287  150
+    2     9 Tomasz         Szymański             121.00 +  388: 295  171
+    3     5 Michał         Derlacki              138.00 -  359: 384   88
+    4     7 Mariola        Osajda-Matczak         83.00 +  365: 329  133
+    5     6 Andrzej        Chmielewski           100.00 +  373: 319  150
+    6     4 Mariusz        Skrobosz              114.00 +  310: 307  164
+    7     3 Małgorzata     Kania                 126.00 -  297: 361   76
+    8     7 Jolanta        Hoffmann              123.00 +  406: 371  173
+    9     4 Wojciech       Usakiewicz            116.00 -  326: 415   66
+   10     6 Ryszard        Żydaczewski           117.00 +  429: 271  167
+   11     2 Dariusz        Banaszek              140.00 -  283: 368   90
+   12     6 Paweł          Stanosz               138.00 -  339: 340   88
+                                                          --------------- ---- ------
+                                                                    1516  / 12 126.33
+
+
+
+
+	Tomasz Szymański 121.00 Gorzów Wielkopolski      
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    14 Maria          Glegoła-Szczap        100.00 +  356: 271  150
+    2     9 Waldemar       Czerwoniec            121.00 -  295: 388   71
+    3    15 Zygmunt        Sołtysiak             112.00 +  413: 379  162
+    4     9 Mariusz        Skrobosz              114.00 -  370: 371   64
+    5    12 Paweł          Stanosz               138.00 -  279: 431   88
+    6    16 Marcin         Mroziuk               104.00 -  309: 326   54
+    7    17 Józef          Burzyński             111.00 -  293: 328   61
+    8    19 Andrzej        Kwiatkowski           102.00 +  452: 313  152
+    9    18 Krzysztof      Usakiewicz             90.00 -  298: 349   40
+   10    19 Irena          Ficak                  90.00 +  404: 288  140
+   11    16 Stanisław      Gasik                 110.00 +  379: 313  160
+   12    14 Leszek         Stecuła               114.00 +  385: 292  164
+                                                          --------------- ---- ------
+                                                                    1306  / 12 108.83
+
+
+
+
+	Stefan Dawidson 120.00 Częstochowa            
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    15 Magdalena      Ochot                 100.00 +  404: 225  150
+    2     6 Mariola        Osajda-Matczak         83.00 +  494: 403  133
+    3     1 Jolanta        Hoffmann              123.00 +  336: 328  173
+    4     1 Tomasz         Zwoliński             138.00 +  401: 389  188
+    5     1 Wojciech       Usakiewicz            116.00 -  285: 367   66
+    6     3 Mariusz        Orzeł                 120.00 -  262: 400   70
+    7     7 Sławomir       Nosek                 120.00 +  395: 299  170
+    8     4 Paweł          Stefaniak             139.00 -  362: 369   89
+    9     6 Zdzisław       Szota                 128.00 -  343: 426   78
+   10     8 Marcin         Skrzyniarz            123.00 -  326: 354   73
+   11    10 Mateusz        Żbikowski              98.00 +  322: 260  148
+   12     9 Maciej         Czupryniak            124.00 +  392: 299  174
+                                                          --------------- ---- ------
+                                                                    1512  / 12 126.00
+
+
+
+
+	Sławomir Nosek 120.00 Mielec                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    17 Jerzy          Ługowski              100.00 +  387: 177  150
+    2     7 Edward         Stefaniak             123.00 +  317: 293  173
+    3     6 Mateusz        Żbikowski              98.00 +  372: 305  148
+    4     3 Michał         Derlacki              138.00 -  299: 374   88
+    5     7 Mariusz        Skrobosz              114.00 -  315: 364   64
+    6    12 Rafał          Matczak                79.00 +  452: 235  129
+    7     7 Stefan         Dawidson              120.00 -  299: 395   70
+    8    10 Andrzej        Chmielewski           100.00 -  267: 389   50
+    9    13 Wiesław        Olewiński             108.00 +  394: 346  158
+   10    10 Grzegorz       Święcki               135.00 +  415: 331  185
+   11     8 Mariusz        Gancarczyk            112.00 +  440: 354  162
+   12     4 Paweł          Stefaniak             139.00 +  452: 318  189
+                                                          --------------- ---- ------
+                                                                    1566  / 12 130.50
+
+
+
+
+	Mariusz Orzeł 120.00 Nowe Miasto Lubawskie       
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    16 Katarzyna      Żuławska              100.00 +  417: 226  150
+    2     5 Wojciech       Usakiewicz            116.00 -  306: 379   66
+    3    11 Andrzej        Kwiatkowski           102.00 +  386: 275  152
+    4     8 Edward         Stefaniak             123.00 +  393: 316  173
+    5     5 Grzegorz       Święcki               135.00 +  446: 338  185
+    6     3 Stefan         Dawidson              120.00 +  400: 262  170
+    7     1 Tomasz         Zwoliński             138.00 -  326: 342   88
+    8     3 Grzegorz       Wiączkowski           117.00 +  388: 319  167
+    9     1 Dariusz        Banaszek              140.00 +  423: 367  190
+   10     2 Małgorzata     Kania                 126.00 =  342: 342  126
+   11     4 Paweł          Stefaniak             139.00 -  333: 352   89
+   12     5 Michał         Derlacki              138.00 -  346: 398   88
+                                                          --------------- ---- ------
+                                                                    1644  / 12 137.00
+
+
+
+
+	Grzegorz Wiączkowski 117.00 Wrocław               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    19 Mateusz        Żbikowski              98.00 -  338: 345   48
+    2    15 Irena          Ficak                  90.00 -  341: 360   40
+    3    20 Michał         Siedlecki             100.00 +  484: 168  150
+    4    13 Mariusz        Gancarczyk            112.00 +  373: 344  162
+    5     9 Leszek         Stecuła               114.00 +  337: 248  164
+    6     7 Wiesław        Olewiński             108.00 +  411: 248  158
+    7     4 Michał         Derlacki              138.00 +  398: 344  188
+    8     3 Mariusz        Orzeł                 120.00 -  319: 388   70
+    9     5 Małgorzata     Kania                 126.00 -  263: 411   76
+   10     9 Maciej         Czupryniak            124.00 -  356: 378   74
+   11    11 Ryszard        Żydaczewski           117.00 +  357: 250  167
+   12     8 Marcin         Skrzyniarz            123.00 -  370: 432   73
+                                                          --------------- ---- ------
+                                                                    1370  / 12 114.17
+
+
+
+
+	Ryszard Żydaczewski 117.00 Lubin                    
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    18 Krzysztof      Bukowski               99.00 +  468: 292  149
+    2     3 Leszek         Stecuła               114.00 -  348: 392   64
+    3     9 Mariola        Osajda-Matczak         83.00 -  291: 344   33
+    4    15 Paweł          Stanosz               138.00 -  338: 345   88
+    5    19 Andrzej        Kwiatkowski           102.00 +  452: 311  152
+    6    14 Józef          Burzyński             111.00 +  336: 268  161
+    7    10 Jolanta        Hoffmann              123.00 -  304: 364   73
+    8    13 Stanisław      Gasik                 110.00 +  409: 341  160
+    9     9 Mateusz        Żbikowski              98.00 +  415: 286  148
+   10     6 Waldemar       Czerwoniec            121.00 -  271: 429   71
+   11    11 Grzegorz       Wiączkowski           117.00 -  250: 357   67
+   12    13 Andrzej        Rechowicz             111.00 -  251: 382   61
+                                                          --------------- ---- ------
+                                                                    1227  / 12 102.25
+
+
+
+
+	Wojciech Usakiewicz 116.00 Warszawa               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    20 Marek          Dubek                  96.00 +  411: 301  146
+    2     5 Mariusz        Orzeł                 120.00 +  379: 306  170
+    3     3 Józef          Burzyński             111.00 +  364: 325  161
+    4     2 Paweł          Stefaniak             139.00 +  383: 373  189
+    5     1 Stefan         Dawidson              120.00 +  367: 285  170
+    6     1 Tomasz         Zwoliński             138.00 -  371: 373   88
+    7     2 Dariusz        Banaszek              140.00 -  346: 406   90
+    8     5 Mariusz        Skrobosz              114.00 +  357: 346  164
+    9     4 Waldemar       Czerwoniec            121.00 +  415: 326  171
+   10     4 Paweł          Stanosz               138.00 +  396: 370  188
+   11     3 Małgorzata     Kania                 126.00 +  446: 275  176
+   12     1 Jolanta        Hoffmann              123.00 +  347: 310  173
+                                                          --------------- ---- ------
+                                                                    1886  / 12 157.17
+
+
+
+
+	Mariusz Skrobosz 114.00 Warszawa               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    21 Krzysztof      Usakiewicz             90.00 +  385: 374  140
+    2     8 Zdzisław       Szota                 128.00 +  401: 299  178
+    3     4 Paweł          Stefaniak             139.00 -  266: 384   89
+    4     9 Tomasz         Szymański             121.00 +  371: 370  171
+    5     7 Sławomir       Nosek                 120.00 +  364: 315  170
+    6     4 Waldemar       Czerwoniec            121.00 -  307: 310   71
+    7     8 Mariusz        Gancarczyk            112.00 +  396: 280  162
+    8     5 Wojciech       Usakiewicz            116.00 -  346: 357   66
+    9     7 Marcin         Skrzyniarz            123.00 +  428: 358  173
+   10     5 Michał         Derlacki              138.00 +  423: 284  188
+   11     1 Tomasz         Zwoliński             138.00 +  311: 297  188
+   12     2 Dariusz        Banaszek              140.00 +  405: 344  190
+                                                          --------------- ---- ------
+                                                                    1786  / 12 148.83
+
+
+
+
+	Leszek Stecuła 114.00 Bytom                    
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    22 Irena          Ficak                  90.00 +  461: 321  140
+    2     3 Ryszard        Żydaczewski           117.00 +  392: 348  167
+    3     2 Tomasz         Zwoliński             138.00 -  355: 455   88
+    4     5 Dariusz        Banaszek              140.00 -  305: 357   90
+    5     9 Grzegorz       Wiączkowski           117.00 -  248: 337   67
+    6    15 Mariola        Osajda-Matczak         83.00 +  333: 321  133
+    7    13 Andrzej        Chmielewski           100.00 -  413: 427   50
+    8    14 Maciej         Czupryniak            124.00 -  295: 378   74
+    9    16 Stanisław      Gasik                 110.00 +  274: 252  160
+   10    14 Marcin         Mroziuk               104.00 +  326: 295  154
+   11    12 Grzegorz       Święcki               135.00 -  315: 363   85
+   12    14 Tomasz         Szymański             121.00 -  292: 385   71
+                                                          --------------- ---- ------
+                                                                    1279  / 12 106.58
+
+
+
+
+	Mariusz Gancarczyk 112.00 Mielec                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    23 Ziemowit       Pazda                  84.00 +  310: 300  134
+    2    13 Mateusz        Dubek                  78.00 +  324: 261  128
+    3     7 Andrzej        Rechowicz             111.00 -  320: 376   61
+    4    13 Grzegorz       Wiączkowski           117.00 -  344: 373   67
+    5    16 Stanisław      Ochot                 100.00 +  391: 240  150
+    6    11 Edward         Stefaniak             123.00 +  402: 361  173
+    7     8 Mariusz        Skrobosz              114.00 -  280: 396   64
+    8    11 Krzysztof      Bukowski               99.00 -  304: 364   49
+    9    14 Katarzyna      Żuławska              100.00 +  397: 295  150
+   10    11 Rafał          Matczak                79.00 +  384: 265  129
+   11     8 Sławomir       Nosek                 120.00 -  354: 440   70
+   12    10 Andrzej        Chmielewski           100.00 -  338: 404   50
+                                                          --------------- ---- ------
+                                                                    1225  / 12 102.08
+
+
+
+
+	Zygmunt Sołtysiak 112.00 Piastów                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    24 Mariola        Osajda-Matczak         83.00 -  317: 390   33
+    2    16 Ewa            Czerwoniec            104.00 +  332: 289  154
+    3    15 Tomasz         Szymański             121.00 -  379: 413   71
+                                                          --------------- ---- ------
+                                                                     258  /  3  86.00
+
+
+
+
+	Józef Burzyński 111.00 Ełk                      
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    25 Rafał          Matczak                79.00 +  469: 199  129
+    2     2 Paweł          Stanosz               138.00 +  352: 307  188
+    3     3 Wojciech       Usakiewicz            116.00 -  325: 364   66
+    4     6 Andrzej        Rechowicz             111.00 -  319: 438   61
+    5    11 Marcin         Skrzyniarz            123.00 -  330: 341   73
+    6    14 Ryszard        Żydaczewski           117.00 -  268: 336   67
+    7    17 Tomasz         Szymański             121.00 +  328: 293  171
+    8    15 Mariola        Osajda-Matczak         83.00 -  389: 407   33
+    9    17 Marcin         Mroziuk               104.00 -  192: 442   54
+   10    21 Magdalena      Ochot                 100.00 +  372: 253  150
+   11    18 Katarzyna      Żuławska              100.00 +  439: 270  150
+   12    15 Andrzej        Kwiatkowski           102.00 -  324: 470   52
+                                                          --------------- ---- ------
+                                                                    1194  / 12  99.50
+
+
+
+
+	Andrzej Rechowicz 111.00 Katowice               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Dariusz        Banaszek              140.00 +  532: 296  190
+    2     1 Jolanta        Hoffmann              123.00 -  306: 427   73
+    3     7 Mariusz        Gancarczyk            112.00 +  376: 320  162
+    4     6 Józef          Burzyński             111.00 +  438: 319  161
+    5     3 Małgorzata     Kania                 126.00 -  283: 369   76
+    6     6 Paweł          Stanosz               138.00 -  323: 327   88
+    7     9 Mateusz        Żbikowski              98.00 +  357: 344  148
+    8     6 Michał         Derlacki              138.00 -  362: 459   88
+    9    11 Maciej         Czupryniak            124.00 -  311: 425   74
+   10    13 Edward         Stefaniak             123.00 -  285: 466   73
+   11    15 Grzegorz       Kulawiak              106.00 +  350: 348  156
+   12    13 Ryszard        Żydaczewski           117.00 +  382: 251  167
+                                                          --------------- ---- ------
+                                                                    1456  / 12 121.33
+
+
+
+
+	Stanisław Gasik 110.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Michał         Derlacki              138.00 -  291: 345   88
+    2    21 Stanisław      Ochot                 100.00 -  290: 322   50
+    3    22 Ewa            Czerwoniec            104.00 +  578: 198  154
+    4    14 Mateusz        Dubek                  78.00 +  354: 315  128
+    5    10 Mariola        Osajda-Matczak         83.00 +  317: 279  133
+    6     8 Paweł          Stefaniak             139.00 -  327: 366   89
+    7    11 Marcin         Skrzyniarz            123.00 -  359: 381   73
+    8    13 Ryszard        Żydaczewski           117.00 -  341: 409   67
+    9    16 Leszek         Stecuła               114.00 -  252: 274   64
+   10    18 Bogdan         Pokojski              100.00 +  303: 249  150
+   11    16 Tomasz         Szymański             121.00 -  313: 379   71
+   12    20 Magdalena      Ochot                 100.00 +  298: 260  150
+                                                          --------------- ---- ------
+                                                                    1217  / 12 101.42
+
+
+
+
+	Marcin Kamiński 110.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Paweł          Stefaniak             139.00 -  271: 341   89
+    2    22 Wiesław        Olewiński             108.00 -  284: 357   58
+    3    23 Krzysztof      Bukowski               99.00 +  421: 240  149
+    4    19 Grzegorz       Kulawiak              106.00 -  331: 336   56
+    5    20 Krzysztof      Usakiewicz             90.00 +  344: 329  140
+    6    17 Irena          Ficak                  90.00 +  354: 292  140
+                                                          --------------- ---- ------
+                                                                     632  /  6 105.33
+
+
+
+
+	Wiesław Olewiński 108.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Paweł          Stanosz               138.00 -  272: 475   88
+    2    22 Marcin         Kamiński              110.00 +  357: 284  160
+    3    16 Rafał          Matczak                79.00 +  370: 294  129
+    4    11 Andrzej        Chmielewski           100.00 -  366: 457   50
+    5    15 Grzegorz       Kulawiak              106.00 +  483: 161  156
+    6     7 Grzegorz       Wiączkowski           117.00 -  248: 411   67
+    7    12 Edward         Stefaniak             123.00 -  252: 426   73
+    8    16 Marcin         Mroziuk               104.00 +  347: 308  154
+    9    13 Sławomir       Nosek                 120.00 -  346: 394   70
+   10    15 Mariola        Osajda-Matczak         83.00 +  337: 206  133
+   11    13 Krzysztof      Bukowski               99.00 +  383: 350  149
+   12    11 Grzegorz       Święcki               135.00 -  356: 408   85
+                                                          --------------- ---- ------
+                                                                    1314  / 12 109.50
+
+
+
+
+	Grzegorz Kulawiak 106.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Tomasz         Zwoliński             138.00 -  317: 451   88
+    2    17 Grzegorz       Święcki               135.00 -  311: 346   85
+    3    21 Krzysztof      Usakiewicz             90.00 +  347: 308  140
+    4    19 Marcin         Kamiński              110.00 +  336: 331  160
+    5    15 Wiesław        Olewiński             108.00 -  161: 483   58
+    6    19 Krzysztof      Bukowski               99.00 -  287: 491   49
+    7    20 Jerzy          Ługowski              100.00 +  409: 195  150
+    8    17 Ziemowit       Pazda                  84.00 +  344: 216  134
+    9    15 Rafał          Matczak                79.00 -  321: 413   29
+   10    17 Stanisław      Ochot                 100.00 +  364: 351  150
+   11    15 Andrzej        Rechowicz             111.00 -  348: 350   61
+   12    18 Bogdan         Pokojski              100.00 +  311: 295  150
+                                                          --------------- ---- ------
+                                                                    1254  / 12 104.50
+
+
+
+
+	Ewa Czerwoniec 104.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Zdzisław       Szota                 128.00 -  319: 371   78
+    2    16 Zygmunt        Sołtysiak             112.00 -  289: 332   62
+    3    22 Stanisław      Gasik                 110.00 -  198: 578   60
+    4    24 Krzysztof      Usakiewicz             90.00 -  261: 366   40
+    5    26 PAUZA
+    6    24 Magdalena      Ochot                 100.00 =  294: 294  100
+    7    22 Paweł          Tomaszewski           100.00 +  269: 211  150
+    8    22 Jerzy          Ługowski              100.00 +  319: 224  150
+    9    20 Bogdan         Pokojski              100.00 -  314: 316   50
+   10    22 Ziemowit       Pazda                  84.00 +  272: 262  134
+   11    19 Mariola        Osajda-Matczak         83.00 -  285: 306   33
+   12    19 Marcin         Mroziuk               104.00 -  262: 346   54
+                                                          --------------- ---- ------
+                                                                     911  / 11  82.82
+
+
+
+
+	Marcin Mroziuk 104.00 Warszawa
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Grzegorz       Święcki               135.00 +  353: 311  185
+    2    10 Michał         Derlacki              138.00 -  340: 376   88
+    3    12 Edward         Stefaniak             123.00 -  284: 383   73
+    4    18 Maciej         Czupryniak            124.00 +  406: 272  174
+    5    13 Zdzisław       Szota                 128.00 -  300: 391   78
+    6    16 Tomasz         Szymański             121.00 +  326: 309  171
+    7    14 Katarzyna      Żuławska              100.00 -  346: 369   50
+    8    16 Wiesław        Olewiński             108.00 -  308: 347   58
+    9    17 Józef          Burzyński             111.00 +  442: 192  161
+   10    14 Leszek         Stecuła               114.00 -  295: 326   64
+   11    17 Andrzej        Kwiatkowski           102.00 -  367: 372   52
+   12    19 Ewa            Czerwoniec            104.00 +  346: 262  154
+                                                          --------------- ---- ------
+                                                                    1308  / 12 109.00
+
+
+
+
+	Andrzej Kwiatkowski 102.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Małgorzata     Kania                 126.00 -  350: 443   76
+    2    14 Krzysztof      Usakiewicz             90.00 +  398: 288  140
+    3    11 Mariusz        Orzeł                 120.00 -  275: 386   70
+    4    17 Irena          Ficak                  90.00 -  320: 378   40
+    5    19 Ryszard        Żydaczewski           117.00 -  311: 452   67
+    6    22 Maciej         Czupryniak            124.00 -  290: 398   74
+    7    21 Magdalena      Ochot                 100.00 +  392: 267  150
+    8    19 Tomasz         Szymański             121.00 -  313: 452   71
+    9    21 Jerzy          Ługowski              100.00 +  409: 235  150
+   10    20 Paweł          Tomaszewski           100.00 +  406: 267  150
+   11    17 Marcin         Mroziuk               104.00 +  372: 367  154
+   12    15 Józef          Burzyński             111.00 +  470: 324  161
+                                                          --------------- ---- ------
+                                                                    1303  / 12 108.58
+
+
+
+
+	Andrzej Chmielewski 100.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    12 Marcin         Skrzyniarz            123.00 +  343: 298  173
+    2    11 Mateusz        Żbikowski              98.00 -  248: 344   48
+    3    18 Bogdan         Pokojski              100.00 +  406: 241  150
+    4    11 Wiesław        Olewiński             108.00 +  457: 366  158
+    5     6 Waldemar       Czerwoniec            121.00 -  319: 373   71
+    6    10 Grzegorz       Święcki               135.00 -  269: 378   85
+    7    13 Leszek         Stecuła               114.00 +  427: 413  164
+    8    10 Sławomir       Nosek                 120.00 +  389: 267  170
+    9     8 Krzysztof      Bukowski               99.00 +  308: 295  149
+   10     7 Jolanta        Hoffmann              123.00 -  348: 371   73
+   11     9 Edward         Stefaniak             123.00 -  329: 347   73
+   12    10 Mariusz        Gancarczyk            112.00 +  404: 338  162
+                                                          --------------- ---- ------
+                                                                    1476  / 12 123.00
+
+
+
+
+	Maria Glegoła-Szczap 100.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    14 Tomasz         Szymański             121.00 -  271: 356   71
+    2    23 Katarzyna      Żuławska              100.00 +  324: 298  150
+    3    17 Stanisław      Ochot                 100.00 -  258: 380   50
+    4    21 Bogdan         Pokojski              100.00 +  314: 294  150
+    5    17 Rafał          Matczak                79.00 -  253: 293   29
+    6    20 Jerzy          Ługowski              100.00 +  373: 281  150
+                                                          --------------- ---- ------
+                                                                     600  /  6 100.00
+
+
+
+
+	Małgorzata Jakubowska 100.00 Piastów                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    3    26 Jerzy          Ługowski              100.00 -   22: 306   50
+                                                          --------------- ---- ------
+                                                                      50  /  1  50.00
+
+
+
+
+	Magdalena Ochot 100.00 Katowice               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    15 Stefan         Dawidson              120.00 -  225: 404   70
+    2    24 Paweł          Tomaszewski           100.00 +  302: 237  150
+    3    19 Mateusz        Dubek                  78.00 -  260: 287   28
+    4    22 Ziemowit       Pazda                  84.00 -  276: 323   34
+    5    23 Jerzy          Ługowski              100.00 -  275: 282   50
+    6    24 Ewa            Czerwoniec            104.00 =  294: 294  104
+    7    21 Andrzej        Kwiatkowski           102.00 -  267: 392   52
+    8    21 Bogdan         Pokojski              100.00 -  217: 372   50
+    9    23 Barbara        Żydaczewska           100.00 +  356: 211  150
+   10    21 Józef          Burzyński             111.00 -  253: 372   61
+   11    22 Irena          Ficak                  90.00 +  333: 267  140
+   12    20 Stanisław      Gasik                 110.00 -  260: 298   60
+                                                          --------------- ---- ------
+                                                                     949  / 12  79.08
+
+
+
+
+	Stanisław Ochot 100.00 Katowice                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    13 Waldemar       Czerwoniec            121.00 -  287: 365   71
+    2    21 Stanisław      Gasik                 110.00 +  322: 290  160
+    3    17 Maria          Glegoła-Szczap        100.00 +  380: 258  150
+    4    12 Mateusz        Żbikowski              98.00 -  289: 319   48
+    5    16 Mariusz        Gancarczyk            112.00 -  240: 391   62
+    6    18 Katarzyna      Żuławska              100.00 -  252: 403   50
+    7    19 Krzysztof      Usakiewicz             90.00 +  334: 266  140
+    8    18 Rafał          Matczak                79.00 -  329: 412   29
+    9    19 Ziemowit       Pazda                  84.00 +  367: 230  134
+   10    17 Grzegorz       Kulawiak              106.00 -  351: 364   56
+   11    20 Jerzy          Ługowski              100.00 +  442: 167  150
+   12    16 Krzysztof      Bukowski               99.00 +  317: 307  149
+                                                          --------------- ---- ------
+                                                                    1199  / 12  99.92
+
+
+
+
+	Bogdan Pokojski 100.00 Piastów                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Maciej         Czupryniak            124.00 +  329: 311  174
+    2    12 Paweł          Stefaniak             139.00 -  237: 430   89
+    3    18 Andrzej        Chmielewski           100.00 -  241: 406   50
+    4    21 Maria          Glegoła-Szczap        100.00 -  294: 314   50
+    5    22 Krzysztof      Bukowski               99.00 -  305: 352   49
+    6    23 Marek          Dubek                  96.00 -  225: 386   46
+    7    23 Barbara        Żydaczewska           100.00 +  349: 290  150
+    8    21 Magdalena      Ochot                 100.00 +  372: 217  150
+    9    20 Ewa            Czerwoniec            104.00 +  316: 314  154
+   10    18 Stanisław      Gasik                 110.00 -  249: 303   60
+   11    21 Paweł          Tomaszewski           100.00 +  382: 257  150
+   12    18 Grzegorz       Kulawiak              106.00 -  295: 311   56
+                                                          --------------- ---- ------
+                                                                    1178  / 12  98.17
+
+
+
+
+	Michał Siedlecki 100.00 Piastów                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Jolanta        Hoffmann              123.00 -  140: 544   73
+    3    20 Grzegorz       Wiączkowski           117.00 -  168: 484   67
+                                                          --------------- ---- ------
+                                                                     140  /  2  70.00
+
+
+
+
+	Paweł Tomaszewski 100.00 Pruszków                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Edward         Stefaniak             123.00 -  200: 388   73
+    2    24 Magdalena      Ochot                 100.00 -  237: 302   50
+    3    25 Ziemowit       Pazda                  84.00 -  236: 347   34
+    4    26 Jerzy          Ługowski              100.00 +  306: 270  150
+    5    24 Marek          Dubek                  96.00 -  198: 289   46
+    7    22 Ewa            Czerwoniec            104.00 -  211: 269   54
+    8    23 Barbara        Żydaczewska           100.00 -  208: 275   50
+    9    22 Irena          Ficak                  90.00 -  281: 325   40
+   10    20 Andrzej        Kwiatkowski           102.00 -  267: 406   52
+   11    21 Bogdan         Pokojski              100.00 -  257: 382   50
+   12    21 Katarzyna      Żuławska              100.00 -  190: 413   50
+                                                          --------------- ---- ------
+                                                                     649  / 11  59.00
+
+
+
+
+	Jerzy Ługowski 100.00 Piastów                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    17 Sławomir       Nosek                 120.00 -  177: 387   70
+    2    25 Rafał          Matczak                79.00 -  181: 437   29
+    3    26 Małgorzata     Jakubowska            100.00 +  306:  22  150
+    4    26 Paweł          Tomaszewski           100.00 -  270: 306   50
+    5    23 Magdalena      Ochot                 100.00 +  282: 275  150
+    6    20 Maria          Glegoła-Szczap        100.00 -  281: 373   50
+    7    20 Grzegorz       Kulawiak              106.00 -  195: 409   56
+    8    22 Ewa            Czerwoniec            104.00 -  224: 319   54
+    9    21 Andrzej        Kwiatkowski           102.00 -  235: 409   52
+   11    20 Stanisław      Ochot                 100.00 -  167: 442   50
+   12    22 Irena          Ficak                  90.00 -  201: 317   40
+                                                          --------------- ---- ------
+                                                                     751  / 11  68.27
+
+
+
+
+	Katarzyna Żuławska 100.00 Katowice                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    16 Mariusz        Orzeł                 120.00 -  226: 417   70
+    2    23 Maria          Glegoła-Szczap        100.00 -  298: 324   50
+    3    24 Marek          Dubek                  96.00 +  358: 258  146
+    4    20 Rafał          Matczak                79.00 -  287: 294   29
+    5    21 Maciej         Czupryniak            124.00 +  373: 342  174
+    6    18 Stanisław      Ochot                 100.00 +  403: 252  150
+    7    14 Marcin         Mroziuk               104.00 +  369: 346  154
+    8    12 Mateusz        Żbikowski              98.00 -  262: 297   48
+    9    14 Mariusz        Gancarczyk            112.00 -  295: 397   62
+   10    16 Krzysztof      Usakiewicz             90.00 -  319: 359   40
+   11    18 Józef          Burzyński             111.00 -  270: 439   61
+   12    21 Paweł          Tomaszewski           100.00 +  413: 190  150
+                                                          --------------- ---- ------
+                                                                    1134  / 12  94.50
+
+
+
+
+	Barbara Żydaczewska 100.00 Lubin                    
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    7    23 Bogdan         Pokojski              100.00 -  290: 349   50
+    8    23 Paweł          Tomaszewski           100.00 +  275: 208  150
+    9    23 Magdalena      Ochot                 100.00 -  211: 356   50
+                                                          --------------- ---- ------
+                                                                     250  /  3  83.33
+
+
+
+
+	Krzysztof Bukowski  99.00 Milanówek
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    18 Ryszard        Żydaczewski           117.00 -  292: 468   67
+    2    20 Dariusz        Banaszek              140.00 -  265: 485   90
+    3    23 Marcin         Kamiński              110.00 -  240: 421   60
+    4    25 Marek          Dubek                  96.00 +  303: 301  146
+    5    22 Bogdan         Pokojski              100.00 +  352: 305  150
+    6    19 Grzegorz       Kulawiak              106.00 +  491: 287  156
+    7    15 Ziemowit       Pazda                  84.00 +  386: 360  134
+    8    11 Mariusz        Gancarczyk            112.00 +  364: 304  162
+    9     8 Andrzej        Chmielewski           100.00 -  295: 308   50
+   10    12 Mateusz        Żbikowski              98.00 -  318: 353   48
+   11    13 Wiesław        Olewiński             108.00 -  350: 383   58
+   12    16 Stanisław      Ochot                 100.00 -  307: 317   50
+                                                          --------------- ---- ------
+                                                                    1171  / 12  97.58
+
+
+
+
+	Mateusz Żbikowski  98.00 Warszawa         
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    19 Grzegorz       Wiączkowski           117.00 +  345: 338  167
+    2    11 Andrzej        Chmielewski           100.00 +  344: 248  150
+    3     6 Sławomir       Nosek                 120.00 -  305: 372   70
+    4    12 Stanisław      Ochot                 100.00 +  319: 289  150
+    5     8 Jolanta        Hoffmann              123.00 -  244: 339   73
+    6    13 Ziemowit       Pazda                  84.00 +  377: 315  134
+    7     9 Andrzej        Rechowicz             111.00 -  344: 357   61
+    8    12 Katarzyna      Żuławska              100.00 +  297: 262  150
+    9     9 Ryszard        Żydaczewski           117.00 -  286: 415   67
+   10    12 Krzysztof      Bukowski               99.00 +  353: 318  149
+   11    10 Stefan         Dawidson              120.00 -  260: 322   70
+   12    12 Rafał          Matczak                79.00 -  298: 368   29
+                                                          --------------- ---- ------
+                                                                    1270  / 12 105.83
+
+
+
+
+	Marek Dubek  96.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    20 Wojciech       Usakiewicz            116.00 -  301: 411   66
+    2    18 Maciej         Czupryniak            124.00 -  232: 348   74
+    3    24 Katarzyna      Żuławska              100.00 -  258: 358   50
+    4    25 Krzysztof      Bukowski               99.00 -  301: 303   49
+    5    24 Paweł          Tomaszewski           100.00 +  289: 198  150
+    6    23 Bogdan         Pokojski              100.00 +  386: 225  150
+                                                          --------------- ---- ------
+                                                                     539  /  6  89.83
+
+
+
+
+	Irena Ficak  90.00 Mielec                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    22 Leszek         Stecuła               114.00 -  321: 461   64
+    2    15 Grzegorz       Wiączkowski           117.00 +  360: 341  167
+    3    13 Zdzisław       Szota                 128.00 -  322: 368   78
+    4    17 Andrzej        Kwiatkowski           102.00 +  378: 320  152
+    5    14 Edward         Stefaniak             123.00 -  297: 360   73
+    6    17 Marcin         Kamiński              110.00 -  292: 354   60
+    7    18 Maciej         Czupryniak            124.00 -  313: 459   74
+    8    20 Krzysztof      Usakiewicz             90.00 -  317: 354   40
+    9    22 Paweł          Tomaszewski           100.00 +  325: 281  150
+   10    19 Tomasz         Szymański             121.00 -  288: 404   71
+   11    22 Magdalena      Ochot                 100.00 -  267: 333   50
+   12    22 Jerzy          Ługowski              100.00 +  317: 201  150
+                                                          --------------- ---- ------
+                                                                    1129  / 12  94.08
+
+
+
+
+	Krzysztof Usakiewicz  90.00 Warszawa               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    21 Mariusz        Skrobosz              114.00 -  374: 385   64
+    2    14 Andrzej        Kwiatkowski           102.00 -  288: 398   52
+    3    21 Grzegorz       Kulawiak              106.00 -  308: 347   56
+    4    24 Ewa            Czerwoniec            104.00 +  366: 261  154
+    5    20 Marcin         Kamiński              110.00 -  329: 344   60
+    6    21 Mateusz        Dubek                  78.00 +  279: 224  128
+    7    19 Stanisław      Ochot                 100.00 -  266: 334   50
+    8    20 Irena          Ficak                  90.00 +  354: 317  140
+    9    18 Tomasz         Szymański             121.00 +  349: 298  171
+   10    16 Katarzyna      Żuławska              100.00 +  359: 319  150
+   11    14 Rafał          Matczak                79.00 -  296: 310   29
+   12    17 Mariola        Osajda-Matczak         83.00 +  318: 302  133
+                                                          --------------- ---- ------
+                                                                    1187  / 12  98.92
+
+
+
+
+	Ziemowit Pazda  84.00 Wrocław                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    23 Mariusz        Gancarczyk            112.00 -  300: 310   62
+    2    19 Marcin         Skrzyniarz            123.00 -  185: 531   73
+    3    25 Paweł          Tomaszewski           100.00 +  347: 236  150
+    4    22 Magdalena      Ochot                 100.00 +  323: 276  150
+    5    18 Mateusz        Dubek                  78.00 +  337: 283  128
+    6    13 Mateusz        Żbikowski              98.00 -  315: 377   48
+    7    15 Krzysztof      Bukowski               99.00 -  360: 386   49
+    8    17 Grzegorz       Kulawiak              106.00 -  216: 344   56
+    9    19 Stanisław      Ochot                 100.00 -  230: 367   50
+   10    22 Ewa            Czerwoniec            104.00 -  262: 272   54
+                                                          --------------- ---- ------
+                                                                     820  / 10  82.00
+
+
+
+
+	Mariola Osajda-Matczak  83.00 Milanówek      
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    24 Zygmunt        Sołtysiak             112.00 +  390: 317  162
+    2     6 Stefan         Dawidson              120.00 -  403: 494   70
+    3     9 Ryszard        Żydaczewski           117.00 +  344: 291  167
+    4     7 Waldemar       Czerwoniec            121.00 -  329: 365   71
+    5    10 Stanisław      Gasik                 110.00 -  279: 317   60
+    6    15 Leszek         Stecuła               114.00 -  321: 333   64
+    7    16 Rafał          Matczak                79.00 +  296: 295  129
+    8    15 Józef          Burzyński             111.00 +  407: 389  161
+    9    12 Grzegorz       Święcki               135.00 -  271: 326   85
+   10    15 Wiesław        Olewiński             108.00 -  206: 337   58
+   11    19 Ewa            Czerwoniec            104.00 +  306: 285  154
+   12    17 Krzysztof      Usakiewicz             90.00 -  302: 318   40
+                                                          --------------- ---- ------
+                                                                    1221  / 12 101.75
+
+
+
+
+	Rafał Matczak  79.00 Milanówek                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    25 Józef          Burzyński             111.00 -  199: 469   61
+    2    25 Jerzy          Ługowski              100.00 +  437: 181  150
+    3    16 Wiesław        Olewiński             108.00 -  294: 370   58
+    4    20 Katarzyna      Żuławska              100.00 +  294: 287  150
+    5    17 Maria          Glegoła-Szczap        100.00 +  293: 253  150
+    6    12 Sławomir       Nosek                 120.00 -  235: 452   70
+    7    16 Mariola        Osajda-Matczak         83.00 -  295: 296   33
+    8    18 Stanisław      Ochot                 100.00 +  412: 329  150
+    9    15 Grzegorz       Kulawiak              106.00 +  413: 321  156
+   10    11 Mariusz        Gancarczyk            112.00 -  265: 384   62
+   11    14 Krzysztof      Usakiewicz             90.00 +  310: 296  140
+   12    12 Mateusz        Żbikowski              98.00 +  368: 298  148
+                                                          --------------- ---- ------
+                                                                    1328  / 12 110.67
+
+
+
+
+	Mateusz Dubek  78.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    2    13 Mariusz        Gancarczyk            112.00 -  261: 324   62
+    3    19 Magdalena      Ochot                 100.00 +  287: 260  150
+    4    14 Stanisław      Gasik                 110.00 -  315: 354   60
+    5    18 Ziemowit       Pazda                  84.00 -  283: 337   34
+    6    21 Krzysztof      Usakiewicz             90.00 -  224: 279   40
+                                                          --------------- ---- ------
+                                                                     346  /  5  69.20
+
+
+</pre></div><div id='p_rundy' class='page'><pre></pre></div><div id='p_ranking' class='page'><pre></pre></div><div id='p_przebieg' class='page'>
+
+    </div><div style="clear:both;width:100%;" class="alignright">
+
+<script>
+<!--
+if ((document.getElementById("content").offsetHeight + document.getElementById("top").offsetHeight) > screen.height)
+    document.write("<br /><br /><a href='#top'>do góry</a>");
+-->
+</script>
+
+</div>
+</div>
+
+<div id="bottom">
+<ul id="bottomlinks">
+<div class='onleft'>
+ Osób on-line: 53</div>
+    <li><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+    <li><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+    <li><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+    <li><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+    <li><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+    <li><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+</ul>
+    SCRABBLE® jest zastrzeżonym znakiem towarowym J.W. Spears &amp; Sons&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://www.pfs.org.pl/prawaautorskie.php">© Prawa autorskie</a>
+</div>
+</body>
+</html>

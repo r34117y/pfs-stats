@@ -85,6 +85,7 @@ final class PfsTournamentPayloadFactoryTest extends TestCase
 
         self::assertSame([
             'org' => 'pfs',
+            'pfsUrlId' => 1421,
             'dateStart' => '2026-03-14',
             'name' => 'VIII Babskie granie (turniej bez jaj)',
             'city' => 'Katowice',

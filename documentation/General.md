@@ -30,6 +30,13 @@ main old-method rows are stored as `n`, and below-threshold old-method waiting
 rows are stored as `u`. Reverting the latest PFS tournament import removes all
 ranking rows for the reverted tournament, including `f`, `w`, `n`, and `u`.
 
+Existing imported tournaments can be repaired with the one-time command
+`app:pfs:rankings:backfill-waiting-lists`. It scans PFS calendar years, matches
+calendar entries to local imported tournaments, imports missing official waiting
+lists as `w`, copies those waiting lists as `u` before "II Wielicki Turniej w
+Scrabble", and calculates missing old-method waiting lists as `u` from that
+tournament onward. Older tournament pages without a ranking tab are skipped.
+
 ## Club games
 
 Club tournaments occur usually once a week and club admins upload the results manually (an account is required for that).

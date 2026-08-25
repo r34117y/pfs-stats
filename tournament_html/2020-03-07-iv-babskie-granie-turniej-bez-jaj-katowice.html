@@ -1,0 +1,1703 @@
+
+<html>
+<head>
+    <title>Polska Federacja Scrabble :: IV Babskie granie (turniej bez jaj)</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="files/img/favicon.ico" />
+    <link rel="stylesheet" href="files/css/style.css" type="text/css" />
+	<link rel="stylesheet" href="files/css/style-index.css" type="text/css" />
+    <!--[if IE]><link rel="stylesheet" type="text/css" href="files/css/styleie.css" /><![endif]-->
+    <!--[if lt IE 7.]><script defer type="text/javascript" src="files/js/pngfix.js"></script><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="files/js/minmax.js"></script><![endif]-->
+    <script type="text/javascript" src="files/js/jquery.js"></script>
+    <script type="text/javascript" src="files/js/jquery-bp.js"></script>
+    <script type="text/javascript" src="files/js/java.js"></script>
+    <script>jSubmenu ("turnieje","kalendarz");jKalendarz();</script>
+    <script>
+    var url, page;
+
+    page = 'info';
+    url  = document.location.toString();
+
+    if (url.match ('#')) {
+      page = url.split ('#')[1];
+      if ($.inArray (page, [ 'info', 'relacja', 'klasyfikacja', 'hh', 'rundy', 'ranking', 'przebieg' ]) == -1)
+        page = 'info';
+    }
+
+    $(document).ready(function(){
+        $('a#listaucz').bind('click', function(event){
+            $('div#lista').toggle();
+            event.preventDefault();
+        }).toggle(function() { $(this).text('schowaj listę uczestników'); }, function() { $(this).text("pokaż listę uczestników"); });
+        $('div#lista table tr:last td').css({"border-bottom" : "none"});
+
+        $("a.przycisk").click (function (e) {
+            if ($(this).attr ('href') !== '#')
+                return true;
+
+            e.preventDefault ();
+
+            id       = this.id;
+            this.id += 'tmp';
+            window.location.hash = id;
+            this.id  = id;
+
+            $(".page").hide ();
+            $(".page#p_" + id).show ();
+
+            $("a.przycisk").removeClass ('active');
+            $(this).addClass ('active');
+
+            return false;
+        });
+
+        $("a.przycisk#" + page).click ();
+        $('html, body').animate ({ scrollTop: 0 }, 0);
+    });
+    </script>
+  <style type="text/css">
+    .page {
+        display: none;
+    }
+    #szczegoly{
+        width: 100%;
+        border-spacing: 0;
+        margin-top: 30px;
+        text-align: left;
+        font-size: inherit;
+    }
+    #szczegoly td{
+        padding: 10px 20px 10px 0;
+        vertical-align: top;
+    }
+    #szczegoly td:first-child{
+        font-weight: bold;
+        width: 160px;
+    }
+    div#lista{
+        display:none;
+        margin-top: 15px;
+    }
+    div#lista table{
+        margin-top: 10px;
+        text-align: left;
+        font-size: inherit;
+    }
+    div#lista table td{
+        padding: 3px 8px;
+        border-bottom: 1px dashed #1576AE;
+    }
+    div#lista table th{
+        padding: 0px 5px 10px 5px;
+    }
+    div#lista table td.ptaszek{
+        text-align: center;
+        background: url('files/img/tick.png') no-repeat center center;
+    }
+    div#lista table th{
+        white-space: nowrap;
+        width: auto;
+    }
+    div#lista table td:first-child, div#lista table th:first-child{
+        text-align:right;
+        width: auto;
+    }
+    </style>
+</head>
+
+<body>
+
+<script type="text/javascript">setMenu();</script>
+
+<div id="top" onclick="location.href='https://www.pfs.org.pl'">
+</div>
+<div id="menu">
+
+    <div id="m_glowna">
+        <div class="tab"><a href="https://www.pfs.org.pl/index.php"></a></div>
+
+        <ul>
+            <li class="sublink" id="aktualnosci"><a href="https://www.pfs.org.pl">Aktualności</a></li>
+            <li class="sublink" id="nowy"><a href="https://www.pfs.org.pl/dlanowych.php">Jestem tu nowy</a></li>
+            <li class="sublink" id="anagramator"><a href="https://www.pfs.org.pl/osps_online.php?main=1">Słownik online</a></li>
+            <li class="sublink" id="siodemka"><a href="https://www.pfs.org.pl/siodemka.php?main=1">Siódemka tygodnia</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+            <li class="sublink" id="dlasponsorow"><a href="https://www.pfs.org.pl/dlasponsorow.php">Dla sponsorów</a></li>
+            <li class="sublink" id="kontakt"><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+        </ul>
+    </div>
+    <div id="m_turnieje">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kalendarz.php"></a></div>
+        <ul>
+            <li class="sublink" id="kalendarz"><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+            <li class="sublink" id="regulaminy"><a href="https://www.pfs.org.pl/regulaminy.php">Regulaminy</a></li>
+            <li class="sublink" id="sedziowie"><a href="https://www.pfs.org.pl/sedziowie.php">Sędziowie</a></li>
+            <li class="sublink" id="gp"><a href="https://www.pfs.org.pl/gp2026.php">Grand Prix</a></li>
+<!--            <li class="sublink" id="mr"><a href="https://www.pfs.org.pl/mr2020.php">Mistrzostwa Regionów</a></li>-->
+            <li class="sublink" id="archiwum"><a href="https://www.pfs.org.pl/archiwum.php">Historia</a></li>
+            <li class="sublink" id="galeria"><a href="https://www.pfs.org.pl/galeria.php">Zdjęcia</a></li>
+            <li class="sublink" id="rekordy"><a href="https://www.pfs.org.pl/rekordy.php">Rekordy</a></li>
+        </ul>
+    </div>
+    <div id="m_pfs">
+        <div  class="tab"><a href="https://www.pfs.org.pl/opfs.php"></a></div>
+        <ul>
+            <li class="sublink" id="opfs"><a href="https://www.pfs.org.pl/opfs.php">O PFS</a></li>
+            <li class="sublink" id="jakprzystapic"><a href="https://www.pfs.org.pl/jakprzystapic.php">Jak przystąpić</a></li>
+            <li class="sublink" id="dlaczlonkow"><a href="https://www.pfs.org.pl/dlaczlonkow.php">Dla członków</a></li>
+            <li class="sublink" id="wladze"><a href="https://www.pfs.org.pl/wladze.php">Władze</a></li>
+            <li class="sublink" id="komisje"><a href="https://www.pfs.org.pl/komisje.php">Komisje</a></li>
+            <li class="sublink" id="statut"><a href="https://www.pfs.org.pl/statut.php">Statut</a></li>
+            <li class="sublink" id="uchwaly"><a href="https://www.pfs.org.pl/uchwaly.php">Uchwały</a></li>
+            <li class="sublink" id="honorowi"><a href="https://www.pfs.org.pl/honorowi.php">Honorowi członkowie</a></li>
+            <li class="sublink" id="finanse"><a href="https://www.pfs.org.pl/finanse.php">Finanse</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabble">
+        <div  class="tab"><a href="https://www.pfs.org.pl/osps_online.php?desktop=1"></a></div>
+        <ul>
+            <li class="sublink" id="osps_online"><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+            <li class="sublink" id="zds"><a href="https://www.pfs.org.pl/zds2.php">ZDS</a></li>
+            <li class="sublink" id="osps"><a href="https://www.pfs.org.pl/osps.php">OSPS</a></li>
+            <li class="sublink" id="aktualizacje"><a href="https://www.pfs.org.pl/osps_aktualizacje.php">Aktualizacje</a></li>
+            <li class="sublink" id="dwojki"><a href="https://www.pfs.org.pl/dwojki.php">2-literówki</a></li>
+            <li class="sublink" id="trojki"><a href="https://www.pfs.org.pl/trojki.php">3-literówki</a></li>
+            <li class="sublink" id="siodemkat"><a href="https://www.pfs.org.pl/siodemka.php">Siódemka tygodnia</a></li>
+            <li class="sublink" id="slowneroznosci"><a href="https://www.pfs.org.pl/slowneroznosci.php">Słowne różności</a></li>
+        </ul>
+    </div>
+    <div id="m_ranking">
+        <div  class="tab"><a href="https://www.pfs.org.pl/ranking.php"></a></div>
+        <ul>
+            <li class="sublink" id="aktranking"><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+            <li class="sublink" id="medale"><a href="https://www.pfs.org.pl/medale.php">Klasyfikacja medalowa</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabblisci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/mistrzowiepolski.php"></a></div>
+        <ul>
+            <li class="sublink" id="mistrzowiepolski"><a href="https://www.pfs.org.pl/mistrzowiepolski.php">Mistrzowie Polski</a></li>
+            <li class="sublink" id="zdobywcypp"><a href="https://www.pfs.org.pl/zdobywcypp.php">Zdobywcy Pucharu Polski</a></li>
+            <li class="sublink" id="zwyciezcygp"><a href="https://www.pfs.org.pl/zwyciezcygp.php">Zwycięzcy Grand Prix</a></li>
+            <li class="sublink" id="liderzyrankingu"><a href="https://www.pfs.org.pl/liderzyrankingu.php">Liderzy rankingu</a></li>
+            <li class="sublink" id="zwyciezcylemans"><a href="https://www.pfs.org.pl/zwyciezcylemans.php">Zwycięzcy 24h Le Mans</a></li>
+            <li class="sublink" id="zwyciezcykmp"><a href="https://www.pfs.org.pl/zwyciezcykmp.php">KMP</a>
+        </ul>
+    </div>
+    <div id="m_kluby">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kluby.php"></a></div>
+        <ul>
+            <li class="sublink" id="rejestrklubow"><a href="https://www.pfs.org.pl/kluby.php">Rejestr klubów</a></li>
+            <li class="sublink" id="kmp"><a href="https://www.pfs.org.pl/kmp.php">KMP</a></li>
+            <li class="sublink" id="wiescizklubow"><a href="https://www.pfs.org.pl/wiescizklubow.php">Wieści z klubów</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/about.php">Statystyki klubowe</a></li>
+        </ul>
+    </div>
+    <div id="m_roznosci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/historia.php"></a></div>
+        <ul>
+            <li class="sublink" id="historia"><a href="https://www.pfs.org.pl/historia.php">Historia</a></li>
+            <li class="sublink" id="odmiany"><a href="https://www.pfs.org.pl/odmiany.php">Odmiany</a></li>
+            <li class="sublink" id="anegdoty"><a href="https://www.pfs.org.pl/anegdoty.php">Anegdoty</a></li>
+            <li class="sublink" id="scrabblealia"><a href="https://www.pfs.org.pl/scrabblealia.php">Scrabblealia</a></li>
+            <li class="sublink" id="scrabblenet"><a href="https://www.pfs.org.pl/scrabblenet.php">Scrabble w internecie</a></li>
+            <li class="sublink" id="programy"><a href="https://www.pfs.org.pl/programy.php">Programy</a></li>
+            <li class="sublink" id="download"><a href="https://www.pfs.org.pl/download.php">Do pobrania</a></li>
+            <li class="sublink" id="ksiazki"><a href="https://www.pfs.org.pl/ksiazki.php">Książki</a></li>
+            <li class="sublink" id="slowniczek"><a href="https://www.pfs.org.pl/slowniczek.php">Słowniczek</a></li>
+        </ul>
+    </div>
+    <div id="m_english">
+        <div  class="tab"><a href="https://www.pfs.org.pl/english.php"></a></div>
+        <ul>
+            <li class="sublink" id="about"><a href="https://www.pfs.org.pl/english.php">About Polish Scrabble</a></li>
+            <li class="sublink" id="news"><a href="https://www.pfs.org.pl/en_news.php">News</a></li>
+            <li class="sublink" id="bartek"><a href="https://www.pfs.org.pl/bartek.php">Bartek w Johor Bahru</a></li>
+            <li class="sublink" id="franko"><a href="https://www.pfs.org.pl/franko.php">Scrabble frankofońskie</a></li>
+        </ul>
+    </div>
+</div>
+
+<div id="submenu"></div>
+<div id="content">
+<div id='nextTours'>
+		<div class='nextTour' onclick='location.href="turniej.php?id=1170"'>
+			<div class='karteczka small1'>
+				<span class='miasto'>Poznań</span><span class='dzien'><span class='big'> 6</span><br />marca</span></div>
+			<div class='kartka big1'>
+				<span class='miasto'>Poznań</span>
+				<span class='dzien'><b> 6- 8 marca</b></span>
+				<span class='nazwaturnieju'>Strefa Scrabble na Poznańskich Targach Książki</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=1149"'>
+			<div class='karteczka small2'>
+				<span class='miasto'>Katowice</span><span class='dzien'><span class='big'> 7</span><br />marca</span></div>
+			<div class='kartka big2'>
+				<span class='miasto'>Katowice</span>
+				<span class='dzien'><b> 7 marca</b></span>
+				<span class='nazwaturnieju'>IV Babskie granie (turniej bez jaj)</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=1164"'>
+			<div class='karteczka small3'>
+				<span class='miasto'>Chełmsko Śląskie</span><span class='dzien'><span class='big'>20</span><br />lipca</span></div>
+			<div class='kartka big3'>
+				<span class='miasto'>Chełmsko Śląskie</span>
+				<span class='dzien'><b>20-26 lipca</b></span>
+				<span class='nazwaturnieju'>Wędrówki i planszówki 2.0</span></div>
+		</div></div><div class='naglowekrelacji'><span class='tytul'>Zero debiutantek daje trzy debiuty<span class='nazwa'>07 marca 2020 —  IV Babskie granie (turniej bez jaj)</span></span><a href='#' id='info' class='przycisk'>Informacje</a><a href='#' id='relacja' class='przycisk'>Relacja</a><a href='#' id='klasyfikacja' class='przycisk'>Wyniki</a><a href='#' id='hh' class='przycisk'>HH</a><a href='#' id='rundy' class='przycisk'>Rundy</a><a href='#' id='ranking' class='przycisk'>Ranking</a><a href='live/index.php?id=1149' class='przycisk'>Przebieg</a><div class='galleries'><img src='files/img/gallery.png' style='visibility:hidden;' alt='galeria' /></div></div><h1 style='color:black; margin-top:0px; margin-bottom:30px; padding: 0px'>IV Babskie granie (turniej bez jaj)<span>Katowice, 07 marca 2020</span></h1><div id='p_relacja' class='page'><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><div class='relacja' style='clear:both;'><figure style='display:inline-block;float:left;margin:5px'><img src='https://pfs.org.pl/foto_action.php?id=2152' alt='Zero debiutantek daje trzy debiuty' /></figure><div>Początek marca stał się oczywistym terminem rozgrywania turnieju w Katowicach Kostuchnie, którego dobrym duchem (a może duchą? duszycą?) jest <b>Joanna Brychcy</b>. Asia organizowała już Mistrzostwa Katowic, regionalne „Hanysowe scrabblowanie”, zaś od 3 lat została specjalistką od „Babskiego grania”. I – jak zwykle – wychodzi jej to bardzo udanie.<br><br>
+
+Na jednodniowe zawody stawiło się 26 scrabblowych graczek, w tym panie z odległych Mazowsza, Dolnego Śląska czy Ziemi Łódzkiej. Część zawodniczek wsparła pulę nagród, sponsorki i sponsorzy obrodzili (dziękujemy), było więc o co powalczyć.<br><br>
+
+Jedynym brakiem na starcie okazała się nieobecność osób debiutujących – no cóż, przygotowany z tej okazji pucharek poczeka do następnej edycji. <br><br>
+
+Turniej był kameralny, niemniej dostarczył sporo emocji, szczególnie grającym o najwyższe miejsce. W ostatniej partii o zwycięstwo w całych zawodach grała <b>Justyna Górka</b> z Krakowa, mając za przeciwniczkę wrocławiankę <b>Barbarę Obremską</b>. Porażka z Basią zsunęła Justynę z podium, pozwalając jej zdobyć… — no, tu się zawsze pisze, że czwarte, najbardziej nielubiane, same i sami wiecie co.<br><br>
+
+
+To rozstrzygnięcie spowodowało, że na podium zanotowaliśmy 3 debiuty. Basia, do tej pory szczycąca się pięcioma scrabblowym srebrami, debiutuje w kategorii ZŁOTO! Z kompletem zwycięstw! Zaś srebrna <b>Bożena Guział</b> z Raciborza i brązowa <b>Ewa Dunikowska</b> z Krakowa zadebiutowały w ogóle na scrabblowych medalowych przestrzeniach! Gratulujemy.<br><br>
+
+
+Pomiędzy grami był oczywiście czas na scrabblowe i niescrabblowe rozmowy, planowanie co można by jeszcze w przyszłości udoskonalić w „Babskim graniu (poturniejowa impreza?) oraz rozważanie, czy i jak dezynfekować płytki.<br><br>
+
+
+Dzień upłynął błyskawicznie, Wczesnym wieczorem rozdano nagrody, pościskano się (choć czasem tak profilaktycznie na odległość) i porozjeżdżano do domów.<br><br>
+
+
+A nam pozostaje czekać na mini jubileusz piątej edycji, do którego odmierzając czas możemy wchodzić na przebieg turnieju i śledząc fotografie w zakładce „zdjęcia” przypominać sobie minione chwile.<br><br>
+
+<i>Uwaga Zarządu PFS:<br>
+Zgodnie z zasadami prowadzenia klasyfikacji medalowej Polskiej Federacji Scrabble turniej Babskie Granie jako turniej zamknięty nie wlicza się do klasyfikacji medalowej</i></div><div class='autor'>relacja: Maciej Śliwa</div></div><div style='clear:both;'></div></div><div id='p_info' class='page'><br><p align='center'></p><br><br><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br>Zobacz, jak było na poprzednich turniejach:<br><a href='turniej.php?id=1083'>III Babskie granie (turniej bez jaj)</a><br><a href='turniej.php?id=1041'>II Babskie granie (turniej bez jaj)</a><br><a href='turniej.php?id=995'>Babskie granie (turniej bez jaj)</a><br><table id='szczegoly' class='ramkadolna'><tr><td>Rodzaj turnieju</td><td>Zamknięty – tylko dla kobiet - liczba miejsc ograniczona do 36 osób </td></tr><tr><td>Sposób rozgrywania</td><td>liczba rund: 7<br>
+system: połówkowy (rundy 1-6), duńczyk (runda 7)<br>
+20 minut dla gracza na partię<br>
+</td></tr><tr><td>Miejsce rozgrywek</td><td>MDK „Południe”<br>
+Katowice Kostuchna<br>
+ul. Boya-Żeleńskiego 83</td></tr><tr><td>Obrońca tytułu</td><td>Justyna Górka</td></tr><tr><td>Sędzia</td><td>Maciej Śliwa</td></tr><tr><td>Harmonogram</td><td><b>Sobota, 7 marca (7 rund)</b><br>
+11:30 — rozpoczęcie turnieju<br>
+14:30-15:30 — przerwa obiadowa<br>
+19:30 — zakończenie gier<br><br>
+</td></tr><tr><td>Wpisowe</td><td>25 zł za dzień<br>
+członkowie PFS z aktualnie opłaconymi składkami — 15 zł za dzień<br>
+młodzież szkolna — 10 zł za dzień (do szkoły średniej włącznie)<br>
+debiutanci — bez opłat</td></tr><tr><td>Dojazd</td><td>Z dworca w Katowicach autobusem 689 do przystanku Kostuchna osiedle</td></tr><tr><td>Wyżywienie</td><td>Kawa, herbata, woda mineralna, ciasto, cukierki<br>
+Obiad — catering na miejscu — wybór w formularzu zgłoszeniowym — zapisy na obiad <b>do wtorku 3.03.</b>
+</td></tr><tr><td>Nagrody</td><td>Puchary dla najlepszych zawodniczek + nagrody pieniężne<br>
+Puchary za najdroższy ruch o tematyce kobiecej, dla najlepszej katowiczanki oraz najlepszej debiutantki<br>
+Kubki turniejowe, nagrody książkowe dla wszystkich uczestniczek<br>
+Nagrody losowane
+</td></tr><tr><td>Zgłoszenia uczestników</td><td><a href='' id='listaucz'>pokaż listę uczestników</a>
+            <div id='lista'>
+            <table width=100%><td width=5% >Lp.</td><td width=15% style='font-weight:bold;'>Imię i nazwisko</td><td width=15% style='font-weight:bold;border-left:#1576AE 1px dashed;'>Miasto</td><td width=10% style='font-weight:bold;border-left:#1576AE 1px dashed;'>Status uczestnika</td><td width=40% style='font-weight:bold;border-left:#1576AE 1px dashed;'>Dodatkowe opcje</td><td width=15% style='font-weight:bold;border-left:#1576AE 1px dashed;'>Data zgłoszenia</td><tr>
+					<td>1</td>
+					<td>Ewa Madejczyk&nbsp;<img src=files/img/star.png></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Katowice</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>pierogi</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2020-02-06 08:42:38</td>
+                </tr><tr>
+					<td>2</td>
+					<td>Teresa  Zalewska</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Racibórz</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>udko</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2020-02-06 09:36:00</td>
+                </tr><tr>
+					<td>3</td>
+					<td>Karolina Sikora</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Jaworzno</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>udko</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2020-02-06 09:54:43</td>
+                </tr><tr>
+					<td>4</td>
+					<td>Justyna Gorka&nbsp;<img src=files/img/star.png>&nbsp;<img src=files/img/star.png></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Kraków</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>pierogi</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2020-02-06 09:57:32</td>
+                </tr><tr>
+					<td>5</td>
+					<td>Magdalena Mazuchowska-Żak</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Łask</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>schabowy</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2020-02-06 12:26:19</td>
+                </tr><tr>
+					<td>6</td>
+					<td>Katarzyna Kowalska</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Katowice</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>cukinia</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2020-02-06 13:12:14</td>
+                </tr><tr>
+					<td>7</td>
+					<td>Aneta Szczyrzyca </td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Jaworzno </td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>udko</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2020-02-07 00:10:54</td>
+                </tr><tr>
+					<td>8</td>
+					<td>Izabela Chmielewska</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Zabrze</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>pierogi</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2020-02-07 21:57:07</td>
+                </tr><tr>
+					<td>9</td>
+					<td>Ewa Dunikowska</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Kraków</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>schabowy</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2020-02-08 17:43:16</td>
+                </tr><tr>
+					<td>10</td>
+					<td>Bożena Guział</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Racibórz</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>udko</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2020-02-08 23:50:06</td>
+                </tr><tr>
+					<td>11</td>
+					<td>Marta Szcześniak</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Krzyków</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>schabowy</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2020-02-09 11:32:44</td>
+                </tr><tr>
+					<td>12</td>
+					<td>Agata Kopta</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Wodzisław Śląski</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>cukinia</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2020-02-09 18:02:25</td>
+                </tr><tr>
+					<td>13</td>
+					<td>Agnieszka Walas</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Kraków</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>pierogi</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2020-02-11 09:45:25</td>
+                </tr><tr>
+					<td>14</td>
+					<td>Anna Demczyszyn</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Bystra</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>pierogi</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2020-02-13 11:57:45</td>
+                </tr><tr>
+					<td>15</td>
+					<td>Justyna Nieznalska</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Jejkowice</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>cukinia</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2020-02-16 20:25:44</td>
+                </tr><tr>
+					<td>16</td>
+					<td>Marta Sztajnert</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Wisła</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>cukinia</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2020-02-23 20:57:02</td>
+                </tr><tr>
+					<td>17</td>
+					<td>Urszula Rechowicz</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Katowice</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>udko</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2020-02-26 14:00:03</td>
+                </tr><tr>
+					<td>18</td>
+					<td>Małgorzata Szczygieł</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Radwanice</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>cukinia</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2020-02-26 19:08:38</td>
+                </tr><tr>
+					<td>19</td>
+					<td>Barbara Spodniewska</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Tychy</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>schabowy</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2020-02-27 17:11:40</td>
+                </tr><tr>
+					<td>20</td>
+					<td>Bernadeta Zapała</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Jaworzno</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>schabowy</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2020-02-28 14:55:02</td>
+                </tr><tr>
+					<td>21</td>
+					<td>Iwona Skubis </td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Dąbrowa Górnicza</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>cukinia</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2020-02-29 12:17:02</td>
+                </tr><tr>
+					<td>22</td>
+					<td>Małgorzata Sulejewska</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Kraków</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>cukinia</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2020-02-29 12:58:58</td>
+                </tr><tr>
+					<td>23</td>
+					<td>Joanna Brychcy</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Katowice</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>udko</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2020-03-02 12:24:20</td>
+                </tr><tr>
+					<td>24</td>
+					<td>Joanna Ostrowska</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Warszawa</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2020-03-04 21:38:29</td>
+                </tr><tr>
+					<td>25</td>
+					<td>Jolanta Zięba</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Zabrze</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Zwykły uczestnik</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2020-03-04 22:29:34</td>
+                </tr><tr>
+					<td>26</td>
+					<td>Barbara Obremska</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Wrocław</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Członek PFS</td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'>2020-03-07 07:35:21</td>
+                </tr></table>
+				</div></td></tr><tr><td>Organizatorzy</td><td>Joanna Brychcy — 516 956 636 — kiane3@wp.pl</td></tr><tr><td>Sponsorzy</td><td><a href="https://www.mdkpoludnie.com/" target="_blank"><img src="http://www.pfs.org.pl/rozne/mdk.png" height="60"></a><br><br>
+<a href="https://www.proszynski.pl/" target="_blank"><img src="http://www.pfs.org.pl/rozne/proszynski.jpg" height="60"></a><br><br>
+<a href="https://inverso.pl/" target="_blank"><img src="http://www.pfs.org.pl/rozne/inverso.jpg" height="60"></a><br>
+<h3>Mariusz Orzeł<br>
+Anna Demczyszyn (kosmetyki)<br>
+Iwona Skubis (kosmetyki)</h3>
+</td></tr></table><br /><br /></div><div id='p_klasyfikacja' class='page'><pre>Wyniki turnieju IV Babskie granie (turniej bez jaj)
+
+Lp. Imię            Nazwisko             Miasto               Ranking  Duże pkt Małe pkt Skalpy   Różn. MP
+--- --------------- -------------------- -------------------- -------- -------- -------- -------- --------
+  1 Barbara         Obremska             Wrocław                126.65      7.0     2913     1204      671
+  2 Bożena          Guział               Racibórz               119.68      5.0     2747      959      535
+  3 Ewa             Dunikowska           Kraków                 115.75      5.0     2738     1004      465
+  4 Justyna         Górka                Kraków                 143.91      5.0     2715     1016      424
+  5 Joanna          Brychcy              Katowice               116.38      5.0     2679      991      352
+  6 Małgorzata      Sulejewska           Kraków                 137.16      5.0     2674      978      301
+  7 Katarzyna       Kowalska             Katowice               118.60      4.0     2696      896      236
+  8 Marta           Sztajnert            Wisła                  123.19      4.0     2677      931      244
+  9 Agnieszka       Walas                Kraków                 133.78      4.0     2643      885      195
+ 10 Joanna          Ostrowska            Warszawa               128.44      4.0     2569      900      151
+ 11 Agata           Kopta                Wodzisław Śląski       115.56      4.0     2505      867     -169
+ 12 Marta           Szcześniak           Krzyków                127.70      4.0     2497      939        8
+ 13 Teresa          Zalewska             Racibórz               119.27      4.0     2384      895     -200
+ 14 Małgorzata      Szczygieł            Radwanice              126.15      3.0     2800      754      339
+ 15 Anna            Demczyszyn           Bystra                 124.04      3.0     2647      777       99
+ 16 Ewa             Madejczyk            Katowice               123.53      3.0     2471      763      -74
+ 17 Justyna         Nieznalska           Jejkowice              110.75      3.0     2367      783     -364
+ 18 Jolanta         Zięba                Zabrze                 111.38      3.0     2322      755     -100
+ 19 Izabela         Chmielewska          Zabrze                 116.76      3.0     2300      786     -150
+ 20 Aneta           Szczyrzyca           Jaworzno               103.33      3.0     2242      753      -83
+ 21 Urszula         Rechowicz            Katowice               119.28      2.0     2509      643     -105
+ 22 Magdalena       Mazuchowska-Żak      Łask                   100.00      2.0     2397      611      -50
+ 23 Karolina        Sikora               Jaworzno               100.90      2.0     2254      672     -408
+ 24 Bernadeta       Zapała               Jaworzno               100.00      2.0     2051      649     -612
+ 25 Barbara         Spodniewska          Tychy                  100.00      2.0     1952      643     -879
+ 26 Iwona           Skubis               Dąbrowa Górnicza       100.00      0.0     1730      387     -826
+</pre></div><div id='p_hh' class='page'><pre>Wyniki poszczególnych graczy w turnieju IV Babskie granie (turniej bez jaj)
+
+
+
+	Justyna Górka 143.91 Kraków  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Katarzyna      Kowalska              118.60 +  434: 294  169
+    2     4 Agnieszka      Walas                 133.78 +  307: 302  184
+    3     2 Marta          Szcześniak            127.70 +  422: 327  178
+    4     1 Teresa         Zalewska              119.27 -  325: 331   69
+    5     4 Joanna         Brychcy               116.38 +  455: 331  166
+    6     2 Marta          Sztajnert             123.19 +  423: 291  173
+    7     1 Barbara        Obremska              126.65 -  349: 415   77
+                                                          --------------- ---- ------
+                                                                    1016  /  7 145.14
+
+
+
+
+	Małgorzata Sulejewska 137.16 Kraków                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Izabela        Chmielewska           116.76 -  311: 344   67
+    2    12 Bernadeta      Zapała                100.00 +  430: 293  150
+    3     4 Małgorzata     Szczygieł             126.15 +  375: 337  176
+    4     4 Marta          Sztajnert             123.19 -  329: 354   73
+    5     9 Justyna        Nieznalska            110.75 +  457: 291  161
+    6     5 Marta          Szcześniak            127.70 +  348: 342  178
+    7     4 Marta          Sztajnert             123.19 +  424: 412  173
+                                                          --------------- ---- ------
+                                                                     978  /  7 139.71
+
+
+
+
+	Agnieszka Walas 133.78 Kraków
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Joanna         Brychcy               116.38 +  371: 301  166
+    2     4 Justyna        Górka                 143.91 -  302: 307   94
+    3     8 Ewa            Dunikowska            115.75 +  354: 337  166
+    4     6 Agata          Kopta                 115.56 -  348: 410   66
+    5     7 Katarzyna      Kowalska              118.60 -  381: 431   69
+    6     9 Barbara        Spodniewska           100.00 +  491: 310  150
+    7     6 Anna           Demczyszyn            124.04 +  396: 352  174
+                                                          --------------- ---- ------
+                                                                     885  /  7 126.43
+
+
+
+
+	Joanna Ostrowska 128.44 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Ewa            Dunikowska            115.75 -  318: 410   66
+    2     9 Katarzyna      Kowalska              118.60 +  389: 352  169
+    3     6 Ewa            Madejczyk             123.53 +  417: 214  174
+    4     3 Marta          Szcześniak            127.70 +  406: 248  178
+    5     3 Bożena         Guział                119.68 +  401: 350  170
+    6     1 Barbara        Obremska              126.65 -  355: 409   77
+    7     3 Ewa            Dunikowska            115.75 -  283: 435   66
+                                                          --------------- ---- ------
+                                                                     900  /  7 128.57
+
+
+
+
+	Marta Szcześniak 127.70 Krzyków
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Agata          Kopta                 115.56 +  481: 374  166
+    2     1 Marta          Sztajnert             123.19 +  403: 331  173
+    3     2 Justyna        Górka                 143.91 -  327: 422   94
+    4     3 Joanna         Ostrowska             128.44 -  248: 406   78
+    5     8 Izabela        Chmielewska           116.76 +  352: 283  167
+    6     5 Małgorzata     Sulejewska            137.16 -  342: 348   87
+    7     7 Ewa            Madejczyk             123.53 +  344: 325  174
+                                                          --------------- ---- ------
+                                                                     939  /  7 134.14
+
+
+
+
+	Barbara Obremska 126.65 Wrocław
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Jolanta        Zięba                 111.38 +  426: 276  161
+    2     6 Justyna        Nieznalska            110.75 +  421: 319  161
+    3     3 Izabela        Chmielewska           116.76 +  391: 358  167
+    4     2 Anna           Demczyszyn            124.04 +  468: 300  174
+    5     1 Teresa         Zalewska              119.27 +  383: 285  169
+    6     1 Joanna         Ostrowska             128.44 +  409: 355  178
+    7     1 Justyna        Górka                 143.91 +  415: 349  194
+                                                          --------------- ---- ------
+                                                                    1204  /  7 172.00
+
+
+
+
+	Małgorzata Szczygieł 126.15 Radwanice
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Justyna        Nieznalska            110.75 -  312: 333   61
+    2    11 Barbara        Spodniewska           100.00 +  591: 223  150
+    3     4 Małgorzata     Sulejewska            137.16 -  337: 375   87
+    4     7 Bożena         Guział                119.68 -  353: 415   70
+    5    10 Karolina       Sikora                100.90 +  431: 311  151
+    6     7 Ewa            Dunikowska            115.75 -  374: 438   66
+    7     9 Urszula        Rechowicz             119.28 +  402: 366  169
+                                                          --------------- ---- ------
+                                                                     754  /  7 107.71
+
+
+
+
+	Anna Demczyszyn 124.04 Bystra
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Aneta          Szczyrzyca            103.33 -  316: 430   53
+    2    10 Jolanta        Zięba                 111.38 +  439: 327  161
+    3    10 Justyna        Nieznalska            110.75 +  483: 254  161
+    4     2 Barbara        Obremska              126.65 -  300: 468   77
+    5     6 Ewa            Madejczyk             123.53 -  305: 366   74
+    6     8 Izabela        Chmielewska           116.76 +  452: 307  167
+    7     6 Agnieszka      Walas                 133.78 -  352: 396   84
+                                                          --------------- ---- ------
+                                                                     777  /  7 111.00
+
+
+
+
+	Ewa Madejczyk 123.53 Katowice
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Karolina       Sikora                100.90 -  435: 438   51
+    2     7 Ewa            Dunikowska            115.75 +  385: 367  166
+    3     6 Joanna         Ostrowska             128.44 -  214: 417   78
+    4    12 Bernadeta      Zapała                100.00 +  400: 313  150
+    5     6 Anna           Demczyszyn            124.04 +  366: 305  174
+    6     6 Joanna         Brychcy               116.38 -  346: 361   66
+    7     7 Marta          Szcześniak            127.70 -  325: 344   78
+                                                          --------------- ---- ------
+                                                                     763  /  7 109.00
+
+
+
+
+	Marta Sztajnert 123.19 Wisła                    
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Magdalena      Mazuchowska-Żak       100.00 +  403: 299  150
+    2     1 Marta          Szcześniak            127.70 -  331: 403   78
+    3     5 Urszula        Rechowicz             119.28 +  448: 271  169
+    4     4 Małgorzata     Sulejewska            137.16 +  354: 329  187
+    5     2 Agata          Kopta                 115.56 +  438: 284  166
+    6     2 Justyna        Górka                 143.91 -  291: 423   94
+    7     4 Małgorzata     Sulejewska            137.16 -  412: 424   87
+                                                          --------------- ---- ------
+                                                                     931  /  7 133.00
+
+
+
+
+	Bożena Guział 119.68 Racibórz                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Iwona          Skubis                100.00 +  377: 221  150
+    2     3 Karolina       Sikora                100.90 +  410: 219  151
+    3     1 Teresa         Zalewska              119.27 -  358: 377   69
+    4     7 Małgorzata     Szczygieł             126.15 +  415: 353  176
+    5     3 Joanna         Ostrowska             128.44 -  350: 401   78
+    6     4 Agata          Kopta                 115.56 +  395: 283  166
+    7     2 Katarzyna      Kowalska              118.60 +  442: 358  169
+                                                          --------------- ---- ------
+                                                                     959  /  7 137.00
+
+
+
+
+	Urszula Rechowicz 119.28 Katowice               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    12 Barbara        Spodniewska           100.00 +  380: 270  150
+    2     2 Teresa         Zalewska              119.27 -  442: 459   69
+    3     5 Marta          Sztajnert             123.19 -  271: 448   73
+    4    10 Jolanta        Zięba                 111.38 -  299: 348   61
+    5    11 Aneta          Szczyrzyca            103.33 -  312: 333   53
+    6    11 Justyna        Nieznalska            110.75 +  439: 354  161
+    7     9 Małgorzata     Szczygieł             126.15 -  366: 402   76
+                                                          --------------- ---- ------
+                                                                     643  /  7  91.86
+
+
+
+
+	Teresa Zalewska 119.27 Racibórz
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    13 Bernadeta      Zapała                100.00 +  458: 265  150
+    2     2 Urszula        Rechowicz             119.28 +  459: 442  169
+    3     1 Bożena         Guział                119.68 +  377: 358  170
+    4     1 Justyna        Górka                 143.91 +  331: 325  194
+    5     1 Barbara        Obremska              126.65 -  285: 383   77
+    6     3 Katarzyna      Kowalska              118.60 -  234: 380   69
+    7     5 Joanna         Brychcy               116.38 -  240: 431   66
+                                                          --------------- ---- ------
+                                                                     895  /  7 127.86
+
+
+
+
+	Katarzyna Kowalska 118.60 Katowice                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Justyna        Górka                 143.91 -  294: 434   94
+    2     9 Joanna         Ostrowska             128.44 -  352: 389   78
+    3    11 Bernadeta      Zapała                100.00 +  516: 239  150
+    4     8 Karolina       Sikora                100.90 +  365: 341  151
+    5     7 Agnieszka      Walas                 133.78 +  431: 381  184
+    6     3 Teresa         Zalewska              119.27 +  380: 234  169
+    7     2 Bożena         Guział                119.68 -  358: 442   70
+                                                          --------------- ---- ------
+                                                                     896  /  7 128.00
+
+
+
+
+	Izabela Chmielewska 116.76 Zabrze
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Małgorzata     Sulejewska            137.16 +  344: 311  187
+    2     5 Aneta          Szczyrzyca            103.33 +  315: 270  153
+    3     3 Barbara        Obremska              126.65 -  358: 391   77
+    4     5 Joanna         Brychcy               116.38 -  321: 378   66
+    5     8 Marta          Szcześniak            127.70 -  283: 352   78
+    6     8 Anna           Demczyszyn            124.04 -  307: 452   74
+    7    11 Karolina       Sikora                100.90 +  372: 296  151
+                                                          --------------- ---- ------
+                                                                     786  /  7 112.29
+
+
+
+
+	Joanna Brychcy 116.38 Katowice                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Agnieszka      Walas                 133.78 -  301: 371   84
+    2    13 Iwona          Skubis                100.00 +  482: 287  150
+    3     7 Aneta          Szczyrzyca            103.33 +  395: 307  153
+    4     5 Izabela        Chmielewska           116.76 +  378: 321  167
+    5     4 Justyna        Górka                 143.91 -  331: 455   94
+    6     6 Ewa            Madejczyk             123.53 +  361: 346  174
+    7     5 Teresa         Zalewska              119.27 +  431: 240  169
+                                                          --------------- ---- ------
+                                                                     991  /  7 141.57
+
+
+
+
+	Ewa Dunikowska 115.75 Kraków
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Joanna         Ostrowska             128.44 +  410: 318  178
+    2     7 Ewa            Madejczyk             123.53 -  367: 385   74
+    3     8 Agnieszka      Walas                 133.78 -  337: 354   84
+    4     9 Aneta          Szczyrzyca            103.33 +  433: 260  153
+    5     5 Jolanta        Zięba                 111.38 +  318: 299  161
+    6     7 Małgorzata     Szczygieł             126.15 +  438: 374  176
+    7     3 Joanna         Ostrowska             128.44 +  435: 283  178
+                                                          --------------- ---- ------
+                                                                    1004  /  7 143.43
+
+
+
+
+	Agata Kopta 115.56 Wodzisław Śląski         
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Marta          Szcześniak            127.70 -  374: 481   78
+    2     8 Magdalena      Mazuchowska-Żak       100.00 +  398: 306  150
+    3     9 Karolina       Sikora                100.90 +  383: 359  151
+    4     6 Agnieszka      Walas                 133.78 +  410: 348  184
+    5     2 Marta          Sztajnert             123.19 -  284: 438   73
+    6     4 Bożena         Guział                119.68 -  283: 395   70
+    7     8 Jolanta        Zięba                 111.38 +  373: 347  161
+                                                          --------------- ---- ------
+                                                                     867  /  7 123.86
+
+
+
+
+	Jolanta Zięba 111.38 Zabrze
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Barbara        Obremska              126.65 -  276: 426   77
+    2    10 Anna           Demczyszyn            124.04 -  327: 439   74
+    3    13 Barbara        Spodniewska           100.00 +  388: 301  150
+    4    10 Urszula        Rechowicz             119.28 +  348: 299  169
+    5     5 Ewa            Dunikowska            115.75 -  299: 318   66
+    6    10 Aneta          Szczyrzyca            103.33 +  337: 266  153
+    7     8 Agata          Kopta                 115.56 -  347: 373   66
+                                                          --------------- ---- ------
+                                                                     755  /  7 107.86
+
+
+
+
+	Justyna Nieznalska 110.75 Jejkowice
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Małgorzata     Szczygieł             126.15 +  333: 312  176
+    2     6 Barbara        Obremska              126.65 -  319: 421   77
+    3    10 Anna           Demczyszyn            124.04 -  254: 483   74
+    4    11 Magdalena      Mazuchowska-Żak       100.00 +  429: 288  150
+    5     9 Małgorzata     Sulejewska            137.16 -  291: 457   87
+    6    11 Urszula        Rechowicz             119.28 -  354: 439   69
+    7    10 Magdalena      Mazuchowska-Żak       100.00 +  387: 331  150
+                                                          --------------- ---- ------
+                                                                     783  /  7 111.86
+
+
+
+
+	Aneta Szczyrzyca 103.33 Jaworzno
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Anna           Demczyszyn            124.04 +  430: 316  174
+    2     5 Izabela        Chmielewska           116.76 -  270: 315   67
+    3     7 Joanna         Brychcy               116.38 -  307: 395   66
+    4     9 Ewa            Dunikowska            115.75 -  260: 433   66
+    5    11 Urszula        Rechowicz             119.28 +  333: 312  169
+    6    10 Jolanta        Zięba                 111.38 -  266: 337   61
+    7    12 Barbara        Spodniewska           100.00 +  376: 217  150
+                                                          --------------- ---- ------
+                                                                     753  /  7 107.57
+
+
+
+
+	Karolina Sikora 100.90 Jaworzno
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Ewa            Madejczyk             123.53 +  438: 435  174
+    2     3 Bożena         Guział                119.68 -  219: 410   70
+    3     9 Agata          Kopta                 115.56 -  359: 383   66
+    4     8 Katarzyna      Kowalska              118.60 -  341: 365   69
+    5    10 Małgorzata     Szczygieł             126.15 -  311: 431   76
+    6    13 Iwona          Skubis                100.00 +  290: 266  150
+    7    11 Izabela        Chmielewska           116.76 -  296: 372   67
+                                                          --------------- ---- ------
+                                                                     672  /  7  96.00
+
+
+
+
+	Magdalena Mazuchowska-Żak 100.00 Łask
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Marta          Sztajnert             123.19 -  299: 403   73
+    2     8 Agata          Kopta                 115.56 -  306: 398   66
+    3    12 Iwona          Skubis                100.00 +  474: 191  150
+    4    11 Justyna        Nieznalska            110.75 -  288: 429   61
+    5    12 Barbara        Spodniewska           100.00 -  335: 345   50
+    6    12 Bernadeta      Zapała                100.00 +  364: 294  150
+    7    10 Justyna        Nieznalska            110.75 -  331: 387   61
+                                                          --------------- ---- ------
+                                                                     611  /  7  87.29
+
+
+
+
+	Iwona Skubis 100.00 Dąbrowa Górnicza         
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Bożena         Guział                119.68 -  221: 377   70
+    2    13 Joanna         Brychcy               116.38 -  287: 482   66
+    3    12 Magdalena      Mazuchowska-Żak       100.00 -  191: 474   50
+    4    13 Barbara        Spodniewska           100.00 -  270: 286   50
+    5    13 Bernadeta      Zapała                100.00 -  231: 303   50
+    6    13 Karolina       Sikora                100.90 -  266: 290   51
+    7    13 Bernadeta      Zapała                100.00 -  264: 344   50
+                                                          --------------- ---- ------
+                                                                     387  /  7  55.29
+
+
+
+
+	Barbara Spodniewska 100.00 Tychy
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    12 Urszula        Rechowicz             119.28 -  270: 380   69
+    2    11 Małgorzata     Szczygieł             126.15 -  223: 591   76
+    3    13 Jolanta        Zięba                 111.38 -  301: 388   61
+    4    13 Iwona          Skubis                100.00 +  286: 270  150
+    5    12 Magdalena      Mazuchowska-Żak       100.00 +  345: 335  150
+    6     9 Agnieszka      Walas                 133.78 -  310: 491   84
+    7    12 Aneta          Szczyrzyca            103.33 -  217: 376   53
+                                                          --------------- ---- ------
+                                                                     643  /  7  91.86
+
+
+
+
+	Bernadeta Zapała 100.00 Jaworzno
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    13 Teresa         Zalewska              119.27 -  265: 458   69
+    2    12 Małgorzata     Sulejewska            137.16 -  293: 430   87
+    3    11 Katarzyna      Kowalska              118.60 -  239: 516   69
+    4    12 Ewa            Madejczyk             123.53 -  313: 400   74
+    5    13 Iwona          Skubis                100.00 +  303: 231  150
+    6    12 Magdalena      Mazuchowska-Żak       100.00 -  294: 364   50
+    7    13 Iwona          Skubis                100.00 +  344: 264  150
+                                                          --------------- ---- ------
+                                                                     649  /  7  92.71
+
+
+</pre></div><div id='p_rundy' class='page'><pre>Wyniki poszczególnych rund turnieju IV Babskie granie (turniej bez jaj)
+
+
+
+Runda nr  1
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Justyna        Górka                - Katarzyna      Kowalska              434: 294
+   2 Izabela        Chmielewska          - Małgorzata     Sulejewska            344: 311
+   3 Agnieszka      Walas                - Joanna         Brychcy               371: 301
+   4 Ewa            Dunikowska           - Joanna         Ostrowska             410: 318
+   5 Marta          Szcześniak           - Agata          Kopta                 481: 374
+   6 Jolanta        Zięba                - Barbara        Obremska              276: 426
+   7 Małgorzata     Szczygieł            - Justyna        Nieznalska            312: 333
+   8 Aneta          Szczyrzyca           - Anna           Demczyszyn            430: 316
+   9 Ewa            Madejczyk            - Karolina       Sikora                435: 438
+  10 Magdalena      Mazuchowska-Żak      - Marta          Sztajnert             299: 403
+  11 Bożena         Guział               - Iwona          Skubis                377: 221
+  12 Barbara        Spodniewska          - Urszula        Rechowicz             270: 380
+  13 Teresa         Zalewska             - Bernadeta      Zapała                458: 265
+
+
+Runda nr  2
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Marta          Sztajnert            - Marta          Szcześniak            331: 403
+   2 Urszula        Rechowicz            - Teresa         Zalewska              442: 459
+   3 Karolina       Sikora               - Bożena         Guział                219: 410
+   4 Justyna        Górka                - Agnieszka      Walas                 307: 302
+   5 Izabela        Chmielewska          - Aneta          Szczyrzyca            315: 270
+   6 Justyna        Nieznalska           - Barbara        Obremska              319: 421
+   7 Ewa            Madejczyk            - Ewa            Dunikowska            385: 367
+   8 Agata          Kopta                - Magdalena      Mazuchowska-Żak       398: 306
+   9 Joanna         Ostrowska            - Katarzyna      Kowalska              389: 352
+  10 Anna           Demczyszyn           - Jolanta        Zięba                 439: 327
+  11 Małgorzata     Szczygieł            - Barbara        Spodniewska           591: 223
+  12 Bernadeta      Zapała               - Małgorzata     Sulejewska            293: 430
+  13 Iwona          Skubis               - Joanna         Brychcy               287: 482
+
+
+Runda nr  3
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Bożena         Guział               - Teresa         Zalewska              358: 377
+   2 Marta          Szcześniak           - Justyna        Górka                 327: 422
+   3 Barbara        Obremska             - Izabela        Chmielewska           391: 358
+   4 Małgorzata     Sulejewska           - Małgorzata     Szczygieł             375: 337
+   5 Urszula        Rechowicz            - Marta          Sztajnert             271: 448
+   6 Joanna         Ostrowska            - Ewa            Madejczyk             417: 214
+   7 Joanna         Brychcy              - Aneta          Szczyrzyca            395: 307
+   8 Agnieszka      Walas                - Ewa            Dunikowska            354: 337
+   9 Karolina       Sikora               - Agata          Kopta                 359: 383
+  10 Anna           Demczyszyn           - Justyna        Nieznalska            483: 254
+  11 Katarzyna      Kowalska             - Bernadeta      Zapała                516: 239
+  12 Magdalena      Mazuchowska-Żak      - Iwona          Skubis                474: 191
+  13 Barbara        Spodniewska          - Jolanta        Zięba                 301: 388
+
+
+Runda nr  4
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Teresa         Zalewska             - Justyna        Górka                 331: 325
+   2 Barbara        Obremska             - Anna           Demczyszyn            468: 300
+   3 Joanna         Ostrowska            - Marta          Szcześniak            406: 248
+   4 Małgorzata     Sulejewska           - Marta          Sztajnert             329: 354
+   5 Joanna         Brychcy              - Izabela        Chmielewska           378: 321
+   6 Agata          Kopta                - Agnieszka      Walas                 410: 348
+   7 Bożena         Guział               - Małgorzata     Szczygieł             415: 353
+   8 Katarzyna      Kowalska             - Karolina       Sikora                365: 341
+   9 Aneta          Szczyrzyca           - Ewa            Dunikowska            260: 433
+  10 Jolanta        Zięba                - Urszula        Rechowicz             348: 299
+  11 Justyna        Nieznalska           - Magdalena      Mazuchowska-Żak       429: 288
+  12 Bernadeta      Zapała               - Ewa            Madejczyk             313: 400
+  13 Iwona          Skubis               - Barbara        Spodniewska           270: 286
+
+
+Runda nr  5
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Teresa         Zalewska             - Barbara        Obremska              285: 383
+   2 Marta          Sztajnert            - Agata          Kopta                 438: 284
+   3 Joanna         Ostrowska            - Bożena         Guział                401: 350
+   4 Justyna        Górka                - Joanna         Brychcy               455: 331
+   5 Ewa            Dunikowska           - Jolanta        Zięba                 318: 299
+   6 Ewa            Madejczyk            - Anna           Demczyszyn            366: 305
+   7 Katarzyna      Kowalska             - Agnieszka      Walas                 431: 381
+   8 Marta          Szcześniak           - Izabela        Chmielewska           352: 283
+   9 Justyna        Nieznalska           - Małgorzata     Sulejewska            291: 457
+  10 Małgorzata     Szczygieł            - Karolina       Sikora                431: 311
+  11 Aneta          Szczyrzyca           - Urszula        Rechowicz             333: 312
+  12 Barbara        Spodniewska          - Magdalena      Mazuchowska-Żak       345: 335
+  13 Iwona          Skubis               - Bernadeta      Zapała                231: 303
+
+
+Runda nr  6
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Barbara        Obremska             - Joanna         Ostrowska             409: 355
+   2 Marta          Sztajnert            - Justyna        Górka                 291: 423
+   3 Katarzyna      Kowalska             - Teresa         Zalewska              380: 234
+   4 Agata          Kopta                - Bożena         Guział                283: 395
+   5 Małgorzata     Sulejewska           - Marta          Szcześniak            348: 342
+   6 Joanna         Brychcy              - Ewa            Madejczyk             361: 346
+   7 Ewa            Dunikowska           - Małgorzata     Szczygieł             438: 374
+   8 Anna           Demczyszyn           - Izabela        Chmielewska           452: 307
+   9 Agnieszka      Walas                - Barbara        Spodniewska           491: 310
+  10 Jolanta        Zięba                - Aneta          Szczyrzyca            337: 266
+  11 Urszula        Rechowicz            - Justyna        Nieznalska            439: 354
+  12 Bernadeta      Zapała               - Magdalena      Mazuchowska-Żak       294: 364
+  13 Karolina       Sikora               - Iwona          Skubis                290: 266
+
+
+Runda nr  7
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Justyna        Górka                - Barbara        Obremska              349: 415
+   2 Bożena         Guział               - Katarzyna      Kowalska              442: 358
+   3 Ewa            Dunikowska           - Joanna         Ostrowska             435: 283
+   4 Małgorzata     Sulejewska           - Marta          Sztajnert             424: 412
+   5 Joanna         Brychcy              - Teresa         Zalewska              431: 240
+   6 Anna           Demczyszyn           - Agnieszka      Walas                 352: 396
+   7 Marta          Szcześniak           - Ewa            Madejczyk             344: 325
+   8 Jolanta        Zięba                - Agata          Kopta                 347: 373
+   9 Małgorzata     Szczygieł            - Urszula        Rechowicz             402: 366
+  10 Magdalena      Mazuchowska-Żak      - Justyna        Nieznalska            331: 387
+  11 Izabela        Chmielewska          - Karolina       Sikora                372: 296
+  12 Aneta          Szczyrzyca           - Barbara        Spodniewska           376: 217
+  13 Iwona          Skubis               - Bernadeta      Zapała                264: 344
+</pre></div><div id='p_ranking' class='page'><pre>Lista rankingowa na dzień 08-03-2020
+
+Lp.  Imię i nazwisko                Miasto               Rank.  Skalpy Gry
+---- ------------------------------ -------------------- ------ ------ ----
+   1 Dominik Urbacki                Pruszków             162.23   7625   47
+   2 Michał Alabrudziński           Włocławek            160.36  30629  191
+   3 Patryk Wolniewicz              Szczecin             159.19   5731   36
+   4 Dawid Pikul                    Poznań               158.26  31493  199
+   5 Marek Reda                     Dębówka              157.51   8663   55
+   6 Krzysztof Obremski             Legnica              155.98  30885  198
+   7 Mirosław Uglik                 Warszawa             155.81  25241  162
+   8 Jakub Szymczak                 Łódź                 155.42  23934  154
+   9 Kacper Zegadło                 Warszawa             155.38  29833  192
+  10 Kazimierz Merklejn             Warszawa             154.76  30178  195
+  11 Dawid Adamczyk                 Inowrocław           154.59  20097  130
+  12 Dariusz Kosz                   Nysa                 154.57  27049  175
+  13 Grzegorz Kurowski              Warszawa             153.95  30482  198
+  14 Krzysztof Mówka                Warszawa             153.76  30598  199
+  15 Bartosz Morawski               Wrocław              153.23  30492  199
+  16 Mariusz Skrobosz               Warszawa             152.96  29674  194
+  17 Aleksander Puchalski           Włocławek            152.96   7342   48
+  18 Dariusz Ulatowski              Tuchola              152.82  30563  200
+  19 Przemysław Rybicki             Otwock               152.77   8555   56
+  20 Piotr Pietuchowski             Białystok            152.36  13103   86
+  21 Miłosz Wrzałek                 Warszawa             151.37  29668  196
+  22 Kamil Górka                    Kraków               150.91  28672  190
+  23 Łukasz Bobowski                Suchedniów           150.85  30170  200
+  24 Łukasz Tuszyński               Chłopowo             149.78  27859  186
+  25 Maciej Czupryniak              Milanówek            149.45  29592  198
+  26 Dariusz Putoń                  Ruda Śląska          148.88  27394  184
+  27 Paweł Mazurek                  Polanica-Zdrój       148.77  17704  119
+  28 Paweł Jackowski                Warszawa             148.47  28952  195
+  29 Jakub Zaryński                 Świnoujście          147.72  27623  187
+  30 Paweł Pogorzelski              Olsztyn              147.64  28495  193
+  31 Stanisław Rydzik               Warszawa             147.04  29261  199
+  32 Szymon Płachta                 Warszawa             146.84  28634  195
+  33 Jan Mrozowski                  Kraków               146.80  26131  178
+  34 Tomasz Zwoliński               Skierdy              146.69  21857  149
+  35 Artur Irzyk                    Strzyżów             146.64  28449  194
+  36 Andrzej Kowalski               Gdańsk               146.58  14951  102
+  37 Mariusz Wrześniewski           Kraków               146.58  29022  198
+  38 Wojciech Zemło                 Łódź                 146.19  25730  176
+  39 Kamil Kister                   Warszawa             145.58  12520   86
+  40 Robert Duczemiński             Gorzów Wielkopolski  145.49   9166   63
+  41 Maciej Grąbczewski             Szczecin             145.46  27638  190
+  42 Michał Waszkiewicz             Białystok            145.42  28794  198
+  43 Krzysztof Kodzis               Bydgoszcz            145.33   6976   48
+  44 Marek Dudkiewicz               Milanówek            145.27  28908  199
+  45 Karol Wyrębkiewicz             Kraków               144.72  14038   97
+  46 Justyna Górka                  Kraków               143.95  21161  147
+  47 Robert Kamiński                Warszawa             143.39  27387  191
+  48 Mikołaj Cieplik                Ostrzeszów           143.16  28488  199
+  49 Przemysław Herdzina            Kraków               142.75   8993   63
+  50 Maciej Rzychoń                 Katowice             142.58   5418   38
+  51 Michał Makowski                Warszawa             142.50  14250  100
+  52 Jarosław Puchalski             Chrzanów Mały        142.47   9688   68
+  53 Konrad Sowula                  Kraków               142.38  17228  121
+  54 Tomasz Górka                   Kraków               142.33   5551   39
+  55 Janusz Krupiński               Bytom                142.28  28314  199
+  56 Tomasz Nasiłowski              Siedlce              142.23  27735  195
+  57 Joanna Juszczak                Warszawa             142.18  27726  195
+  58 Grzegorz Łukasik               Konojady             141.80  12337   87
+  59 Sławomir Piotrowski            Deszczno             141.42  15273  108
+  60 Andrzej Rakoczy                Kraków               141.13  16089  114
+  61 Małgorzata Deszczyńska         Warszawa             141.02  26653  189
+  62 Marcin Rogala                  Warszawa             140.73  28146  200
+  63 Krzysztof Gibas                Kraków               140.68   8863   63
+  64 Marcin Mroziuk                 Warszawa             140.44   5477   39
+  65 Tomasz Suchanek                Wrocław              139.71  16067  115
+  66 Franciszek Łysek               Warszawa             139.51  24972  179
+  67 Radosław Jachna                Gdańsk               139.35  18533  133
+  68 Piotr Domański                 Lublin               139.01  15986  115
+  69 Michał Rogalewicz              Poznań               138.70   9570   69
+  70 Irena Sołdan                   Warszawa             138.21  24601  178
+  71 Andrzej Kwiatkowski            Warszawa             138.12  26657  193
+  72 Karol Waniek                   Wrocław              138.00   5934   43
+  73 Adrian Ziemniewicz             Białystok            137.87  26195  190
+  74 Maciej Sancewicz               Gorzów Wielkopolski  137.77   7302   53
+  75 Rafał Wesołowski               Warszawa             137.54  27508  200
+  76 Małgorzata Sulejewska          Kraków               137.29  20181  147
+  77 Bronisław Parada               Polanica-Zdrój       137.16  13442   98
+  78 Szymon Dąbrowski               Warszawa             136.92  24920  182
+  79 Jakub Błażejewski              Poznań               136.85  26823  196
+  80 Jacek Mańko                    Poznań               136.48  26886  197
+  81 Krzysztof Sporczyk             Piaseczno            136.07  27077  199
+  82 Grzegorz Pukniel               Łódź                 135.75   9367   69
+  83 Marcin Stachowski              Wydartowo I          135.61  23190  171
+  84 Dariusz Kuć                    Stargard             135.32  22463  166
+  85 Natalia Woźniak                Dziwnówek            135.03  26871  199
+  86 Andrzej Kroc                   Łódź                 134.86  26972  200
+  87 Marta Bajorek                  Warszawa             134.71  26403  196
+  88 Rafał Matczak                  Milanówek            134.39  26609  198
+  89 Tomasz Lempart                 Wadowice             134.26  26046  194
+  90 Alicja Grąbczewska             Szczecin             133.84  25964  194
+  91 Piotr Broda                    Sandomierz           133.83  25963  194
+  92 Bartłomiej Pawlak              Stary Szwarocin      133.74  21131  158
+  93 Leszek Stecuła                 Bytom                133.72   6151   46
+  94 Juliusz Czupryniak             Warszawa             133.72   7087   53
+  95 Maciej Skrzypczak              Kędzierzyn-Koźle     133.59  26184  196
+  96 Jakub Hassa                    Lutol Suchy          133.54  25773  193
+  97 Maciej Śliwa                   Zabrze               133.53   9080   68
+  98 Katarzyna Polak                Warszawa             133.31  25995  195
+  99 Agnieszka Walas                Kraków               133.19  11454   86
+ 100 Grzegorz Koczkodon             Ostróda              133.15  16111  121
+ 101 Wojciech Usakiewicz            Warszawa             132.84   7572   57
+ 102 Krzysztof Kałuża               Sosnowiec            132.64  23875  180
+ 103 Maciej Nawrocki                Wrocław              132.56  24656  186
+ 104 Maciej Perzyński               Piła                 132.56   8351   63
+ 105 Ewa Radzikowska                Pyskowice            132.18   4362   33
+ 106 Maciej Kuć                     Stargard             131.96  17947  136
+ 107 Daniel Janus                   Wąchock              131.88   9891   75
+ 108 Adam Grzelec                   Poznań               131.72  22655  172
+ 109 Diana Pietrzykowska            Szczecin             131.61   8686   66
+ 110 Rafał Błaszkiewicz             Milanówek            131.49  25114  191
+ 111 Mariusz Makuch                 Zator                131.45   4075   31
+ 112 Tomasz Łapka                   Opole                131.33   5122   39
+ 113 Mariusz Orzeł                  Nowe Miasto Lubaw.   131.32  21143  161
+ 114 Jacek Baltyn                   Suchedniów           130.98   8252   63
+ 115 Andrzej Rechowicz              Katowice             130.92  26053  199
+ 116 Ireneusz Kurzok                Mikołów              130.71  16208  124
+ 117 Wojciech Sołdan                Gdynia               130.69   7188   55
+ 118 Grażyna Wesołowska             Łódź                 130.62  22858  175
+ 119 Małgorzata Szmuksta            Szczecin             130.56  23239  178
+ 120 Agata Kuć                      Stargard             130.25  23055  177
+ 121 Dominika Worona                Police               130.25  10941   84
+ 122 Marcin Orzechowski             Poznań               130.10   6505   50
+ 123 Andrzej Grabiński              Suchedniów           130.03   4421   34
+ 124 Dominik Ulejczyk               Będzin               129.92  25984  200
+ 125 Marcin Ceglarek                Kraków               129.82  14800  114
+ 126 Paweł Maciejczuk               Białystok            129.72  25684  198
+ 127 Ireneusz Moralewicz            Goleniów             129.58  24621  190
+ 128 Bartosz Aleksandrowicz         Poznań               129.41  11776   91
+ 129 Katarzyna Ślusarska            Milanówek            129.29  24695  191
+ 130 Mariola Osajda-Matczak         Milanówek            129.21  25326  196
+ 131 Joanna Ostrowska               Warszawa             128.45  24148  188
+ 132 Arkadiusz Biegun               Kraków               128.40   6163   48
+ 133 Jerzy Matyasik                 Kraków               128.32  25280  197
+ 134 Marta Szcześniak               Krzyków              128.31   9495   74
+ 135 Jolanta Chłopińska             Wałcz                128.22  13848  108
+ 136 Zbigniew Wietecki              Gorzów Wielkopolski  128.10  24339  190
+ 137 Jakub Nalepa                   Gliwice              127.93   5501   43
+ 138 Marek Rogalski                 Warszawa             127.54  25125  197
+ 139 Zbigniew Rybak                 Warszawa             127.32  23681  186
+ 140 Arkadiusz Łydka                Jaworzno             126.93  25259  199
+ 141 Tomasz Sehnal                  Warszawa             126.56  25312  200
+ 142 Tomasz A. Praga                Białystok            126.49  12270   97
+ 143 Zdzisław Stańkowski            Rząska               126.49   6451   51
+ 144 Dorota Kuć                     Stargard             126.46  24153  191
+ 145 Natalia Ogierman               Katowice             126.11  19043  151
+ 146 Monika Gawron-Cieślik          Szczecin             126.09  20678  164
+ 147 Maria Magdalena Kupczyńska     Szczecin             126.02   7057   56
+ 148 Dariusz Białobrzewski          Gdynia               125.56   6027   48
+ 149 Małgorzata Szczygieł           Radwanice            125.50  24849  198
+ 150 Dorota Stachowska              Wydartowo I          125.46  25093  200
+ 151 Konrad Mikusek                 Milanówek            125.46  16812  134
+ 152 Dariusz Sowula                 Kraków               125.45  16685  133
+ 153 Ryszard Korpalski              Wójtowice            125.11  21519  172
+ 154 Jerzy Luter                    Bytom                125.07  24388  195
+ 155 Grzegorz Papciak               Jodłowa              125.00   7000   56
+ 156 Monika Siemaszko               Lipiany              125.00  16125  129
+ 157 Jakub Onoszko                  Gdynia               124.98  22871  183
+ 158 Łukasz Sornek                  Mikołów              124.76  12726  102
+ 159 Stanisław Gasik                Warszawa             124.69  14963  120
+ 160 Marta Sztajnert                Wisła                124.65  17077  137
+ 161 Zdzisław Figurski              Gryfów Śląski        124.35   7461   60
+ 162 Zdzisław Szota                 Warszawa             124.34  10693   86
+ 163 Walenty Siemaszko              Lipiany              124.28  11682   94
+ 164 Arkadiusz Kleniewski           Dzierzążnia          124.12  24327  196
+ 165 Dorota Rudzińska               Warszawa             124.08   8934   72
+ 166 Czesław Grajewski              Białystok            124.01  24554  198
+ 167 Szymon Stępień                 Bytom                123.97  24547  198
+ 168 Anna Demczyszyn                Bystra               123.58   6426   52
+ 169 Bartosz Bartczak               Poznań               123.43  23575  191
+ 170 Maciej Sylwestrzuk             Białystok            123.18  24512  199
+ 171 Jarosław Michalak              Łódź                 122.76  10557   86
+ 172 Sylwia Łada                    Inowrocław           122.74  24180  197
+ 173 Adam Sternik                   Kętrzyn              122.59   6865   56
+ 174 Artur Wawrzynowski             Żukowo               122.57  19121  156
+ 175 Łukasz Przyszlak               Świnoujście          122.35  14560  119
+ 176 Ryszard Żydaczewski            Lubin                122.25   5868   48
+ 177 Ala Białobrzewska              Gdynia               122.08  13551  111
+ 178 Ewelina Kister                 Warszawa             121.85   7189   59
+ 179 Ewa Madejczyk                  Katowice             121.83   7310   60
+ 180 Agnieszka Matus                Milanówek            121.74  23130  190
+ 181 Dariusz Buławko                Warszawa             121.67   5475   45
+ 182 Zofia Gajewska                 Jelenia Góra         121.38  15415  127
+ 183 Michał Sak                     Lublin               121.35   4854   40
+ 184 Piotr Potoczek                 Nowy Sącz            121.31   6187   51
+ 185 Karolina Urbańska              Poznań               121.29  17709  146
+ 186 Sławomir Rosochacz             Lublin               121.16  10662   88
+ 187 Ziemowit Pazda                 Wrocław              121.06  14406  119
+ 188 Rafał Stachowski               Police               120.97  11008   91
+ 189 Anita Bruska                   Gdynia               120.61  18574  154
+ 190 Teresa Zalewska                Racibórz             120.48  22770  189
+ 191 Bożena Guział                  Racibórz             120.29  23938  199
+ 192 Łukasz Baranowski              Gdynia               120.25   4329   36
+ 193 Leokadia Litwinowicz           Gliwice              120.25   3848   32
+ 194 Michał Mikołajczyk             Gdańsk               120.25   4329   36
+ 195 Katarzyna Kowalska             Katowice             119.43  18751  157
+ 196 Jarosław Olek                  Warszawa             119.32   9188   77
+ 197 Bogdan Kozłowski               Białystok            119.19  14660  123
+ 198 Lucyna Śniadach                Rumia                119.07  15241  128
+ 199 Sławomir Wiśniowski            Jaworzno             118.81  16871  142
+ 200 Krystyna Augustyniak           Łódź                 118.75   4275   36
+ 201 Sławomir Długosz               Ostróda              118.74  16980  143
+ 202 Andrzej Bednaruk               Gdańsk               118.69  21364  180
+ 203 Iwona Wieluńska                Kołobrzeg            118.47  23102  195
+ 204 Urszula Rechowicz              Katowice             118.31  23425  198
+ 205 Sławomir Wolski                Wrocław              118.11  23386  198
+ 206 Maciej Labe                    Poznań               117.95   4364   37
+ 207 Beata Piotrowska               Łódź                 117.93   8019   68
+ 208 Joanna Brychcy                 Katowice             117.90  23108  196
+ 209 Samir Chakrar                  Poznań               117.69   9180   78
+ 210 Marta Świątkowska              Wrocław              117.63  22114  188
+ 211 Marianna Kozłowska             Białystok            117.51  18802  160
+ 212 Agnieszka Dawid                Kraków               117.40  15966  136
+ 213 Olga Swarcewicz                Warszawa             117.38   8569   73
+ 214 Tomasz Siwiński                Zawiercie            117.36  11267   96
+ 215 Renata Andracka                Zwola                117.12  21901  187
+ 216 Adam Janicki                   Wrocław              117.11  10306   88
+ 217 Ewa Dunikowska                 Kraków               116.96  21170  181
+ 218 Izabela Chmielewska            Zabrze               116.47  12812  110
+ 219 Maciej Dąbrowski               Warszawa             116.10  22176  191
+ 220 Agata Kopta                    Wodzisław Śląski     116.06  13463  116
+ 221 Małgorzata Jóźwiak             Iława                115.91   7650   66
+ 222 Paweł Wdziękoński              Świnoujście          115.59  11559  100
+ 223 Dorota Ostrowska               Białystok            115.33  11302   98
+ 224 Maria Krzyżanowska             Władysławowo         115.24   5762   50
+ 225 Dorota Gwiazdoń                Nowa Wieś            115.12   9900   86
+ 226 Anna Arana                     Kołobrzeg            114.95  21725  189
+ 227 Mieczysław Pastuszak           Gdynia               114.94  21378  186
+ 228 Paweł Brylski                  Kraków               114.65   5618   49
+ 229 Mateusz Stańczyk               Tarnów               114.62   3897   34
+ 230 Mateusz Gołębiewski            Łódź                 114.31   4115   36
+ 231 Karolina Mak                   Wrocław              114.25   6855   60
+ 232 Jerzy Krzyżewski               Piasutno             114.06   3992   35
+ 233 Józef Burzyński                Ełk                  114.05  20872  183
+ 234 Waldemar Czerwoniec            Warszawa             113.89   5353   47
+ 235 Waldemar Wypchał               Kraków               113.84  20718  182
+ 236 Stanisław Olsztyn              Olsztyn              113.71   3980   35
+ 237 Jerzy Kędra                    Warszawa             113.65   4205   37
+ 238 Marcin Kurowski                Racibórz             113.42  22116  195
+ 239 Maria Skutela                  Warszawa             113.22  22304  197
+ 240 Krzysztof Zawadzki             Sampława             112.81  21660  192
+ 241 Tomasz Duda                    Tychy                112.37   3371   30
+ 242 Katarzyna Okoniewska           Poznań               111.89   6937   62
+ 243 Leszek Kilian                  Jaworzno             111.38  21385  192
+ 244 Katarzyna  Szachowicz          Unieszewo            111.31   7235   65
+ 245 Jolanta Zięba                  Zabrze               111.09   9554   86
+ 246 Justyna Nieznalska             Jejkowice            110.85   8646   78
+ 247 Iwona Duźniak                  Dębica               110.70   4096   37
+ 248 Michał Dąbrowski               Warszawa             110.49   7845   71
+ 249 Waldemar Kudliński             Bydgoszcz            110.45  22090  200
+ 250 Zuzanna Cichoń                 Gdańsk               110.33  16219  147
+ 251 Przemysław Pawlic              Wrocław              110.14   3965   36
+ 252 Agnieszka Antos                Racibórz             109.85   6042   55
+ 253 Beata Kiżewska                 Świnoujście          109.42  14881  136
+ 254 Patrycja Skibska               Warszawa             108.68   6086   56
+ 255 Robert Wagner                  Wrocław              108.62   7712   71
+ 256 Paweł Kamiński                 Gdańsk               108.61   3910   36
+ 257 Łukasz Moskal                  Kurzętnik            108.47   3905   36
+ 258 Zbigniew Skrzypczyk            Kłonice              108.47   3905   36
+ 259 Marta Jamrozy                  Dąbrowa Górnicza     107.93   6368   59
+ 260 Wanda Grabiec                  Tarnów               107.67   5922   55
+ 261 Halina Cecot                   Kołobrzeg            107.54  20002  186
+ 262 Justyna Sławińska              Gdańsk               107.18   9432   88
+ 263 Józef Wietecki                 Gorzów Wielkopolski  107.16   8787   82
+ 264 Jacek Nowak                    Szczecin             106.90   9300   87
+ 265 Jadwiga Szczurowska            Świnoujście          106.78  11959  112
+ 266 Małgorzata Pochopień           Kraków               106.72   5763   54
+ 267 Marcin Radwański               Nowa Wieś Wrocławska 106.60   4584   43
+ 268 Mariusz Rostkowski             Częstochowa          106.48   8838   83
+ 269 Wojciech Gołęcki               Inowrocław           106.29  18919  178
+ 270 Błażej Ochocki                 Przeźmierowo         105.97   6252   59
+ 271 Marta Majewska                 Wadowice             105.80  14494  137
+ 272 Grażyna Smereka                Racibórz             105.76   3913   37
+ 273 Liliana Dąbrowska              Warszawa             105.22   4735   45
+ 274 Zofia Górka                    Łęczna               104.66   9105   87
+ 275 Katarzyna Dębska               Ostróda              104.61  11193  107
+ 276 Marcin Gauer                   Kołobrzeg            104.46  11491  110
+ 277 Bernadeta Kudlińska            Bydgoszcz            104.38  19832  190
+ 278 Aneta Szczyrzyca               Jaworzno             103.52  20496  198
+ 279 Lidia Żywna                    Gdynia               102.66  12216  119
+ 280 Małgorzata Wesołowska          Kołobrzeg            101.88   7437   73
+ 281 Natalia Mówka                  Warszawa             101.84   8351   82
+ 282 Maciej Onoszko                 Warszawa             101.84   3157   31
+ 283 Grażyna Chłopek                Jaworzno             101.38  13483  133
+ 284 Zygmunt Skwarek                Katowice             101.12   7786   77
+ 285 Karolina Sikora                Jaworzno             100.68  15605  155
+ 286 Marcin Stachowiak              Poznań                99.49   6666   67
+ 287 Marek Cecot                    Kołobrzeg             99.48   8655   87
+ 288 Krystyna Perekitko             Ciechanowiec          99.33   3278   33
+ 289 Jolanta Olczak                 Kołobrzeg             98.65  11838  120
+ 290 Krystyna Czajkowska            Kołobrzeg             98.60  18636  189
+ 291 Sylwia Bagińska-Worwa          Dąbrowa Górnicza      98.56   5618   57
+ 292 Barbara Wiśniewska             Gdańsk                97.98  15775  161
+ 293 Tomasz Lewiński                Wejherowo             97.60   3416   35
+ 294 Alicja Tuz                     Kielce                97.22   4764   49
+ 295 Grzegorz Bajer                 Łódź                  96.56   3283   34
+ 296 Teresa Balewska                Reda                  96.41  18414  191
+ 297 Piotr Kozak                    Racibórz              95.14   3520   37
+ 298 Jan Pawłowski                  Warszawa              95.09  18637  196
+ 299 Marek Popczyk                  Tychy                 95.02   5606   59
+ 300 Wojciech Łysek                 Warszawa              94.97  18899  199
+ 301 Marzena  Skrzypczak            Kędzierzyn-Koźle      94.24   3110   33
+ 302 Krzysztof Nasiłowski           Siedlce               93.82  12197  130
+ 303 Magdalena Mazuchowska-Żak      Łask                  93.82   6192   66
+ 304 Andrzej Klich                  Jaworzno              93.74  17717  189
+ 305 Adam Kaczyński                 Świnoujście           92.71   3152   34
+ 306 Przemysław Woiński             Łódź                  92.07   4972   54
+ 307 Jarosław Wypart                Częstochowa           92.07   5248   57
+ 308 Ewa Tymińska                   Gdańsk                90.88   6271   69
+ 309 Patrycja Kuśnierczyk           Jaworzno              90.43   2713   30
+ 310 Bernadeta Zapała               Jaworzno              90.14  10006  111
+ 311 Wojciech Wojtysiak             Warszawa              90.10  14597  162
+ 312 Piotr Duda                     Tychy                 89.47   2863   32
+ 313 Adam Graczyk                   Nowe Miasto Lubawsk   86.47   2940   34
+ 314 Ryszard Pliszka                Szczecin              85.29   2985   35
+ 315 Stanisław Świgost              Gdańsk                85.11   2979   35
+ 316 Tadeusz Kondej                 Świnoujście           84.75  10085  119
+ 317 Marcin Szczyrzyca              Jaworzno              84.35   2615   31
+ 318 Rafał Maciejewski              Łódź                  83.71   2846   34
+ 319 Dawid Węgrzyński               Zabrze                83.30   5331   64
+ 320 Patrycja Matulewicz            Kołobrzeg             81.93   5489   67
+ 321 Marcel Smolarek                Nowa Wieś             81.61   3591   44
+ 322 Roman Chomicz                  Kołobrzeg             81.60   2856   35
+ 323 Waldemar Dębski                Ostróda               79.89   3595   45
+ 324 Eugeniusz Tuszyński            Nowe Miasto Lubawsk   78.57   3457   44
+ 325 Elżbieta Fitał                 Kołobrzeg             78.47   8161  104
+ 326 Elżbieta Salamon               Wrocław               76.81   3303   43
+ 327 Maria Wieczorek                Kołobrzeg             75.79   5305   70
+ 328 Michał Sztajnert               Wisła                 71.47   2430   34
+
+
+
+
+Poczekalnia na dzień 08-03-2020
+
+Lp.  Imię i nazwisko                Miasto               Rank.  Skalpy Gry
+---- ------------------------------ -------------------- ------ ------ ----
+   1 Jakub Kowalski                 Piaseczno             92.48   2682   29
+   2 Patryk Gadus                   Pszczew              145.00   4060   28
+   3 Olga Żukowicz                  Ustronie Morskie      85.61   2397   28
+   4 Weronika Rudnicka              Szczecin             129.96   3509   27
+   5 Michał Burak                   Wrocław              123.67   3339   27
+   6 Radosław Pastusiak             Gorzów Wielkopolski   89.19   2408   27
+   7 Mariusz Sylwestrzuk            Kobyłka              146.12   3799   26
+   8 Grzegorz Grzeszczuk            Racibórz             113.04   2939   26
+   9 Klara Wigier                   Milanówek            106.40   2660   25
+  10 Wojciech Wąs                   Warszawa              90.04   2251   25
+  11 Marek Syczuk                   Warszawa             145.50   3492   24
+  12 Maciej Kuczyński               Gdynia               134.38   3225   24
+  13 Michał Garnowski               Pasłęk               133.96   3215   24
+  14 Andrzej Stańczyk               Tarnów               130.42   3130   24
+  15 Marek Charytoniuk              Biała Podlaska       129.25   3102   24
+  16 Michał Puchowski               Strzelce Opolskie    124.25   2982   24
+  17 Agnieszka Kaczkowska           Gdańsk               123.46   2963   24
+  18 Joanna Nawrocka                Bydgoszcz            121.42   2914   24
+  19 Alicja Wałaszewska-Kempa       Gdynia               121.25   2910   24
+  20 Mariusz Kubicki                Inowrocław           118.92   2854   24
+  21 Jarosław Karp                  Jędrzejów            114.67   2752   24
+  22 Maria Uryga                    Kraków               114.58   2750   24
+  23 Jacek Gasik                    Warszawa             106.96   2567   24
+  24 Lidia Szpakowska               Jaworzno             104.00   2496   24
+  25 Remigiusz Belesa               Zabrze                97.29   2335   24
+  26 Marta Popławska                Warszawa              93.92   2254   24
+  27 Bartosz Knapik                 Szczecin              89.67   2152   24
+  28 Iwona Skubis                   Dąbrowa Górnicza      65.33   1568   24
+  29 Krzysztof Jaworski             Warszawa             129.57   2980   23
+  30 Anna Kowalik                   Szczecin             124.00   2852   23
+  31 Leszek Dobrowolski             Wrocław              118.91   2735   23
+  32 Grzegorz Piotrkiewicz          Warszawa             107.30   2468   23
+  33 Agnieszka Piotrowicz           Gdańsk               105.09   2417   23
+  34 Maciej Pietrasik               Nowogard             100.09   2302   23
+  35 Marek Wodnicki                 Łódź                  97.04   2232   23
+  36 Krystyna Drynkowska            Świnoujście           91.39   2102   23
+  37 Agata Rosińska                 Warszawa              90.78   2088   23
+  38 Alicja Bielecka-Żabierek       Poznań                90.35   2078   23
+  39 Joanna Regdos                  Kraków                89.96   2069   23
+  40 Przemysław Saktura             Kołobrzeg             80.91   1861   23
+  41 Szymon Sztajnert               Wisła                 79.17   1821   23
+  42 Tomasz Rekus                   Gliwice               78.83   1813   23
+  43 Igor Kociełkiewicz             Łódź                  76.61   1762   23
+  44 Zbigniew Wiśniewski            Sokołów Małopolski    93.64   2060   22
+  45 Beata Pasternak                Kraków                63.91   1406   22
+  46 Barbara Obremska               Wrocław              141.29   2967   21
+  47 Aleksandra Kaczanowska         Szczecin             112.48   2362   21
+  48 Dariusz Nawrocki               Bydgoszcz            118.55   2371   20
+  49 Rafał Świątek                  Wrocław              101.75   2035   20
+  50 Krzysztof Murawski             Ciechanowiec          99.50   1990   20
+  51 Adam Jurkowski                 Gliwice              128.79   2447   19
+  52 Radosław Chomentowski          Krosno               125.42   2383   19
+  53 Dawid Mierzchała               Ostrów Wielkopolski  123.11   2339   19
+  54 Agnieszka Dymkowska            Bielsko-Biała        116.16   2207   19
+  55 Paweł Morga                    Warszawa             115.47   2194   19
+  56 Beata Jacyniuk                 Grodzisk Mazowiecki  106.37   2021   19
+  57 Jan Lisiewski                  Piasutno              89.16   1694   19
+  58 Barbara Spodniewska            Tychy                 83.58   1588   19
+  59 Bożena Mileńko                 Warszawa              98.06   1765   18
+  60 Maria Tomiczek                 Zabrze                91.67   1650   18
+  61 Anna Prażuch                   Warszawa              72.39   1303   18
+  62 Sławomir Kamecki               Konstancin            67.72   1219   18
+  63 Agnieszka Wiśniewska           Inowrocław            89.12   1515   17
+  64 Anna Strugała                  Świnoujście           77.41   1316   17
+  65 Jędrzej Pogorzelski            Słupsk                76.06   1293   17
+  66 Julia Sylwestrzuk              Gródek                60.71   1032   17
+  67 Tomasz Pogorzelski             Słupsk                56.41    959   17
+  68 Anna Niewiadomska              Kołobrzeg             97.38   1558   16
+  69 Magdalena Maternicka           Gdynia                91.31   1461   16
+  70 Andrzej Słapiński              Warszawa             115.50   1617   14
+  71 Hanna Siemionow                Białystok            112.21   1571   14
+  72 Piotr Majak                    Chynów               102.86   1440   14
+  73 Agnieszka Kłosowska            Warszawa              93.79   1313   14
+  74 Maciej  Ciuba                  Warszawa              91.21   1277   14
+  75 Barbara  Sadurska              Warszawa              89.71   1256   14
+  76 Eliza Tyszka                   Warszawa              72.57   1016   14
+  77 Adam Klimont                   Wałcz                132.46   1722   13
+  78 Michał Szymkowski              Wrocław              118.31   1538   13
+  79 Celina Korniej                 Poznań               110.23   1433   13
+  80 Joanna Śledź                   Świnoujście           91.15   1185   13
+  81 Magdalena Ziółko               Legionowo             80.23   1043   13
+  82 Marek Salamon                  Bytom                167.00   2004   12
+  83 Michał Kolaj                   Ostróda              158.33   1900   12
+  84 Sławomir Kucia                 Krosno               145.08   1741   12
+  85 Andrzej Oleksiak               Ostróda              144.67   1736   12
+  86 Iwona Kucia                    Krosno               135.17   1622   12
+  87 Agnieszka Goniowska            Wrocław              133.08   1597   12
+  88 Mikołaj Przybyłowicz           Warszawa             132.00   1584   12
+  89 Eugeniusz Wróblewski           Inowrocław           128.92   1547   12
+  90 Aleksandra Brzeska             Piastów              127.58   1531   12
+  91 Magda Sarad Pedersen           Świnoujście          127.17   1526   12
+  92 Bogusław Szyszka               Oława                124.92   1499   12
+  93 Andrzej Gostomski              Starowa Góra         122.42   1469   12
+  94 Jacek Wandzel                  Ząbkowice Śląskie    122.42   1469   12
+  95 Piotr Maciejczak               Poznań               122.25   1467   12
+  96 Dawid Buzowicz                 Rzeszów              121.92   1463   12
+  97 Marcin Bertrand                Poznań               121.58   1459   12
+  98 Bartłomiej Dalecki             Rumia                121.25   1455   12
+  99 Marek Roszak                   Poznań               119.58   1435   12
+ 100 Bogusław Książek               Szczecin             118.83   1426   12
+ 101 Beata Błaszczyk                Poznań               116.92   1403   12
+ 102 Lech Boszko                    Gdańsk               115.83   1390   12
+ 103 Lidia Gałek                    Wałbrzych            115.50   1386   12
+ 104 Katarzyna Bogusławska          Piastów              114.42   1373   12
+ 105 Kayetan Cygański- Bolski       Warszawa             113.33   1360   12
+ 106 Klaudia  Makowska              Rzeszów              112.92   1355   12
+ 107 Halina Roszak                  Poznań               112.67   1352   12
+ 108 Marzena Zawierska              Warszawa             112.25   1347   12
+ 109 Wojciech Gonet                 Wrocław              109.67   1316   12
+ 110 Piotr Jura                     Brzezinka            109.50   1314   12
+ 111 Michał Kulpiński               Grójec               109.17   1310   12
+ 112 Radosław Deska                 Warszawa             106.50   1278   12
+ 113 Dorota Kunigielis              Legnica              105.33   1264   12
+ 114 Adam Skowroński                Jarocin              102.92   1235   12
+ 115 Sławomir Zabawa                Wałcz                102.92   1235   12
+ 116 Paweł Pędzisz                  Szczecin             102.58   1231   12
+ 117 Agnieszka Kozak                Gdynia               101.83   1222   12
+ 118 Justyna Mądrzak                Stargard             100.92   1211   12
+ 119 Artur Sikorski                 Gdańsk                98.33   1180   12
+ 120 Jan M. Kowalik                 Zabrze                98.08   1177   12
+ 121 Barbara Kurkowska              Gdańsk                97.58   1171   12
+ 122 Mariusz Michalski              Inowrocław            97.33   1168   12
+ 123 Mariusz Michalski              Inowrocław            95.75   1149   12
+ 124 Kinga Bilska                   Ostrów Wielkopolski   95.42   1145   12
+ 125 Amelia Makowska                Sandomierz            95.25   1143   12
+ 126 Magdalena Spadło               Kraków                94.00   1128   12
+ 127 Barbara Boszko                 Gdańsk                91.92   1103   12
+ 128 Piotr Haraf                    Jaworzno              91.33   1096   12
+ 129 Barbara  Grzymała              Kraków                91.17   1094   12
+ 130 Michał Nowak                   Nakło nad Notecią     88.75   1065   12
+ 131 Kamil Kaczmarek                Zabrze                87.42   1049   12
+ 132 Agnieszka Palczewska           Ostrów Wielkopolski   86.58   1039   12
+ 133 Dorota Citkowska               Józefów               84.25   1011   12
+ 134 Alina Kąpa                     Kołobrzeg             82.17    986   12
+ 135 Grażyna Wleklińska             Gdańsk                78.00    936   12
+ 136 Bożena Lisiewska               Piasutno              72.92    875   12
+ 137 Maciej Czopik                  Jaworzno              58.00    696   12
+ 138 Ryszard Popczyk                Tychy                 54.58    655   12
+ 139 Magdalena Podlaska             Warszawa             113.82   1252   11
+ 140 Jolanta Kosmowska              Warszawa             107.36   1181   11
+ 141 Wiesław Pastuła                Mielec               106.09   1167   11
+ 142 Adam Wencel                    Bydgoszcz            105.91   1165   11
+ 143 Magdalena Cichoń               Korsze               102.27   1125   11
+ 144 Jacek Gołąb                    Wrocław               99.36   1093   11
+ 145 Anna Piasek                    Radom                 97.73   1075   11
+ 146 Paweł Kustroń                  Kraków                95.82   1054   11
+ 147 Bogdan Pokojski                Brwinów               94.73   1042   11
+ 148 Zbigniew Radziszewski          Ciechanowiec          92.82   1021   11
+ 149 Agnieszka Dudziak              Poznań                91.55   1007   11
+ 150 Anna Seemann                   Świnna                90.82    999   11
+ 151 Hanna Góźdź                    Ostrów Wielkopolski   89.09    980   11
+ 152 Marek Minor                    Wałbrzych             87.55    963   11
+ 153 Krystian Matykiewicz           Zabrze                87.27    960   11
+ 154 Krystian Wandzlewicz           Nowe Miasto Lubawsk   86.64    953   11
+ 155 Marta Kaflińska                Kraków                86.27    949   11
+ 156 Jan Salamon                    Wrocław               84.18    926   11
+ 157 Jagoda Polińska                Gdańsk                83.82    922   11
+ 158 Miłka Janaszewska              Kołobrzeg             83.00    913   11
+ 159 Aleksandra Zontek              Kęty                  82.82    911   11
+ 160 Dorota Gołąb                   Wrocław               82.64    909   11
+ 161 Maria Kistowska                Poznań                79.64    876   11
+ 162 Adrianna Gałka                 Wrocław               79.09    870   11
+ 163 Monika Mocarska                Warszawa              78.91    868   11
+ 164 Patryk Świech                  Czarnocin Piotrk.     77.18    849   11
+ 165 Łukasz Żmijejko                Koszalin              75.00    825   11
+ 166 Wojciech Lyszczyna             Zabrze                74.64    821   11
+ 167 Weronika Zdancewicz            Zabrze                73.55    809   11
+ 168 Angelika Sztajnke              Warszawa              72.91    802   11
+ 169 Kewin Szyller                  Ciechanowiec          67.91    747   11
+ 170 Maciej Kurcewicz               Białystok             66.73    734   11
+ 171 Adam Fałek                     Mikołów               64.64    711   11
+ 172 Konrad Sigda                   Grodzisko Nowe        64.27    707   11
+ 173 Stanisław  Bolewski            Warszawa              63.82    702   11
+ 174 Kamil Omidi                    Zbrosławice           63.64    700   11
+ 175 Zofia Sroczek                  Wrocław               63.55    699   11
+ 176 Dorota Buzowicz                Kraków                62.00    682   11
+ 177 Eugeniusz Badowski             Kęty                  60.45    665   11
+ 178 Marek Szejba                   Gdynia                59.45    654   11
+ 179 Agnieszka Mocarska             Warszawa              59.36    653   11
+ 180 Sebastian Kowalski             Gliwice               57.55    633   11
+ 181 Jakub Dworczyk                 Będzin                57.45    632   11
+ 182 Helena Pyrcik                  Bieruń                57.27    630   11
+ 183 Krystyna Smolińska             Świnoujście           57.27    630   11
+ 184 Tomasz Wiśniewski              Inowrocław            56.73    624   11
+ 185 Martyna Śmiechura              Nowa Wieś             56.00    616   11
+ 186 Kacper Wieczorek               Wrocław               55.36    609   11
+ 187 Teresa Jaśkiewicz              Kołobrzeg             51.91    571   11
+ 188 Bernard Swoczyna               Warszawa              80.30    803   10
+ 189 Łukasz Łyskawy                 Ciechanowiec          79.40    794   10
+ 190 Jerzy Paleń                    Szczecin              74.40    744   10
+ 191 Emilia Stachowiak              Poznań                62.20    622   10
+ 192 Piotr Sławiński                Wrocław              109.89    989    9
+ 193 Adrianna Piskorska             Sandomierz            70.78    637    9
+ 194 Dariusz Wiza                   Katowice              56.89    512    9
+ 195 Zbigniew Stettner              Bielsko Biała        100.50    804    8
+ 196 Marta Wawrzyn                  Pruszków              94.12    753    8
+ 197 Aleksandra Borawska            Wysokie Mazowieckie   86.00    688    8
+ 198 Małgorzata Nieżychowska        Racibórz              81.12    649    8
+ 199 Marcin Mikołajczyk             Września              70.50    564    8
+ 200 Dorota Zielińska               Piaseczno            140.57    984    7
+ 201 Marzena Mazur                  Warszawa             138.14    967    7
+ 202 Laura Pisula                   Wrocław              122.43    857    7
+ 203 Katarzyna Kruś-Kubaszewska     Piastów              115.86    811    7
+ 204 Weronika Szałas                Katowice             112.86    790    7
+ 205 Marian Wiatr                   Warszawa             112.29    786    7
+ 206 Michał  Kubaszewski            Piastów              111.14    778    7
+ 207 Andrzej Ciołek                 Bielsk Podlaski      110.43    773    7
+ 208 Anna  Kwiatkowska              Warszawa             105.57    739    7
+ 209 Agata Bojarska                 Gdańsk               105.00    735    7
+ 210 Elżbieta Kołomyjska            Warszawa             102.29    716    7
+ 211 Robert  Młynarski              Siedlce               99.57    697    7
+ 212 Agnieszka  Putkiewicz          Warszawa              99.57    697    7
+ 213 Michał Lasecki                 Warszawa              99.00    693    7
+ 214 Ewa  Walczak                   Płochocin             99.00    693    7
+ 215 Alina Borowska                 Ruda Śląska           98.29    688    7
+ 216 Andrzej  Pastor                Warszawa              96.57    676    7
+ 217 Teresa Dziemiańczuk            Białystok             95.71    670    7
+ 218 Marianna Żyznowska             Konstancin            94.43    661    7
+ 219 Sebastian Wojtysiak            Warszawa              90.86    636    7
+ 220 Arkadiusz Florczak             Szczecin              89.14    624    7
+ 221 Dorota Berezowska              Warszawa              87.86    615    7
+ 222 Stanisław Uliński              Warszawa              87.29    611    7
+ 223 Mirosław Dymkowski             Bielsko-Biała         85.86    601    7
+ 224 Paweł Golubiński               Gdynia                85.57    599    7
+ 225 Sławomir Nowak                 Jaworzno              85.14    596    7
+ 226 Julia  Orłowska                Warszawa              85.14    596    7
+ 227 Agnieszka Madej                Warszawa              84.43    591    7
+ 228 Dawid Adamczyk                 Warszawa              83.86    587    7
+ 229 Małgorzata Grąziewicz          Warszawa              82.86    580    7
+ 230 Bartosz Polańczyk              Łódź                  81.43    570    7
+ 231 Michał Tarnogórski             Legnica               80.00    560    7
+ 232 Joanna Haśnik                  Katowice              71.71    502    7
+ 233 Jan Jawornik                   Kielce                71.43    500    7
+ 234 Andrzej Czabański              Kołobrzeg             69.86    489    7
+ 235 Małgorzata Wawro               Katowice              69.57    487    7
+ 236 Piotr Ozimek                   Sochaczew             68.00    476    7
+ 237 Anna Mach                      Zabrze                67.29    471    7
+ 238 Ewelina Sołtysiak              Zabrze                66.43    465    7
+ 239 Aleksandra Nowicka             Puszczykowo           64.57    452    7
+ 240 Małgorzata Sieradzon           Kutno                 63.71    446    7
+ 241 Michał Kosmecki                Legnica               62.14    435    7
+ 242 Wojciech Mijas                 Legnica               61.86    433    7
+ 243 Monika Kamińska                Konstancin            61.57    431    7
+ 244 Andrzej Choiński               Gródek                58.43    409    7
+ 245 Stanisław Rosochacki           Warszawa              54.71    383    7
+ 246 Hanna Grąbczewska              Szczecin              53.29    373    7
+ 247 Fabian Feldfeber               Poznań               108.00    648    6
+ 248 Radosław Dziurawiec            Grodzisk Mazowiecki  100.33    602    6
+ 249 Grażyna Kaczyńska              Łódź                  96.17    577    6
+ 250 Rozalia Chajutin               Wrocław               81.83    491    6
+ 251 Grzegorz Włodarczyk            Pabianice             81.17    487    6
+ 252 Marian  Majszyk                Mińsk Mazowiecki      79.33    476    6
+ 253 Magda Wilczek                  Warszawa              74.00    444    6
+ 254 Przemysław Kuczyński           Chomęcice             73.00    438    6
+ 255 Karol Chowański                Warszawa              68.00    408    6
+ 256 Małgorzata Bogacz              Kęty                  65.67    394    6
+ 257 Katarzyna Buda                 Warszawa              64.50    387    6
+ 258 Olga Jamrozik                  Jaworzno              53.33    320    6
+ 259 Ryszard Kosmaczewski           Szczecin             128.80    644    5
+ 260 Monika Szczyrzyca              Jaworzno             115.00    575    5
+ 261 Łukasz Pudło                   Gdańsk                95.20    476    5
+ 262 Natalia Lenartowicz            Otwock                69.40    347    5
+ 263 Apolonia Green                 Kartuzy               69.20    346    5
+ 264 Julita Dawidczyk               Warszawa              66.80    334    5
+ 265 Jakub Green                    Kartuzy               57.20    286    5
+ 266 Małgorzata Pikusa              Tarnów                55.40    277    5
+ 267 Sebastian Richter              Zabrze                74.75    299    4
+ 268 Sławomir Kumor                 Tychy                 58.25    233    4
+ 269 Kamil Nawrocki                 Bydgoszcz            116.67    350    3
+ 270 Jerzy Ciesielski               Łódź                 107.00    321    3
+ 271 Michał Dudko                   Tarnogród            104.67    314    3
+ 272 Kuba Kallus                    Katowice              97.33    292    3
+ 273 Anna Ćwikła                    Wrocław               75.33    226    3
+ 274 Julia Szyszkowska              Sandomierz            65.67    197    3
+ 275 Zofia Komorowska               Warszawa              62.33    187    3
+ 276 Grzegorz Kasprowicz            Grabowo              114.50    229    2
+ 277 Marcin Grześkiewicz            Szczecin             107.50    215    2
+ 278 Edyta Nowakowska               Szczecin             100.00    200    2
+ 279 Joanna Neyman                  Puszczykowo           79.50    159    2
+ 280 Teresa Swoczyna                Warszawa              78.50    157    2
+ 281 Aleksandra Ciżyńska            Sandomierz            77.50    155    2
+ 282 Sebastian Orzelski             Bielsk Podlaski       77.50    155    2
+ 283 Konrad Pajorski                Puszczykowo           72.00    144    2
+ 284 Elżbieta Jacheć                Wrocław               71.00    142    2
+ 285 Monika Wrzałek                 Rumia                 64.50    129    2
+ 286 Julia Ławniczak                Warszawa              64.50    129    2
+ 287 Violeta Kurkowska              Gdańsk                61.50    123    2
+ 288 Adam Walicki                   Szczecin              51.00    102    2
+ 289 Jakub Miłosławski              Warszawa              50.00    100    2
+ 290 Zdzisław Czypionka             Wrocław               86.00     86    1
+ 291 Krzysztof Lipczyński           Puszczykowo           78.00     78    1
+ 292 Łukasz Bachur                  Szczecin              71.00     71    1
+ 293 Michał Barcz                   Warszawa              67.00     67    1
+ 294 Patryk Gołębiewski             Szczecin              50.00     50    1
+ 295 Marzena Rogowska               Gliwice               50.00     50    1
+ 296 Zbigniew Smereka               Racibórz              50.00     50    1
+</pre></div><div id='p_przebieg' class='page'>
+
+    </div><div style="clear:both;width:100%;" class="alignright">
+
+<script>
+<!--
+if ((document.getElementById("content").offsetHeight + document.getElementById("top").offsetHeight) > screen.height)
+    document.write("<br /><br /><a href='#top'>do góry</a>");
+-->
+</script>
+
+</div>
+</div>
+
+<div id="bottom">
+<ul id="bottomlinks">
+<div class='onleft'>
+ Osób on-line: 62</div>
+    <li><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+    <li><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+    <li><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+    <li><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+    <li><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+    <li><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+</ul>
+    SCRABBLE® jest zastrzeżonym znakiem towarowym J.W. Spears &amp; Sons&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://www.pfs.org.pl/prawaautorskie.php">© Prawa autorskie</a>
+</div>
+</body>
+</html>

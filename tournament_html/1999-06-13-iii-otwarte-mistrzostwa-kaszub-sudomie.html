@@ -1,0 +1,683 @@
+
+<html>
+<head>
+    <title>Polska Federacja Scrabble :: III Otwarte Mistrzostwa Kaszub</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="files/img/favicon.ico" />
+    <link rel="stylesheet" href="files/css/style.css" type="text/css" />
+	<link rel="stylesheet" href="files/css/style-index.css" type="text/css" />
+    <!--[if IE]><link rel="stylesheet" type="text/css" href="files/css/styleie.css" /><![endif]-->
+    <!--[if lt IE 7.]><script defer type="text/javascript" src="files/js/pngfix.js"></script><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="files/js/minmax.js"></script><![endif]-->
+    <script type="text/javascript" src="files/js/jquery.js"></script>
+    <script type="text/javascript" src="files/js/jquery-bp.js"></script>
+    <script type="text/javascript" src="files/js/java.js"></script>
+    <script>jSubmenu ("turnieje","kalendarz");jKalendarz();</script>
+    <script>
+    var url, page;
+
+    page = 'info';
+    url  = document.location.toString();
+
+    if (url.match ('#')) {
+      page = url.split ('#')[1];
+      if ($.inArray (page, [ 'info', 'relacja', 'klasyfikacja', 'hh', 'rundy', 'ranking', 'przebieg' ]) == -1)
+        page = 'info';
+    }
+
+    $(document).ready(function(){
+        $('a#listaucz').bind('click', function(event){
+            $('div#lista').toggle();
+            event.preventDefault();
+        }).toggle(function() { $(this).text('schowaj listę uczestników'); }, function() { $(this).text("pokaż listę uczestników"); });
+        $('div#lista table tr:last td').css({"border-bottom" : "none"});
+
+        $("a.przycisk").click (function (e) {
+            if ($(this).attr ('href') !== '#')
+                return true;
+
+            e.preventDefault ();
+
+            id       = this.id;
+            this.id += 'tmp';
+            window.location.hash = id;
+            this.id  = id;
+
+            $(".page").hide ();
+            $(".page#p_" + id).show ();
+
+            $("a.przycisk").removeClass ('active');
+            $(this).addClass ('active');
+
+            return false;
+        });
+
+        $("a.przycisk#" + page).click ();
+        $('html, body').animate ({ scrollTop: 0 }, 0);
+    });
+    </script>
+  <style type="text/css">
+    .page {
+        display: none;
+    }
+    #szczegoly{
+        width: 100%;
+        border-spacing: 0;
+        margin-top: 30px;
+        text-align: left;
+        font-size: inherit;
+    }
+    #szczegoly td{
+        padding: 10px 20px 10px 0;
+        vertical-align: top;
+    }
+    #szczegoly td:first-child{
+        font-weight: bold;
+        width: 160px;
+    }
+    div#lista{
+        display:none;
+        margin-top: 15px;
+    }
+    div#lista table{
+        margin-top: 10px;
+        text-align: left;
+        font-size: inherit;
+    }
+    div#lista table td{
+        padding: 3px 8px;
+        border-bottom: 1px dashed #1576AE;
+    }
+    div#lista table th{
+        padding: 0px 5px 10px 5px;
+    }
+    div#lista table td.ptaszek{
+        text-align: center;
+        background: url('files/img/tick.png') no-repeat center center;
+    }
+    div#lista table th{
+        white-space: nowrap;
+        width: auto;
+    }
+    div#lista table td:first-child, div#lista table th:first-child{
+        text-align:right;
+        width: auto;
+    }
+    </style>
+</head>
+
+<body>
+
+<script type="text/javascript">setMenu();</script>
+
+<div id="top" onclick="location.href='https://www.pfs.org.pl'">
+</div>
+<div id="menu">
+
+    <div id="m_glowna">
+        <div class="tab"><a href="https://www.pfs.org.pl/index.php"></a></div>
+
+        <ul>
+            <li class="sublink" id="aktualnosci"><a href="https://www.pfs.org.pl">Aktualności</a></li>
+            <li class="sublink" id="nowy"><a href="https://www.pfs.org.pl/dlanowych.php">Jestem tu nowy</a></li>
+            <li class="sublink" id="anagramator"><a href="https://www.pfs.org.pl/osps_online.php?main=1">Słownik online</a></li>
+            <li class="sublink" id="siodemka"><a href="https://www.pfs.org.pl/siodemka.php?main=1">Siódemka tygodnia</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+            <li class="sublink" id="dlasponsorow"><a href="https://www.pfs.org.pl/dlasponsorow.php">Dla sponsorów</a></li>
+            <li class="sublink" id="kontakt"><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+        </ul>
+    </div>
+    <div id="m_turnieje">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kalendarz.php"></a></div>
+        <ul>
+            <li class="sublink" id="kalendarz"><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+            <li class="sublink" id="regulaminy"><a href="https://www.pfs.org.pl/regulaminy.php">Regulaminy</a></li>
+            <li class="sublink" id="sedziowie"><a href="https://www.pfs.org.pl/sedziowie.php">Sędziowie</a></li>
+            <li class="sublink" id="gp"><a href="https://www.pfs.org.pl/gp2026.php">Grand Prix</a></li>
+<!--            <li class="sublink" id="mr"><a href="https://www.pfs.org.pl/mr2020.php">Mistrzostwa Regionów</a></li>-->
+            <li class="sublink" id="archiwum"><a href="https://www.pfs.org.pl/archiwum.php">Historia</a></li>
+            <li class="sublink" id="galeria"><a href="https://www.pfs.org.pl/galeria.php">Zdjęcia</a></li>
+            <li class="sublink" id="rekordy"><a href="https://www.pfs.org.pl/rekordy.php">Rekordy</a></li>
+        </ul>
+    </div>
+    <div id="m_pfs">
+        <div  class="tab"><a href="https://www.pfs.org.pl/opfs.php"></a></div>
+        <ul>
+            <li class="sublink" id="opfs"><a href="https://www.pfs.org.pl/opfs.php">O PFS</a></li>
+            <li class="sublink" id="jakprzystapic"><a href="https://www.pfs.org.pl/jakprzystapic.php">Jak przystąpić</a></li>
+            <li class="sublink" id="dlaczlonkow"><a href="https://www.pfs.org.pl/dlaczlonkow.php">Dla członków</a></li>
+            <li class="sublink" id="wladze"><a href="https://www.pfs.org.pl/wladze.php">Władze</a></li>
+            <li class="sublink" id="komisje"><a href="https://www.pfs.org.pl/komisje.php">Komisje</a></li>
+            <li class="sublink" id="statut"><a href="https://www.pfs.org.pl/statut.php">Statut</a></li>
+            <li class="sublink" id="uchwaly"><a href="https://www.pfs.org.pl/uchwaly.php">Uchwały</a></li>
+            <li class="sublink" id="honorowi"><a href="https://www.pfs.org.pl/honorowi.php">Honorowi członkowie</a></li>
+            <li class="sublink" id="finanse"><a href="https://www.pfs.org.pl/finanse.php">Finanse</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabble">
+        <div  class="tab"><a href="https://www.pfs.org.pl/osps_online.php?desktop=1"></a></div>
+        <ul>
+            <li class="sublink" id="osps_online"><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+            <li class="sublink" id="zds"><a href="https://www.pfs.org.pl/zds2.php">ZDS</a></li>
+            <li class="sublink" id="osps"><a href="https://www.pfs.org.pl/osps.php">OSPS</a></li>
+            <li class="sublink" id="aktualizacje"><a href="https://www.pfs.org.pl/osps_aktualizacje.php">Aktualizacje</a></li>
+            <li class="sublink" id="dwojki"><a href="https://www.pfs.org.pl/dwojki.php">2-literówki</a></li>
+            <li class="sublink" id="trojki"><a href="https://www.pfs.org.pl/trojki.php">3-literówki</a></li>
+            <li class="sublink" id="siodemkat"><a href="https://www.pfs.org.pl/siodemka.php">Siódemka tygodnia</a></li>
+            <li class="sublink" id="slowneroznosci"><a href="https://www.pfs.org.pl/slowneroznosci.php">Słowne różności</a></li>
+        </ul>
+    </div>
+    <div id="m_ranking">
+        <div  class="tab"><a href="https://www.pfs.org.pl/ranking.php"></a></div>
+        <ul>
+            <li class="sublink" id="aktranking"><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+            <li class="sublink" id="medale"><a href="https://www.pfs.org.pl/medale.php">Klasyfikacja medalowa</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabblisci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/mistrzowiepolski.php"></a></div>
+        <ul>
+            <li class="sublink" id="mistrzowiepolski"><a href="https://www.pfs.org.pl/mistrzowiepolski.php">Mistrzowie Polski</a></li>
+            <li class="sublink" id="zdobywcypp"><a href="https://www.pfs.org.pl/zdobywcypp.php">Zdobywcy Pucharu Polski</a></li>
+            <li class="sublink" id="zwyciezcygp"><a href="https://www.pfs.org.pl/zwyciezcygp.php">Zwycięzcy Grand Prix</a></li>
+            <li class="sublink" id="liderzyrankingu"><a href="https://www.pfs.org.pl/liderzyrankingu.php">Liderzy rankingu</a></li>
+            <li class="sublink" id="zwyciezcylemans"><a href="https://www.pfs.org.pl/zwyciezcylemans.php">Zwycięzcy 24h Le Mans</a></li>
+            <li class="sublink" id="zwyciezcykmp"><a href="https://www.pfs.org.pl/zwyciezcykmp.php">KMP</a>
+        </ul>
+    </div>
+    <div id="m_kluby">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kluby.php"></a></div>
+        <ul>
+            <li class="sublink" id="rejestrklubow"><a href="https://www.pfs.org.pl/kluby.php">Rejestr klubów</a></li>
+            <li class="sublink" id="kmp"><a href="https://www.pfs.org.pl/kmp.php">KMP</a></li>
+            <li class="sublink" id="wiescizklubow"><a href="https://www.pfs.org.pl/wiescizklubow.php">Wieści z klubów</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/about.php">Statystyki klubowe</a></li>
+        </ul>
+    </div>
+    <div id="m_roznosci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/historia.php"></a></div>
+        <ul>
+            <li class="sublink" id="historia"><a href="https://www.pfs.org.pl/historia.php">Historia</a></li>
+            <li class="sublink" id="odmiany"><a href="https://www.pfs.org.pl/odmiany.php">Odmiany</a></li>
+            <li class="sublink" id="anegdoty"><a href="https://www.pfs.org.pl/anegdoty.php">Anegdoty</a></li>
+            <li class="sublink" id="scrabblealia"><a href="https://www.pfs.org.pl/scrabblealia.php">Scrabblealia</a></li>
+            <li class="sublink" id="scrabblenet"><a href="https://www.pfs.org.pl/scrabblenet.php">Scrabble w internecie</a></li>
+            <li class="sublink" id="programy"><a href="https://www.pfs.org.pl/programy.php">Programy</a></li>
+            <li class="sublink" id="download"><a href="https://www.pfs.org.pl/download.php">Do pobrania</a></li>
+            <li class="sublink" id="ksiazki"><a href="https://www.pfs.org.pl/ksiazki.php">Książki</a></li>
+            <li class="sublink" id="slowniczek"><a href="https://www.pfs.org.pl/slowniczek.php">Słowniczek</a></li>
+        </ul>
+    </div>
+    <div id="m_english">
+        <div  class="tab"><a href="https://www.pfs.org.pl/english.php"></a></div>
+        <ul>
+            <li class="sublink" id="about"><a href="https://www.pfs.org.pl/english.php">About Polish Scrabble</a></li>
+            <li class="sublink" id="news"><a href="https://www.pfs.org.pl/en_news.php">News</a></li>
+            <li class="sublink" id="bartek"><a href="https://www.pfs.org.pl/bartek.php">Bartek w Johor Bahru</a></li>
+            <li class="sublink" id="franko"><a href="https://www.pfs.org.pl/franko.php">Scrabble frankofońskie</a></li>
+        </ul>
+    </div>
+</div>
+
+<div id="submenu"></div>
+<div id="content">
+<div id='nextTours'>
+		<div class='nextTour' onclick='location.href="turniej.php?id=339"'>
+			<div class='karteczka small1'>
+				<span class='miasto'>Bielsk Podlaski</span><span class='dzien'><span class='big'>29</span><br />maja</span></div>
+			<div class='kartka big1'>
+				<span class='miasto'>Bielsk Podlaski</span>
+				<span class='dzien'><b>29-30 maja</b></span>
+				<span class='nazwaturnieju'>III Otwarte Mistrzostwa Podlasia</span><span class='gp'>Grand&nbsp;Prix&nbsp;1999</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=338"'>
+			<div class='karteczka small2'>
+				<span class='miasto'>Sudomie</span><span class='dzien'><span class='big'>13</span><br />czerwca</span></div>
+			<div class='kartka big2'>
+				<span class='miasto'>Sudomie</span>
+				<span class='dzien'><b>13 czerwca</b></span>
+				<span class='nazwaturnieju'>III Otwarte Mistrzostwa Kaszub</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=337"'>
+			<div class='karteczka small3'>
+				<span class='miasto'>Nowe Miasto Lubawskie</span><span class='dzien'><span class='big'>26</span><br />czerwca</span></div>
+			<div class='kartka big3'>
+				<span class='miasto'>Nowe Miasto Lubawskie</span>
+				<span class='dzien'><b>26-27 czerwca</b></span>
+				<span class='nazwaturnieju'>II Otwarte Mistrzostwa Warmii i Mazur</span><span class='gp'>Grand&nbsp;Prix&nbsp;1999</span></div>
+		</div></div><div class='naglowekrelacji'><span class='tytul'>III Otwarte Mistrzostwa Kaszub<span class='nazwa'>13 czerwca 1999 —  III Otwarte Mistrzostwa Kaszub</span></span><a href='#' id='info' class='przycisk'>Informacje</a><a href='#' id='relacja' class='przycisk'>Relacja</a><a href='#' id='klasyfikacja' class='przycisk'>Wyniki</a><a href='#' id='hh' class='przycisk'>HH</a><div class='galleries'><img src='files/img/gallery.png' style='visibility:hidden;' alt='galeria' /></div></div><h1 style='color:black; margin-top:0px; margin-bottom:30px; padding: 0px'>III Otwarte Mistrzostwa Kaszub<span>Sudomie, 13 czerwca 1999</span></h1><div id='p_relacja' class='page'><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><div class='relacja' style='clear:both;'><div><pre>
+ 1. Tomasz Zwoliński (Warszawa)
+ 2. Zdzisław Szota (Warszawa)
+ 3-4. Marek Roszak (Tczew), Leszek Nowak (Myślibórz)
+ 5. Kazimierz M. Merklejn (Szczecin)
+ 6. Waldemar Czerwoniec (Pruszków)
+ 7. Grażyna Furman (Sosnowiec)
+ 8. Paweł Stanosz (Warszawa)
+ 9. Katarzyna Stępień (Katowice)
+ 10. Dariusz Banaszek (Warszawa)
+
+23 uczestników, 6 rund 
+</pre></div><div class='autor'></div></div><div style='clear:both;'></div></div><div id='p_info' class='page'><br><p align='center'></p><br><br><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br>Zobacz, jak było na poprzednich turniejach:<br><a href='turniej.php?id=362'>Turniej Otwarty &#8222;O Złoty Prawdziwek&#8221;</a><br><a href='turniej.php?id=367'>Turniej z Okazji 600-lecia Kościerzyny</a><br><a href='turniej.php?id=368'>II Otwarte Mistrzostwa Kaszub</a><br><table id='szczegoly' class='ramkadolna'></table><br /><br /></div><div id='p_klasyfikacja' class='page'><pre>Wyniki turnieju Puchar Wójta Gminy KoŁcierzyna
+
+Lp. Imię            Nazwisko             Miasto               Ranking  Duże pkt Małe pkt Skalpy   Różn. MP
+--- --------------- -------------------- -------------------- -------- -------- -------- -------- --------
+  1 Tomasz          Zwoliński            Warszawa               142.00      6.0     2593     1016      911
+  2 Zdzisław        Szota                Warszawa               130.00      5.0     2194      859      191
+  3 Leszek          Nowak                Myślibórz              120.00      4.0     2278      838      222
+  4 Marek           Roszak               Poznań                 124.00      4.0     2278      761      315
+  5 Kazimierz.J     Merklejn             Szczecin               106.00      4.0     2239      850      168
+  6 Waldemar        Czerwoniec           Warszawa               124.00      4.0     2042      793       36
+  7 Grażyna         Furman               Sosnowiec              100.00      4.0     1926      780     -151
+  8 Paweł           Stanosz              Warszawa               142.00      3.0     2335      681      192
+  9 Katarzyna       Stępień              Katowice               115.00      3.0     2306      709      118
+ 10 Dariusz         Banaszek             Warszawa               142.00      3.0     2276      710       99
+ 11 Leszek          Stecuła              Bytom                  120.00      3.0     2273      657      253
+ 12 Wiktor          Stępień              Katowice               116.00      3.0     2048      629       12
+ 13 Elżbieta        Jaskuła              Zielona Góra           100.00      3.0     1856      659     -368
+ 14 Adam            Kotwica              Gdańsk                 100.00      2.5     1944      680     -270
+ 15 Andrzej         Lożyński             Piastów                102.00      2.5     1938      622       -8
+ 16 Magdalena       Merklejn             Szczecin               102.00      2.0     2051      569     -142
+ 17 Maciej          Grabowski            Warszawa               100.00      2.0     2018      580     -226
+ 18 Jerzy           Luter                Bytom                  100.00      2.0     1854      579     -273
+ 19 Katarzyna       Żuławska             Katowice               100.00      2.0     1820      533     -195
+ 20 Halina          Roszak               Poznań                 111.00      2.0     1800      551      -75
+ 21 Bogdan          Fiedoruk             Gdynia                 100.00      2.0     1685      527     -335
+ 22 Aleksandra      Merklejn-Kaczanowska Szczecin               105.00      0.0     1946      358     -424
+ 23 Stanisław       Rydzik               Warszawa               116.00     -0.5      -32       70      -50
+</pre></div><div id='p_hh' class='page'><pre>Wyniki poszczególnych graczy w turnieju Puchar Wójta Gminy KoŁcierzyna
+
+
+
+	Dariusz Banaszek 142.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Kazimierz.J    Merklejn              106.00 -  355: 393   56
+    2     6 Grażyna        Furman                100.00 +  463: 270  150
+    3     3 Adam           Kotwica               100.00 +  368: 290  150
+    4     3 Paweł          Stanosz               142.00 +  439: 316  192
+    5     1 Tomasz         Zwoliński             142.00 -  294: 440   92
+    6     4 Leszek         Nowak                 120.00 -  357: 468   70
+                                                          --------------- ---- ------
+                                                                     710  /  6 118.33
+
+
+
+
+	Paweł Stanosz 142.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Andrzej        Lożyński              102.00 +  354: 299  152
+    2     5 Leszek         Nowak                 120.00 -  345: 446   70
+    3     6 Jerzy          Luter                 100.00 +  462: 232  150
+    4     3 Dariusz        Banaszek              142.00 -  316: 439   92
+    5     5 Halina         Roszak                111.00 +  476: 285  161
+    6     3 Kazimierz.J    Merklejn              106.00 -  382: 442   56
+                                                          --------------- ---- ------
+                                                                     681  /  6 113.50
+
+
+
+
+	Tomasz Zwoliński 142.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Aleksandra     Merklejn-Kaczanowska  105.00 +  494: 256  155
+    2     1 Katarzyna      Stępień               115.00 +  482: 346  165
+    3     1 Kazimierz.J    Merklejn              106.00 +  393: 252  156
+    4     1 Waldemar       Czerwoniec            124.00 +  450: 249  174
+    5     1 Dariusz        Banaszek              142.00 +  440: 294  192
+    6     1 Marek          Roszak                124.00 +  334: 285  174
+                                                          --------------- ---- ------
+                                                                    1016  /  6 169.33
+
+
+
+
+	Zdzisław Szota 130.00 Warszawa               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Magdalena      Merklejn              102.00 +  372: 331  152
+    2     3 Adam           Kotwica               100.00 -  368: 399   50
+    3     7 Andrzej        Lożyński              102.00 +  346: 281  152
+    4     6 Leszek         Stecuła               120.00 +  336: 301  170
+    5     3 Leszek         Nowak                 120.00 +  365: 352  170
+    6     2 Katarzyna      Stępień               115.00 +  407: 339  165
+                                                          --------------- ---- ------
+                                                                     859  /  6 143.17
+
+
+
+
+	Waldemar Czerwoniec 124.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Katarzyna      Żuławska              100.00 +  367: 292  150
+    2     4 Elżbieta       Jaskuła               100.00 +  425: 274  150
+    3     2 Leszek         Nowak                 120.00 +  383: 305  170
+    4     1 Tomasz         Zwoliński             142.00 -  249: 450   92
+    5     4 Katarzyna      Stępień               115.00 -  196: 383   65
+    6     5 Wiktor         Stępień               116.00 +  422: 302  166
+                                                          --------------- ---- ------
+                                                                     793  /  6 132.17
+
+
+
+
+	Marek Roszak 124.00 Poznań                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Jerzy          Luter                 100.00 -  280: 378   50
+    2    10 Maciej         Grabowski             100.00 +  426: 342  150
+    3     5 Magdalena      Merklejn              102.00 +  522: 276  152
+    4     2 Halina         Roszak                111.00 +  362: 302  161
+    5     2 Kazimierz.J    Merklejn              106.00 +  403: 331  156
+    6     1 Tomasz         Zwoliński             142.00 -  285: 334   92
+                                                          --------------- ---- ------
+                                                                     761  /  6 126.83
+
+
+
+
+	Leszek Nowak 120.00 Myślibórz                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Bogdan         Fiedoruk              100.00 +  329: 319  150
+    2     5 Paweł          Stanosz               142.00 +  446: 345  192
+    3     2 Waldemar       Czerwoniec            124.00 -  305: 383   74
+    4     4 Adam           Kotwica               100.00 +  378: 287  150
+    5     3 Zdzisław       Szota                 130.00 -  352: 365   80
+    6     4 Dariusz        Banaszek              142.00 +  468: 357  192
+                                                          --------------- ---- ------
+                                                                     838  /  6 139.67
+
+
+
+
+	Leszek Stecuła 120.00 Bytom                    
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Adam           Kotwica               100.00 -  342: 376   50
+    2     7 Halina         Roszak                111.00 -  322: 450   61
+    3     9 Grażyna        Furman                100.00 +  629: 330  150
+    4     6 Zdzisław       Szota                 130.00 -  301: 336   80
+    5     9 Maciej         Grabowski             100.00 +  361: 260  150
+    6     7 Stanisław      Rydzik                116.00 +  318: 268  166
+                                                          --------------- ---- ------
+                                                                     657  /  6 109.50
+
+
+
+
+	Stanisław Rydzik 116.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    6     7 Leszek         Stecuła               120.00 -  268: 318   70
+                                                          --------------- ---- ------
+                                                                      70  /  1  70.00
+
+
+
+
+	Wiktor Stępień 116.00 Katowice               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Grażyna        Furman                100.00 -  248: 301   50
+    2    11 Aleksandra     Merklejn-Kaczanowska  105.00 +  357: 354  155
+    3     8 Elżbieta       Jaskuła               100.00 -  330: 358   50
+    4     8 Maciej         Grabowski             100.00 +  383: 339  150
+    5     6 Adam           Kotwica               100.00 +  428: 262  150
+    6     5 Waldemar       Czerwoniec            124.00 -  302: 422   74
+                                                          --------------- ---- ------
+                                                                     629  /  6 104.83
+
+
+
+
+	Katarzyna Stępień 115.00 Katowice               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Maciej         Grabowski             100.00 +  452: 281  150
+    2     1 Tomasz         Zwoliński             142.00 -  346: 482   92
+    3     4 Halina         Roszak                111.00 -  360: 414   61
+    4     7 Magdalena      Merklejn              102.00 +  426: 408  152
+    5     4 Waldemar       Czerwoniec            124.00 +  383: 196  174
+    6     2 Zdzisław       Szota                 130.00 -  339: 407   80
+                                                          --------------- ---- ------
+                                                                     709  /  6 118.17
+
+
+
+
+	Halina Roszak 111.00 Poznań                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Elżbieta       Jaskuła               100.00 -  349: 355   50
+    2     7 Leszek         Stecuła               120.00 +  450: 322  170
+    3     4 Katarzyna      Stępień               115.00 +  414: 360  165
+    4     2 Marek          Roszak                124.00 -  302: 362   74
+    5     5 Paweł          Stanosz               142.00 -  285: 476   92
+                                                          --------------- ---- ------
+                                                                     551  /  5 110.20
+
+
+
+
+	Kazimierz.J Merklejn 106.00 Szczecin               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Dariusz        Banaszek              142.00 +  393: 355  192
+    2     2 Jerzy          Luter                 100.00 +  410: 304  150
+    3     1 Tomasz         Zwoliński             142.00 -  252: 393   92
+    4     5 Elżbieta       Jaskuła               100.00 +  411: 234  150
+    5     2 Marek          Roszak                124.00 -  331: 403   74
+    6     3 Paweł          Stanosz               142.00 +  442: 382  192
+                                                          --------------- ---- ------
+                                                                     850  /  6 141.67
+
+
+
+
+	Aleksandra Merklejn-Kaczanowska 105.00 Szczecin                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Tomasz         Zwoliński             142.00 -  256: 494   92
+    2    11 Wiktor         Stępień               116.00 -  354: 357   66
+    3    10 Maciej         Grabowski             100.00 -  367: 454   50
+    4    11 Katarzyna      Żuławska              100.00 -  341: 374   50
+    5    11 Bogdan         Fiedoruk              100.00 -  308: 332   50
+    6    11 Jerzy          Luter                 100.00 -  320: 359   50
+                                                          --------------- ---- ------
+                                                                     358  /  6  59.67
+
+
+
+
+	Andrzej Lożyński 102.00 Piastów                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Paweł          Stanosz               142.00 -  299: 354   92
+    2     9 Katarzyna      Żuławska              100.00 +  352: 271  150
+    3     7 Zdzisław       Szota                 130.00 -  281: 346   80
+    4     9 Jerzy          Luter                 100.00 +  344: 275  150
+    5     7 Elżbieta       Jaskuła               100.00 -  332: 370   50
+    6     8 Adam           Kotwica               100.00 =  330: 330  100
+                                                          --------------- ---- ------
+                                                                     622  /  6 103.67
+
+
+
+
+	Magdalena Merklejn 102.00 Szczecin               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Zdzisław       Szota                 130.00 -  331: 372   80
+    2     8 Bogdan         Fiedoruk              100.00 +  428: 266  150
+    3     5 Marek          Roszak                124.00 -  276: 522   74
+    4     7 Katarzyna      Stępień               115.00 -  408: 426   65
+    5     8 Grażyna        Furman                100.00 -  278: 343   50
+    6    10 Katarzyna      Żuławska              100.00 +  330: 264  150
+                                                          --------------- ---- ------
+                                                                     569  /  6  94.83
+
+
+
+
+	Bogdan Fiedoruk 100.00 Gdynia                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Leszek         Nowak                 120.00 -  319: 329   70
+    2     8 Magdalena      Merklejn              102.00 -  266: 428   52
+    3    11 Katarzyna      Żuławska              100.00 +  319: 308  150
+    4    10 Grażyna        Furman                100.00 -  194: 305   50
+    5    11 Aleksandra     Merklejn-Kaczanowska  105.00 +  332: 308  155
+    6     9 Maciej         Grabowski             100.00 -  255: 342   50
+                                                          --------------- ---- ------
+                                                                     527  /  6  87.83
+
+
+
+
+	Grażyna Furman 100.00 Sosnowiec                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Wiktor         Stępień               116.00 +  301: 248  166
+    2     6 Dariusz        Banaszek              142.00 -  270: 463   92
+    3     9 Leszek         Stecuła               120.00 -  330: 629   70
+    4    10 Bogdan         Fiedoruk              100.00 +  305: 194  150
+    5     8 Magdalena      Merklejn              102.00 +  343: 278  152
+    6     6 Elżbieta       Jaskuła               100.00 +  377: 265  150
+                                                          --------------- ---- ------
+                                                                     780  /  6 130.00
+
+
+
+
+	Maciej Grabowski 100.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Katarzyna      Stępień               115.00 -  281: 452   65
+    2    10 Marek          Roszak                124.00 -  342: 426   74
+    3    10 Aleksandra     Merklejn-Kaczanowska  105.00 +  454: 367  155
+    4     8 Wiktor         Stępień               116.00 -  339: 383   66
+    5     9 Leszek         Stecuła               120.00 -  260: 361   70
+    6     9 Bogdan         Fiedoruk              100.00 +  342: 255  150
+                                                          --------------- ---- ------
+                                                                     580  /  6  96.67
+
+
+
+
+	Elżbieta Jaskuła 100.00 Zielona Góra             
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Halina         Roszak                111.00 +  355: 349  161
+    2     4 Waldemar       Czerwoniec            124.00 -  274: 425   74
+    3     8 Wiktor         Stępień               116.00 +  358: 330  166
+    4     5 Kazimierz.J    Merklejn              106.00 -  234: 411   56
+    5     7 Andrzej        Lożyński              102.00 +  370: 332  152
+    6     6 Grażyna        Furman                100.00 -  265: 377   50
+                                                          --------------- ---- ------
+                                                                     659  /  6 109.83
+
+
+
+
+	Adam Kotwica 100.00 Gdańsk                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Leszek         Stecuła               120.00 +  376: 342  170
+    2     3 Zdzisław       Szota                 130.00 +  399: 368  180
+    3     3 Dariusz        Banaszek              142.00 -  290: 368   92
+    4     4 Leszek         Nowak                 120.00 -  287: 378   70
+    5     6 Wiktor         Stępień               116.00 -  262: 428   66
+    6     8 Andrzej        Lożyński              102.00 =  330: 330  102
+                                                          --------------- ---- ------
+                                                                     680  /  6 113.33
+
+
+
+
+	Jerzy Luter 100.00 Bytom                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Marek          Roszak                124.00 +  378: 280  174
+    2     2 Kazimierz.J    Merklejn              106.00 -  304: 410   56
+    3     6 Paweł          Stanosz               142.00 -  232: 462   92
+    4     9 Andrzej        Lożyński              102.00 -  275: 344   52
+    5    10 Katarzyna      Żuławska              100.00 -  306: 311   50
+    6    11 Aleksandra     Merklejn-Kaczanowska  105.00 +  359: 320  155
+                                                          --------------- ---- ------
+                                                                     579  /  6  96.50
+
+
+
+
+	Katarzyna Żuławska 100.00 Katowice                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Waldemar       Czerwoniec            124.00 -  292: 367   74
+    2     9 Andrzej        Lożyński              102.00 -  271: 352   52
+    3    11 Bogdan         Fiedoruk              100.00 -  308: 319   50
+    4    11 Aleksandra     Merklejn-Kaczanowska  105.00 +  374: 341  155
+    5    10 Jerzy          Luter                 100.00 +  311: 306  150
+    6    10 Magdalena      Merklejn              102.00 -  264: 330   52
+                                                          --------------- ---- ------
+                                                                     533  /  6  88.83
+
+
+</pre></div><div id='p_rundy' class='page'><pre></pre></div><div id='p_ranking' class='page'><pre></pre></div><div id='p_przebieg' class='page'>
+
+    </div><div style="clear:both;width:100%;" class="alignright">
+
+<script>
+<!--
+if ((document.getElementById("content").offsetHeight + document.getElementById("top").offsetHeight) > screen.height)
+    document.write("<br /><br /><a href='#top'>do góry</a>");
+-->
+</script>
+
+</div>
+</div>
+
+<div id="bottom">
+<ul id="bottomlinks">
+<div class='onleft'>
+ Osób on-line: 54</div>
+    <li><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+    <li><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+    <li><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+    <li><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+    <li><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+    <li><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+</ul>
+    SCRABBLE® jest zastrzeżonym znakiem towarowym J.W. Spears &amp; Sons&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://www.pfs.org.pl/prawaautorskie.php">© Prawa autorskie</a>
+</div>
+</body>
+</html>

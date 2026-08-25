@@ -1,0 +1,758 @@
+
+<html>
+<head>
+    <title>Polska Federacja Scrabble :: I Otwarte Mistrzostwa Opola</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="files/img/favicon.ico" />
+    <link rel="stylesheet" href="files/css/style.css" type="text/css" />
+	<link rel="stylesheet" href="files/css/style-index.css" type="text/css" />
+    <!--[if IE]><link rel="stylesheet" type="text/css" href="files/css/styleie.css" /><![endif]-->
+    <!--[if lt IE 7.]><script defer type="text/javascript" src="files/js/pngfix.js"></script><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="files/js/minmax.js"></script><![endif]-->
+    <script type="text/javascript" src="files/js/jquery.js"></script>
+    <script type="text/javascript" src="files/js/jquery-bp.js"></script>
+    <script type="text/javascript" src="files/js/java.js"></script>
+    <script>jSubmenu ("turnieje","kalendarz");jKalendarz();</script>
+    <script>
+    var url, page;
+
+    page = 'info';
+    url  = document.location.toString();
+
+    if (url.match ('#')) {
+      page = url.split ('#')[1];
+      if ($.inArray (page, [ 'info', 'relacja', 'klasyfikacja', 'hh', 'rundy', 'ranking', 'przebieg' ]) == -1)
+        page = 'info';
+    }
+
+    $(document).ready(function(){
+        $('a#listaucz').bind('click', function(event){
+            $('div#lista').toggle();
+            event.preventDefault();
+        }).toggle(function() { $(this).text('schowaj listę uczestników'); }, function() { $(this).text("pokaż listę uczestników"); });
+        $('div#lista table tr:last td').css({"border-bottom" : "none"});
+
+        $("a.przycisk").click (function (e) {
+            if ($(this).attr ('href') !== '#')
+                return true;
+
+            e.preventDefault ();
+
+            id       = this.id;
+            this.id += 'tmp';
+            window.location.hash = id;
+            this.id  = id;
+
+            $(".page").hide ();
+            $(".page#p_" + id).show ();
+
+            $("a.przycisk").removeClass ('active');
+            $(this).addClass ('active');
+
+            return false;
+        });
+
+        $("a.przycisk#" + page).click ();
+        $('html, body').animate ({ scrollTop: 0 }, 0);
+    });
+    </script>
+  <style type="text/css">
+    .page {
+        display: none;
+    }
+    #szczegoly{
+        width: 100%;
+        border-spacing: 0;
+        margin-top: 30px;
+        text-align: left;
+        font-size: inherit;
+    }
+    #szczegoly td{
+        padding: 10px 20px 10px 0;
+        vertical-align: top;
+    }
+    #szczegoly td:first-child{
+        font-weight: bold;
+        width: 160px;
+    }
+    div#lista{
+        display:none;
+        margin-top: 15px;
+    }
+    div#lista table{
+        margin-top: 10px;
+        text-align: left;
+        font-size: inherit;
+    }
+    div#lista table td{
+        padding: 3px 8px;
+        border-bottom: 1px dashed #1576AE;
+    }
+    div#lista table th{
+        padding: 0px 5px 10px 5px;
+    }
+    div#lista table td.ptaszek{
+        text-align: center;
+        background: url('files/img/tick.png') no-repeat center center;
+    }
+    div#lista table th{
+        white-space: nowrap;
+        width: auto;
+    }
+    div#lista table td:first-child, div#lista table th:first-child{
+        text-align:right;
+        width: auto;
+    }
+    </style>
+</head>
+
+<body>
+
+<script type="text/javascript">setMenu();</script>
+
+<div id="top" onclick="location.href='https://www.pfs.org.pl'">
+</div>
+<div id="menu">
+
+    <div id="m_glowna">
+        <div class="tab"><a href="https://www.pfs.org.pl/index.php"></a></div>
+
+        <ul>
+            <li class="sublink" id="aktualnosci"><a href="https://www.pfs.org.pl">Aktualności</a></li>
+            <li class="sublink" id="nowy"><a href="https://www.pfs.org.pl/dlanowych.php">Jestem tu nowy</a></li>
+            <li class="sublink" id="anagramator"><a href="https://www.pfs.org.pl/osps_online.php?main=1">Słownik online</a></li>
+            <li class="sublink" id="siodemka"><a href="https://www.pfs.org.pl/siodemka.php?main=1">Siódemka tygodnia</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+            <li class="sublink" id="dlasponsorow"><a href="https://www.pfs.org.pl/dlasponsorow.php">Dla sponsorów</a></li>
+            <li class="sublink" id="kontakt"><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+        </ul>
+    </div>
+    <div id="m_turnieje">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kalendarz.php"></a></div>
+        <ul>
+            <li class="sublink" id="kalendarz"><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+            <li class="sublink" id="regulaminy"><a href="https://www.pfs.org.pl/regulaminy.php">Regulaminy</a></li>
+            <li class="sublink" id="sedziowie"><a href="https://www.pfs.org.pl/sedziowie.php">Sędziowie</a></li>
+            <li class="sublink" id="gp"><a href="https://www.pfs.org.pl/gp2026.php">Grand Prix</a></li>
+<!--            <li class="sublink" id="mr"><a href="https://www.pfs.org.pl/mr2020.php">Mistrzostwa Regionów</a></li>-->
+            <li class="sublink" id="archiwum"><a href="https://www.pfs.org.pl/archiwum.php">Historia</a></li>
+            <li class="sublink" id="galeria"><a href="https://www.pfs.org.pl/galeria.php">Zdjęcia</a></li>
+            <li class="sublink" id="rekordy"><a href="https://www.pfs.org.pl/rekordy.php">Rekordy</a></li>
+        </ul>
+    </div>
+    <div id="m_pfs">
+        <div  class="tab"><a href="https://www.pfs.org.pl/opfs.php"></a></div>
+        <ul>
+            <li class="sublink" id="opfs"><a href="https://www.pfs.org.pl/opfs.php">O PFS</a></li>
+            <li class="sublink" id="jakprzystapic"><a href="https://www.pfs.org.pl/jakprzystapic.php">Jak przystąpić</a></li>
+            <li class="sublink" id="dlaczlonkow"><a href="https://www.pfs.org.pl/dlaczlonkow.php">Dla członków</a></li>
+            <li class="sublink" id="wladze"><a href="https://www.pfs.org.pl/wladze.php">Władze</a></li>
+            <li class="sublink" id="komisje"><a href="https://www.pfs.org.pl/komisje.php">Komisje</a></li>
+            <li class="sublink" id="statut"><a href="https://www.pfs.org.pl/statut.php">Statut</a></li>
+            <li class="sublink" id="uchwaly"><a href="https://www.pfs.org.pl/uchwaly.php">Uchwały</a></li>
+            <li class="sublink" id="honorowi"><a href="https://www.pfs.org.pl/honorowi.php">Honorowi członkowie</a></li>
+            <li class="sublink" id="finanse"><a href="https://www.pfs.org.pl/finanse.php">Finanse</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabble">
+        <div  class="tab"><a href="https://www.pfs.org.pl/osps_online.php?desktop=1"></a></div>
+        <ul>
+            <li class="sublink" id="osps_online"><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+            <li class="sublink" id="zds"><a href="https://www.pfs.org.pl/zds2.php">ZDS</a></li>
+            <li class="sublink" id="osps"><a href="https://www.pfs.org.pl/osps.php">OSPS</a></li>
+            <li class="sublink" id="aktualizacje"><a href="https://www.pfs.org.pl/osps_aktualizacje.php">Aktualizacje</a></li>
+            <li class="sublink" id="dwojki"><a href="https://www.pfs.org.pl/dwojki.php">2-literówki</a></li>
+            <li class="sublink" id="trojki"><a href="https://www.pfs.org.pl/trojki.php">3-literówki</a></li>
+            <li class="sublink" id="siodemkat"><a href="https://www.pfs.org.pl/siodemka.php">Siódemka tygodnia</a></li>
+            <li class="sublink" id="slowneroznosci"><a href="https://www.pfs.org.pl/slowneroznosci.php">Słowne różności</a></li>
+        </ul>
+    </div>
+    <div id="m_ranking">
+        <div  class="tab"><a href="https://www.pfs.org.pl/ranking.php"></a></div>
+        <ul>
+            <li class="sublink" id="aktranking"><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+            <li class="sublink" id="medale"><a href="https://www.pfs.org.pl/medale.php">Klasyfikacja medalowa</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabblisci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/mistrzowiepolski.php"></a></div>
+        <ul>
+            <li class="sublink" id="mistrzowiepolski"><a href="https://www.pfs.org.pl/mistrzowiepolski.php">Mistrzowie Polski</a></li>
+            <li class="sublink" id="zdobywcypp"><a href="https://www.pfs.org.pl/zdobywcypp.php">Zdobywcy Pucharu Polski</a></li>
+            <li class="sublink" id="zwyciezcygp"><a href="https://www.pfs.org.pl/zwyciezcygp.php">Zwycięzcy Grand Prix</a></li>
+            <li class="sublink" id="liderzyrankingu"><a href="https://www.pfs.org.pl/liderzyrankingu.php">Liderzy rankingu</a></li>
+            <li class="sublink" id="zwyciezcylemans"><a href="https://www.pfs.org.pl/zwyciezcylemans.php">Zwycięzcy 24h Le Mans</a></li>
+            <li class="sublink" id="zwyciezcykmp"><a href="https://www.pfs.org.pl/zwyciezcykmp.php">KMP</a>
+        </ul>
+    </div>
+    <div id="m_kluby">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kluby.php"></a></div>
+        <ul>
+            <li class="sublink" id="rejestrklubow"><a href="https://www.pfs.org.pl/kluby.php">Rejestr klubów</a></li>
+            <li class="sublink" id="kmp"><a href="https://www.pfs.org.pl/kmp.php">KMP</a></li>
+            <li class="sublink" id="wiescizklubow"><a href="https://www.pfs.org.pl/wiescizklubow.php">Wieści z klubów</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/about.php">Statystyki klubowe</a></li>
+        </ul>
+    </div>
+    <div id="m_roznosci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/historia.php"></a></div>
+        <ul>
+            <li class="sublink" id="historia"><a href="https://www.pfs.org.pl/historia.php">Historia</a></li>
+            <li class="sublink" id="odmiany"><a href="https://www.pfs.org.pl/odmiany.php">Odmiany</a></li>
+            <li class="sublink" id="anegdoty"><a href="https://www.pfs.org.pl/anegdoty.php">Anegdoty</a></li>
+            <li class="sublink" id="scrabblealia"><a href="https://www.pfs.org.pl/scrabblealia.php">Scrabblealia</a></li>
+            <li class="sublink" id="scrabblenet"><a href="https://www.pfs.org.pl/scrabblenet.php">Scrabble w internecie</a></li>
+            <li class="sublink" id="programy"><a href="https://www.pfs.org.pl/programy.php">Programy</a></li>
+            <li class="sublink" id="download"><a href="https://www.pfs.org.pl/download.php">Do pobrania</a></li>
+            <li class="sublink" id="ksiazki"><a href="https://www.pfs.org.pl/ksiazki.php">Książki</a></li>
+            <li class="sublink" id="slowniczek"><a href="https://www.pfs.org.pl/slowniczek.php">Słowniczek</a></li>
+        </ul>
+    </div>
+    <div id="m_english">
+        <div  class="tab"><a href="https://www.pfs.org.pl/english.php"></a></div>
+        <ul>
+            <li class="sublink" id="about"><a href="https://www.pfs.org.pl/english.php">About Polish Scrabble</a></li>
+            <li class="sublink" id="news"><a href="https://www.pfs.org.pl/en_news.php">News</a></li>
+            <li class="sublink" id="bartek"><a href="https://www.pfs.org.pl/bartek.php">Bartek w Johor Bahru</a></li>
+            <li class="sublink" id="franko"><a href="https://www.pfs.org.pl/franko.php">Scrabble frankofońskie</a></li>
+        </ul>
+    </div>
+</div>
+
+<div id="submenu"></div>
+<div id="content">
+<div id='nextTours'>
+		<div class='nextTour' onclick='location.href="turniej.php?id=399"'>
+			<div class='karteczka small1'>
+				<span class='miasto'>Poznań</span><span class='dzien'><span class='big'>18</span><br />maja</span></div>
+			<div class='kartka big1'>
+				<span class='miasto'>Poznań</span>
+				<span class='dzien'><b>18 maja</b></span>
+				<span class='nazwaturnieju'>I Otwarte Mistrzostwa Poznania</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=398"'>
+			<div class='karteczka small2'>
+				<span class='miasto'>Opole</span><span class='dzien'><span class='big'>24</span><br />maja</span></div>
+			<div class='kartka big2'>
+				<span class='miasto'>Opole</span>
+				<span class='dzien'><b>24 maja</b></span>
+				<span class='nazwaturnieju'>I Otwarte Mistrzostwa Opola</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=397"'>
+			<div class='karteczka small3'>
+				<span class='miasto'>Kościerzyna</span><span class='dzien'><span class='big'> 8</span><br />czerwca</span></div>
+			<div class='kartka big3'>
+				<span class='miasto'>Kościerzyna</span>
+				<span class='dzien'><b> 8 czerwca</b></span>
+				<span class='nazwaturnieju'>I Otwarte Mistrzostwa Kaszub</span></div>
+		</div></div><div class='naglowekrelacji'><span class='tytul'>I Otwarte Mistrzostwa Opola<span class='nazwa'>24 maja 1997 —  I Otwarte Mistrzostwa Opola</span></span><a href='#' id='info' class='przycisk'>Informacje</a><a href='#' id='relacja' class='przycisk'>Relacja</a><a href='#' id='klasyfikacja' class='przycisk'>Wyniki</a><a href='#' id='hh' class='przycisk'>HH</a><div class='galleries'><img src='files/img/gallery.png' style='visibility:hidden;' alt='galeria' /></div></div><h1 style='color:black; margin-top:0px; margin-bottom:30px; padding: 0px'>I Otwarte Mistrzostwa Opola<span>Opole, 24 maja 1997</span></h1><div id='p_relacja' class='page'><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><div class='relacja' style='clear:both;'><div><pre>
+ 1. Paweł Dawidson (Częstochowa)
+ 2. Paweł Stanosz (Warszawa)
+ 3. Dariusz Puton (Ruda Śląska)
+ 4. Stefan Dawidson (Częstochowa)
+ 5. Maciek Czupryniak (Milanówek)
+ 6. Michał Derlacki (Warszawa)
+ 7. Andrzej Rechowicz (Katowice)
+ 8. Bogusław Koszarski (Lądek Zdrój)
+ 9. Ryszard Żydaczewski (Lubin)
+ 10. Małgorzata Kania (Milanówek) 
+
+29 uczestników, 5 rund 
+</pre></div><div class='autor'></div></div><div style='clear:both;'></div></div><div id='p_info' class='page'><br><p align='center'></p><br><br><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><table id='szczegoly' class='ramkadolna'></table><br /><br /></div><div id='p_klasyfikacja' class='page'><pre>Wyniki turnieju I Otwarte Mistrzostwa Opola
+
+Lp. Imię            Nazwisko             Miasto               Ranking  Duże pkt Małe pkt Skalpy   Różn. MP
+--- --------------- -------------------- -------------------- -------- -------- -------- -------- --------
+  1 Paweł           Dawidson             Częstochowa            138.00      5.0     2079      854      578
+  2 Paweł           Stanosz              Warszawa               138.00      4.0     2170      717      626
+  3 Dariusz         Puton                Ruda Śląska            134.00      4.0     1929      689      443
+  4 Stefan          Dawidson             Częstochowa            112.00      4.0     1774      699      259
+  5 Maciej          Czupryniak           Milanówek              114.00      4.0     1717      689      235
+  6 Michał          Derlacki             Warszawa               135.00      3.0     2048      570      593
+  7 Andrzej         Rechowicz            Katowice                96.00      3.0     1775      618      288
+  8 Bogusław        Koszarski            Lądek Zdrój            100.00      3.0     1704      614       42
+  9 Ryszard         Żydaczewski          Lubin                  117.00      3.0     1692      593      231
+ 10 Małgorzata      Kania                Milanówek              109.00      3.0     1675      617      -61
+ 11 Jolanta         Hoffmann             Kraków                 119.00      3.0     1591      618       34
+ 12 Ireneusz        Kurzok               Mikołów                105.00      3.0     1583      564       72
+ 13 Tomasz          Drąszkowski          Katowice               100.00      3.0     1463      595     -232
+ 14 Maurycy         Piasecki             Tychy                  106.00      3.0     1400      590     -148
+ 15 Leszek          Stecuła              Bytom                  114.00      3.0     1287      582     -205
+ 16 Piotr           Grondziowski         Chorzów                100.00      2.5     1568      591     -116
+ 17 Stenia          Zwolińska            Warszawa                98.00      2.5     1419      508     -239
+ 18 Tomasz          Zwoliński            Skierdy                135.00      2.0     1681      486        5
+ 19 Zbigniew        Wietecki             Gorzów Wielkopolski     99.00      2.0     1657      555       48
+ 20 Paweł           Pilawski             Kraków                 116.00      2.0     1584      482      -79
+ 21 Renata          Kowalska             Bielsko Biała           86.00      2.0     1339      471     -187
+ 22 Stanisław       Stanek               Olkusz                  98.00      1.0     1509      407     -191
+ 23 Marcin          Mroziuk              Warszawa               101.00      1.0     1446      355     -263
+ 24 Krzysztof       Radzik               Opole                  100.00      1.0     1415      367     -243
+ 25 Andrzej         Lożyński             Piastów                108.00      1.0     1193      363     -223
+ 26 Jerzy           Luter                Bytom                   88.00      1.0     1045      288     -261
+ 27 Krzysztof       Warchoł              Zdzieszowice           100.00      1.0      907      331     -279
+ 28 Anna            Kowalska-Demczyszyn  Bielsko Biała           92.00      0.0     1144      270     -336
+ 29 Zygmunt         Skwarek              Katowice               100.00      0.0      736      219     -391
+</pre></div><div id='p_hh' class='page'><pre>Wyniki poszczególnych graczy w turnieju I Otwarte Mistrzostwa Opola
+
+
+
+	Paweł Dawidson 138.00 Częstochowa              
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Krzysztof      Radzik                100.00 +  373: 234  150
+    2     3 Tomasz         Zwoliński             135.00 +  368: 362  185
+    3     2 Jolanta        Hoffmann              119.00 +  520: 208  169
+    4     1 Paweł          Stanosz               138.00 +  443: 379  188
+    5     1 Stefan         Dawidson              112.00 +  375: 318  162
+                                                          --------------- ---- ------
+                                                                     854  /  5 170.80
+
+
+
+
+	Paweł Stanosz 138.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Tomasz         Drąszkowski           100.00 +  567: 231  150
+    2     1 Zbigniew       Wietecki               99.00 +  416: 302  149
+    3     1 Dariusz        Puton                 134.00 +  361: 302  184
+    4     1 Paweł          Dawidson              138.00 -  379: 443   88
+    5     2 Andrzej        Rechowicz              96.00 +  447: 266  146
+                                                          --------------- ---- ------
+                                                                     717  /  5 143.40
+
+
+
+
+	Michał Derlacki 135.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Piotr          Grondziowski          100.00 -  349: 380   50
+    2     8 Andrzej        Lożyński              108.00 -  353: 395   58
+    3    12 Anna           Kowalska-Demczyszyn    92.00 +  452: 251  142
+    4     8 Leszek         Stecuła               114.00 +  540: 227  164
+    5     5 Maurycy        Piasecki              106.00 +  354: 202  156
+                                                          --------------- ---- ------
+                                                                     570  /  5 114.00
+
+
+
+
+	Tomasz Zwoliński 135.00 Skierdy         
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Renata         Kowalska               86.00 +  372: 238  136
+    2     3 Paweł          Dawidson              138.00 -  362: 368   88
+    3     5 Zbigniew       Wietecki               99.00 +  333: 318  149
+    4     3 Andrzej        Rechowicz              96.00 -  295: 398   46
+    5     6 Ryszard        Żydaczewski           117.00 -  319: 354   67
+                                                          --------------- ---- ------
+                                                                     486  /  5  97.20
+
+
+
+
+	Dariusz Puton 134.00 Ruda Śląska            
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Anna           Kowalska-Demczyszyn    92.00 +  379: 342  142
+    2     2 Piotr          Grondziowski          100.00 +  376: 212  150
+    3     1 Paweł          Stanosz               138.00 -  302: 361   88
+    4     4 Bogusław       Koszarski             100.00 +  424: 292  150
+    5     3 Małgorzata     Kania                 109.00 +  448: 279  159
+                                                          --------------- ---- ------
+                                                                     689  /  5 137.80
+
+
+
+
+	Jolanta Hoffmann 119.00 Kraków                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Zygmunt        Skwarek               100.00 +  344: 147  150
+    2     4 Paweł          Pilawski              116.00 +  400: 244  166
+    3     2 Paweł          Dawidson              138.00 -  208: 520   88
+    4     6 Piotr          Grondziowski          100.00 +  328: 310  150
+    5     4 Maciej         Czupryniak            114.00 -  311: 336   64
+                                                          --------------- ---- ------
+                                                                     618  /  5 123.60
+
+
+
+
+	Ryszard Żydaczewski 117.00 Lubin                    
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Krzysztof      Warchoł               100.00 +  328: 191  150
+    2     6 Małgorzata     Kania                 109.00 -  362: 367   59
+    3     6 Bogusław       Koszarski             100.00 -  277: 331   50
+    4     9 Zbigniew       Wietecki               99.00 +  371: 253  149
+    5     6 Tomasz         Zwoliński             135.00 +  354: 319  185
+                                                          --------------- ---- ------
+                                                                     593  /  5 118.60
+
+
+
+
+	Paweł Pilawski 116.00 Kraków                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Marcin         Mroziuk               101.00 +  354: 221  151
+    2     4 Jolanta        Hoffmann              119.00 -  244: 400   69
+    3     8 Maciej         Czupryniak            114.00 -  327: 330   64
+    4    10 Stanisław      Stanek                 98.00 +  356: 315  148
+    5     7 Bogusław       Koszarski             100.00 -  303: 397   50
+                                                          --------------- ---- ------
+                                                                     482  /  5  96.40
+
+
+
+
+	Maciej Czupryniak 114.00 Milanówek                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Stenia         Zwolińska              98.00 -  318: 327   48
+    2    10 Stanisław      Stanek                 98.00 +  329: 267  148
+    3     8 Paweł          Pilawski              116.00 +  330: 327  166
+    4     5 Andrzej        Lożyński              108.00 +  404: 250  158
+    5     4 Jolanta        Hoffmann              119.00 +  336: 311  169
+                                                          --------------- ---- ------
+                                                                     689  /  5 137.80
+
+
+
+
+	Leszek Stecuła 114.00 Bytom                    
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Zbigniew       Wietecki               99.00 -  218: 390   49
+    2    14 Krzysztof      Warchoł               100.00 +  281: 237  150
+    3    11 Zygmunt        Skwarek               100.00 +  189:  77  150
+    4     8 Michał         Derlacki              135.00 -  227: 540   85
+    5    11 Stanisław      Stanek                 98.00 +  372: 248  148
+                                                          --------------- ---- ------
+                                                                     582  /  5 116.40
+
+
+
+
+	Stefan Dawidson 112.00 Częstochowa            
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Stanisław      Stanek                 98.00 +  316: 296  148
+    2     7 Stenia         Zwolińska              98.00 +  335: 259  148
+    3     4 Maurycy        Piasecki              106.00 +  450: 249  156
+    4     2 Małgorzata     Kania                 109.00 +  355: 336  159
+    5     1 Paweł          Dawidson              138.00 -  318: 375   88
+                                                          --------------- ---- ------
+                                                                     699  /  5 139.80
+
+
+
+
+	Małgorzata Kania 109.00 Milanówek                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    12 Andrzej        Rechowicz              96.00 +  339: 279  146
+    2     6 Ryszard        Żydaczewski           117.00 +  367: 362  167
+    3     3 Andrzej        Lożyński              108.00 +  354: 292  158
+    4     2 Stefan         Dawidson              112.00 -  336: 355   62
+    5     3 Dariusz        Puton                 134.00 -  279: 448   84
+                                                          --------------- ---- ------
+                                                                     617  /  5 123.40
+
+
+
+
+	Andrzej Lożyński 108.00 Piastów                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    2     8 Michał         Derlacki              135.00 +  395: 353  185
+    3     3 Małgorzata     Kania                 109.00 -  292: 354   59
+    4     5 Maciej         Czupryniak            114.00 -  250: 404   64
+    5     8 Ireneusz       Kurzok                105.00 -  256: 305   55
+                                                          --------------- ---- ------
+                                                                     363  /  4  90.75
+
+
+
+
+	Maurycy Piasecki 106.00 Tychy                    
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    13 Jerzy          Luter                  88.00 +  340: 256  138
+    2     5 Ireneusz       Kurzok                105.00 +  323: 250  155
+    3     4 Stefan         Dawidson              112.00 -  249: 450   62
+    4     7 Tomasz         Drąszkowski           100.00 +  286: 238  150
+    5     5 Michał         Derlacki              135.00 -  202: 354   85
+                                                          --------------- ---- ------
+                                                                     590  /  5 118.00
+
+
+
+
+	Ireneusz Kurzok 105.00 Mikołów                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    14 Bogusław       Koszarski             100.00 +  344: 336  150
+    2     5 Maurycy        Piasecki              106.00 -  250: 323   56
+    3     9 Piotr          Grondziowski          100.00 -  312: 347   50
+    4    11 Krzysztof      Radzik                100.00 +  372: 249  150
+    5     8 Andrzej        Lożyński              108.00 +  305: 256  158
+                                                          --------------- ---- ------
+                                                                     564  /  5 112.80
+
+
+
+
+	Marcin Mroziuk 101.00 Warszawa
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Paweł          Pilawski              116.00 -  221: 354   66
+    2    13 Tomasz         Drąszkowski           100.00 -  326: 341   50
+    3    13 Stanisław      Stanek                 98.00 -  327: 383   48
+    4    14 Anna           Kowalska-Demczyszyn    92.00 +  301: 237  142
+    5    12 Zbigniew       Wietecki               99.00 -  271: 394   49
+                                                          --------------- ---- ------
+                                                                     355  /  5  71.00
+
+
+
+
+	Tomasz Drąszkowski 100.00 Katowice                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Paweł          Stanosz               138.00 -  231: 567   88
+    2    13 Marcin         Mroziuk               101.00 +  341: 326  151
+    3    10 Krzysztof      Radzik                100.00 +  331: 304  150
+    4     7 Maurycy        Piasecki              106.00 -  238: 286   56
+    5    10 Krzysztof      Warchoł               100.00 +  322: 212  150
+                                                          --------------- ---- ------
+                                                                     595  /  5 119.00
+
+
+
+
+	Piotr Grondziowski 100.00 Chorzów                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Michał         Derlacki              135.00 +  380: 349  185
+    2     2 Dariusz        Puton                 134.00 -  212: 376   84
+    3     9 Ireneusz       Kurzok                105.00 +  347: 312  155
+    4     6 Jolanta        Hoffmann              119.00 -  310: 328   69
+    5     9 Stenia         Zwolińska              98.00 =  319: 319   98
+                                                          --------------- ---- ------
+                                                                     591  /  5 118.20
+
+
+
+
+	Bogusław Koszarski 100.00 Lądek Zdrój              
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    14 Ireneusz       Kurzok                105.00 -  336: 344   55
+    2     9 Anna           Kowalska-Demczyszyn    92.00 +  348: 314  142
+    3     6 Ryszard        Żydaczewski           117.00 +  331: 277  167
+    4     4 Dariusz        Puton                 134.00 -  292: 424   84
+    5     7 Paweł          Pilawski              116.00 +  397: 303  166
+                                                          --------------- ---- ------
+                                                                     614  /  5 122.80
+
+
+
+
+	Krzysztof Radzik 100.00 Opole                    
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Paweł          Dawidson              138.00 -  234: 373   88
+    2    12 Renata         Kowalska               86.00 +  322: 260  136
+    3    10 Tomasz         Drąszkowski           100.00 -  304: 331   50
+    4    11 Ireneusz       Kurzok                105.00 -  249: 372   55
+    5    13 Jerzy          Luter                  88.00 -  306: 322   38
+                                                          --------------- ---- ------
+                                                                     367  /  5  73.40
+
+
+
+
+	Zygmunt Skwarek 100.00 Katowice                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Jolanta        Hoffmann              119.00 -  147: 344   69
+    3    11 Leszek         Stecuła               114.00 -   77: 189   64
+    4    13 Krzysztof      Warchoł               100.00 -  255: 267   50
+    5    14 Renata         Kowalska               86.00 -  257: 327   36
+                                                          --------------- ---- ------
+                                                                     219  /  4  54.75
+
+
+
+
+	Krzysztof Warchoł 100.00 Zdzieszowice             
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Ryszard        Żydaczewski           117.00 -  191: 328   67
+    2    14 Leszek         Stecuła               114.00 -  237: 281   64
+    4    13 Zygmunt        Skwarek               100.00 +  267: 255  150
+    5    10 Tomasz         Drąszkowski           100.00 -  212: 322   50
+                                                          --------------- ---- ------
+                                                                     331  /  4  82.75
+
+
+
+
+	Zbigniew Wietecki  99.00 Gorzów Wielkopolski          
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Leszek         Stecuła               114.00 +  390: 218  164
+    2     1 Paweł          Stanosz               138.00 -  302: 416   88
+    3     5 Tomasz         Zwoliński             135.00 -  318: 333   85
+    4     9 Ryszard        Żydaczewski           117.00 -  253: 371   67
+    5    12 Marcin         Mroziuk               101.00 +  394: 271  151
+                                                          --------------- ---- ------
+                                                                     555  /  5 111.00
+
+
+
+
+	Stanisław Stanek  98.00 Olkusz                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Stefan         Dawidson              112.00 -  296: 316   62
+    2    10 Maciej         Czupryniak            114.00 -  267: 329   64
+    3    13 Marcin         Mroziuk               101.00 +  383: 327  151
+    4    10 Paweł          Pilawski              116.00 -  315: 356   66
+    5    11 Leszek         Stecuła               114.00 -  248: 372   64
+                                                          --------------- ---- ------
+                                                                     407  /  5  81.40
+
+
+
+
+	Stenia Zwolińska  98.00 Warszawa
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Maciej         Czupryniak            114.00 +  327: 318  164
+    2     7 Stefan         Dawidson              112.00 -  259: 335   62
+    3     7 Andrzej        Rechowicz              96.00 -  192: 448   46
+    4    12 Renata         Kowalska               86.00 +  322: 238  136
+    5     9 Piotr          Grondziowski          100.00 =  319: 319  100
+                                                          --------------- ---- ------
+                                                                     508  /  5 101.60
+
+
+
+
+	Andrzej Rechowicz  96.00 Katowice               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    12 Małgorzata     Kania                 109.00 -  279: 339   59
+    2    11 Jerzy          Luter                  88.00 +  384: 214  138
+    3     7 Stenia         Zwolińska              98.00 +  448: 192  148
+    4     3 Tomasz         Zwoliński             135.00 +  398: 295  185
+    5     2 Paweł          Stanosz               138.00 -  266: 447   88
+                                                          --------------- ---- ------
+                                                                     618  /  5 123.60
+
+
+
+
+	Anna Kowalska-Demczyszyn  92.00 Bielsko Biała            
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Dariusz        Puton                 134.00 -  342: 379   84
+    2     9 Bogusław       Koszarski             100.00 -  314: 348   50
+    3    12 Michał         Derlacki              135.00 -  251: 452   85
+    4    14 Marcin         Mroziuk               101.00 -  237: 301   51
+                                                          --------------- ---- ------
+                                                                     270  /  4  67.50
+
+
+
+
+	Jerzy Luter  88.00 Bytom                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    13 Maurycy        Piasecki              106.00 -  256: 340   56
+    2    11 Andrzej        Rechowicz              96.00 -  214: 384   46
+    3    14 Renata         Kowalska               86.00 -  253: 276   36
+    5    13 Krzysztof      Radzik                100.00 +  322: 306  150
+                                                          --------------- ---- ------
+                                                                     288  /  4  72.00
+
+
+
+
+	Renata Kowalska  86.00 Bielsko Biała          
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Tomasz         Zwoliński             135.00 -  238: 372   85
+    2    12 Krzysztof      Radzik                100.00 -  260: 322   50
+    3    14 Jerzy          Luter                  88.00 +  276: 253  138
+    4    12 Stenia         Zwolińska              98.00 -  238: 322   48
+    5    14 Zygmunt        Skwarek               100.00 +  327: 257  150
+                                                          --------------- ---- ------
+                                                                     471  /  5  94.20
+
+
+</pre></div><div id='p_rundy' class='page'><pre></pre></div><div id='p_ranking' class='page'><pre></pre></div><div id='p_przebieg' class='page'>
+
+    </div><div style="clear:both;width:100%;" class="alignright">
+
+<script>
+<!--
+if ((document.getElementById("content").offsetHeight + document.getElementById("top").offsetHeight) > screen.height)
+    document.write("<br /><br /><a href='#top'>do góry</a>");
+-->
+</script>
+
+</div>
+</div>
+
+<div id="bottom">
+<ul id="bottomlinks">
+<div class='onleft'>
+ Osób on-line: 53</div>
+    <li><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+    <li><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+    <li><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+    <li><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+    <li><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+    <li><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+</ul>
+    SCRABBLE® jest zastrzeżonym znakiem towarowym J.W. Spears &amp; Sons&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://www.pfs.org.pl/prawaautorskie.php">© Prawa autorskie</a>
+</div>
+</body>
+</html>

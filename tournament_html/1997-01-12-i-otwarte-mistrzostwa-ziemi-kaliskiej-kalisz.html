@@ -1,0 +1,811 @@
+
+<html>
+<head>
+    <title>Polska Federacja Scrabble :: I Otwarte Mistrzostwa Ziemi Kaliskiej</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="files/img/favicon.ico" />
+    <link rel="stylesheet" href="files/css/style.css" type="text/css" />
+	<link rel="stylesheet" href="files/css/style-index.css" type="text/css" />
+    <!--[if IE]><link rel="stylesheet" type="text/css" href="files/css/styleie.css" /><![endif]-->
+    <!--[if lt IE 7.]><script defer type="text/javascript" src="files/js/pngfix.js"></script><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="files/js/minmax.js"></script><![endif]-->
+    <script type="text/javascript" src="files/js/jquery.js"></script>
+    <script type="text/javascript" src="files/js/jquery-bp.js"></script>
+    <script type="text/javascript" src="files/js/java.js"></script>
+    <script>jSubmenu ("turnieje","kalendarz");jKalendarz();</script>
+    <script>
+    var url, page;
+
+    page = 'info';
+    url  = document.location.toString();
+
+    if (url.match ('#')) {
+      page = url.split ('#')[1];
+      if ($.inArray (page, [ 'info', 'relacja', 'klasyfikacja', 'hh', 'rundy', 'ranking', 'przebieg' ]) == -1)
+        page = 'info';
+    }
+
+    $(document).ready(function(){
+        $('a#listaucz').bind('click', function(event){
+            $('div#lista').toggle();
+            event.preventDefault();
+        }).toggle(function() { $(this).text('schowaj listę uczestników'); }, function() { $(this).text("pokaż listę uczestników"); });
+        $('div#lista table tr:last td').css({"border-bottom" : "none"});
+
+        $("a.przycisk").click (function (e) {
+            if ($(this).attr ('href') !== '#')
+                return true;
+
+            e.preventDefault ();
+
+            id       = this.id;
+            this.id += 'tmp';
+            window.location.hash = id;
+            this.id  = id;
+
+            $(".page").hide ();
+            $(".page#p_" + id).show ();
+
+            $("a.przycisk").removeClass ('active');
+            $(this).addClass ('active');
+
+            return false;
+        });
+
+        $("a.przycisk#" + page).click ();
+        $('html, body').animate ({ scrollTop: 0 }, 0);
+    });
+    </script>
+  <style type="text/css">
+    .page {
+        display: none;
+    }
+    #szczegoly{
+        width: 100%;
+        border-spacing: 0;
+        margin-top: 30px;
+        text-align: left;
+        font-size: inherit;
+    }
+    #szczegoly td{
+        padding: 10px 20px 10px 0;
+        vertical-align: top;
+    }
+    #szczegoly td:first-child{
+        font-weight: bold;
+        width: 160px;
+    }
+    div#lista{
+        display:none;
+        margin-top: 15px;
+    }
+    div#lista table{
+        margin-top: 10px;
+        text-align: left;
+        font-size: inherit;
+    }
+    div#lista table td{
+        padding: 3px 8px;
+        border-bottom: 1px dashed #1576AE;
+    }
+    div#lista table th{
+        padding: 0px 5px 10px 5px;
+    }
+    div#lista table td.ptaszek{
+        text-align: center;
+        background: url('files/img/tick.png') no-repeat center center;
+    }
+    div#lista table th{
+        white-space: nowrap;
+        width: auto;
+    }
+    div#lista table td:first-child, div#lista table th:first-child{
+        text-align:right;
+        width: auto;
+    }
+    </style>
+</head>
+
+<body>
+
+<script type="text/javascript">setMenu();</script>
+
+<div id="top" onclick="location.href='https://www.pfs.org.pl'">
+</div>
+<div id="menu">
+
+    <div id="m_glowna">
+        <div class="tab"><a href="https://www.pfs.org.pl/index.php"></a></div>
+
+        <ul>
+            <li class="sublink" id="aktualnosci"><a href="https://www.pfs.org.pl">Aktualności</a></li>
+            <li class="sublink" id="nowy"><a href="https://www.pfs.org.pl/dlanowych.php">Jestem tu nowy</a></li>
+            <li class="sublink" id="anagramator"><a href="https://www.pfs.org.pl/osps_online.php?main=1">Słownik online</a></li>
+            <li class="sublink" id="siodemka"><a href="https://www.pfs.org.pl/siodemka.php?main=1">Siódemka tygodnia</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+            <li class="sublink" id="dlasponsorow"><a href="https://www.pfs.org.pl/dlasponsorow.php">Dla sponsorów</a></li>
+            <li class="sublink" id="kontakt"><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+        </ul>
+    </div>
+    <div id="m_turnieje">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kalendarz.php"></a></div>
+        <ul>
+            <li class="sublink" id="kalendarz"><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+            <li class="sublink" id="regulaminy"><a href="https://www.pfs.org.pl/regulaminy.php">Regulaminy</a></li>
+            <li class="sublink" id="sedziowie"><a href="https://www.pfs.org.pl/sedziowie.php">Sędziowie</a></li>
+            <li class="sublink" id="gp"><a href="https://www.pfs.org.pl/gp2026.php">Grand Prix</a></li>
+<!--            <li class="sublink" id="mr"><a href="https://www.pfs.org.pl/mr2020.php">Mistrzostwa Regionów</a></li>-->
+            <li class="sublink" id="archiwum"><a href="https://www.pfs.org.pl/archiwum.php">Historia</a></li>
+            <li class="sublink" id="galeria"><a href="https://www.pfs.org.pl/galeria.php">Zdjęcia</a></li>
+            <li class="sublink" id="rekordy"><a href="https://www.pfs.org.pl/rekordy.php">Rekordy</a></li>
+        </ul>
+    </div>
+    <div id="m_pfs">
+        <div  class="tab"><a href="https://www.pfs.org.pl/opfs.php"></a></div>
+        <ul>
+            <li class="sublink" id="opfs"><a href="https://www.pfs.org.pl/opfs.php">O PFS</a></li>
+            <li class="sublink" id="jakprzystapic"><a href="https://www.pfs.org.pl/jakprzystapic.php">Jak przystąpić</a></li>
+            <li class="sublink" id="dlaczlonkow"><a href="https://www.pfs.org.pl/dlaczlonkow.php">Dla członków</a></li>
+            <li class="sublink" id="wladze"><a href="https://www.pfs.org.pl/wladze.php">Władze</a></li>
+            <li class="sublink" id="komisje"><a href="https://www.pfs.org.pl/komisje.php">Komisje</a></li>
+            <li class="sublink" id="statut"><a href="https://www.pfs.org.pl/statut.php">Statut</a></li>
+            <li class="sublink" id="uchwaly"><a href="https://www.pfs.org.pl/uchwaly.php">Uchwały</a></li>
+            <li class="sublink" id="honorowi"><a href="https://www.pfs.org.pl/honorowi.php">Honorowi członkowie</a></li>
+            <li class="sublink" id="finanse"><a href="https://www.pfs.org.pl/finanse.php">Finanse</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabble">
+        <div  class="tab"><a href="https://www.pfs.org.pl/osps_online.php?desktop=1"></a></div>
+        <ul>
+            <li class="sublink" id="osps_online"><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+            <li class="sublink" id="zds"><a href="https://www.pfs.org.pl/zds2.php">ZDS</a></li>
+            <li class="sublink" id="osps"><a href="https://www.pfs.org.pl/osps.php">OSPS</a></li>
+            <li class="sublink" id="aktualizacje"><a href="https://www.pfs.org.pl/osps_aktualizacje.php">Aktualizacje</a></li>
+            <li class="sublink" id="dwojki"><a href="https://www.pfs.org.pl/dwojki.php">2-literówki</a></li>
+            <li class="sublink" id="trojki"><a href="https://www.pfs.org.pl/trojki.php">3-literówki</a></li>
+            <li class="sublink" id="siodemkat"><a href="https://www.pfs.org.pl/siodemka.php">Siódemka tygodnia</a></li>
+            <li class="sublink" id="slowneroznosci"><a href="https://www.pfs.org.pl/slowneroznosci.php">Słowne różności</a></li>
+        </ul>
+    </div>
+    <div id="m_ranking">
+        <div  class="tab"><a href="https://www.pfs.org.pl/ranking.php"></a></div>
+        <ul>
+            <li class="sublink" id="aktranking"><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+            <li class="sublink" id="medale"><a href="https://www.pfs.org.pl/medale.php">Klasyfikacja medalowa</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabblisci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/mistrzowiepolski.php"></a></div>
+        <ul>
+            <li class="sublink" id="mistrzowiepolski"><a href="https://www.pfs.org.pl/mistrzowiepolski.php">Mistrzowie Polski</a></li>
+            <li class="sublink" id="zdobywcypp"><a href="https://www.pfs.org.pl/zdobywcypp.php">Zdobywcy Pucharu Polski</a></li>
+            <li class="sublink" id="zwyciezcygp"><a href="https://www.pfs.org.pl/zwyciezcygp.php">Zwycięzcy Grand Prix</a></li>
+            <li class="sublink" id="liderzyrankingu"><a href="https://www.pfs.org.pl/liderzyrankingu.php">Liderzy rankingu</a></li>
+            <li class="sublink" id="zwyciezcylemans"><a href="https://www.pfs.org.pl/zwyciezcylemans.php">Zwycięzcy 24h Le Mans</a></li>
+            <li class="sublink" id="zwyciezcykmp"><a href="https://www.pfs.org.pl/zwyciezcykmp.php">KMP</a>
+        </ul>
+    </div>
+    <div id="m_kluby">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kluby.php"></a></div>
+        <ul>
+            <li class="sublink" id="rejestrklubow"><a href="https://www.pfs.org.pl/kluby.php">Rejestr klubów</a></li>
+            <li class="sublink" id="kmp"><a href="https://www.pfs.org.pl/kmp.php">KMP</a></li>
+            <li class="sublink" id="wiescizklubow"><a href="https://www.pfs.org.pl/wiescizklubow.php">Wieści z klubów</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/about.php">Statystyki klubowe</a></li>
+        </ul>
+    </div>
+    <div id="m_roznosci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/historia.php"></a></div>
+        <ul>
+            <li class="sublink" id="historia"><a href="https://www.pfs.org.pl/historia.php">Historia</a></li>
+            <li class="sublink" id="odmiany"><a href="https://www.pfs.org.pl/odmiany.php">Odmiany</a></li>
+            <li class="sublink" id="anegdoty"><a href="https://www.pfs.org.pl/anegdoty.php">Anegdoty</a></li>
+            <li class="sublink" id="scrabblealia"><a href="https://www.pfs.org.pl/scrabblealia.php">Scrabblealia</a></li>
+            <li class="sublink" id="scrabblenet"><a href="https://www.pfs.org.pl/scrabblenet.php">Scrabble w internecie</a></li>
+            <li class="sublink" id="programy"><a href="https://www.pfs.org.pl/programy.php">Programy</a></li>
+            <li class="sublink" id="download"><a href="https://www.pfs.org.pl/download.php">Do pobrania</a></li>
+            <li class="sublink" id="ksiazki"><a href="https://www.pfs.org.pl/ksiazki.php">Książki</a></li>
+            <li class="sublink" id="slowniczek"><a href="https://www.pfs.org.pl/slowniczek.php">Słowniczek</a></li>
+        </ul>
+    </div>
+    <div id="m_english">
+        <div  class="tab"><a href="https://www.pfs.org.pl/english.php"></a></div>
+        <ul>
+            <li class="sublink" id="about"><a href="https://www.pfs.org.pl/english.php">About Polish Scrabble</a></li>
+            <li class="sublink" id="news"><a href="https://www.pfs.org.pl/en_news.php">News</a></li>
+            <li class="sublink" id="bartek"><a href="https://www.pfs.org.pl/bartek.php">Bartek w Johor Bahru</a></li>
+            <li class="sublink" id="franko"><a href="https://www.pfs.org.pl/franko.php">Scrabble frankofońskie</a></li>
+        </ul>
+    </div>
+</div>
+
+<div id="submenu"></div>
+<div id="content">
+<div id='nextTours'>
+		<div class='nextTour' onclick='location.href="turniej.php?id=420"'>
+			<div class='karteczka small1'>
+				<span class='miasto'>Biała Podlaska</span><span class='dzien'><span class='big'> 5</span><br />stycznia</span></div>
+			<div class='kartka big1'>
+				<span class='miasto'>Biała Podlaska</span>
+				<span class='dzien'><b> 5 stycznia</b></span>
+				<span class='nazwaturnieju'>I Otwarte Mistrzostwa Podlasia</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=419"'>
+			<div class='karteczka small2'>
+				<span class='miasto'>Kalisz</span><span class='dzien'><span class='big'>12</span><br />stycznia</span></div>
+			<div class='kartka big2'>
+				<span class='miasto'>Kalisz</span>
+				<span class='dzien'><b>12 stycznia</b></span>
+				<span class='nazwaturnieju'>I Otwarte Mistrzostwa Ziemi Kaliskiej</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=418"'>
+			<div class='karteczka small3'>
+				<span class='miasto'>Wałbrzych</span><span class='dzien'><span class='big'>19</span><br />stycznia</span></div>
+			<div class='kartka big3'>
+				<span class='miasto'>Wałbrzych</span>
+				<span class='dzien'><b>19 stycznia</b></span>
+				<span class='nazwaturnieju'>II Ogólnopolski Turniej Scrabble na Zamku Książ</span></div>
+		</div></div><div class='naglowekrelacji'><span class='tytul'>I Otwarte Mistrzostwa Ziemi Kaliskiej<span class='nazwa'>12 stycznia 1997 —  I Otwarte Mistrzostwa Ziemi Kaliskiej</span></span><a href='#' id='info' class='przycisk'>Informacje</a><a href='#' id='relacja' class='przycisk'>Relacja</a><a href='#' id='klasyfikacja' class='przycisk'>Wyniki</a><a href='#' id='hh' class='przycisk'>HH</a><div class='galleries'><img src='files/img/gallery.png' style='visibility:hidden;' alt='galeria' /></div></div><h1 style='color:black; margin-top:0px; margin-bottom:30px; padding: 0px'>I Otwarte Mistrzostwa Ziemi Kaliskiej<span>Kalisz, 12 stycznia 1997</span></h1><div id='p_relacja' class='page'><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><div class='relacja' style='clear:both;'><div><pre>
+ 1. Zdzisław Szota (Warszawa)
+ 2. Tomasz Zwoliński (Warszawa)
+ 3. Michał Derlacki (Warszawa)
+ 4. Dariusz Banaszek (Sokołów Podlaski)
+ 5. Małgorzata Kania (Milanówek)
+ 6. Olgierd Kurowski (Łódź)
+ 7. Ryszard Żydaczewski (Lubin)
+ 8. Konrad Kaliszewski (Piotrków Trybunalski)
+ 9. Grzegorz Szewczyk (Łódź)
+ 10. Maciek Czupryniak (Milanówek) 
+
+32 uczestników, 5 rund
+</pre></div><div class='autor'></div></div><div style='clear:both;'></div></div><div id='p_info' class='page'><br><p align='center'></p><br><br><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><table id='szczegoly' class='ramkadolna'></table><br /><br /></div><div id='p_klasyfikacja' class='page'><pre>Wyniki turnieju I Otwarte Mistrzostwa Ziemi Kaliskiej
+
+Lp. Imię            Nazwisko             Miasto               Ranking  Duże pkt Małe pkt Skalpy   Różn. MP
+--- --------------- -------------------- -------------------- -------- -------- -------- -------- --------
+  1 Zdzisław        Szota                Warszawa               121.00      5.0     1662      768      316
+  2 Tomasz          Zwoliński            Skierdy                129.00      4.0     2047      724      486
+  3 Michał          Derlacki             Warszawa               100.00      4.0     1963      704      438
+  4 Dariusz         Banaszek             Warszawa               131.00      4.0     1939      673      382
+  5 Małgorzata      Kania                Milanówek              100.00      4.0     1707      614       96
+  6 Olgierd         Kurowski             Łódź                    81.00      4.0     1499      633       89
+  7 Ryszard         Żydaczewski          Lubin                  116.00      3.0     1896      564      155
+  8 Konrad          Kaliszewski          Piotrków Trybunalski   100.00      3.0     1742      551       42
+  9 Grzegorz        Szewczyk             Łódź                   113.00      3.0     1683      561     -138
+ 10 Maciej          Czupryniak           Milanówek              100.00      3.0     1643      505       25
+ 11 Jarosław        Michalak             Łódź                   112.00      3.0     1601      610        8
+ 12 Sławomir        Nowak                Łódź                    75.00      3.0     1589      537     -204
+ 13 Paweł           Graczykowski         Łódź                   110.00      3.0     1573      579      121
+ 14 Tatiana         Łubniewicz           Łódź                    89.00      3.0     1518      539      -24
+ 15 Witold          Kurowski             Łódź                   100.00      3.0     1506      543      189
+ 16 Gabriela        Hofman               Łódź                   100.00      3.0     1362      533       79
+ 17 Paweł           Dawidson             Częstochowa            127.00      2.0     1812      452       87
+ 18 Mariusz         Wójcik               Warszawa                81.00      2.0     1704      445       -3
+ 19 Bogusław        Koszarski            Lądek Zdrój             74.00      2.0     1640      472      -51
+ 20 Bogusław        Wróbel               Łódź                    83.00      2.0     1605      444     -161
+ 21 Krzysztof       Szewczyk             Łódź                   100.00      2.0     1556      431      -35
+ 22 Krzysztof       Kurowski             Łódź                   100.00      2.0     1509      462      -58
+ 23 Barbara         Graczykowska         Łódź                   100.00      2.0     1502      449       98
+ 24 Jerzy           Augustyniak          Łódź                   100.00      2.0     1362      449      -23
+ 25 Maciej          Michalak             Łódź                    81.00      2.0     1303      420      -77
+ 26 Kazimierz       Krukowski            Kalisz                 100.00      2.0     1128      431      -54
+ 27 Stefan          Dawidson             Częstochowa            117.00      1.0     1736      400       19
+ 28 Janusz          Grodzki              Łódź                    89.00      1.0     1566      346       74
+ 29 Krystyna        Augustyniak          Łódź                    87.00      1.0     1398      342     -333
+ 30 Grzegorz        Cuske                Kalisz                 100.00      1.0     1233      331     -343
+ 31 Marek           Stachowiak           Kalisz                 100.00      1.0      988      331     -438
+ 32 Rafał           Cuske                Kalisz                 100.00      0.0      767      237     -762
+</pre></div><div id='p_hh' class='page'><pre>Wyniki poszczególnych graczy w turnieju I Otwarte Mistrzostwa Ziemi Kaliskiej
+
+
+
+	Dariusz Banaszek 131.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Tomasz         Zwoliński             129.00 +  367: 327  179
+    2     1 Grzegorz       Szewczyk              113.00 +  491: 223  163
+    3     1 Michał         Derlacki              100.00 -  305: 361   50
+    4     4 Mariusz        Wójcik                 81.00 +  438: 340  131
+    5     2 Konrad         Kaliszewski           100.00 +  338: 306  150
+                                                          --------------- ---- ------
+                                                                     673  /  5 134.60
+
+
+
+
+	Tomasz Zwoliński 129.00 Skierdy         
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Dariusz        Banaszek              131.00 -  327: 367   81
+    2    10 Krystyna       Augustyniak            87.00 +  503: 235  137
+    3     5 Stefan         Dawidson              117.00 +  395: 361  167
+    4     3 Paweł          Dawidson              127.00 +  372: 353  177
+    5     3 Jarosław       Michalak              112.00 +  450: 245  162
+                                                          --------------- ---- ------
+                                                                     724  /  5 144.80
+
+
+
+
+	Paweł Dawidson 127.00 Częstochowa              
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Michał         Derlacki              100.00 -  314: 347   50
+    2    12 Bogusław       Koszarski              74.00 +  409: 323  124
+    3     6 Bogusław       Wróbel                 83.00 +  365: 297  133
+    4     3 Tomasz         Zwoliński             129.00 -  353: 372   79
+    5     6 Ryszard        Żydaczewski           116.00 -  371: 386   66
+                                                          --------------- ---- ------
+                                                                     452  /  5  90.40
+
+
+
+
+	Zdzisław Szota 121.00 Warszawa               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Stefan         Dawidson              117.00 +  342: 328  167
+    2     4 Gabriela       Hofman                100.00 +  308: 223  150
+    3     3 Tatiana        Łubniewicz             89.00 +  312: 246  139
+    4     2 Jarosław       Michalak              112.00 +  346: 245  162
+    5     1 Michał         Derlacki              100.00 +  354: 304  150
+                                                          --------------- ---- ------
+                                                                     768  /  5 153.60
+
+
+
+
+	Stefan Dawidson 117.00 Częstochowa            
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Zdzisław       Szota                 121.00 -  328: 342   71
+    2     9 Ryszard        Żydaczewski           116.00 +  417: 289  166
+    3     5 Tomasz         Zwoliński             129.00 -  361: 395   79
+    4     9 Paweł          Graczykowski          110.00 -  294: 340   60
+    5    12 Bogusław       Koszarski              74.00 -  336: 351   24
+                                                          --------------- ---- ------
+                                                                     400  /  5  80.00
+
+
+
+
+	Ryszard Żydaczewski 116.00 Lubin                    
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Grzegorz       Szewczyk              113.00 -  394: 427   63
+    2     9 Stefan         Dawidson              117.00 -  289: 417   67
+    3    13 Bogusław       Koszarski              74.00 +  403: 263  124
+    4    10 Bogusław       Wróbel                 83.00 +  424: 263  133
+    5     6 Paweł          Dawidson              127.00 +  386: 371  177
+                                                          --------------- ---- ------
+                                                                     564  /  5 112.80
+
+
+
+
+	Grzegorz Szewczyk 113.00 Łódź                     
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Ryszard        Żydaczewski           116.00 +  427: 394  166
+    2     1 Dariusz        Banaszek              131.00 -  223: 491   81
+    3     7 Sławomir       Nowak                  75.00 -  316: 336   25
+    4    11 Janusz         Grodzki                89.00 +  314: 306  139
+    5     8 Krzysztof      Szewczyk              100.00 +  403: 294  150
+                                                          --------------- ---- ------
+                                                                     561  /  5 112.20
+
+
+
+
+	Jarosław Michalak 112.00 Łódź                     
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Paweł          Graczykowski          110.00 +  305: 267  160
+    2     7 Krzysztof      Kurowski              100.00 +  319: 261  150
+    3     4 Witold         Kurowski              100.00 +  487: 269  150
+    4     2 Zdzisław       Szota                 121.00 -  245: 346   71
+    5     3 Tomasz         Zwoliński             129.00 -  245: 450   79
+                                                          --------------- ---- ------
+                                                                     610  /  5 122.00
+
+
+
+
+	Paweł Graczykowski 110.00 Łódź                     
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Jarosław       Michalak              112.00 -  267: 305   62
+    2    14 Jerzy          Augustyniak           100.00 +  351: 253  150
+    3     8 Maciej         Czupryniak            100.00 -  298: 351   50
+    4     9 Stefan         Dawidson              117.00 +  340: 294  167
+    5     9 Barbara        Graczykowska          100.00 +  317: 249  150
+                                                          --------------- ---- ------
+                                                                     579  /  5 115.80
+
+
+
+
+	Jerzy Augustyniak 100.00 Łódź                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Krzysztof      Kurowski              100.00 -  221: 307   50
+    2    14 Paweł          Graczykowski          110.00 -  253: 351   60
+    3    15 Janusz         Grodzki                89.00 -  206: 363   39
+    4    16 Rafał          Cuske                 100.00 +  340: 177  150
+    5    15 Marek          Stachowiak            100.00 +  342: 187  150
+                                                          --------------- ---- ------
+                                                                     449  /  5  89.80
+
+
+
+
+	Grzegorz Cuske 100.00 Kalisz                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    12 Kazimierz      Krukowski             100.00 +  239: 165  150
+    2     8 Witold         Kurowski              100.00 -  215: 327   50
+    3    11 Olgierd        Kurowski               81.00 -  273: 325   31
+    4    13 Barbara        Graczykowska          100.00 -  243: 410   50
+    5    14 Krzysztof      Kurowski              100.00 -  263: 349   50
+                                                          --------------- ---- ------
+                                                                     331  /  5  66.20
+
+
+
+
+	Rafał Cuske 100.00 Kalisz                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    14 Gabriela       Hofman                100.00 -  111: 342   50
+    2    16 Marek          Stachowiak            100.00 -  175: 239   50
+    3    16 Kazimierz      Krukowski             100.00 -  132: 258   50
+    4    16 Jerzy          Augustyniak           100.00 -  177: 340   50
+    5    16 Krystyna       Augustyniak            87.00 -  172: 350   37
+                                                          --------------- ---- ------
+                                                                     237  /  5  47.40
+
+
+
+
+	Maciej Czupryniak 100.00 Milanówek                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    13 Krzysztof      Szewczyk              100.00 +  331: 289  150
+    2     5 Tatiana        Łubniewicz             89.00 -  292: 361   39
+    3     8 Paweł          Graczykowski          110.00 +  351: 298  160
+    4     5 Sławomir       Nowak                  75.00 -  320: 346   25
+    5     7 Mariusz        Wójcik                 81.00 +  349: 324  131
+                                                          --------------- ---- ------
+                                                                     505  /  5 101.00
+
+
+
+
+	Michał Derlacki 100.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Paweł          Dawidson              127.00 +  347: 314  177
+    2     3 Sławomir       Nowak                  75.00 +  487: 289  125
+    3     1 Dariusz        Banaszek              131.00 +  361: 305  181
+    4     1 Konrad         Kaliszewski           100.00 +  464: 263  150
+    5     1 Zdzisław       Szota                 121.00 -  304: 354   71
+                                                          --------------- ---- ------
+                                                                     704  /  5 140.80
+
+
+
+
+	Barbara Graczykowska 100.00 Łódź                     
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    16 Małgorzata     Kania                 100.00 -  319: 323   50
+    2    11 Janusz         Grodzki                89.00 +  276: 246  139
+    3     9 Gabriela       Hofman                100.00 -  248: 275   50
+    4    13 Grzegorz       Cuske                 100.00 +  410: 243  150
+    5     9 Paweł          Graczykowski          110.00 -  249: 317   60
+                                                          --------------- ---- ------
+                                                                     449  /  5  89.80
+
+
+
+
+	Gabriela Hofman 100.00 Łódź                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    14 Rafał          Cuske                 100.00 +  342: 111  150
+    2     4 Zdzisław       Szota                 121.00 -  223: 308   71
+    3     9 Barbara        Graczykowska          100.00 +  275: 248  150
+    4     8 Maciej         Michalak               81.00 +  291: 282  131
+    5     5 Olgierd        Kurowski               81.00 -  231: 334   31
+                                                          --------------- ---- ------
+                                                                     533  /  5 106.60
+
+
+
+
+	Konrad Kaliszewski 100.00 Piotrków Trybunalski     
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Janusz         Grodzki                89.00 +  324: 318  139
+    2     6 Małgorzata     Kania                 100.00 +  421: 253  150
+    3     2 Mariusz        Wójcik                 81.00 +  428: 327  131
+    4     1 Michał         Derlacki              100.00 -  263: 464   50
+    5     2 Dariusz        Banaszek              131.00 -  306: 338   81
+                                                          --------------- ---- ------
+                                                                     551  /  5 110.20
+
+
+
+
+	Małgorzata Kania 100.00 Milanówek                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    16 Barbara        Graczykowska          100.00 +  323: 319  150
+    2     6 Konrad         Kaliszewski           100.00 -  253: 421   50
+    3    10 Krzysztof      Kurowski              100.00 +  393: 310  150
+    4     6 Tatiana        Łubniewicz             89.00 +  373: 287  139
+    5     4 Sławomir       Nowak                  75.00 +  365: 274  125
+                                                          --------------- ---- ------
+                                                                     614  /  5 122.80
+
+
+
+
+	Kazimierz Krukowski 100.00 Kalisz                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    12 Grzegorz       Cuske                 100.00 -  165: 239   50
+    2    15 Maciej         Michalak               81.00 -  261: 264   31
+    3    16 Rafał          Cuske                 100.00 +  258: 132  150
+    4    14 Marek          Stachowiak            100.00 +  264: 211  150
+    5    11 Witold         Kurowski              100.00 -  180: 336   50
+                                                          --------------- ---- ------
+                                                                     431  /  5  86.20
+
+
+
+
+	Krzysztof Kurowski 100.00 Łódź                     
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Jerzy          Augustyniak           100.00 +  307: 221  150
+    2     7 Jarosław       Michalak              112.00 -  261: 319   62
+    3    10 Małgorzata     Kania                 100.00 -  310: 393   50
+    4    12 Krzysztof      Szewczyk              100.00 -  282: 371   50
+    5    14 Grzegorz       Cuske                 100.00 +  349: 263  150
+                                                          --------------- ---- ------
+                                                                     462  /  5  92.40
+
+
+
+
+	Witold Kurowski 100.00 Łódź                     
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    15 Marek          Stachowiak            100.00 +  299: 159  150
+    2     8 Grzegorz       Cuske                 100.00 +  327: 215  150
+    3     4 Jarosław       Michalak              112.00 -  269: 487   62
+    4     7 Olgierd        Kurowski               81.00 -  275: 276   31
+    5    11 Kazimierz      Krukowski             100.00 +  336: 180  150
+                                                          --------------- ---- ------
+                                                                     543  /  5 108.60
+
+
+
+
+	Marek Stachowiak 100.00 Kalisz                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    15 Witold         Kurowski              100.00 -  159: 299   50
+    2    16 Rafał          Cuske                 100.00 +  239: 175  150
+    3    12 Maciej         Michalak               81.00 -  192: 346   31
+    4    14 Kazimierz      Krukowski             100.00 -  211: 264   50
+    5    15 Jerzy          Augustyniak           100.00 -  187: 342   50
+                                                          --------------- ---- ------
+                                                                     331  /  5  66.20
+
+
+
+
+	Krzysztof Szewczyk 100.00 Łódź                     
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    13 Maciej         Czupryniak            100.00 -  289: 331   50
+    2    13 Olgierd        Kurowski               81.00 -  281: 284   31
+    3    14 Krystyna       Augustyniak            87.00 +  321: 291  137
+    4    12 Krzysztof      Kurowski              100.00 +  371: 282  150
+    5     8 Grzegorz       Szewczyk              113.00 -  294: 403   63
+                                                          --------------- ---- ------
+                                                                     431  /  5  86.20
+
+
+
+
+	Janusz Grodzki  89.00 Łódź                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Konrad         Kaliszewski           100.00 -  318: 324   50
+    2    11 Barbara        Graczykowska          100.00 -  246: 276   50
+    3    15 Jerzy          Augustyniak           100.00 +  363: 206  150
+    4    11 Grzegorz       Szewczyk              113.00 -  306: 314   63
+    5    13 Bogusław       Wróbel                 83.00 -  333: 372   33
+                                                          --------------- ---- ------
+                                                                     346  /  5  69.20
+
+
+
+
+	Tatiana Łubniewicz  89.00 Łódź
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Krystyna       Augustyniak            87.00 +  337: 323  137
+    2     5 Maciej         Czupryniak            100.00 +  361: 292  150
+    3     3 Zdzisław       Szota                 121.00 -  246: 312   71
+    4     6 Małgorzata     Kania                 100.00 -  287: 373   50
+    5    10 Maciej         Michalak               81.00 +  287: 242  131
+                                                          --------------- ---- ------
+                                                                     539  /  5 107.80
+
+
+
+
+	Krystyna Augustyniak  87.00 Łódź                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Tatiana        Łubniewicz             89.00 -  323: 337   39
+    2    10 Tomasz         Zwoliński             129.00 -  235: 503   79
+    3    14 Krzysztof      Szewczyk              100.00 -  291: 321   50
+    4    15 Bogusław       Koszarski              74.00 -  199: 398   24
+    5    16 Rafał          Cuske                 100.00 +  350: 172  150
+                                                          --------------- ---- ------
+                                                                     342  /  5  68.40
+
+
+
+
+	Bogusław Wróbel  83.00 Łódź                     
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Olgierd        Kurowski               81.00 +  350: 280  131
+    2     2 Mariusz        Wójcik                 81.00 -  323: 364   31
+    3     6 Paweł          Dawidson              127.00 -  297: 365   77
+    4    10 Ryszard        Żydaczewski           116.00 -  263: 424   66
+    5    13 Janusz         Grodzki                89.00 +  372: 333  139
+                                                          --------------- ---- ------
+                                                                     444  /  5  88.80
+
+
+
+
+	Olgierd Kurowski  81.00 Łódź                     
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Bogusław       Wróbel                 83.00 -  280: 350   33
+    2    13 Krzysztof      Szewczyk              100.00 +  284: 281  150
+    3    11 Grzegorz       Cuske                 100.00 +  325: 273  150
+    4     7 Witold         Kurowski              100.00 +  276: 275  150
+    5     5 Gabriela       Hofman                100.00 +  334: 231  150
+                                                          --------------- ---- ------
+                                                                     633  /  5 126.60
+
+
+
+
+	Maciej Michalak  81.00 Łódź                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Mariusz        Wójcik                 81.00 -  169: 349   31
+    2    15 Kazimierz      Krukowski             100.00 +  264: 261  150
+    3    12 Marek          Stachowiak            100.00 +  346: 192  150
+    4     8 Gabriela       Hofman                100.00 -  282: 291   50
+    5    10 Tatiana        Łubniewicz             89.00 -  242: 287   39
+                                                          --------------- ---- ------
+                                                                     420  /  5  84.00
+
+
+
+
+	Mariusz Wójcik  81.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Maciej         Michalak               81.00 +  349: 169  131
+    2     2 Bogusław       Wróbel                 83.00 +  364: 323  133
+    3     2 Konrad         Kaliszewski           100.00 -  327: 428   50
+    4     4 Dariusz        Banaszek              131.00 -  340: 438   81
+    5     7 Maciej         Czupryniak            100.00 -  324: 349   50
+                                                          --------------- ---- ------
+                                                                     445  /  5  89.00
+
+
+
+
+	Sławomir Nowak  75.00 Łódź                     
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Bogusław       Koszarski              74.00 +  344: 305  124
+    2     3 Michał         Derlacki              100.00 -  289: 487   50
+    3     7 Grzegorz       Szewczyk              113.00 +  336: 316  163
+    4     5 Maciej         Czupryniak            100.00 +  346: 320  150
+    5     4 Małgorzata     Kania                 100.00 -  274: 365   50
+                                                          --------------- ---- ------
+                                                                     537  /  5 107.40
+
+
+
+
+	Bogusław Koszarski  74.00 Lądek Zdrój              
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Sławomir       Nowak                  75.00 -  305: 344   25
+    2    12 Paweł          Dawidson              127.00 -  323: 409   77
+    3    13 Ryszard        Żydaczewski           116.00 -  263: 403   66
+    4    15 Krystyna       Augustyniak            87.00 +  398: 199  137
+    5    12 Stefan         Dawidson              117.00 +  351: 336  167
+                                                          --------------- ---- ------
+                                                                     472  /  5  94.40
+
+
+</pre></div><div id='p_rundy' class='page'><pre></pre></div><div id='p_ranking' class='page'><pre></pre></div><div id='p_przebieg' class='page'>
+
+    </div><div style="clear:both;width:100%;" class="alignright">
+
+<script>
+<!--
+if ((document.getElementById("content").offsetHeight + document.getElementById("top").offsetHeight) > screen.height)
+    document.write("<br /><br /><a href='#top'>do góry</a>");
+-->
+</script>
+
+</div>
+</div>
+
+<div id="bottom">
+<ul id="bottomlinks">
+<div class='onleft'>
+ Osób on-line: 52</div>
+    <li><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+    <li><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+    <li><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+    <li><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+    <li><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+    <li><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+</ul>
+    SCRABBLE® jest zastrzeżonym znakiem towarowym J.W. Spears &amp; Sons&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://www.pfs.org.pl/prawaautorskie.php">© Prawa autorskie</a>
+</div>
+</body>
+</html>

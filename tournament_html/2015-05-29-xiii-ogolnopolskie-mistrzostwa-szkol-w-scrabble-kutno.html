@@ -1,0 +1,992 @@
+
+<html>
+<head>
+    <title>Polska Federacja Scrabble :: XIII Ogólnopolskie Mistrzostwa Szkół w Scrabble</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="files/img/favicon.ico" />
+    <link rel="stylesheet" href="files/css/style.css" type="text/css" />
+	<link rel="stylesheet" href="files/css/style-index.css" type="text/css" />
+    <!--[if IE]><link rel="stylesheet" type="text/css" href="files/css/styleie.css" /><![endif]-->
+    <!--[if lt IE 7.]><script defer type="text/javascript" src="files/js/pngfix.js"></script><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="files/js/minmax.js"></script><![endif]-->
+    <script type="text/javascript" src="files/js/jquery.js"></script>
+    <script type="text/javascript" src="files/js/jquery-bp.js"></script>
+    <script type="text/javascript" src="files/js/java.js"></script>
+    <script>jSubmenu ("turnieje","kalendarz");jKalendarz();</script>
+    <script>
+    var url, page;
+
+    page = 'info';
+    url  = document.location.toString();
+
+    if (url.match ('#')) {
+      page = url.split ('#')[1];
+      if ($.inArray (page, [ 'info', 'relacja', 'klasyfikacja', 'hh', 'rundy', 'ranking', 'przebieg' ]) == -1)
+        page = 'info';
+    }
+
+    $(document).ready(function(){
+        $('a#listaucz').bind('click', function(event){
+            $('div#lista').toggle();
+            event.preventDefault();
+        }).toggle(function() { $(this).text('schowaj listę uczestników'); }, function() { $(this).text("pokaż listę uczestników"); });
+        $('div#lista table tr:last td').css({"border-bottom" : "none"});
+
+        $("a.przycisk").click (function (e) {
+            if ($(this).attr ('href') !== '#')
+                return true;
+
+            e.preventDefault ();
+
+            id       = this.id;
+            this.id += 'tmp';
+            window.location.hash = id;
+            this.id  = id;
+
+            $(".page").hide ();
+            $(".page#p_" + id).show ();
+
+            $("a.przycisk").removeClass ('active');
+            $(this).addClass ('active');
+
+            return false;
+        });
+
+        $("a.przycisk#" + page).click ();
+        $('html, body').animate ({ scrollTop: 0 }, 0);
+    });
+    </script>
+  <style type="text/css">
+    .page {
+        display: none;
+    }
+    #szczegoly{
+        width: 100%;
+        border-spacing: 0;
+        margin-top: 30px;
+        text-align: left;
+        font-size: inherit;
+    }
+    #szczegoly td{
+        padding: 10px 20px 10px 0;
+        vertical-align: top;
+    }
+    #szczegoly td:first-child{
+        font-weight: bold;
+        width: 160px;
+    }
+    div#lista{
+        display:none;
+        margin-top: 15px;
+    }
+    div#lista table{
+        margin-top: 10px;
+        text-align: left;
+        font-size: inherit;
+    }
+    div#lista table td{
+        padding: 3px 8px;
+        border-bottom: 1px dashed #1576AE;
+    }
+    div#lista table th{
+        padding: 0px 5px 10px 5px;
+    }
+    div#lista table td.ptaszek{
+        text-align: center;
+        background: url('files/img/tick.png') no-repeat center center;
+    }
+    div#lista table th{
+        white-space: nowrap;
+        width: auto;
+    }
+    div#lista table td:first-child, div#lista table th:first-child{
+        text-align:right;
+        width: auto;
+    }
+    </style>
+</head>
+
+<body>
+
+<script type="text/javascript">setMenu();</script>
+
+<div id="top" onclick="location.href='https://www.pfs.org.pl'">
+</div>
+<div id="menu">
+
+    <div id="m_glowna">
+        <div class="tab"><a href="https://www.pfs.org.pl/index.php"></a></div>
+
+        <ul>
+            <li class="sublink" id="aktualnosci"><a href="https://www.pfs.org.pl">Aktualności</a></li>
+            <li class="sublink" id="nowy"><a href="https://www.pfs.org.pl/dlanowych.php">Jestem tu nowy</a></li>
+            <li class="sublink" id="anagramator"><a href="https://www.pfs.org.pl/osps_online.php?main=1">Słownik online</a></li>
+            <li class="sublink" id="siodemka"><a href="https://www.pfs.org.pl/siodemka.php?main=1">Siódemka tygodnia</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+            <li class="sublink" id="dlasponsorow"><a href="https://www.pfs.org.pl/dlasponsorow.php">Dla sponsorów</a></li>
+            <li class="sublink" id="kontakt"><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+        </ul>
+    </div>
+    <div id="m_turnieje">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kalendarz.php"></a></div>
+        <ul>
+            <li class="sublink" id="kalendarz"><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+            <li class="sublink" id="regulaminy"><a href="https://www.pfs.org.pl/regulaminy.php">Regulaminy</a></li>
+            <li class="sublink" id="sedziowie"><a href="https://www.pfs.org.pl/sedziowie.php">Sędziowie</a></li>
+            <li class="sublink" id="gp"><a href="https://www.pfs.org.pl/gp2026.php">Grand Prix</a></li>
+<!--            <li class="sublink" id="mr"><a href="https://www.pfs.org.pl/mr2020.php">Mistrzostwa Regionów</a></li>-->
+            <li class="sublink" id="archiwum"><a href="https://www.pfs.org.pl/archiwum.php">Historia</a></li>
+            <li class="sublink" id="galeria"><a href="https://www.pfs.org.pl/galeria.php">Zdjęcia</a></li>
+            <li class="sublink" id="rekordy"><a href="https://www.pfs.org.pl/rekordy.php">Rekordy</a></li>
+        </ul>
+    </div>
+    <div id="m_pfs">
+        <div  class="tab"><a href="https://www.pfs.org.pl/opfs.php"></a></div>
+        <ul>
+            <li class="sublink" id="opfs"><a href="https://www.pfs.org.pl/opfs.php">O PFS</a></li>
+            <li class="sublink" id="jakprzystapic"><a href="https://www.pfs.org.pl/jakprzystapic.php">Jak przystąpić</a></li>
+            <li class="sublink" id="dlaczlonkow"><a href="https://www.pfs.org.pl/dlaczlonkow.php">Dla członków</a></li>
+            <li class="sublink" id="wladze"><a href="https://www.pfs.org.pl/wladze.php">Władze</a></li>
+            <li class="sublink" id="komisje"><a href="https://www.pfs.org.pl/komisje.php">Komisje</a></li>
+            <li class="sublink" id="statut"><a href="https://www.pfs.org.pl/statut.php">Statut</a></li>
+            <li class="sublink" id="uchwaly"><a href="https://www.pfs.org.pl/uchwaly.php">Uchwały</a></li>
+            <li class="sublink" id="honorowi"><a href="https://www.pfs.org.pl/honorowi.php">Honorowi członkowie</a></li>
+            <li class="sublink" id="finanse"><a href="https://www.pfs.org.pl/finanse.php">Finanse</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabble">
+        <div  class="tab"><a href="https://www.pfs.org.pl/osps_online.php?desktop=1"></a></div>
+        <ul>
+            <li class="sublink" id="osps_online"><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+            <li class="sublink" id="zds"><a href="https://www.pfs.org.pl/zds2.php">ZDS</a></li>
+            <li class="sublink" id="osps"><a href="https://www.pfs.org.pl/osps.php">OSPS</a></li>
+            <li class="sublink" id="aktualizacje"><a href="https://www.pfs.org.pl/osps_aktualizacje.php">Aktualizacje</a></li>
+            <li class="sublink" id="dwojki"><a href="https://www.pfs.org.pl/dwojki.php">2-literówki</a></li>
+            <li class="sublink" id="trojki"><a href="https://www.pfs.org.pl/trojki.php">3-literówki</a></li>
+            <li class="sublink" id="siodemkat"><a href="https://www.pfs.org.pl/siodemka.php">Siódemka tygodnia</a></li>
+            <li class="sublink" id="slowneroznosci"><a href="https://www.pfs.org.pl/slowneroznosci.php">Słowne różności</a></li>
+        </ul>
+    </div>
+    <div id="m_ranking">
+        <div  class="tab"><a href="https://www.pfs.org.pl/ranking.php"></a></div>
+        <ul>
+            <li class="sublink" id="aktranking"><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+            <li class="sublink" id="medale"><a href="https://www.pfs.org.pl/medale.php">Klasyfikacja medalowa</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabblisci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/mistrzowiepolski.php"></a></div>
+        <ul>
+            <li class="sublink" id="mistrzowiepolski"><a href="https://www.pfs.org.pl/mistrzowiepolski.php">Mistrzowie Polski</a></li>
+            <li class="sublink" id="zdobywcypp"><a href="https://www.pfs.org.pl/zdobywcypp.php">Zdobywcy Pucharu Polski</a></li>
+            <li class="sublink" id="zwyciezcygp"><a href="https://www.pfs.org.pl/zwyciezcygp.php">Zwycięzcy Grand Prix</a></li>
+            <li class="sublink" id="liderzyrankingu"><a href="https://www.pfs.org.pl/liderzyrankingu.php">Liderzy rankingu</a></li>
+            <li class="sublink" id="zwyciezcylemans"><a href="https://www.pfs.org.pl/zwyciezcylemans.php">Zwycięzcy 24h Le Mans</a></li>
+            <li class="sublink" id="zwyciezcykmp"><a href="https://www.pfs.org.pl/zwyciezcykmp.php">KMP</a>
+        </ul>
+    </div>
+    <div id="m_kluby">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kluby.php"></a></div>
+        <ul>
+            <li class="sublink" id="rejestrklubow"><a href="https://www.pfs.org.pl/kluby.php">Rejestr klubów</a></li>
+            <li class="sublink" id="kmp"><a href="https://www.pfs.org.pl/kmp.php">KMP</a></li>
+            <li class="sublink" id="wiescizklubow"><a href="https://www.pfs.org.pl/wiescizklubow.php">Wieści z klubów</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/about.php">Statystyki klubowe</a></li>
+        </ul>
+    </div>
+    <div id="m_roznosci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/historia.php"></a></div>
+        <ul>
+            <li class="sublink" id="historia"><a href="https://www.pfs.org.pl/historia.php">Historia</a></li>
+            <li class="sublink" id="odmiany"><a href="https://www.pfs.org.pl/odmiany.php">Odmiany</a></li>
+            <li class="sublink" id="anegdoty"><a href="https://www.pfs.org.pl/anegdoty.php">Anegdoty</a></li>
+            <li class="sublink" id="scrabblealia"><a href="https://www.pfs.org.pl/scrabblealia.php">Scrabblealia</a></li>
+            <li class="sublink" id="scrabblenet"><a href="https://www.pfs.org.pl/scrabblenet.php">Scrabble w internecie</a></li>
+            <li class="sublink" id="programy"><a href="https://www.pfs.org.pl/programy.php">Programy</a></li>
+            <li class="sublink" id="download"><a href="https://www.pfs.org.pl/download.php">Do pobrania</a></li>
+            <li class="sublink" id="ksiazki"><a href="https://www.pfs.org.pl/ksiazki.php">Książki</a></li>
+            <li class="sublink" id="slowniczek"><a href="https://www.pfs.org.pl/slowniczek.php">Słowniczek</a></li>
+        </ul>
+    </div>
+    <div id="m_english">
+        <div  class="tab"><a href="https://www.pfs.org.pl/english.php"></a></div>
+        <ul>
+            <li class="sublink" id="about"><a href="https://www.pfs.org.pl/english.php">About Polish Scrabble</a></li>
+            <li class="sublink" id="news"><a href="https://www.pfs.org.pl/en_news.php">News</a></li>
+            <li class="sublink" id="bartek"><a href="https://www.pfs.org.pl/bartek.php">Bartek w Johor Bahru</a></li>
+            <li class="sublink" id="franko"><a href="https://www.pfs.org.pl/franko.php">Scrabble frankofońskie</a></li>
+        </ul>
+    </div>
+</div>
+
+<div id="submenu"></div>
+<div id="content">
+<div id='nextTours'>
+		<div class='nextTour' onclick='location.href="turniej.php?id=847"'>
+			<div class='karteczka small1'>
+				<span class='miasto'>Piasutno</span><span class='dzien'><span class='big'>23</span><br />maja</span></div>
+			<div class='kartka big1'>
+				<span class='miasto'>Piasutno</span>
+				<span class='dzien'><b>23-24 maja</b></span>
+				<span class='nazwaturnieju'>Trzecie Scrabble nad jeziorem</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=833"'>
+			<div class='karteczka small2'>
+				<span class='miasto'>Kutno</span><span class='dzien'><span class='big'>29</span><br />maja</span></div>
+			<div class='kartka big2'>
+				<span class='miasto'>Kutno</span>
+				<span class='dzien'><b>29 maja</b></span>
+				<span class='nazwaturnieju'>XIII Ogólnopolskie Mistrzostwa Szkół w Scrabble</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=839"'>
+			<div class='karteczka small3'>
+				<span class='miasto'>Pruszków</span><span class='dzien'><span class='big'>30</span><br />maja</span></div>
+			<div class='kartka big3'>
+				<span class='miasto'>Pruszków</span>
+				<span class='dzien'><b>30-31 maja</b></span>
+				<span class='nazwaturnieju'>III Mistrzostwa Pruszkowa</span></div>
+		</div></div><div class='naglowekrelacji'><span class='tytul'>Po XIII Mistrzostwach Szkół w Scrabble<span class='nazwa'>29 maja 2015 —  XIII Ogólnopolskie Mistrzostwa Szkół w Scrabble</span></span><a href='#' id='info' class='przycisk'>Informacje</a><a href='#' id='relacja' class='przycisk'>Relacja</a><a href='#' id='klasyfikacja' class='przycisk'>Wyniki</a><a href='#' id='rundy' class='przycisk'>Rundy</a><a href='live/index.php?id=833' class='przycisk'>Przebieg</a><div class='galleries'><img src='files/img/gallery.png' style='visibility:hidden;' alt='galeria' /></div></div><h1 style='color:black; margin-top:0px; margin-bottom:30px; padding: 0px'>XIII Ogólnopolskie Mistrzostwa Szkół w Scrabble<span>Kutno, 29 maja 2015 <br>turniej&nbsp;nierankingowy</span></h1><div id='p_relacja' class='page'><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><div class='relacja' style='clear:both;'><figure style='display:inline-block;float:left;margin:5px'><img src='https://pfs.org.pl/foto_action.php?id=1016' alt='Po XIII Mistrzostwach Szkół w Scrabble' /></figure><div>Za nami XIII Ogólnopolskie Mistrzostwa Szkół w Scrabble, które od lat odbywają się w gościnnym Kutnie. Praca <b>Małgorzaty Sieradzon</b> i <b>Renaty Chodorowskiej</b> oraz pozostałych pracowników <B>Gimnazjum nr 2 w Kutnie</b>, przyjazna atmosfera ze strony władz miasta, a także wsparcie ze strony programu Scrabble w Szkole i Polskiej Federacji Scrabble – to wszystko owocuje znakomitym turniejem. W tym roku Mistrzostwa zanotowały bodajże frekwencyjny rekord: zagrało 106 zawodników i zawodniczek, podzielonych na trzy kategorie szkół.<br><br>
+W grupie szkół podstawowych triumfowała para ze stolicy, <b>Franciszek Uliński</b> i <b>Joanna Kulawik</b> ze Szkoły Podstawowej nr 23. Za nimi uplasowała się para zawodniczek z Dąbrowy Górniczej: <b>Aniela Kula</b> i <b>Patrycja Więcławek</b>, reprezentujące SP 2. Stawkę zamknęli <b>Mikołaj Czajkowski</b> i <b>Bartosz Bukalski</b> z Publicznej szkoły Podstawowej z Mazowszan.<Br><br>
+W najliczniej obsadzonej kategorii gimnazjów zaszczytny tytuł Mistrza Polski przypadł gospodarzom, Gimnazjum nr 2 z Kutna, w składzie <b>Julia Kowalska</b> i <b>Krzysztof Olejniczak</b>. Drugie i trzecie miejsce zdobyło Gimnazjum z  Rybna, reprezentowane przez pary: <B>Łukasz Pawlak</b> i <B>Klaudia Kantorska</b> oraz <b>Emilia Pyrkowska</b> i <B>Kamila Kania</b>.<Br><br>
+Młodzież ponadgimnazjalna rywalizowała w grupie 18 zespołów. Wyraźnie odskoczyły od stawki dwie szkoły: triumfujące IV Liceum Ogólnokształcące z Zabrza (w składzie <b>Krzysztof Lelonek</b> i <b>Artur Dachowski</b>) oraz wicemistrzowskie I Liceum Ogólnokształcące z Kutna (<b>Martyna Bloch</b> i <b>Hubert Smoliński</b>). Obie te szkoły zgromadziły po 8 dużych punktów, zaś w pięciorundowych zawodach zwycięska para uzyskała średnią 392,8 pkt. na partię. Ostatnie miejsce na podium (6 dużych punktów) przypadło <b>Piotrowi Studzyńskiemu</b> i <B>Roksanie Statkiewicz</b> z Zespołu Szkół Ponadgimnazjalnych nr 3 z Jaworzna.<Br><br>
+Wszystkie grające osoby wyjeżdżały z Kutna z zestawem upominków ufundowanych przez program <B>Scrabble w Szkole</b>, zaś zwycięskim parom nagrody wręczał przedstawiciel fundujących je władz miasta – zastępca prezydenta Kutna, Pan <B>Zbigniew Wdowiak</b>.<Br><br>
+Serdecznie dziękujemy organizatorom Mistrzostw, dzięki którym Kutno, zwane miastem róż, być może należy już nazywać miastem róż i scrabbli.
+</div><div class='autor'>relacja: Maciej Śliwa</div></div><div style='clear:both;'></div></div><div id='p_info' class='page'><br><p align='center'></p><br><br><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br>Zobacz, jak było na poprzednich turniejach:<br><a href='turniej.php?id=768'>XII Ogólnopolskie Mistrzostwa Szkół w Scrabble Kutno &apos;2014 </a><br><a href='turniej.php?id=713'>XI Ogólnopolskie Mistrzostwa Szkół w Scrabble Kutno ‘2013</a><br><a href='turniej.php?id=658'>X Ogólnopolskie Mistrzostwa Szkół w Scrabble Kutno 2012</a><br><table id='szczegoly' class='ramkadolna'><tr><td>Rodzaj turnieju</td><td>zamknięty, z ograniczoną liczbą drużyn reprezentujących trzy kategorie: szkoły podstawowe, gimnazja oraz szkoły ponadgimnazjalne,  zarejestrowane w Programie Scrabble w Szkole</td></tr><tr><td>Miejsce rozgrywek</td><td>Gimnazjum nr 2 im. Marszałka Józefa Piłsudskiego w Kutnie, <Br>
+ul. Staszica 6, 99-300 Kutno; tel. 24 355 15 77; <br>
+e-mail: gim2kutno@tlen.pl
+</td></tr><tr><td>Obrońca tytułu</td><td>Publiczna Szkoła Podstawowa im. M. Konopnickiej w Mazowszanach;   <br>Gimnazjum nr 2 im. Króla J. III Sobieskiego w Warszawie;  <br>I Liceum Ogólnokształcące im. B. Limanowskiego w Warszawie</td></tr><tr><td>Strona www turnieju</td><td>www.scrabblewszkole.pl; http://gim2kutno.szkoly.lodz.pl/scrabble/</td></tr><tr><td>Harmonogram</td><td>na bieżąco na&nbsp;www Turnieju: http://gim2kutno.szkoly.lodz.pl/scrabble/</td></tr><tr><td>Dojazd</td><td>na www Turnieju: http://gim2kutno.szkoly.lodz.pl/scrabble/</td></tr><tr><td>Wyżywienie</td><td>śniadanie, obiad, napoje, herbata, kawa, słodycze</td></tr><tr><td>Noclegi</td><td>na www Turnieju: http://gim2kutno.szkoly.lodz.pl/scrabble/</td></tr><tr><td>Nagrody</td><td>statuetki za&nbsp;zajęcie I, II i&nbsp;III miejsca, dyplomy, upominki dla wszystkich zawodników i&nbsp;opiekunów</td></tr><tr><td>Organizatorzy</td><td>www.scrabblewszkole.pl; www.gim2kutno.szkolnastrona.pl <br>
+e-mail do&nbsp;organizatora: literkagim2@interia.pl <br>
+Renata Chodorowska: renchod@interia.pl; 660 373 612<br>
+Małgorzata Sieradzon: malsier@interia.pl;  501 753 957
+</td></tr></table><br /><br /></div><div id='p_klasyfikacja' class='page'><pre>﻿XIII ogólnopolskie Mistrzostwa Szkół w Scrabble
+
+Wyniki końcowe turnieju SZKOŁY PODSTAWOWE
+
+MIEJSCE                                             DP    MP   
+---------------------------------------------------------------
+  1.SP 23 Warszawa                 Warszawa        9.0  3104
+  Franciszek Uliński i Joanna Kulawik
+  2.SP 2 Dąbrowa Górn.             Dąbrowa Górn.   7.0  3033
+  Aniela Kula i Patrycja Więcławek
+  3.PSP Mazowszany                 Mazowszany      6.0  2828
+  Mikołaj Czajkowski i Bartosz Bukalski
+
+  4.(1) PSP 28 Radom               Radom           6.0  2736
+  5.SP 2 Grodzisk Maz.             Grodzisk Maz.   6.0  2044
+  6.(2) SP 6 Kutno                 Kutno           6.0  1989
+  7.SP 7 Jaworzno                  Jaworzno        5.0  2331
+  8.(1) SP 6 Kutno                 Kutno           5.0  2296
+  9.SP 5 Ostrów Wlkpl.             Ostrów Wlkpl.   5.0  1565
+ 10.(2) PSP 28 Radom               Radom           3.0  2122
+ 11.SP Smólnik                     Smólnik         3.0  1605
+ 12.(1) SP 4 Kutno                 Kutno           2.0  1559
+ 13.(2) SP 4 Kutno                 Kutno           2.0  1474
+
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+Gimnazja
+
+MIEJSCE                                             DP    MP   
+---------------------------------------------------------------
+  1.(1) Gimnazjum nr 2 w Kutnie      Kutno           7.0  3275
+  Julia Kowalska i Krzysztof Olejniczak
+  2.(1) Gimnazjum w Rybnie           Rybno           7.0  3165
+  Łukasz Pawlak i Klaudia Kantorska
+  3.(2) Gimnazjum w Rybnie           Rybno           7.0  2869
+  Emilia Pyrkowska i Kamila Kania
+
+  4.Gimnazjum 1 w Będzinie            Będzin          7.0  2595
+  5.Gimnazjum 5 w Jaworznie           Jaworzno        6.0  3013
+  6.(2) Gimazjum 2 w Kutnie           Kutno           6.0  2969
+  7.(1) Gimnazjum w Topoli Król.      Topola Król.    6.0  2960
+  8.Gimnazjum 4 w Radomsku            Radomsko        6.0  2878
+  9.(1) Gimnazjum 4 w Ostrowie Wlp.   Ostrów Wlp.     6.0  2801
+ 10.( 1) Gimmnazjum w Krośniewicach   Krośniewice     6.0  2573
+ 11.(2) Gimnazjum w Topoli Król.      Topola Król.    5.0  2595
+ 12.(1) Gimnazjum 4 w Zabrzu          Zabrze          5.0  2441
+ 13.(1) Gimnazjum 3 w Kutnie          Kutno           5.0  2360
+ 14.(2) Gimnazjum 4 w Ostrowiew Wlp.  Ostrów Wlkpl.   4.0  2430
+ 15.(2) Gim 3 Kutno                   Kutno           4.0  2274
+ 16.(2) Gimnazjum w Krośniewicach     Krośniewice     4.0  2115
+ 17.(2) Gimnazjum nr 4 w Zabrzu       Zabrze          4.0  2113
+ 18.(1) Gimnazjum w Smólniku          Smólnik         4.0  1519
+ 19.Gimnazjum w Byszewie              Byszew          3.5  1885
+ 20.(2) Gimnazjum 99 w Warszawie      Warszawa        3.5  1722
+ 21.Gimnazjum Akademickie weWłocławku Włocławek       2.0  1680
+ 22.(1) Gimnazjum 99 Warszawa         Warszawa        2.0  1428
+
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+Wyniki końcowe turnieju SZKOŁY PONADGIMNAZJALNE
+
+MIEJSCE                                             DP    MP   
+---------------------------------------------------------------
+ 1.(1) IV LO Zabrze               Zabrze           8.0  3928
+  Krzysztof Lelonek i Artur Dachowski
+  2.(1) I LO Kutno                Kutno            8.0  3643
+  Martyna Bloch i Hubert Smoliński
+  3.ZSP 3 Jaworzno                Jaworzno         6.0  2845
+  Piotr Sadzyński i Roksana Statkiewicz
+
+  4.(2) I LO Łódź                  Łódź            6.0  2822
+  5.(2) IV LO Zabrze               Zabrze          6.0  2731
+  6.II LO Kutno                    Kutno           6.0  2721
+  7.LO Gostynin                    Gostynin        6.0  2654
+  8.I LO Radomsko                  Radomsko        6.0  2637
+  9.(1) I LO Łódź                  Łódź            6.0  2605
+ 10.(2) ZS 3 Kutno                 Kutno           6.0  2103
+ 11.ZSP 2 Garwolin                 Garwolin        5.0  2580
+ 12.(1) LA Włocławek               Włocławek       4.0  2239
+ 13.(2) I LO Kutno                 Kutno           4.0  2223
+ 14.ZS 2 Ostrzeszów                Ostrzeszów      4.0  2123
+ 15.LO Krośniewice                 Krośniewice     4.0  2099
+ 16.(1) ZS 3 Kutno                 Kutno           3.0  2428
+ 17.SMS Włocławek                  Włocławek       1.0  1320
+ 18.(2) LA Włocławek               Włocławek       1.0  1160
+
+</pre></div><div id='p_hh' class='page'><pre></pre></div><div id='p_rundy' class='page'><pre>﻿Wyniki poszczególnych rund 
+XIII Ogólnopolskich Mistrzostw Szkół w Scrabble
+
+SZKOŁY PODSTAWOWE
+
+Wyniki rundy 1 turnieju SZKOŁY PODSTAWOWE
+STÓŁ                                                   WYNIK   
+---------------------------------------------------------------
+ 1.Kutno: (1) SP 6 Kutno   - Grodzisk Maz.: SP 2 Gro 2.0 0.0
+ A.Piotr Wykrętowicz       - Krzysztof Rytel-Kuc     306 193
+ B.Kacper Dałek            - Zuzanna Rytel-Kuc       175 168
+
+ 2.Kutno: (2) SP 6 Kutno   - Jaworzno: SP 7 Jaworzno 1.0 1.0
+ A.Julia Tulińska          - Marcin Szczyrzyca       264 245
+ B.Marcelina Czajkowska    - Jakub Więcek             97 282
+
+ 3.Smólnik: SP Smólnik     - Kutno: (1) SP 4 Kutno   1.0 1.0
+ A.Natalia Kuźnicka        - Szymon Pietrzak         177  90
+ B.Nikola Zielińska        - Milosz Pietrzak          63  81
+
+ 4.Mazowszany: PSP Mazowsz - Kutno: (2) SP 4 Kutno   2.0 0.0
+ A.Mikołaj Czajkowski      - Zofia Bregier           517  96
+ B.Bartosz Bukalski        - Justyna Pikuła          295 151
+
+ 5.Radom: (2) PSP 28 Radom - Ostrów Wlkpl.: SP 5 Ost 0.0 2.0
+ A.Magdalena Mikołajczyk   - Jan Gawroński           117 123
+ B.Julia Zegarek           - Mateusz Luciński         96 125
+
+ 6.Warszawa: SP 23 Warszaw - Dąbrowa Górn.: SP 2 Dąb 2.0 0.0
+ A.Franciszek Uliński      - Aniela Kula             261 247
+ B.Joanna Kulawiak         - Patrycja Więcławek      243 215
+
+ 7.Radom: (1) PSP 28 Radom - PAUZA
+ A.Anna Jóźwiak            - PAUZA
+ B.Artur Jóźwiak           - PAUZA
+
+Wyniki rundy 2 turnieju SZKOŁY PODSTAWOWE
+
+STÓŁ                                                   WYNIK   
+---------------------------------------------------------------
+ 1.Mazowszany: PSP Mazowsz - Warszawa: SP 23 Warszaw 1.0 1.0
+ A.Mikołaj Czajkowski      - Franciszek Uliński      341 323
+ B.Bartosz Bukalski        - Joanna Kulawiak         161 366
+
+ 2.Kutno: (1) SP 6 Kutno   - Ostrów Wlkpl.: SP 5 Ost 1.0 1.0
+ A.Piotr Wykrętowicz       - Jan Gawroński           352 197
+ B.Kacper Dałek            - Mateusz Luciński        132 189
+
+ 3.Radom: (1) PSP 28 Radom - Jaworzno: SP 7 Jaworzno 1.0 1.0
+ A.Anna Jóźwiak            - Marcin Szczyrzyca       240 226
+ B.Artur Jóźwiak           - Jakub Więcek            165 201
+
+ 4.Kutno: (2) SP 6 Kutno   - Smólnik: SP Smólnik     2.0 0.0
+ A.Julia Tulińska          - Natalia Kuźnicka        240 215
+ B.Marcelina Czajkowska    - Nikola Zielińska        221  87
+
+ 5.Kutno: (1) SP 4 Kutno   - Dąbrowa Górn.: SP 2 Dąb 0.0 2.0
+ A.Szymon Pietrzak         - Aniela Kula             131 435
+ B.Milosz Pietrzak         - Patrycja Więcławek      140 253
+
+ 6.Grodzisk Maz.: SP 2 Gro - Kutno: (2) SP 4 Kutno   2.0 0.0
+ A.Krzysztof Rytel-Kuc     - Zofia Bregier           285 123
+ B.Zuzanna Rytel-Kuc       - Justyna Pikuła          197  83
+
+ 7.Radom: (2) PSP 28 Radom - PAUZA
+ A.Magdalena Mikołajczyk   - PAUZA
+ B.Julia Zegarek           - PAUZA
+
+
+Wyniki rundy 3 turnieju SZKOŁY PODSTAWOWE
+STÓŁ                                                   WYNIK   
+---------------------------------------------------------------
+ 1.Mazowszany: PSP Mazowsz - Kutno: (1) SP 6 Kutno   1.0 1.0
+ A.Mikołaj Czajkowski      - Piotr Wykrętowicz       354 216
+ B.Bartosz Bukalski        - Kacper Dałek            207 250
+
+ 2.Warszawa: SP 23 Warszaw - Kutno: (2) SP 6 Kutno   2.0 0.0
+ A.Franciszek Uliński      - Julia Tulińska          333 165
+ B.Joanna Kulawiak         - Marcelina Czajkowska    313 165
+
+ 3.Ostrów Wlkpl.: SP 5 Ost - Dąbrowa Górn.: SP 2 Dąb 0.0 2.0
+ A.Jan Gawroński           - Aniela Kula             175 290
+ B.Mateusz Luciński        - Patrycja Więcławek      179 305
+
+ 4.Radom: (1) PSP 28 Radom - Grodzisk Maz.: SP 2 Gro 2.0 0.0
+ A.Anna Jóźwiak            - Krzysztof Rytel-Kuc     311 204
+ B.Artur Jóźwiak           - Zuzanna Rytel-Kuc       212 193
+
+ 5.Jaworzno: SP 7 Jaworzno - Smólnik: SP Smólnik     2.0 0.0
+ A.Marcin Szczyrzyca       - Natalia Kuźnicka        361 188
+ B.Jakub Więcek            - Nikola Zielińska        178  79
+
+ 6.Radom: (2) PSP 28 Radom - Kutno: (1) SP 4 Kutno   2.0 0.0
+ A.Magdalena Mikołajczyk   - Szymon Pietrzak         213 179
+ B.Julia Zegarek           - Milosz Pietrzak         118  99
+
+ 7.Kutno: (2) SP 4 Kutno   - PAUZA
+ A.Zofia Bregier           - PAUZA
+ B.Justyna Pikuła          - PAUZA
+
+Wyniki rundy 4 turnieju SZKOŁY PODSTAWOWE
+
+STÓŁ                                                   WYNIK   
+---------------------------------------------------------------
+ 1.Warszawa: SP 23 Warszaw - Radom: (1) PSP 28 Radom 2.0 0.0
+ A.Franciszek Uliński      - Anna Jóźwiak            361 241
+ B.Joanna Kulawiak         - Artur Jóźwiak           277 201
+
+ 2.Mazowszany: PSP Mazowsz - Dąbrowa Górn.: SP 2 Dąb 1.0 1.0
+ A.Mikołaj Czajkowski      - Aniela Kula             334 329
+ B.Bartosz Bukalski        - Patrycja Więcławek      116 329
+
+ 3.Jaworzno: SP 7 Jaworzno - Kutno: (1) SP 6 Kutno   1.0 1.0
+ A.Marcin Szczyrzyca       - Piotr Wykrętowicz       238 250
+ B.Jakub Więcek            - Kacper Dałek            254 222
+
+ 4.Kutno: (2) SP 6 Kutno   - Radom: (2) PSP 28 Radom 2.0 0.0
+ A.Julia Tulińska          - Magdalena Mikołajczyk   224 168
+ B.Marcelina Czajkowska    - Julia Zegarek           230 205
+
+ 5.Ostrów Wlkpl.: SP 5 Ost - Grodzisk Maz.: SP 2 Gro 0.0 2.0
+ A.Jan Gawroński           - Krzysztof Rytel-Kuc     180 222
+ B.Mateusz Luciński        - Zuzanna Rytel-Kuc       112 136
+
+ 6.Kutno: (2) SP 4 Kutno   - Smólnik: SP Smólnik     1.0 1.0
+ A.Zofia Bregier           - Natalia Kuźnicka         93 120
+ B.Justyna Pikuła          - Nikola Zielińska        103  76
+
+ 7.Kutno: (1) SP 4 Kutno   - PAUZA
+ A.Szymon Pietrzak         - PAUZA
+ B.Milosz Pietrzak         - PAUZA
+
+
+Wyniki rundy 5 turnieju SZKOŁY PODSTAWOWE
+
+STÓŁ                                                   WYNIK   
+---------------------------------------------------------------
+ 1.Warszawa: SP 23 Warszaw - Jaworzno: SP 7 Jaworzno 2.0 0.0
+ A.Franciszek Uliński      - Marcin Szczyrzyca       303 247
+ B.Joanna Kulawiak         - Jakub Więcek            324  99
+
+ 2.Dąbrowa Górn.: SP 2 Dąb - Kutno: (1) SP 6 Kutno   2.0 0.0
+ A.Aniela Kula             - Piotr Wykrętowicz       338 183
+ B.Patrycja Więcławek      - Kacper Dałek            292 210
+
+ 3.Mazowszany: PSP Mazowsz - Kutno: (2) SP 6 Kutno   1.0 1.0
+ A.Mikołaj Czajkowski      - Julia Tulińska          349 139
+ B.Bartosz Bukalski        - Marcelina Czajkowska    154 244
+
+ 4.Radom: (1) PSP 28 Radom - Radom: (2) PSP 28 Radom 2.0 0.0
+ A.Anna Jóźwiak            - Magdalena Mikołajczyk   345 254
+ B.Artur Jóźwiak           - Julia Zegarek           421 351
+
+ 5.Grodzisk Maz.: SP 2 Gro - Kutno: (1) SP 4 Kutno   2.0 0.0
+ A.Krzysztof Rytel-Kuc     - Szymon Pietrzak         313 127
+ B.Zuzanna Rytel-Kuc       - Milosz Pietrzak         133 112
+
+ 6.Ostrów Wlkpl.: SP 5 Ost - Kutno: (2) SP 4 Kutno   2.0 0.0
+ A.Jan Gawroński           - Zofia Bregier           191 150
+ B.Mateusz Luciński        - Justyna Pikuła           94  75
+
+ 7.Smólnik: SP Smólnik     - PAUZA
+ A.Natalia Kuźnicka        - PAUZA
+ B.Nikola Zielińska        - PAUZA
+
+
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+GIMNAZJA
+Wyniki rundy 1 turnieju GIMNAZJA
+
+STÓŁ                                                   WYNIK   
+---------------------------------------------------------------
+ 1.Smólnik: (1) Gim Smólni - Kutno: (1) Gim 2 Kutno  0.0 2.0
+ A.Martyna Nowacka         - Julia Kowalska          223 374
+ B.Kacper Zawadzki         - Kamil Olejniczak         48 404
+
+ 2.Krośniewice: ( 1) Gim K - Kutno: (2) Gim 2 Kutno  1.0 1.0
+ A.Martyna Jędrzejczak     - Krystian Hiszpański     279 242
+ B.Aneta Wacławska         - Krzysztof Tomczak       158 379
+
+ 3.Krośniewice: (2) Gim Kr - Warszawa: (1) Gim 99 Wa 1.0 1.0
+ A.Jakub Paćkowski         - Anna Olborska           146 236
+ B.Aleksander Kruszyński   - Dominika Dolna          256 100
+
+ 4.Rybno: (1) Gim Rybno    - Warszawa: (2) Gim 99 Wa 2.0 0.0
+ A.Łukasz Pawlak           - Max Warych              430 120
+ B.Klaudia Kantorska       - Dariusz Kazerooni       345 107
+
+ 5.Rybno: (2) Gim Rybno    - Będzin: Gim 1 Będzin    1.0 1.0
+ A.Emilia Pyrkowska        - Dominik Ulejczyk        256 293
+ B.Weronika Kania          - Wiktoria Koler          285 197
+
+ 6.Kutno: (1) Gim 3 Kutno  - Zabrze: (1) Gim 4 Zabrz 0.0 2.0
+ A.Zuzanna Staniszewska    - Szymon Stępień          149 294
+ B.Weronika Bronikowska    - Kamil Nadolski          235 245
+
+ 7.Kutno: (2) Gim 3 Kutno  - Zabrze: (2) Gim 4 Zabrz 2.0 0.0
+ A.Michał Sęczkowski       - Julia Pustuł            221 189
+ B.Kacper Stępień          - Maria Tomiczek          197 113
+
+ 8.Jaworzno: Gim 5 Jaworzn - Radomsko: Gim 4 Radomsk 1.0 1.0
+ A.Monika Szczyrzyca       - Szymon Rudawski         419 196
+ B.Lubomir Kuchta          - Dominik Iskrzyński      203 378
+
+ 9.Ostrów Wlkpl.: (1) Gim  - Włocławek: Gim Ak. Włoc 2.0 0.0
+ A.Hanna Góźdź             - Julia Matusiak          385 140
+ B.Kacper Majczak          - Paulina Reznerowicz     328 205
+
+10.Ostrów Wlkpl.: (2) Gim  - Topola Król.: (1) Gim T 0.0 2.0
+ A.Julia Wietrzyńska       - Konrad Bratosiewicz     220 322
+ B.Natalia Wojtczak        - Monika Góra             246 306
+
+11.Byszew: Gim Byszew      - Topola Król.: (2) Gim T 0.0 2.0
+ A.Sandra Szymańska        - Dominika Marciniak      180 329
+ B.Maria Szubska           - Damian Granosik         224 245
+
+
+Wyniki rundy 2 turnieju GIMNAZJA
+
+STÓŁ                                                   WYNIK   
+---------------------------------------------------------------
+ 1.Kutno: (1) Gim 2 Kutno  - Rybno: (1) Gim Rybno    1.0 1.0
+ A.Julia Kowalska          - Łukasz Pawlak           321 323
+ B.Kamil Olejniczak        - Klaudia Kantorska       322 218
+
+ 2.Ostrów Wlkpl.: (1) Gim  - Topola Król.: (1) Gim T 2.0 0.0
+ A.Hanna Góźdź             - Konrad Bratosiewicz     321 286
+ B.Kacper Majczak          - Monika Góra             265 263
+
+ 3.Topola Król.: (2) Gim T - Zabrze: (1) Gim 4 Zabrz 2.0 0.0
+ A.Dominika Marciniak      - Szymon Stępień          266 260
+ B.Damian Granosik         - Kamil Nadolski          298 218
+
+ 4.Kutno: (2) Gim 3 Kutno  - Jaworzno: Gim 5 Jaworzn 0.0 2.0
+ A.Michał Sęczkowski       - Monika Szczyrzyca       198 372
+ B.Kacper Stępień          - Lubomir Kuchta          248 283
+
+ 5.Kutno: (2) Gim 2 Kutno  - Radomsko: Gim 4 Radomsk 1.0 1.0
+ A.Krystian Hiszpański     - Szymon Rudawski         239 267
+ B.Krzysztof Tomczak       - Dominik Iskrzyński      359 341
+
+ 6.Rybno: (2) Gim Rybno    - Krośniewice: ( 1) Gim K 2.0 0.0
+ A.Emilia Pyrkowska        - Martyna Jędrzejczak     342 211
+ B.Weronika Kania          - Aneta Wacławska         258 201
+
+ 7.Będzin: Gim 1 Będzin    - Krośniewice: (2) Gim Kr 2.0 0.0
+ A.Dominik Ulejczyk        - Jakub Paćkowski         421 138
+ B.Wiktoria Koler          - Aleksander Kruszyński   232 228
+
+ 8.Warszawa: (1) Gim 99 Wa - Ostrów Wlkpl.: (2) Gim  0.0 2.0
+ A.Anna Olborska           - Julia Wietrzyńska       198 254
+ B.Dominika Dolna          - Natalia Wojtczak        109 276
+
+ 9.Byszew: Gim Byszew      - Kutno: (1) Gim 3 Kutno  0.0 2.0
+ A.Sandra Szymańska        - Zuzanna Staniszewska    154 165
+ B.Maria Szubska           - Weronika Bronikowska    246 297
+
+10.Włocławek: Gim Ak. Włoc - Zabrze: (2) Gim 4 Zabrz 0.0 2.0
+ A.Julia Matusiak          - Julia Pustuł            163 245
+ B.Paulina Reznerowicz     - Maria Tomiczek          131 234
+
+11.Smólnik: (1) Gim Smólni - Warszawa: (2) Gim 99 Wa 0.0 2.0
+ A.Martyna Nowacka         - Max Warych               80 237
+ B.Kacper Zawadzki         - Dariusz Kazerooni        83 225
+
+Wyniki rundy 3 turnieju GIMNAZJA
+
+STÓŁ                                                   WYNIK   
+---------------------------------------------------------------
+ 1.Ostrów Wlkpl.: (1) Gim  - Topola Król.: (2) Gim T 1.0 1.0
+ A.Hanna Góźdź             - Dominika Marciniak      268 252
+ B.Kacper Majczak          - Damian Granosik         279 280
+
+ 2.Kutno: (1) Gim 2 Kutno  - Jaworzno: Gim 5 Jaworzn 1.0 1.0
+ A.Julia Kowalska          - Monika Szczyrzyca       256 327
+ B.Kamil Olejniczak        - Lubomir Kuchta          314 209
+
+ 3.Rybno: (1) Gim Rybno    - Będzin: Gim 1 Będzin    1.0 1.0
+ A.Łukasz Pawlak           - Dominik Ulejczyk        277 282
+ B.Klaudia Kantorska       - Wiktoria Koler          376 153
+
+ 4.Rybno: (2) Gim Rybno    - Kutno: (2) Gim 2 Kutno  1.0 1.0
+ A.Emilia Pyrkowska        - Krystian Hiszpański     323 200
+ B.Weronika Kania          - Krzysztof Tomczak       241 319
+
+ 5.Radomsko: Gim 4 Radomsk - Topola Król.: (1) Gim T 1.0 1.0
+ A.Szymon Rudawski         - Konrad Bratosiewicz     222 383
+ B.Dominik Iskrzyński      - Monika Góra             408 210
+
+ 6.Zabrze: (1) Gim 4 Zabrz - Ostrów Wlkpl.: (2) Gim  0.0 2.0
+ A.Szymon Stępień          - Julia Wietrzyńska       262 268
+ B.Kamil Nadolski          - Natalia Wojtczak        140 259
+
+ 7.Kutno: (2) Gim 3 Kutno  - Kutno: (1) Gim 3 Kutno  0.0 2.0
+ A.Michał Sęczkowski       - Zuzanna Staniszewska    216 227
+ B.Kacper Stępień          - Weronika Bronikowska    211 254
+
+ 8.Zabrze: (2) Gim 4 Zabrz - Warszawa: (2) Gim 99 Wa 1.0 1.0
+ A.Julia Pustuł            - Max Warych              178 245
+ B.Maria Tomiczek          - Dariusz Kazerooni       283 175
+
+ 9.Krośniewice: ( 1) Gim K - Krośniewice: (2) Gim Kr 2.0 0.0
+ A.Martyna Jędrzejczak     - Jakub Paćkowski         350 201
+ B.Aneta Wacławska         - Aleksander Kruszyński   294 289
+
+10.Warszawa: (1) Gim 99 Wa - Byszew: Gim Byszew      0.0 2.0
+ A.Anna Olborska           - Sandra Szymańska        225 235
+ B.Dominika Dolna          - Maria Szubska            81 206
+
+11.Włocławek: Gim Ak. Włoc - Smólnik: (1) Gim Smólni 1.0 1.0
+ A.Julia Matusiak          - Martyna Nowacka         156 170
+ B.Paulina Reznerowicz     - Kacper Zawadzki         249 113
+
+Wyniki rundy 4 GIMNAZJA
+
+STÓŁ                                                   WYNIK   
+---------------------------------------------------------------
+ 1.Ostrów Wlkpl.: (1) Gim  - Kutno: (1) Gim 2 Kutno  0.0 2.0
+ A.Hanna Góźdź             - Julia Kowalska          274 310
+ B.Kacper Majczak          - Kamil Olejniczak        184 355
+
+ 2.Topola Król.: (2) Gim T - Rybno: (1) Gim Rybno    0.0 2.0
+ A.Dominika Marciniak      - Łukasz Pawlak           231 327
+ B.Damian Granosik         - Klaudia Kantorska       220 326
+
+ 3.Jaworzno: Gim 5 Jaworzn - Rybno: (2) Gim Rybno    1.0 1.0
+ A.Monika Szczyrzyca       - Emilia Pyrkowska        435 312
+ B.Lubomir Kuchta          - Weronika Kania          228 254
+
+ 4.Będzin: Gim 1 Będzin    - Ostrów Wlkpl.: (2) Gim  2.0 0.0
+ A.Dominik Ulejczyk        - Julia Wietrzyńska       291 268
+ B.Wiktoria Koler          - Natalia Wojtczak        253 197
+
+ 5.Kutno: (1) Gim 3 Kutno  - Radomsko: Gim 4 Radomsk 0.0 2.0
+ A.Zuzanna Staniszewska    - Szymon Rudawski         278 280
+ B.Weronika Bronikowska    - Dominik Iskrzyński      230 264
+
+ 6.Topola Król.: (1) Gim T - Kutno: (2) Gim 2 Kutno  0.0 2.0
+ A.Konrad Bratosiewicz     - Krystian Hiszpański     286 276
+ B.Monika Góra             - Krzysztof Tomczak       252 299
+
+ 7.Krośniewice: ( 1) Gim K - Zabrze: (2) Gim 4 Zabrz 2.0 0.0
+ A.Martyna Jędrzejczak     - Julia Pustuł            307 257
+ B.Aneta Wacławska         - Maria Tomiczek          269 132
+
+ 8.Warszawa: (2) Gim 99 Wa - Zabrze: (1) Gim 4 Zabrz 0.0 2.0
+ A.Max Warych              - Szymon Stępień          223 245
+ B.Dariusz Kazerooni       - Kamil Nadolski          175 277
+
+ 9.Kutno: (2) Gim 3 Kutno  - Byszew: Gim Byszew      2.0 0.0
+ A.Michał Sęczkowski       - Sandra Szymańska        336 196
+ B.Kacper Stępień          - Maria Szubska           255 209
+
+10.Krośniewice: (2) Gim Kr - Włocławek: Gim Ak. Włoc 2.0 0.0
+ A.Jakub Paćkowski         - Julia Matusiak          220 107
+ B.Aleksander Kruszyński   - Paulina Reznerowicz     208 107
+
+11.Warszawa: (1) Gim 99 Wa - Smólnik: (1) Gim Smólni 0.0 2.0
+ A.Anna Olborska           - Martyna Nowacka         174 214
+ B.Dominika Dolna          - Kacper Zawadzki         169 179
+
+Wyniki rundy 5 GIMNAZJA
+
+STÓŁ                                                   WYNIK   
+---------------------------------------------------------------
+ 1.Kutno: (1) Gim 2 Kutno  - Będzin: Gim 1 Będzin    1.0 1.0
+ A.Julia Kowalska          - Dominik Ulejczyk        302 316
+ B.Kamil Olejniczak        - Wiktoria Koler          317 157
+
+ 2.Rybno: (1) Gim Rybno    - Jaworzno: Gim 5 Jaworzn 1.0 1.0
+ A.Łukasz Pawlak           - Monika Szczyrzyca       276 306
+ B.Klaudia Kantorska       - Lubomir Kuchta          267 231
+
+ 3.Radomsko: Gim 4 Radomsk - Ostrów Wlkpl.: (1) Gim  1.0 1.0
+ A.Szymon Rudawski         - Hanna Góźdź             246 274
+ B.Dominik Iskrzyński      - Kacper Majczak          276 223
+
+ 4.Kutno: (2) Gim 2 Kutno  - Topola Król.: (2) Gim T 2.0 0.0
+ A.Krystian Hiszpański     - Dominika Marciniak      261 252
+ B.Krzysztof Tomczak       - Damian Granosik         395 222
+
+ 5.Rybno: (2) Gim Rybno    - Ostrów Wlkpl.: (2) Gim  2.0 0.0
+ A.Emilia Pyrkowska        - Julia Wietrzyńska       269 219
+ B.Weronika Kania          - Natalia Wojtczak        329 223
+
+ 6.Krośniewice: ( 1) Gim K - Zabrze: (1) Gim 4 Zabrz 1.0 1.0
+ A.Martyna Jędrzejczak     - Szymon Stępień          219 320
+ B.Aneta Wacławska         - Kamil Nadolski          285 180
+
+ 7.Kutno: (2) Gim 3 Kutno  - Topola Król.: (1) Gim T 0.0 2.0
+ A.Michał Sęczkowski       - Konrad Bratosiewicz     147 394
+ B.Kacper Stępień          - Monika Góra             245 258
+
+ 8.Kutno: (1) Gim 3 Kutno  - Krośniewice: (2) Gim Kr 1.0 1.0
+ A.Zuzanna Staniszewska    - Jakub Paćkowski         293 193
+ B.Weronika Bronikowska    - Aleksander Kruszyński   232 236
+
+ 9.Zabrze: (2) Gim 4 Zabrz - Smólnik: (1) Gim Smólni 1.0 1.0
+ A.Julia Pustuł            - Martyna Nowacka         241 259
+ B.Maria Tomiczek          - Kacper Zawadzki         241 150
+
+10.Warszawa: (2) Gim 99 Wa - Byszew: Gim Byszew      0.5 1.5
+ A.Max Warych              - Sandra Szymańska        215 235
+ B.Dariusz Kazerooni       - Maria Szubska             0   0
+
+11.Warszawa: (1) Gim 99 Wa - Włocławek: Gim Ak. Włoc 1.0 1.0
+ A.Anna Olborska           - Julia Matusiak          135  72
+ B.Dominika Dolna          - Paulina Reznerowicz       1 350
+
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+SZKOŁY PONADGIMNAZJALNE
+
+Wyniki rundy 1 turnieju PONADGIMNAZJALNE
+
+STÓŁ                                                   WYNIK   
+---------------------------------------------------------------
+ 1.Radomsko: I LO Radomsko - Kutno: (1) I LO Kutno   0.0 2.0
+ A.Bartosz Molka           - Martyna Bloch           203 382
+ B.Maciej Krzyżowski       - Hubert Smoliński        274 376
+
+ 2.Krośniewice: LO Krośnie - Kutno: (2) I LO Kutno   0.0 2.0
+ A.Adam Jaros              - Marta Pawlak            181 267
+ B.Krzysztof Baranowski    - Jakub Żandarowski       186 254
+
+ 3.Garwolin: ZSP 2 Garwoli - Kutno: (1) ZS 3 Kutno   1.0 1.0
+ A.Emil Zając              - Kamil Wojciechowski     341 216
+ B.Łukasz Wrzesiński       - Adrian Piaszczyński     188 231
+
+ 4.Gostynin: LO Gostynin   - Włocławek: (1) LA Włocł 2.0 0.0
+ A.Bartłomiej Stolarz      - Michalina Wnukowska     396 100
+ B.Andrzej Macek           - Paulina Frej            343 110
+
+ 5.Zabrze: (1) IV LO Zabrz - Włocławek: (2) LA Włocł 2.0 0.0
+ A.Krzysztof Lelonek       - Damian Niedziółka       596  52
+ B.Artur Dachowski         - Filip Lipowski          498  57
+
+ 6.Zabrze: (2) IV LO Zabrz - Włocławek: SMS Włocławe 2.0 0.0
+ A.Michał Głąb             - Dawid Świerkowski       393 103
+ B.Dawid Węgrzyński        - Adam Grabowski          276  99
+
+ 7.Jaworzno: ZSP 3 Jaworzn - Łódź: (1) I LO Łódź     2.0 0.0
+ A.Piotr Sadzyński         - Krzysztof Wierzbicki    322 246
+ B.Roksana Statkiewicz     - Maciej Rzeszutek        248 222
+
+ 8.Kutno: II LO Kutno      - Łódź: (2) I LO Łódź     0.0 2.0
+ A.Krzysztof Rosiak        - Hanna Dąbrowska         228 362
+ B.Wojciech Stelmaszewski  - Szymon Stachlewski      200 259
+
+ 9.Ostrzeszów: ZS 2 Ostrze - Kutno: (2) ZS 3 Kutno   0.0 2.0
+ A.Pamela Braun            - Sebastian Iwaniak       188 207
+ B.Piotr Noculak           - Magdalena Kołodziejska  138 168
+
+Wyniki rundy 2 turnieju PONADGIMNAZJLNE
+
+STÓŁ                                                   WYNIK   
+---------------------------------------------------------------
+ 1.Zabrze: (1) IV LO Zabrz - Kutno: (1) I LO Kutno   1.0 1.0
+ A.Krzysztof Lelonek       - Martyna Bloch           405 232
+ B.Artur Dachowski         - Hubert Smoliński        252 399
+
+ 2.Gostynin: LO Gostynin   - Zabrze: (2) IV LO Zabrz 0.0 2.0
+ A.Bartłomiej Stolarz      - Michał Głąb             264 271
+ B.Andrzej Macek           - Dawid Węgrzyński        213 226
+
+ 3.Łódź: (2) I LO Łódź     - Jaworzno: ZSP 3 Jaworzn 0.0 2.0
+ A.Hanna Dąbrowska         - Piotr Sadzyński         289 304
+ B.Szymon Stachlewski      - Roksana Statkiewicz     217 260
+
+ 4.Kutno: (2) I LO Kutno   - Kutno: (2) ZS 3 Kutno   0.0 2.0
+ A.Marta Pawlak            - Sebastian Iwaniak       212 222
+ B.Jakub Żandarowski       - Magdalena Kołodziejska  210 227
+
+ 5.Garwolin: ZSP 2 Garwoli - Radomsko: I LO Radomsko 0.0 2.0
+ A.Emil Zając              - Bartosz Molka           244 253
+ B.Łukasz Wrzesiński       - Maciej Krzyżowski       196 256
+
+ 6.Kutno: (1) ZS 3 Kutno   - Łódź: (1) I LO Łódź     0.0 2.0
+ A.Kamil Wojciechowski     - Krzysztof Wierzbicki    205 259
+ B.Adrian Piaszczyński     - Maciej Rzeszutek        215 302
+
+ 7.Kutno: II LO Kutno      - Krośniewice: LO Krośnie 2.0 0.0
+ A.Krzysztof Rosiak        - Adam Jaros              304 189
+ B.Wojciech Stelmaszewski  - Krzysztof Baranowski    272 134
+
+ 8.Ostrzeszów: ZS 2 Ostrze - Włocławek: (1) LA Włocł 2.0 0.0
+ A.Pamela Braun            - Michalina Wnukowska     277 143
+ B.Piotr Noculak           - Paulina Frej            308 212
+
+ 9.Włocławek: SMS Włocławe - Włocławek: (2) LA Włocł 1.0 1.0
+ A.Dawid Świerkowski       - Damian Niedziółka       148 211
+ B.Adam Grabowski          - Filip Lipowski           99  82
+
+Wyniki rundy 3 turnieju PONADGIMNAZJALNE
+
+STÓŁ                                                   WYNIK   
+---------------------------------------------------------------
+ 1.Zabrze: (2) IV LO Zabrz - Jaworzno: ZSP 3 Jaworzn 0.0 2.0
+ A.Michał Głąb             - Piotr Sadzyński         222 383
+ B.Dawid Węgrzyński        - Roksana Statkiewicz     238 247
+
+ 2.Kutno: (2) ZS 3 Kutno   - Zabrze: (1) IV LO Zabrz 0.0 2.0
+ A.Sebastian Iwaniak       - Krzysztof Lelonek       168 440
+ B.Magdalena Kołodziejska  - Artur Dachowski         170 368
+
+ 3.Kutno: (1) I LO Kutno   - Gostynin: LO Gostynin   1.0 1.0
+ A.Martyna Bloch           - Bartłomiej Stolarz      259 268
+ B.Hubert Smoliński        - Andrzej Macek           383 187
+
+ 4.Łódź: (2) I LO Łódź     - Łódź: (1) I LO Łódź     1.0 1.0
+ A.Hanna Dąbrowska         - Krzysztof Wierzbicki    388 185
+ B.Szymon Stachlewski      - Maciej Rzeszutek        239 274
+
+ 5.Kutno: II LO Kutno      - Radomsko: I LO Radomsko 1.0 1.0
+ A.Krzysztof Rosiak        - Bartosz Molka           307 220
+ B.Wojciech Stelmaszewski  - Maciej Krzyżowski       170 288
+
+ 6.Kutno: (2) Kutno        - Ostrzeszów: ZS 2 Ostrze 2.0 0.0
+ A.Marta Pawlak            - Pamela Braun            255 225
+ B.Jakub Żandarowski       - Piotr Noculak           248 194
+
+ 7.Garwolin: ZSP 2 Garwoli - Włocławek: SMS Włocławe 2.0 0.0
+ A.Emil Zając              - Dawid Świerkowski       387  85
+ B.Łukasz Wrzesiński       - Adam Grabowski          296  94
+
+ 8.Kutno: (1) ZS 3 Kutno   - Włocławek: (2) LA Włocł 2.0 0.0
+ A.Kamil Wojciechowski     - Damian Niedziółka       306 141
+ B.Adrian Piaszczyński     - Filip Lipowski          339  26
+
+ 9.Krośniewice: LO Krośnie - Włocławek: (1) LA Włocł 2.0 0.0
+ A.Adam Jaros              - Michalina Wnukowska     357 155
+ B.Krzysztof Baranowski    - Paulina Frej            320 175
+
+Wyniki rundy 4 turnieju PONADGIMNAZJALNE
+
+STÓŁ                                                   WYNIK   
+---------------------------------------------------------------
+ 1.Jaworzno: ZSP 3 Jaworzn - Zabrze: (1) IV LO Zabrz 0.0 2.0
+ A.Piotr Sadzyński         - Krzysztof Lelonek       299 366
+ B.Roksana Statkiewicz     - Artur Dachowski         249 409
+
+ 2.Kutno: (1) I LO Kutno   - Zabrze: (2) IV LO Zabrz 2.0 0.0
+ A.Martyna Bloch           - Michał Głąb             370 219
+ B.Hubert Smoliński        - Dawid Węgrzyński        430 140
+
+ 3.Kutno: (2) I LO Kutno   - Łódź: (2) I LO Łódź     0.0 2.0
+ A.Marta Pawlak            - Hanna Dąbrowska         205 351
+ B.Jakub Żandarowski       - Szymon Stachlewski      167 190
+
+ 4.Kutno: (2) ZS 3 Kutno   - Gostynin: LO Gostynin   0.0 2.0
+ A.Sebastian Iwaniak       - Bartłomiej Stolarz      222 264
+ B.Magdalena Kołodziejska  - Andrzej Macek           184 225
+
+ 5.Garwolin: ZSP 2 Garwoli - Łódź: (1) I LO Łódź     0.0 2.0
+ A.Emil Zając              - Krzysztof Wierzbicki    190 308
+ B.Łukasz Wrzesiński       - Maciej Rzeszutek        217 278
+
+ 6.Kutno: (1) ZS 3 Kutno   - Radomsko: I LO Radomsko 0.0 2.0
+ A.Kamil Wojciechowski     - Bartosz Molka           218 352
+ B.Adrian Piaszczyński     - Maciej Krzyżowski       203 323
+
+ 7.Kutno: II LO Kutno      - Ostrzeszów: ZS 2 Ostrze 2.0 0.0
+ A.Krzysztof Rosiak        - Pamela Braun            300 186
+ B.Wojciech Stelmaszewski  - Piotr Noculak           390 147
+
+ 8.Krośniewice: LO Krośnie - Włocławek: SMS Włocławe 2.0 0.0
+ A.Adam Jaros              - Dawid Świerkowski       270 139
+ B.Krzysztof Baranowski    - Adam Grabowski          213 141
+
+ 9.Włocławek: (2) LA Włocł - Włocławek: (1) LA Włocł 0.0 2.0
+ A.Damian Niedziółka       - Michalina Wnukowska     222 254
+ B.Filip Lipowski          - Paulina Frej            115 210
+
+Wyniki rundy 5 turnieju PONADGIMNAZJALNE
+
+STÓŁ                                                   WYNIK   
+---------------------------------------------------------------
+ 1.Zabrze: (1) IV LO Zabrz - Łódź: (2) I LO Łódź     1.0 1.0
+ A.Krzysztof Lelonek       - Hanna Dąbrowska         240 324
+ B.Artur Dachowski         - Szymon Stachlewski      354 203
+
+ 2.Kutno: (1) I LO Kutno   - Jaworzno: ZSP 3 Jaworzn 2.0 0.0
+ A.Martyna Bloch           - Piotr Sadzyński         301 279
+ B.Hubert Smoliński        - Roksana Statkiewicz     511 254
+
+ 3.Kutno: II LO Kutno      - Gostynin: LO Gostynin   1.0 1.0
+ A.Krzysztof Rosiak        - Bartłomiej Stolarz      320 239
+ B.Wojciech Stelmaszewski  - Andrzej Macek           230 255
+
+ 4.Radomsko: I LO Radomsko - Łódź: (1) I LO Łódź     1.0 1.0
+ A.Bartosz Molka           - Krzysztof Wierzbicki    276 199
+ B.Maciej Krzyżowski       - Maciej Rzeszutek        192 332
+
+ 5.Zabrze: (2) IV LO Zabrz - Krośniewice: LO Krośnie 2.0 0.0
+ A.Michał Głąb             - Adam Jaros              419 122
+ B.Dawid Węgrzyński        - Krzysztof Baranowski    327 127
+
+ 6.Kutno: (2) I LO Kutno   - Garwolin: ZSP 2 Garwoli 0.0 2.0
+ A.Marta Pawlak            - Emil Zając              226 250
+ B.Jakub Żandarowski       - Łukasz Wrzesiński       179 271
+
+ 7.Kutno: (2) ZS 3 Kutno   - Kutno: (1) ZS 3 Kutno   2.0 0.0
+ A.Sebastian Iwaniak       - Kamil Wojciechowski     271 248
+ B.Magdalena Kołodziejska  - Adrian Piaszczyński     264 247
+
+ 8.Ostrzeszów: ZS 2 Ostrze - Włocławek: (2) LA Włocł 2.0 0.0
+ A.Pamela Braun            - Damian Niedziółka       267 146
+ B.Piotr Noculak           - Filip Lipowski          193 108
+
+ 9.Włocławek: (1) LA Włocł - Włocławek: SMS Włocławe 2.0 0.0
+ A.Michalina Wnukowska     - Dawid Świerkowski       454 250
+ B.Paulina Frej            - Adam Grabowski          426 162
+</pre></div><div id='p_ranking' class='page'><pre></pre></div><div id='p_przebieg' class='page'>
+
+    </div><div style="clear:both;width:100%;" class="alignright">
+
+<script>
+<!--
+if ((document.getElementById("content").offsetHeight + document.getElementById("top").offsetHeight) > screen.height)
+    document.write("<br /><br /><a href='#top'>do góry</a>");
+-->
+</script>
+
+</div>
+</div>
+
+<div id="bottom">
+<ul id="bottomlinks">
+<div class='onleft'>
+ Osób on-line: 58</div>
+    <li><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+    <li><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+    <li><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+    <li><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+    <li><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+    <li><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+</ul>
+    SCRABBLE® jest zastrzeżonym znakiem towarowym J.W. Spears &amp; Sons&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://www.pfs.org.pl/prawaautorskie.php">© Prawa autorskie</a>
+</div>
+</body>
+</html>

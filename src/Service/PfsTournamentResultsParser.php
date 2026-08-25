@@ -38,11 +38,44 @@ final readonly class PfsTournamentResultsParser
     /**
      * @return list<ParsedTournamentRankingRow>
      */
+    public function parseRankingRows(string $html): array
+    {
+        return $this->parseRanking($html);
+    }
+
+    /**
+     * @return list<ParsedTournamentRankingRow>
+     */
     private function parseRanking(string $html): array
     {
         $text = $this->extractFirstPreBlockText($html, ['p_ranking', 'ranking']);
         $lines = preg_split('/\R/u', $text) ?: [];
+        $rows = $this->parseCurrentRankingRows($lines);
+        if ($rows === []) {
+            $rows = $this->parseDottedRankingRows($lines);
+        }
 
+        if ($rows === []) {
+            $rows = $this->parseSurnameFirstRankingRows($lines);
+        }
+
+        if ($rows === []) {
+            $rows = $this->parseOldRankingRows($lines);
+        }
+
+        if ($rows === []) {
+            throw new \RuntimeException('Could not parse any rows from #ranking section.');
+        }
+
+        return $rows;
+    }
+
+    /**
+     * @param list<string> $lines
+     * @return list<ParsedTournamentRankingRow>
+     */
+    private function parseCurrentRankingRows(array $lines): array
+    {
         while ($lines !== []) {
             $line = trim((string) array_shift($lines));
             if (str_starts_with($line, 'Lp. ')) {
@@ -62,7 +95,7 @@ final readonly class PfsTournamentResultsParser
                 continue;
             }
 
-            if (str_starts_with($trimmed, 'Poczekalnia na dzień')) {
+            if (str_starts_with($trimmed, 'Poczekalnia na dzień') || str_ends_with($trimmed, '-  POCZEKALNIA')) {
                 $main = false;
                 continue;
             }
@@ -87,8 +120,164 @@ final readonly class PfsTournamentResultsParser
             );
         }
 
-        if ($rows === []) {
-            throw new \RuntimeException('Could not parse any rows from #ranking section.');
+        return $rows;
+    }
+
+    /**
+     * @param list<string> $lines
+     * @return list<ParsedTournamentRankingRow>
+     */
+    private function parseDottedRankingRows(array $lines): array
+    {
+        $rows = [];
+        $main = true;
+
+        foreach ($lines as $line) {
+            $trimmed = trim($line);
+            if ($trimmed === '') {
+                continue;
+            }
+
+            if (str_starts_with($trimmed, 'Poczekalnia na dzień') || str_ends_with($trimmed, '-  POCZEKALNIA')) {
+                $main = false;
+                continue;
+            }
+
+            if (
+                str_starts_with($trimmed, 'Lista rankingowa')
+                || str_starts_with($trimmed, 'Lp.')
+                || preg_match('/^-+\s+-+/', $trimmed)
+            ) {
+                continue;
+            }
+
+            if (!preg_match(
+                '/^\s*(\d+)\.\s+(.+?)\s{2,}(.+?)\s+(\d+\.\d{2})\s+(-?\d+)\s*\/\s*(\d+)\s*$/u',
+                $line,
+                $match,
+            )) {
+                continue;
+            }
+
+            $rows[] = new ParsedTournamentRankingRow(
+                position: (int) $match[1],
+                playerName: $this->normalizeInlineWhitespace($match[2]),
+                city: $this->normalizeInlineWhitespace($match[3]),
+                rank: (float) $match[4],
+                scalp: (int) $match[5],
+                games: (int) $match[6],
+                main: $main,
+            );
+        }
+
+        return $rows;
+    }
+
+    /**
+     * @param list<string> $lines
+     * @return list<ParsedTournamentRankingRow>
+     */
+    private function parseSurnameFirstRankingRows(array $lines): array
+    {
+        $rows = [];
+        $main = true;
+
+        foreach ($lines as $line) {
+            $trimmed = trim($line);
+            if ($trimmed === '') {
+                continue;
+            }
+
+            if (str_contains($trimmed, 'POCZEKALNIA')) {
+                $main = false;
+                continue;
+            }
+
+            if (
+                str_starts_with($trimmed, 'MIEJSCE')
+                || preg_match('/^-+\s+-+/', $trimmed)
+            ) {
+                continue;
+            }
+
+            if (!preg_match(
+                '/^\s*(\d+)\s+(.+?)\s{2,}(\d+\.\d{2})\s+(.+?)\s+(-?\d+)\s*\/\s*(\d+)\s*$/u',
+                $line,
+                $match,
+            )) {
+                continue;
+            }
+
+            $rows[] = new ParsedTournamentRankingRow(
+                position: (int) $match[1],
+                playerName: $this->normalizeSurnameFirstPlayerName($match[2]),
+                city: $this->normalizeInlineWhitespace($match[4]),
+                rank: (float) $match[3],
+                scalp: (int) $match[5],
+                games: (int) $match[6],
+                main: $main,
+            );
+        }
+
+        return $rows;
+    }
+
+    /**
+     * @param list<string> $lines
+     * @return list<ParsedTournamentRankingRow>
+     */
+    private function parseOldRankingRows(array $lines): array
+    {
+        $rows = [];
+        $main = true;
+        $lastPosition = null;
+
+        foreach ($lines as $line) {
+            $trimmed = trim($line);
+            if ($trimmed === '') {
+                continue;
+            }
+
+            if (str_ends_with($trimmed, '-  POCZEKALNIA')) {
+                $main = false;
+                $lastPosition = null;
+                continue;
+            }
+
+            if (
+                str_starts_with($trimmed, 'RANKING Z DNIA')
+                || str_starts_with($trimmed, 'MIEJSCE')
+                || str_starts_with($trimmed, 'RANKING')
+                || preg_match('/^-+$/u', $trimmed)
+            ) {
+                continue;
+            }
+
+            if (!preg_match(
+                '/^\s*(?:(\d+)\s+)?(.+?)\s{2,}(.+?)\s+(-?\d+)\s+\(\s*(?:(-?\d+\.\d{2}))?\s*\)\s+(-?\d+)\s*\/\s*(\d+)\s*$/u',
+                $line,
+                $match,
+            )) {
+                continue;
+            }
+
+            if ($match[1] !== '') {
+                $lastPosition = (int) $match[1];
+            }
+
+            if ($lastPosition === null) {
+                continue;
+            }
+
+            $rows[] = new ParsedTournamentRankingRow(
+                position: $lastPosition,
+                playerName: $this->normalizeInlineWhitespace($match[2]),
+                city: $this->normalizeInlineWhitespace($match[3]),
+                rank: $match[5] !== '' ? (float) $match[5] : (float) $match[4],
+                scalp: (int) $match[6],
+                games: (int) $match[7],
+                main: $main,
+            );
         }
 
         return $rows;
@@ -195,17 +384,17 @@ final readonly class PfsTournamentResultsParser
      */
     private function resolveRankingIdentity(string $identityPart): array
     {
-        $chunks = preg_split('/\s{2,}/u', trim($identityPart)) ?: [];
+        $chunks = preg_split('/\s+/u', trim($identityPart)) ?: [];
         $chunks = array_values(array_filter($chunks, static fn (string $chunk): bool => $chunk !== ''));
 
         if (count($chunks) >= 3) {
-            $city = array_pop($chunks);
-            $surname = array_pop($chunks);
-            $firstName = implode(' ', $chunks);
+            $firstName = array_shift($chunks);
+            $surname = array_shift($chunks);
+            $city = implode(' ', $chunks);
 
             return [
                 $this->normalizeInlineWhitespace($firstName . ' ' . $surname),
-                $this->normalizeInlineWhitespace((string) $city),
+                $this->normalizeInlineWhitespace($city),
             ];
         }
 
@@ -217,6 +406,20 @@ final readonly class PfsTournamentResultsParser
         }
 
         throw new \RuntimeException('Could not resolve ranking identity: ' . $identityPart);
+    }
+
+    private function normalizeSurnameFirstPlayerName(string $value): string
+    {
+        $chunks = preg_split('/\s+/u', trim($value)) ?: [];
+        $chunks = array_values(array_filter($chunks, static fn (string $chunk): bool => $chunk !== ''));
+        if (count($chunks) < 2) {
+            return $this->normalizeInlineWhitespace($value);
+        }
+
+        $firstName = (string) array_pop($chunks);
+        $lastName = implode(' ', $chunks);
+
+        return $this->normalizeInlineWhitespace(sprintf('%s %s', $firstName, $lastName));
     }
 
     /**

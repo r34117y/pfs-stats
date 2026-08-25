@@ -1,0 +1,779 @@
+
+<html>
+<head>
+    <title>Polska Federacja Scrabble :: I Otwarte Mistrzostwa Warmii i Mazur</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="files/img/favicon.ico" />
+    <link rel="stylesheet" href="files/css/style.css" type="text/css" />
+	<link rel="stylesheet" href="files/css/style-index.css" type="text/css" />
+    <!--[if IE]><link rel="stylesheet" type="text/css" href="files/css/styleie.css" /><![endif]-->
+    <!--[if lt IE 7.]><script defer type="text/javascript" src="files/js/pngfix.js"></script><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="files/js/minmax.js"></script><![endif]-->
+    <script type="text/javascript" src="files/js/jquery.js"></script>
+    <script type="text/javascript" src="files/js/jquery-bp.js"></script>
+    <script type="text/javascript" src="files/js/java.js"></script>
+    <script>jSubmenu ("turnieje","kalendarz");jKalendarz();</script>
+    <script>
+    var url, page;
+
+    page = 'info';
+    url  = document.location.toString();
+
+    if (url.match ('#')) {
+      page = url.split ('#')[1];
+      if ($.inArray (page, [ 'info', 'relacja', 'klasyfikacja', 'hh', 'rundy', 'ranking', 'przebieg' ]) == -1)
+        page = 'info';
+    }
+
+    $(document).ready(function(){
+        $('a#listaucz').bind('click', function(event){
+            $('div#lista').toggle();
+            event.preventDefault();
+        }).toggle(function() { $(this).text('schowaj listę uczestników'); }, function() { $(this).text("pokaż listę uczestników"); });
+        $('div#lista table tr:last td').css({"border-bottom" : "none"});
+
+        $("a.przycisk").click (function (e) {
+            if ($(this).attr ('href') !== '#')
+                return true;
+
+            e.preventDefault ();
+
+            id       = this.id;
+            this.id += 'tmp';
+            window.location.hash = id;
+            this.id  = id;
+
+            $(".page").hide ();
+            $(".page#p_" + id).show ();
+
+            $("a.przycisk").removeClass ('active');
+            $(this).addClass ('active');
+
+            return false;
+        });
+
+        $("a.przycisk#" + page).click ();
+        $('html, body').animate ({ scrollTop: 0 }, 0);
+    });
+    </script>
+  <style type="text/css">
+    .page {
+        display: none;
+    }
+    #szczegoly{
+        width: 100%;
+        border-spacing: 0;
+        margin-top: 30px;
+        text-align: left;
+        font-size: inherit;
+    }
+    #szczegoly td{
+        padding: 10px 20px 10px 0;
+        vertical-align: top;
+    }
+    #szczegoly td:first-child{
+        font-weight: bold;
+        width: 160px;
+    }
+    div#lista{
+        display:none;
+        margin-top: 15px;
+    }
+    div#lista table{
+        margin-top: 10px;
+        text-align: left;
+        font-size: inherit;
+    }
+    div#lista table td{
+        padding: 3px 8px;
+        border-bottom: 1px dashed #1576AE;
+    }
+    div#lista table th{
+        padding: 0px 5px 10px 5px;
+    }
+    div#lista table td.ptaszek{
+        text-align: center;
+        background: url('files/img/tick.png') no-repeat center center;
+    }
+    div#lista table th{
+        white-space: nowrap;
+        width: auto;
+    }
+    div#lista table td:first-child, div#lista table th:first-child{
+        text-align:right;
+        width: auto;
+    }
+    </style>
+</head>
+
+<body>
+
+<script type="text/javascript">setMenu();</script>
+
+<div id="top" onclick="location.href='https://www.pfs.org.pl'">
+</div>
+<div id="menu">
+
+    <div id="m_glowna">
+        <div class="tab"><a href="https://www.pfs.org.pl/index.php"></a></div>
+
+        <ul>
+            <li class="sublink" id="aktualnosci"><a href="https://www.pfs.org.pl">Aktualności</a></li>
+            <li class="sublink" id="nowy"><a href="https://www.pfs.org.pl/dlanowych.php">Jestem tu nowy</a></li>
+            <li class="sublink" id="anagramator"><a href="https://www.pfs.org.pl/osps_online.php?main=1">Słownik online</a></li>
+            <li class="sublink" id="siodemka"><a href="https://www.pfs.org.pl/siodemka.php?main=1">Siódemka tygodnia</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+            <li class="sublink" id="dlasponsorow"><a href="https://www.pfs.org.pl/dlasponsorow.php">Dla sponsorów</a></li>
+            <li class="sublink" id="kontakt"><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+        </ul>
+    </div>
+    <div id="m_turnieje">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kalendarz.php"></a></div>
+        <ul>
+            <li class="sublink" id="kalendarz"><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+            <li class="sublink" id="regulaminy"><a href="https://www.pfs.org.pl/regulaminy.php">Regulaminy</a></li>
+            <li class="sublink" id="sedziowie"><a href="https://www.pfs.org.pl/sedziowie.php">Sędziowie</a></li>
+            <li class="sublink" id="gp"><a href="https://www.pfs.org.pl/gp2026.php">Grand Prix</a></li>
+<!--            <li class="sublink" id="mr"><a href="https://www.pfs.org.pl/mr2020.php">Mistrzostwa Regionów</a></li>-->
+            <li class="sublink" id="archiwum"><a href="https://www.pfs.org.pl/archiwum.php">Historia</a></li>
+            <li class="sublink" id="galeria"><a href="https://www.pfs.org.pl/galeria.php">Zdjęcia</a></li>
+            <li class="sublink" id="rekordy"><a href="https://www.pfs.org.pl/rekordy.php">Rekordy</a></li>
+        </ul>
+    </div>
+    <div id="m_pfs">
+        <div  class="tab"><a href="https://www.pfs.org.pl/opfs.php"></a></div>
+        <ul>
+            <li class="sublink" id="opfs"><a href="https://www.pfs.org.pl/opfs.php">O PFS</a></li>
+            <li class="sublink" id="jakprzystapic"><a href="https://www.pfs.org.pl/jakprzystapic.php">Jak przystąpić</a></li>
+            <li class="sublink" id="dlaczlonkow"><a href="https://www.pfs.org.pl/dlaczlonkow.php">Dla członków</a></li>
+            <li class="sublink" id="wladze"><a href="https://www.pfs.org.pl/wladze.php">Władze</a></li>
+            <li class="sublink" id="komisje"><a href="https://www.pfs.org.pl/komisje.php">Komisje</a></li>
+            <li class="sublink" id="statut"><a href="https://www.pfs.org.pl/statut.php">Statut</a></li>
+            <li class="sublink" id="uchwaly"><a href="https://www.pfs.org.pl/uchwaly.php">Uchwały</a></li>
+            <li class="sublink" id="honorowi"><a href="https://www.pfs.org.pl/honorowi.php">Honorowi członkowie</a></li>
+            <li class="sublink" id="finanse"><a href="https://www.pfs.org.pl/finanse.php">Finanse</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabble">
+        <div  class="tab"><a href="https://www.pfs.org.pl/osps_online.php?desktop=1"></a></div>
+        <ul>
+            <li class="sublink" id="osps_online"><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+            <li class="sublink" id="zds"><a href="https://www.pfs.org.pl/zds2.php">ZDS</a></li>
+            <li class="sublink" id="osps"><a href="https://www.pfs.org.pl/osps.php">OSPS</a></li>
+            <li class="sublink" id="aktualizacje"><a href="https://www.pfs.org.pl/osps_aktualizacje.php">Aktualizacje</a></li>
+            <li class="sublink" id="dwojki"><a href="https://www.pfs.org.pl/dwojki.php">2-literówki</a></li>
+            <li class="sublink" id="trojki"><a href="https://www.pfs.org.pl/trojki.php">3-literówki</a></li>
+            <li class="sublink" id="siodemkat"><a href="https://www.pfs.org.pl/siodemka.php">Siódemka tygodnia</a></li>
+            <li class="sublink" id="slowneroznosci"><a href="https://www.pfs.org.pl/slowneroznosci.php">Słowne różności</a></li>
+        </ul>
+    </div>
+    <div id="m_ranking">
+        <div  class="tab"><a href="https://www.pfs.org.pl/ranking.php"></a></div>
+        <ul>
+            <li class="sublink" id="aktranking"><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+            <li class="sublink" id="medale"><a href="https://www.pfs.org.pl/medale.php">Klasyfikacja medalowa</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabblisci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/mistrzowiepolski.php"></a></div>
+        <ul>
+            <li class="sublink" id="mistrzowiepolski"><a href="https://www.pfs.org.pl/mistrzowiepolski.php">Mistrzowie Polski</a></li>
+            <li class="sublink" id="zdobywcypp"><a href="https://www.pfs.org.pl/zdobywcypp.php">Zdobywcy Pucharu Polski</a></li>
+            <li class="sublink" id="zwyciezcygp"><a href="https://www.pfs.org.pl/zwyciezcygp.php">Zwycięzcy Grand Prix</a></li>
+            <li class="sublink" id="liderzyrankingu"><a href="https://www.pfs.org.pl/liderzyrankingu.php">Liderzy rankingu</a></li>
+            <li class="sublink" id="zwyciezcylemans"><a href="https://www.pfs.org.pl/zwyciezcylemans.php">Zwycięzcy 24h Le Mans</a></li>
+            <li class="sublink" id="zwyciezcykmp"><a href="https://www.pfs.org.pl/zwyciezcykmp.php">KMP</a>
+        </ul>
+    </div>
+    <div id="m_kluby">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kluby.php"></a></div>
+        <ul>
+            <li class="sublink" id="rejestrklubow"><a href="https://www.pfs.org.pl/kluby.php">Rejestr klubów</a></li>
+            <li class="sublink" id="kmp"><a href="https://www.pfs.org.pl/kmp.php">KMP</a></li>
+            <li class="sublink" id="wiescizklubow"><a href="https://www.pfs.org.pl/wiescizklubow.php">Wieści z klubów</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/about.php">Statystyki klubowe</a></li>
+        </ul>
+    </div>
+    <div id="m_roznosci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/historia.php"></a></div>
+        <ul>
+            <li class="sublink" id="historia"><a href="https://www.pfs.org.pl/historia.php">Historia</a></li>
+            <li class="sublink" id="odmiany"><a href="https://www.pfs.org.pl/odmiany.php">Odmiany</a></li>
+            <li class="sublink" id="anegdoty"><a href="https://www.pfs.org.pl/anegdoty.php">Anegdoty</a></li>
+            <li class="sublink" id="scrabblealia"><a href="https://www.pfs.org.pl/scrabblealia.php">Scrabblealia</a></li>
+            <li class="sublink" id="scrabblenet"><a href="https://www.pfs.org.pl/scrabblenet.php">Scrabble w internecie</a></li>
+            <li class="sublink" id="programy"><a href="https://www.pfs.org.pl/programy.php">Programy</a></li>
+            <li class="sublink" id="download"><a href="https://www.pfs.org.pl/download.php">Do pobrania</a></li>
+            <li class="sublink" id="ksiazki"><a href="https://www.pfs.org.pl/ksiazki.php">Książki</a></li>
+            <li class="sublink" id="slowniczek"><a href="https://www.pfs.org.pl/slowniczek.php">Słowniczek</a></li>
+        </ul>
+    </div>
+    <div id="m_english">
+        <div  class="tab"><a href="https://www.pfs.org.pl/english.php"></a></div>
+        <ul>
+            <li class="sublink" id="about"><a href="https://www.pfs.org.pl/english.php">About Polish Scrabble</a></li>
+            <li class="sublink" id="news"><a href="https://www.pfs.org.pl/en_news.php">News</a></li>
+            <li class="sublink" id="bartek"><a href="https://www.pfs.org.pl/bartek.php">Bartek w Johor Bahru</a></li>
+            <li class="sublink" id="franko"><a href="https://www.pfs.org.pl/franko.php">Scrabble frankofońskie</a></li>
+        </ul>
+    </div>
+</div>
+
+<div id="submenu"></div>
+<div id="content">
+<div id='nextTours'>
+		<div class='nextTour' onclick='location.href="turniej.php?id=396"'>
+			<div class='karteczka small1'>
+				<span class='miasto'>Słupsk</span><span class='dzien'><span class='big'> 3</span><br />sierpnia</span></div>
+			<div class='kartka big1'>
+				<span class='miasto'>Słupsk</span>
+				<span class='dzien'><b> 3 sierpnia</b></span>
+				<span class='nazwaturnieju'>I Otwarte Mistrzostwa Ziemi Słupskiej</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=395"'>
+			<div class='karteczka small2'>
+				<span class='miasto'>Olsztyn</span><span class='dzien'><span class='big'>10</span><br />sierpnia</span></div>
+			<div class='kartka big2'>
+				<span class='miasto'>Olsztyn</span>
+				<span class='dzien'><b>10 sierpnia</b></span>
+				<span class='nazwaturnieju'>I Otwarte Mistrzostwa Warmii i Mazur</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=394"'>
+			<div class='karteczka small3'>
+				<span class='miasto'>Warszawa</span><span class='dzien'><span class='big'>15</span><br />sierpnia</span></div>
+			<div class='kartka big3'>
+				<span class='miasto'>Warszawa</span>
+				<span class='dzien'><b>15-17 sierpnia</b></span>
+				<span class='nazwaturnieju'>II Otwarte Mistrzostwa Warszawy</span></div>
+		</div></div><div class='naglowekrelacji'><span class='tytul'>I Otwarte Mistrzostwa Warmii i&nbsp;Mazur<span class='nazwa'>10 sierpnia 1997 —  I Otwarte Mistrzostwa Warmii i Mazur</span></span><a href='#' id='info' class='przycisk'>Informacje</a><a href='#' id='relacja' class='przycisk'>Relacja</a><a href='#' id='klasyfikacja' class='przycisk'>Wyniki</a><a href='#' id='hh' class='przycisk'>HH</a><div class='galleries'><img src='files/img/gallery.png' style='visibility:hidden;' alt='galeria' /></div></div><h1 style='color:black; margin-top:0px; margin-bottom:30px; padding: 0px'>I Otwarte Mistrzostwa Warmii i Mazur<span>Olsztyn, 10 sierpnia 1997</span></h1><div id='p_relacja' class='page'><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><div class='relacja' style='clear:both;'><div><pre>
+ 1. Tomasz Zwoliński (Warszawa)
+ 2. Maciek Czupryniak (Milanówek)
+ 3. Mariusz Orzeł (Nowe Miasto Lubawskie)
+ 4. Stanisław Gasik (Warszawa)
+ 5. Józef Burzyński (Ełk)
+ 6. Paweł Stanosz (Warszawa)
+ 7. Zdzisław Szota (Warszawa)
+ 8. Małgorzata Kania (Milanówek)
+ 9. Marek Antosik (Nowy Dwór Mazowiecki)
+ 10. Janusz Grodzki (Łódź) 
+
+30 uczestników, 5 rund 
+</pre></div><div class='autor'></div></div><div style='clear:both;'></div></div><div id='p_info' class='page'><br><p align='center'></p><br><br><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><table id='szczegoly' class='ramkadolna'></table><br /><br /></div><div id='p_klasyfikacja' class='page'><pre>Wyniki turnieju I Otwarte Mistrzostwa Warmii i Mazur w Scrabble
+
+Lp. Imię            Nazwisko             Miasto               Ranking  Duże pkt Małe pkt Skalpy   Różn. MP
+--- --------------- -------------------- -------------------- -------- -------- -------- -------- --------
+  1 Tomasz          Zwoliński            Skierdy                133.00      5.0     2182      831      693
+  2 Maciej          Czupryniak           Milanówek              117.00      4.0     1926      678      293
+  3 Mariusz         Orzeł                Nowe Miasto Lubawskie   122.00      4.0     1912      706      364
+  4 Stanisław       Gasik                Warszawa               102.00      4.0     1679      710      227
+  5 Józef           Burzyński            Ełk                    110.00      4.0     1647      654      186
+  6 Paweł           Stanosz              Warszawa               138.00      3.0     1996      620      250
+  7 Zdzisław        Szota                Warszawa               130.00      3.0     1937      590      424
+  8 Małgorzata      Kania                Milanówek              111.00      3.0     1837      596      458
+  9 Marek           Antosik              Nowy Dwór Mazowiecki   103.00      3.0     1725      604      111
+ 10 Janusz          Grodzki              Łódź                    98.00      3.0     1557      574      -37
+ 11 Stenia          Zwolińska            Warszawa                96.00      3.0     1498      550      385
+ 12 Lucjan          Boroś                Gdańsk                 100.00      3.0     1491      589      -90
+ 13 Grzegorz        Orzeł                Nowe Miasto Lubawskie   100.00      3.0     1453      591     -191
+ 14 Rafał-Damian    Michałowski          Olsztyn                100.00      3.0     1320      560      -45
+ 15 Urszula         Michałowska          Olsztyn                100.00      3.0     1249      554     -101
+ 16 Wiesław         Paluch               Olsztyn                100.00      3.0     1206      582     -333
+ 17 Andrzej         Słapiński            Warszawa               104.00      2.0     1638      503       42
+ 18 Andrzej         Kwiatkowski          Warszawa                91.00      2.0     1572      463     -151
+ 19 Gabriela        Hofman               Łódź                    85.00      2.0     1565      468       30
+ 20 Krzysztof       Czart                Barczewo               100.00      2.0     1539      441       -8
+ 21 Rafał-Andrzej   Jóźwik               Malbork                100.00      2.0     1345      463     -261
+ 22 Leszek          Dys                  Olsztyn                100.00      2.0     1286      431     -144
+ 23 Michał          Grzybek              Olsztyn                100.00      2.0     1074      431     -212
+ 24 Michał          Ryżejno              Olsztyn                100.00      2.0     1071      452     -202
+ 25 Artur           Jeżewski             Olsztyn                100.00      1.0     1396      372     -313
+ 26 Bogdan          Fiedoruk             Gdynia                 100.00      1.0     1386      379     -178
+ 27 Adam            Kotwica              Gdańsk                 100.00      1.0     1318      353     -213
+ 28 Michał          Dys                  Olsztyn                100.00      1.0     1131      344     -335
+ 29 Tomasz          Januszyk             Olsztyn                100.00      1.0     1086      361     -315
+ 30 Ryszard         Bernatowski          Olsztyn                100.00      0.0      985      250     -334
+</pre></div><div id='p_hh' class='page'><pre>Wyniki poszczególnych graczy w turnieju I Otwarte Mistrzostwa Warmii i Mazur w Scrabble
+
+
+
+	Paweł Stanosz 138.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Bogdan         Fiedoruk              100.00 +  333: 289  150
+    2     6 Janusz         Grodzki                98.00 +  467: 269  148
+    3     2 Mariusz        Orzeł                 122.00 +  458: 341  172
+    4     1 Tomasz         Zwoliński             133.00 -  346: 443   83
+    5     2 Maciej         Czupryniak            117.00 -  392: 404   67
+                                                          --------------- ---- ------
+                                                                     620  /  5 124.00
+
+
+
+
+	Tomasz Zwoliński 133.00 Skierdy         
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Lucjan         Boroś                 100.00 +  479: 206  150
+    2     1 Zdzisław       Szota                 130.00 +  419: 322  180
+    3     1 Małgorzata     Kania                 111.00 +  353: 319  161
+    4     1 Paweł          Stanosz               138.00 +  443: 346  188
+    5     1 Stanisław      Gasik                 102.00 +  488: 296  152
+                                                          --------------- ---- ------
+                                                                     831  /  5 166.20
+
+
+
+
+	Zdzisław Szota 130.00 Warszawa               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Grzegorz       Orzeł                 100.00 +  496: 249  150
+    2     1 Tomasz         Zwoliński             133.00 -  322: 419   83
+    3     5 Marek          Antosik               103.00 -  264: 358   53
+    4     8 Wiesław        Paluch                100.00 +  504: 191  150
+    5     6 Andrzej        Słapiński             104.00 +  351: 296  154
+                                                          --------------- ---- ------
+                                                                     590  /  5 118.00
+
+
+
+
+	Mariusz Orzeł 122.00 Nowe Miasto Lubawskie       
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Artur          Jeżewski              100.00 +  435: 270  150
+    2     2 Andrzej        Słapiński             104.00 +  373: 277  154
+    3     2 Paweł          Stanosz               138.00 -  341: 458   88
+    4     3 Małgorzata     Kania                 111.00 +  372: 228  161
+    5     3 Marek          Antosik               103.00 +  391: 315  153
+                                                          --------------- ---- ------
+                                                                     706  /  5 141.20
+
+
+
+
+	Maciej Czupryniak 117.00 Milanówek                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Rafał-Andrzej  Jóźwik                100.00 +  364: 245  150
+    2     4 Marek          Antosik               103.00 +  388: 386  153
+    3     3 Gabriela       Hofman                 85.00 +  469: 292  135
+    4     2 Stanisław      Gasik                 102.00 -  301: 318   52
+    5     2 Paweł          Stanosz               138.00 +  404: 392  188
+                                                          --------------- ---- ------
+                                                                     678  /  5 135.60
+
+
+
+
+	Małgorzata Kania 111.00 Milanówek                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Tomasz         Januszyk              100.00 +  375: 171  150
+    2     3 Andrzej        Kwiatkowski            91.00 +  500: 217  141
+    3     1 Tomasz         Zwoliński             133.00 -  319: 353   83
+    4     3 Mariusz        Orzeł                 122.00 -  228: 372   72
+    5     5 Grzegorz       Orzeł                 100.00 +  415: 266  150
+                                                          --------------- ---- ------
+                                                                     596  /  5 119.20
+
+
+
+
+	Józef Burzyński 110.00 Ełk                      
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Rafał-Damian   Michałowski           100.00 +  339: 168  150
+    2     5 Stanisław      Gasik                 102.00 -  289: 347   52
+    3     6 Andrzej        Słapiński             104.00 +  334: 330  154
+    4     5 Janusz         Grodzki                98.00 +  336: 313  148
+    5     4 Lucjan         Boroś                 100.00 +  349: 303  150
+                                                          --------------- ---- ------
+                                                                     654  /  5 130.80
+
+
+
+
+	Andrzej Słapiński 104.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Urszula        Michałowska           100.00 +  379: 211  150
+    2     2 Mariusz        Orzeł                 122.00 -  277: 373   72
+    3     6 Józef          Burzyński             110.00 -  330: 334   60
+    4     9 Andrzej        Kwiatkowski            91.00 +  356: 327  141
+    5     6 Zdzisław       Szota                 130.00 -  296: 351   80
+                                                          --------------- ---- ------
+                                                                     503  /  5 100.60
+
+
+
+
+	Marek Antosik 103.00 Nowy Dwór Mazowiecki          
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Adam           Kotwica               100.00 +  366: 285  150
+    2     4 Maciej         Czupryniak            117.00 -  386: 388   67
+    3     5 Zdzisław       Szota                 130.00 +  358: 264  180
+    4     4 Gabriela       Hofman                 85.00 +  300: 286  135
+    5     3 Mariusz        Orzeł                 122.00 -  315: 391   72
+                                                          --------------- ---- ------
+                                                                     604  /  5 120.80
+
+
+
+
+	Stanisław Gasik 102.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    15 Michał         Ryżejno               100.00 +  335: 167  150
+    2     5 Józef          Burzyński             110.00 +  347: 289  160
+    3     4 Wiesław        Paluch                100.00 +  383: 207  150
+    4     2 Maciej         Czupryniak            117.00 +  318: 301  167
+    5     1 Tomasz         Zwoliński             133.00 -  296: 488   83
+                                                          --------------- ---- ------
+                                                                     710  /  5 142.00
+
+
+
+
+	Ryszard Bernatowski 100.00 Olsztyn                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    14 Wiesław        Paluch                100.00 -  157: 267   50
+    2    15 Michał         Ryżejno               100.00 -  168: 293   50
+    3    15 Michał         Grzybek               100.00 -  225: 247   50
+    4    15 Tomasz         Januszyk              100.00 -  219: 223   50
+    5    15 Adam           Kotwica               100.00 -  216: 289   50
+                                                          --------------- ---- ------
+                                                                     250  /  5  50.00
+
+
+
+
+	Lucjan Boroś 100.00 Gdańsk                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Tomasz         Zwoliński             133.00 -  206: 479   83
+    2    12 Urszula        Michałowska           100.00 +  300: 226  150
+    3    10 Stenia         Zwolińska              96.00 +  297: 280  146
+    4     7 Rafał-Damian   Michałowski           100.00 +  385: 247  150
+    5     4 Józef          Burzyński             110.00 -  303: 349   60
+                                                          --------------- ---- ------
+                                                                     589  /  5 117.80
+
+
+
+
+	Krzysztof Czart 100.00 Barczewo                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    12 Andrzej        Kwiatkowski            91.00 -  250: 377   41
+    2    10 Grzegorz       Orzeł                 100.00 -  261: 307   50
+    3    13 Michał         Dys                   100.00 -  238: 295   50
+    4    14 Adam           Kotwica               100.00 +  413: 233  150
+    5    13 Artur          Jeżewski              100.00 +  377: 335  150
+                                                          --------------- ---- ------
+                                                                     441  /  5  88.20
+
+
+
+
+	Leszek Dys 100.00 Olsztyn                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Stenia         Zwolińska              96.00 +  280: 198  146
+    2     7 Gabriela       Hofman                 85.00 -  243: 361   35
+    3     9 Rafał-Andrzej  Jóźwik                100.00 +  316: 295  150
+    4     6 Grzegorz       Orzeł                 100.00 -  223: 284   50
+    5     9 Rafał-Damian   Michałowski           100.00 -  224: 292   50
+                                                          --------------- ---- ------
+                                                                     431  /  5  86.20
+
+
+
+
+	Michał Dys 100.00 Olsztyn                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Janusz         Grodzki                98.00 -  212: 324   48
+    2    11 Rafał-Andrzej  Jóźwik                100.00 -  258: 279   50
+    3    13 Krzysztof      Czart                 100.00 +  295: 238  150
+    4    12 Stenia         Zwolińska              96.00 -  158: 353   46
+    5    10 Urszula        Michałowska           100.00 -  208: 272   50
+                                                          --------------- ---- ------
+                                                                     344  /  5  68.80
+
+
+
+
+	Bogdan Fiedoruk 100.00 Gdynia                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Paweł          Stanosz               138.00 -  289: 333   88
+    2     8 Wiesław        Paluch                100.00 -  267: 298   50
+    3    12 Adam           Kotwica               100.00 +  257: 241  150
+    4    10 Rafał-Andrzej  Jóźwik                100.00 -  282: 316   50
+    5    11 Andrzej        Kwiatkowski            91.00 -  291: 376   41
+                                                          --------------- ---- ------
+                                                                     379  /  5  75.80
+
+
+
+
+	Michał Grzybek 100.00 Olsztyn                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    13 Gabriela       Hofman                 85.00 -  198: 322   35
+    2    13 Stenia         Zwolińska              96.00 -  168: 281   46
+    3    15 Ryszard        Bernatowski           100.00 +  247: 225  150
+    4    13 Michał         Ryżejno               100.00 -  195: 211   50
+    5    14 Tomasz         Januszyk              100.00 +  266: 247  150
+                                                          --------------- ---- ------
+                                                                     431  /  5  86.20
+
+
+
+
+	Tomasz Januszyk 100.00 Olsztyn                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Małgorzata     Kania                 111.00 -  171: 375   61
+    2    14 Rafał-Damian   Michałowski           100.00 -  245: 281   50
+    3    14 Urszula        Michałowska           100.00 -  200: 260   50
+    4    15 Ryszard        Bernatowski           100.00 +  223: 219  150
+    5    14 Michał         Grzybek               100.00 -  247: 266   50
+                                                          --------------- ---- ------
+                                                                     361  /  5  72.20
+
+
+
+
+	Artur Jeżewski 100.00 Olsztyn                    
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Mariusz        Orzeł                 122.00 -  270: 435   72
+    2     9 Adam           Kotwica               100.00 +  279: 270  150
+    3     8 Grzegorz       Orzeł                 100.00 -  249: 347   50
+    4    11 Urszula        Michałowska           100.00 -  263: 280   50
+    5    13 Krzysztof      Czart                 100.00 -  335: 377   50
+                                                          --------------- ---- ------
+                                                                     372  /  5  74.40
+
+
+
+
+	Rafał-Andrzej Jóźwik 100.00 Malbork                    
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Maciej         Czupryniak            117.00 -  245: 364   67
+    2    11 Michał         Dys                   100.00 +  279: 258  150
+    3     9 Leszek         Dys                   100.00 -  295: 316   50
+    4    10 Bogdan         Fiedoruk              100.00 +  316: 282  150
+    5     8 Stenia         Zwolińska              96.00 -  210: 386   46
+                                                          --------------- ---- ------
+                                                                     463  /  5  92.60
+
+
+
+
+	Adam Kotwica 100.00 Gdańsk                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Marek          Antosik               103.00 -  285: 366   53
+    2     9 Artur          Jeżewski              100.00 -  270: 279   50
+    3    12 Bogdan         Fiedoruk              100.00 -  241: 257   50
+    4    14 Krzysztof      Czart                 100.00 -  233: 413   50
+    5    15 Ryszard        Bernatowski           100.00 +  289: 216  150
+                                                          --------------- ---- ------
+                                                                     353  /  5  70.60
+
+
+
+
+	Urszula Michałowska 100.00 Olsztyn                       
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Andrzej        Słapiński             104.00 -  211: 379   54
+    2    12 Lucjan         Boroś                 100.00 -  226: 300   50
+    3    14 Tomasz         Januszyk              100.00 +  260: 200  150
+    4    11 Artur          Jeżewski              100.00 +  280: 263  150
+    5    10 Michał         Dys                   100.00 +  272: 208  150
+                                                          --------------- ---- ------
+                                                                     554  /  5 110.80
+
+
+
+
+	Rafał-Damian Michałowski 100.00 Olsztyn                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Józef          Burzyński             110.00 -  168: 339   60
+    2    14 Tomasz         Januszyk              100.00 +  281: 245  150
+    3    11 Michał         Ryżejno               100.00 +  332: 172  150
+    4     7 Lucjan         Boroś                 100.00 -  247: 385   50
+    5     9 Leszek         Dys                   100.00 +  292: 224  150
+                                                          --------------- ---- ------
+                                                                     560  /  5 112.00
+
+
+
+
+	Grzegorz Orzeł 100.00 Nowe Miasto Lubawskie      
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Zdzisław       Szota                 130.00 -  249: 496   80
+    2    10 Krzysztof      Czart                 100.00 +  307: 261  150
+    3     8 Artur          Jeżewski              100.00 +  347: 249  150
+    4     6 Leszek         Dys                   100.00 +  284: 223  150
+    5     5 Małgorzata     Kania                 111.00 -  266: 415   61
+                                                          --------------- ---- ------
+                                                                     591  /  5 118.20
+
+
+
+
+	Wiesław Paluch 100.00 Olsztyn                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    14 Ryszard        Bernatowski           100.00 +  267: 157  150
+    2     8 Bogdan         Fiedoruk              100.00 +  298: 267  150
+    3     4 Stanisław      Gasik                 102.00 -  207: 383   52
+    4     8 Zdzisław       Szota                 130.00 -  191: 504   80
+    5    12 Michał         Ryżejno               100.00 +  243: 228  150
+                                                          --------------- ---- ------
+                                                                     582  /  5 116.40
+
+
+
+
+	Michał Ryżejno 100.00 Olsztyn                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    15 Stanisław      Gasik                 102.00 -  167: 335   52
+    2    15 Ryszard        Bernatowski           100.00 +  293: 168  150
+    3    11 Rafał-Damian   Michałowski           100.00 -  172: 332   50
+    4    13 Michał         Grzybek               100.00 +  211: 195  150
+    5    12 Wiesław        Paluch                100.00 -  228: 243   50
+                                                          --------------- ---- ------
+                                                                     452  /  5  90.40
+
+
+
+
+	Janusz Grodzki  98.00 Łódź                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Michał         Dys                   100.00 +  324: 212  150
+    2     6 Paweł          Stanosz               138.00 -  269: 467   88
+    3     7 Andrzej        Kwiatkowski            91.00 +  326: 275  141
+    4     5 Józef          Burzyński             110.00 -  313: 336   60
+    5     7 Gabriela       Hofman                 85.00 +  325: 304  135
+                                                          --------------- ---- ------
+                                                                     574  /  5 114.80
+
+
+
+
+	Stenia Zwolińska  96.00 Warszawa
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Leszek         Dys                   100.00 -  198: 280   50
+    2    13 Michał         Grzybek               100.00 +  281: 168  150
+    3    10 Lucjan         Boroś                 100.00 -  280: 297   50
+    4    12 Michał         Dys                   100.00 +  353: 158  150
+    5     8 Rafał-Andrzej  Jóźwik                100.00 +  386: 210  150
+                                                          --------------- ---- ------
+                                                                     550  /  5 110.00
+
+
+
+
+	Andrzej Kwiatkowski  91.00 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    12 Krzysztof      Czart                 100.00 +  377: 250  150
+    2     3 Małgorzata     Kania                 111.00 -  217: 500   61
+    3     7 Janusz         Grodzki                98.00 -  275: 326   48
+    4     9 Andrzej        Słapiński             104.00 -  327: 356   54
+    5    11 Bogdan         Fiedoruk              100.00 +  376: 291  150
+                                                          --------------- ---- ------
+                                                                     463  /  5  92.60
+
+
+
+
+	Gabriela Hofman  85.00 Łódź                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    13 Michał         Grzybek               100.00 +  322: 198  150
+    2     7 Leszek         Dys                   100.00 +  361: 243  150
+    3     3 Maciej         Czupryniak            117.00 -  292: 469   67
+    4     4 Marek          Antosik               103.00 -  286: 300   53
+    5     7 Janusz         Grodzki                98.00 -  304: 325   48
+                                                          --------------- ---- ------
+                                                                     468  /  5  93.60
+
+
+</pre></div><div id='p_rundy' class='page'><pre></pre></div><div id='p_ranking' class='page'><pre></pre></div><div id='p_przebieg' class='page'>
+
+    </div><div style="clear:both;width:100%;" class="alignright">
+
+<script>
+<!--
+if ((document.getElementById("content").offsetHeight + document.getElementById("top").offsetHeight) > screen.height)
+    document.write("<br /><br /><a href='#top'>do góry</a>");
+-->
+</script>
+
+</div>
+</div>
+
+<div id="bottom">
+<ul id="bottomlinks">
+<div class='onleft'>
+ Osób on-line: 53</div>
+    <li><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+    <li><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+    <li><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+    <li><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+    <li><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+    <li><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+</ul>
+    SCRABBLE® jest zastrzeżonym znakiem towarowym J.W. Spears &amp; Sons&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://www.pfs.org.pl/prawaautorskie.php">© Prawa autorskie</a>
+</div>
+</body>
+</html>

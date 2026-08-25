@@ -1,0 +1,917 @@
+
+<html>
+<head>
+    <title>Polska Federacja Scrabble :: II Mistrzostwa Podhala</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="files/img/favicon.ico" />
+    <link rel="stylesheet" href="files/css/style.css" type="text/css" />
+	<link rel="stylesheet" href="files/css/style-index.css" type="text/css" />
+    <!--[if IE]><link rel="stylesheet" type="text/css" href="files/css/styleie.css" /><![endif]-->
+    <!--[if lt IE 7.]><script defer type="text/javascript" src="files/js/pngfix.js"></script><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="files/js/minmax.js"></script><![endif]-->
+    <script type="text/javascript" src="files/js/jquery.js"></script>
+    <script type="text/javascript" src="files/js/jquery-bp.js"></script>
+    <script type="text/javascript" src="files/js/java.js"></script>
+    <script>jSubmenu ("turnieje","kalendarz");jKalendarz();</script>
+    <script>
+    var url, page;
+
+    page = 'info';
+    url  = document.location.toString();
+
+    if (url.match ('#')) {
+      page = url.split ('#')[1];
+      if ($.inArray (page, [ 'info', 'relacja', 'klasyfikacja', 'hh', 'rundy', 'ranking', 'przebieg' ]) == -1)
+        page = 'info';
+    }
+
+    $(document).ready(function(){
+        $('a#listaucz').bind('click', function(event){
+            $('div#lista').toggle();
+            event.preventDefault();
+        }).toggle(function() { $(this).text('schowaj listę uczestników'); }, function() { $(this).text("pokaż listę uczestników"); });
+        $('div#lista table tr:last td').css({"border-bottom" : "none"});
+
+        $("a.przycisk").click (function (e) {
+            if ($(this).attr ('href') !== '#')
+                return true;
+
+            e.preventDefault ();
+
+            id       = this.id;
+            this.id += 'tmp';
+            window.location.hash = id;
+            this.id  = id;
+
+            $(".page").hide ();
+            $(".page#p_" + id).show ();
+
+            $("a.przycisk").removeClass ('active');
+            $(this).addClass ('active');
+
+            return false;
+        });
+
+        $("a.przycisk#" + page).click ();
+        $('html, body').animate ({ scrollTop: 0 }, 0);
+    });
+    </script>
+  <style type="text/css">
+    .page {
+        display: none;
+    }
+    #szczegoly{
+        width: 100%;
+        border-spacing: 0;
+        margin-top: 30px;
+        text-align: left;
+        font-size: inherit;
+    }
+    #szczegoly td{
+        padding: 10px 20px 10px 0;
+        vertical-align: top;
+    }
+    #szczegoly td:first-child{
+        font-weight: bold;
+        width: 160px;
+    }
+    div#lista{
+        display:none;
+        margin-top: 15px;
+    }
+    div#lista table{
+        margin-top: 10px;
+        text-align: left;
+        font-size: inherit;
+    }
+    div#lista table td{
+        padding: 3px 8px;
+        border-bottom: 1px dashed #1576AE;
+    }
+    div#lista table th{
+        padding: 0px 5px 10px 5px;
+    }
+    div#lista table td.ptaszek{
+        text-align: center;
+        background: url('files/img/tick.png') no-repeat center center;
+    }
+    div#lista table th{
+        white-space: nowrap;
+        width: auto;
+    }
+    div#lista table td:first-child, div#lista table th:first-child{
+        text-align:right;
+        width: auto;
+    }
+    </style>
+</head>
+
+<body>
+
+<script type="text/javascript">setMenu();</script>
+
+<div id="top" onclick="location.href='https://www.pfs.org.pl'">
+</div>
+<div id="menu">
+
+    <div id="m_glowna">
+        <div class="tab"><a href="https://www.pfs.org.pl/index.php"></a></div>
+
+        <ul>
+            <li class="sublink" id="aktualnosci"><a href="https://www.pfs.org.pl">Aktualności</a></li>
+            <li class="sublink" id="nowy"><a href="https://www.pfs.org.pl/dlanowych.php">Jestem tu nowy</a></li>
+            <li class="sublink" id="anagramator"><a href="https://www.pfs.org.pl/osps_online.php?main=1">Słownik online</a></li>
+            <li class="sublink" id="siodemka"><a href="https://www.pfs.org.pl/siodemka.php?main=1">Siódemka tygodnia</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+            <li class="sublink" id="dlasponsorow"><a href="https://www.pfs.org.pl/dlasponsorow.php">Dla sponsorów</a></li>
+            <li class="sublink" id="kontakt"><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+        </ul>
+    </div>
+    <div id="m_turnieje">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kalendarz.php"></a></div>
+        <ul>
+            <li class="sublink" id="kalendarz"><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+            <li class="sublink" id="regulaminy"><a href="https://www.pfs.org.pl/regulaminy.php">Regulaminy</a></li>
+            <li class="sublink" id="sedziowie"><a href="https://www.pfs.org.pl/sedziowie.php">Sędziowie</a></li>
+            <li class="sublink" id="gp"><a href="https://www.pfs.org.pl/gp2026.php">Grand Prix</a></li>
+<!--            <li class="sublink" id="mr"><a href="https://www.pfs.org.pl/mr2020.php">Mistrzostwa Regionów</a></li>-->
+            <li class="sublink" id="archiwum"><a href="https://www.pfs.org.pl/archiwum.php">Historia</a></li>
+            <li class="sublink" id="galeria"><a href="https://www.pfs.org.pl/galeria.php">Zdjęcia</a></li>
+            <li class="sublink" id="rekordy"><a href="https://www.pfs.org.pl/rekordy.php">Rekordy</a></li>
+        </ul>
+    </div>
+    <div id="m_pfs">
+        <div  class="tab"><a href="https://www.pfs.org.pl/opfs.php"></a></div>
+        <ul>
+            <li class="sublink" id="opfs"><a href="https://www.pfs.org.pl/opfs.php">O PFS</a></li>
+            <li class="sublink" id="jakprzystapic"><a href="https://www.pfs.org.pl/jakprzystapic.php">Jak przystąpić</a></li>
+            <li class="sublink" id="dlaczlonkow"><a href="https://www.pfs.org.pl/dlaczlonkow.php">Dla członków</a></li>
+            <li class="sublink" id="wladze"><a href="https://www.pfs.org.pl/wladze.php">Władze</a></li>
+            <li class="sublink" id="komisje"><a href="https://www.pfs.org.pl/komisje.php">Komisje</a></li>
+            <li class="sublink" id="statut"><a href="https://www.pfs.org.pl/statut.php">Statut</a></li>
+            <li class="sublink" id="uchwaly"><a href="https://www.pfs.org.pl/uchwaly.php">Uchwały</a></li>
+            <li class="sublink" id="honorowi"><a href="https://www.pfs.org.pl/honorowi.php">Honorowi członkowie</a></li>
+            <li class="sublink" id="finanse"><a href="https://www.pfs.org.pl/finanse.php">Finanse</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabble">
+        <div  class="tab"><a href="https://www.pfs.org.pl/osps_online.php?desktop=1"></a></div>
+        <ul>
+            <li class="sublink" id="osps_online"><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+            <li class="sublink" id="zds"><a href="https://www.pfs.org.pl/zds2.php">ZDS</a></li>
+            <li class="sublink" id="osps"><a href="https://www.pfs.org.pl/osps.php">OSPS</a></li>
+            <li class="sublink" id="aktualizacje"><a href="https://www.pfs.org.pl/osps_aktualizacje.php">Aktualizacje</a></li>
+            <li class="sublink" id="dwojki"><a href="https://www.pfs.org.pl/dwojki.php">2-literówki</a></li>
+            <li class="sublink" id="trojki"><a href="https://www.pfs.org.pl/trojki.php">3-literówki</a></li>
+            <li class="sublink" id="siodemkat"><a href="https://www.pfs.org.pl/siodemka.php">Siódemka tygodnia</a></li>
+            <li class="sublink" id="slowneroznosci"><a href="https://www.pfs.org.pl/slowneroznosci.php">Słowne różności</a></li>
+        </ul>
+    </div>
+    <div id="m_ranking">
+        <div  class="tab"><a href="https://www.pfs.org.pl/ranking.php"></a></div>
+        <ul>
+            <li class="sublink" id="aktranking"><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+            <li class="sublink" id="medale"><a href="https://www.pfs.org.pl/medale.php">Klasyfikacja medalowa</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabblisci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/mistrzowiepolski.php"></a></div>
+        <ul>
+            <li class="sublink" id="mistrzowiepolski"><a href="https://www.pfs.org.pl/mistrzowiepolski.php">Mistrzowie Polski</a></li>
+            <li class="sublink" id="zdobywcypp"><a href="https://www.pfs.org.pl/zdobywcypp.php">Zdobywcy Pucharu Polski</a></li>
+            <li class="sublink" id="zwyciezcygp"><a href="https://www.pfs.org.pl/zwyciezcygp.php">Zwycięzcy Grand Prix</a></li>
+            <li class="sublink" id="liderzyrankingu"><a href="https://www.pfs.org.pl/liderzyrankingu.php">Liderzy rankingu</a></li>
+            <li class="sublink" id="zwyciezcylemans"><a href="https://www.pfs.org.pl/zwyciezcylemans.php">Zwycięzcy 24h Le Mans</a></li>
+            <li class="sublink" id="zwyciezcykmp"><a href="https://www.pfs.org.pl/zwyciezcykmp.php">KMP</a>
+        </ul>
+    </div>
+    <div id="m_kluby">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kluby.php"></a></div>
+        <ul>
+            <li class="sublink" id="rejestrklubow"><a href="https://www.pfs.org.pl/kluby.php">Rejestr klubów</a></li>
+            <li class="sublink" id="kmp"><a href="https://www.pfs.org.pl/kmp.php">KMP</a></li>
+            <li class="sublink" id="wiescizklubow"><a href="https://www.pfs.org.pl/wiescizklubow.php">Wieści z klubów</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/about.php">Statystyki klubowe</a></li>
+        </ul>
+    </div>
+    <div id="m_roznosci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/historia.php"></a></div>
+        <ul>
+            <li class="sublink" id="historia"><a href="https://www.pfs.org.pl/historia.php">Historia</a></li>
+            <li class="sublink" id="odmiany"><a href="https://www.pfs.org.pl/odmiany.php">Odmiany</a></li>
+            <li class="sublink" id="anegdoty"><a href="https://www.pfs.org.pl/anegdoty.php">Anegdoty</a></li>
+            <li class="sublink" id="scrabblealia"><a href="https://www.pfs.org.pl/scrabblealia.php">Scrabblealia</a></li>
+            <li class="sublink" id="scrabblenet"><a href="https://www.pfs.org.pl/scrabblenet.php">Scrabble w internecie</a></li>
+            <li class="sublink" id="programy"><a href="https://www.pfs.org.pl/programy.php">Programy</a></li>
+            <li class="sublink" id="download"><a href="https://www.pfs.org.pl/download.php">Do pobrania</a></li>
+            <li class="sublink" id="ksiazki"><a href="https://www.pfs.org.pl/ksiazki.php">Książki</a></li>
+            <li class="sublink" id="slowniczek"><a href="https://www.pfs.org.pl/slowniczek.php">Słowniczek</a></li>
+        </ul>
+    </div>
+    <div id="m_english">
+        <div  class="tab"><a href="https://www.pfs.org.pl/english.php"></a></div>
+        <ul>
+            <li class="sublink" id="about"><a href="https://www.pfs.org.pl/english.php">About Polish Scrabble</a></li>
+            <li class="sublink" id="news"><a href="https://www.pfs.org.pl/en_news.php">News</a></li>
+            <li class="sublink" id="bartek"><a href="https://www.pfs.org.pl/bartek.php">Bartek w Johor Bahru</a></li>
+            <li class="sublink" id="franko"><a href="https://www.pfs.org.pl/franko.php">Scrabble frankofońskie</a></li>
+        </ul>
+    </div>
+</div>
+
+<div id="submenu"></div>
+<div id="content">
+<div id='nextTours'>
+		<div class='nextTour' onclick='location.href="turniej.php?id=274"'>
+			<div class='karteczka small1'>
+				<span class='miasto'>Warszawa</span><span class='dzien'><span class='big'>12</span><br />stycznia</span></div>
+			<div class='kartka big1'>
+				<span class='miasto'>Warszawa</span>
+				<span class='dzien'><b>12-13 stycznia</b></span>
+				<span class='nazwaturnieju'>Turniej Otwarcia Sezonu</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=273"'>
+			<div class='karteczka small2'>
+				<span class='miasto'>Zakopane</span><span class='dzien'><span class='big'> 3</span><br />lutego</span></div>
+			<div class='kartka big2'>
+				<span class='miasto'>Zakopane</span>
+				<span class='dzien'><b> 3 lutego</b></span>
+				<span class='nazwaturnieju'>II Mistrzostwa Podhala</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=272"'>
+			<div class='karteczka small3'>
+				<span class='miasto'>Warszawa</span><span class='dzien'><span class='big'> 2</span><br />marca</span></div>
+			<div class='kartka big3'>
+				<span class='miasto'>Warszawa</span>
+				<span class='dzien'><b> 2- 3 marca</b></span>
+				<span class='nazwaturnieju'>VII Mistrzostwa Warszawy</span><span class='gp'>Grand&nbsp;Prix&nbsp;2002</span></div>
+		</div></div><div class='naglowekrelacji'><span class='tytul'>II Mistrzostwa Podhala<span class='nazwa'>03 lutego 2002 —  II Mistrzostwa Podhala</span></span><a href='#' id='info' class='przycisk'>Informacje</a><a href='#' id='relacja' class='przycisk'>Relacja</a><a href='#' id='klasyfikacja' class='przycisk'>Wyniki</a><a href='#' id='hh' class='przycisk'>HH</a><div class='galleries'><img src='files/img/gallery.png' style='visibility:hidden;' alt='galeria' /></div></div><h1 style='color:black; margin-top:0px; margin-bottom:30px; padding: 0px'>II Mistrzostwa Podhala<span>Zakopane, 03 lutego 2002</span></h1><div id='p_relacja' class='page'><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><div class='relacja' style='clear:both;'><div><pre>
+ 1. Szymon Zaleski (Poznań) 6,0 2736
+ 2. Mariusz Skrobosz (Warszawa) 5,0 2656
+ 3. Roman Sulima (Warszawa) 5,0 2184
+ 4. Tomasz Zwoliński (Warszawa) 4,0 2505
+ 5. Maciej Czupryniak (Milanówek) 4,0 2468
+ 6. Kamil Górka (Łęczna) 4,0 2377
+ 7. Magdalena Merklejn (Szczecin) 4,0 2354
+ 8. Radosław Konca (Warszawa) 4,0 2337
+ 9. Jarosław Borowski (Bielsk Podlaski) 4,0 2265
+ 10. Beata Madej (Lublin) 4,0 2172
+
+ 40 uczestników, 6 rund 
+</pre></div><div class='autor'></div></div><div style='clear:both;'></div></div><div id='p_info' class='page'><br><p align='center'></p><br><br><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br>Zobacz, jak było na poprzednich turniejach:<br><a href='turniej.php?id=296'>I Otwarte Mistrzostwa Podhala</a><br><table id='szczegoly' class='ramkadolna'></table><br /><br /></div><div id='p_klasyfikacja' class='page'><pre>sędzia: Grzegorz Wiączkowski                                                                            Nie, 3 Lut 2002
+
+II Otwarte Mistrzostwa Podhala
+
+                                                                 VP
+MIEJSCE                                           p-ty    +/-  RAZEM
+---------------------------------------------------------------------
+  1 Szymon Zaleski         121 Poznań             2736           6.0
+  2 Mariusz Skrobosz       135 Warszawa           2656           5.0
+  3 Roman Sulima           100 Warszawa           2184           5.0
+  4 Tomasz Zwoliński       143 Warszawa           2505           4.0
+  5 Maciej Czupryniak      134 Milanówek          2468           4.0
+  6 Kamil Górka            128 Łęczna             2377           4.0
+  7 Magdalena Merklejn     117 Szczecin           2354           4.0
+  8 Radosław Konca         130 Warszawa           2337           4.0
+  9 Jarosław Borowski      128 Bielsk Podlaski    2265           4.0
+ 10 Beata Madej            108 Lublin             2172           4.0
+ 11 Roman Figiel           105 Zawichost          2167           4.0
+ 12 Zbigniew Wietecki      119 Gorzów Wielkop.    2095           4.0
+ 13 Leszek Nowak           140 Myślibórz          2044           4.0
+ 14 Mariusz Makuch         100 Zator              1964           4.0
+ 15 Beata Piotrowska       102 ŁÓdź               2261           3.0
+ 16 Aleksandra Merklejn    118 Szczecin           2243           3.0
+ 17 Kazio Merklejn         131 Szczecin           2188           3.0
+ 18 Lucyna Śniadach        111 Rumia              2188           3.0
+ 19 Stanisław Rydzik       131 Warszawa           2183           3.0
+ 20 Krzysztof Usakiewicz   119 Warszawa           2133           3.0
+ 21 Justyna Fugiel         113 Sandomierz         2066           3.0
+ 22 Małgorzata Sulejewska  100 Kraków             2046           3.0
+ 23 Michał Krzemień        100 Kraków             2032           3.0
+ 24 Filip Klar             109 Mielec             1969           3.0
+ 25 Krzysztof Kokot        100 Nowy Targ          1912           3.0
+ 26 Tomasz Figiel          100 Zawichost          1858           3.0
+ 27 Arkadiusz Jaworski     100 Tychy              2110           2.5
+ 28 Andrzej Kwiatkowski    117 Warszawa           2241           2.0
+ 29 Dariusz Banaszek       139 Warszawa           2125           2.0
+ 30 Marcin Mroziuk         136 Warszawa           2110           2.0
+ 31 Dawid Boczoń           100 Zakopane           2039           2.0
+ 32 Grzegorz Pukniel       104 Lublin             1974           2.0
+ 33 Grzegorz Matysiak      109 Kraków             1938           2.0
+ 34 Waldemar Czerwoniec    130 Warszawa           1928           2.0
+ 35 Andrzej Gostomski      100 Łódź               1873           2.0
+ 36 Ziemowit Pazda         102 Wrocław            1639           2.0
+ 37 Ewa Ciszewska          100 Katowice           2065           1.0
+ 38 Bożena Matysiak        101 Kraków             2008           1.0
+ 39 Piotr Madej            100 Lublin             1750           1.0
+ 40 Adam Sulejewski        100 Kraków             1435           0.0
+
+</pre></div><div id='p_hh' class='page'><pre>sędzia: Grzegorz Wiączkowski                                                                           Pon, 18 Lut 2002
+
+   1  Tomasz Zwoliński       143 Warszawa        
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1    1   20  Lucyna Śniadach        111   -  334:443    61
+   2   13   32  Piotr Madej            100   +  441:299   150
+   3    7   27  Beata Piotrowska       102   +  515:325   152
+   4    3   15  Zbigniew Wietecki      119   +  465:271   169
+   5    2    6  Maciej Czupryniak      134   +  387:312   184
+   6    1   13  Szymon Zaleski         121   -  363:367    71
+                                                --------------
+                                                 SUMA =   787 /  6 partii
+
+
+   2  Leszek Nowak           140 Myślibórz       
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1    2   21  Grzegorz Matysiak      109   +  353:340   159
+   2    9    4  Marcin Mroziuk         136   +  387:375   186
+   3    4   12  Jarosław Borowski      128   -  242:429    78
+   4    9   37  Małgorzata Sulejewska  100   +  316:314   150
+   5    6   15  Zbigniew Wietecki      119   +  434:321   169
+   6    4    6  Maciej Czupryniak      134   -  312:365    84
+                                                --------------
+                                                 SUMA =   826 /  6 partii
+
+
+   3  Dariusz Banaszek       139 Warszawa        
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1    3   22  Filip Klar             109   +  454:241   159
+   2    2   13  Szymon Zaleski         121   -  272:461    71
+   3    8   18  Magdalena Merklejn     117   -  323:409    67
+   4   12   17  Andrzej Kwiatkowski    117   +  491:382   167
+   5    8    8  Stanisław Rydzik       131   -  269:444    81
+   6   12    7  Kazio Merklejn         131   -  316:380    81
+                                                --------------
+                                                 SUMA =   626 /  6 partii
+
+
+   4  Marcin Mroziuk         136 Warszawa        
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1    4   23  Beata Madej            108   +  330:317   158
+   2    9    2  Leszek Nowak           140   -  375:387    90
+   3   10    8  Stanisław Rydzik       131   +  403:295   181
+   4    6   18  Magdalena Merklejn     117   -  386:422    67
+   5    9   20  Lucyna Śniadach        111   -  311:390    61
+   6   13   19  Justyna Fugiel         113   -  305:370    63
+                                                --------------
+                                                 SUMA =   620 /  6 partii
+
+
+   5  Mariusz Skrobosz       135 Warszawa        
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1    5   24  Roman Figiel           105   +  444:298   155
+   2    3   20  Lucyna Śniadach        111   +  438:383   161
+   3    1   13  Szymon Zaleski         121   -  308:530    71
+   4    5    7  Kazio Merklejn         131   +  516:311   181
+   5    3   18  Magdalena Merklejn     117   +  432:322   167
+   6    2   11  Kamil Górka            128   +  518:356   178
+                                                --------------
+                                                 SUMA =   913 /  6 partii
+
+
+   6  Maciej Czupryniak      134 Milanówek       
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1    6   25  Grzegorz Pukniel       104   +  427:248   154
+   2    4   18  Magdalena Merklejn     117   +  426:308   167
+   3    2    9  Radosław Konca         130   +  474:431   180
+   4    1   13  Szymon Zaleski         121   -  464:468    71
+   5    2    1  Tomasz Zwoliński       143   -  312:387    93
+   6    4    2  Leszek Nowak           140   +  365:312   190
+                                                --------------
+                                                 SUMA =   855 /  6 partii
+
+
+   7  Kazio Merklejn         131 Szczecin        
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1    7   26  Ziemowit Pazda         102   +  472:220   152
+   2    1   16  Aleksandra Merklejn    118   -  336:359    68
+   3    6   20  Lucyna Śniadach        111   +  367:280   161
+   4    5    5  Mariusz Skrobosz       135   -  311:516    85
+   5   10   14  Krzysztof Usakiewicz   119   -  322:405    69
+   6   12    3  Dariusz Banaszek       139   +  380:316   189
+                                                --------------
+                                                 SUMA =   724 /  6 partii
+
+
+   8  Stanisław Rydzik       131 Warszawa        
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1    8   27  Beata Piotrowska       102   +  415:280   152
+   2    5   11  Kamil Górka            128   -  293:400    78
+   3   10    4  Marcin Mroziuk         136   -  295:403    86
+   4   14   10  Waldemar Czerwoniec    130   +  492:240   180
+   5    8    3  Dariusz Banaszek       139   +  444:269   189
+   6    5    9  Radosław Konca         130   -  244:346    80
+                                                --------------
+                                                 SUMA =   765 /  6 partii
+
+
+   9  Radosław Konca         130 Warszawa        
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1    9   28  Bożena Matysiak        101   +  370:298   151
+   2    7   14  Krzysztof Usakiewicz   119   +  480:345   169
+   3    2    6  Maciej Czupryniak      134   -  431:474    84
+   4    4   16  Aleksandra Merklejn    118   -  320:324    68
+   5    7   39  Arkadiusz Jaworski     100   +  390:349   150
+   6    5    8  Stanisław Rydzik       131   +  346:244   181
+                                                --------------
+                                                 SUMA =   803 /  6 partii
+
+
+  10  Waldemar Czerwoniec    130 Warszawa        
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1   10   29  Ewa Ciszewska          100   +  395:360   150
+   2    6   12  Jarosław Borowski      128   -  319:363    78
+   3    9   14  Krzysztof Usakiewicz   119   -  297:375    69
+   4   14    8  Stanisław Rydzik       131   -  240:492    81
+   5   17   35  Michał Krzemień        100   -  340:397    50
+   6   19   40  Adam Sulejewski        100   +  337:290   150
+                                                --------------
+                                                 SUMA =   578 /  6 partii
+
+
+  11  Kamil Górka            128 Łęczna          
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1   11   30  Andrzej Gostomski      100   +  396:285   150
+   2    5    8  Stanisław Rydzik       131   +  400:293   181
+   3    3   16  Aleksandra Merklejn    118   +  383:372   168
+   4    2   12  Jarosław Borowski      128   -  363:410    78
+   5    4   24  Roman Figiel           105   +  479:323   155
+   6    2    5  Mariusz Skrobosz       135   -  356:518    85
+                                                --------------
+                                                 SUMA =   817 /  6 partii
+
+
+  12  Jarosław Borowski      128 Bielsk Podlaski 
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1   12   31  Krzysztof Kokot        100   +  387:233   150
+   2    6   10  Waldemar Czerwoniec    130   +  363:319   180
+   3    4    2  Leszek Nowak           140   +  429:242   190
+   4    2   11  Kamil Górka            128   +  410:363   178
+   5    1   13  Szymon Zaleski         121   -  388:465    71
+   6    3   33  Roman Sulima           100   -  288:317    50
+                                                --------------
+                                                 SUMA =   819 /  6 partii
+
+
+  13  Szymon Zaleski         121 Poznań          
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1   13   32  Piotr Madej            100   +  445:332   150
+   2    2    3  Dariusz Banaszek       139   +  461:272   189
+   3    1    5  Mariusz Skrobosz       135   +  530:308   185
+   4    1    6  Maciej Czupryniak      134   +  468:464   184
+   5    1   12  Jarosław Borowski      128   +  465:388   178
+   6    1    1  Tomasz Zwoliński       143   +  367:363   193
+                                                --------------
+                                                 SUMA =  1079 /  6 partii
+
+
+  14  Krzysztof Usakiewicz   119 Warszawa        
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1   14   33  Roman Sulima           100   +  372:337   150
+   2    7    9  Radosław Konca         130   -  345:480    80
+   3    9   10  Waldemar Czerwoniec    130   +  375:297   180
+   4    7   24  Roman Figiel           105   -  332:428    55
+   5   10    7  Kazio Merklejn         131   +  405:322   181
+   6    8   23  Beata Madej            108   -  304:397    58
+                                                --------------
+                                                 SUMA =   704 /  6 partii
+
+
+  15  Zbigniew Wietecki      119 Gorzów Wielkop. 
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1   15   34  Tomasz Figiel          100   +  358:280   150
+   2    8   38  Dawid Boczoń           100   +  372:331   150
+   3    5   39  Arkadiusz Jaworski     100   +  354:349   150
+   4    3    1  Tomasz Zwoliński       143   -  271:465    93
+   5    6    2  Leszek Nowak           140   -  321:434    90
+   6    9   22  Filip Klar             109   +  419:276   159
+                                                --------------
+                                                 SUMA =   792 /  6 partii
+
+
+  16  Aleksandra Merklejn    118 Szczecin        
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1   16   35  Michał Krzemień        100   +  463:279   150
+   2    1    7  Kazio Merklejn         131   +  359:336   181
+   3    3   11  Kamil Górka            128   -  372:383    78
+   4    4    9  Radosław Konca         130   +  324:320   180
+   5    5   33  Roman Sulima           100   -  376:406    50
+   6    6   18  Magdalena Merklejn     117   -  349:451    67
+                                                --------------
+                                                 SUMA =   706 /  6 partii
+
+
+  17  Andrzej Kwiatkowski    117 Warszawa        
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1   17   36  Mariusz Makuch         100   -  270:377    50
+   2   11   29  Ewa Ciszewska          100   +  386:325   150
+   3   12   19  Justyna Fugiel         113   -  404:412    63
+   4   12    3  Dariusz Banaszek       139   -  382:491    89
+   5   15   27  Beata Piotrowska       102   -  387:445    52
+   6   17   28  Bożena Matysiak        101   +  412:332   151
+                                                --------------
+                                                 SUMA =   555 /  6 partii
+
+
+  18  Magdalena Merklejn     117 Szczecin        
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1   18   37  Małgorzata Sulejewska  100   +  442:289   150
+   2    4    6  Maciej Czupryniak      134   -  308:426    84
+   3    8    3  Dariusz Banaszek       139   +  409:323   189
+   4    6    4  Marcin Mroziuk         136   +  422:386   186
+   5    3    5  Mariusz Skrobosz       135   -  322:432    85
+   6    6   16  Aleksandra Merklejn    118   +  451:349   168
+                                                --------------
+                                                 SUMA =   862 /  6 partii
+
+
+  19  Justyna Fugiel         113 Sandomierz      
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1   19   38  Dawid Boczoń           100   -  265:357    50
+   2   18   25  Grzegorz Pukniel       104   +  398:304   154
+   3   12   17  Andrzej Kwiatkowski    117   +  412:404   167
+   4    8   33  Roman Sulima           100   -  309:378    50
+   5   12   23  Beata Madej            108   -  312:413    58
+   6   13    4  Marcin Mroziuk         136   +  370:305   186
+                                                --------------
+                                                 SUMA =   665 /  6 partii
+
+
+  20  Lucyna Śniadach        111 Rumia           
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1    1    1  Tomasz Zwoliński       143   +  443:334   193
+   2    3    5  Mariusz Skrobosz       135   -  383:438    85
+   3    6    7  Kazio Merklejn         131   -  280:367    81
+   4   11   27  Beata Piotrowska       102   +  388:315   152
+   5    9    4  Marcin Mroziuk         136   +  390:311   186
+   6    7   24  Roman Figiel           105   -  304:316    55
+                                                --------------
+                                                 SUMA =   752 /  6 partii
+
+
+  21  Grzegorz Matysiak      109 Kraków          
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1    2    2  Leszek Nowak           140   -  340:353    90
+   2   12   33  Roman Sulima           100   -  331:346    50
+   3   16   29  Ewa Ciszewska          100   +  346:306   150
+   4   13   38  Dawid Boczoń           100   -  331:357    50
+   5   16   28  Bożena Matysiak        101   +  321:305   151
+   6   15   37  Małgorzata Sulejewska  100   -  269:440    50
+                                                --------------
+                                                 SUMA =   541 /  6 partii
+
+
+  22  Filip Klar             109 Mielec          
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1    3    3  Dariusz Banaszek       139   -  241:454    89
+   2   19   31  Krzysztof Kokot        100   +  312:282   150
+   3   15   34  Tomasz Figiel          100   +  425:303   150
+   4   10   39  Arkadiusz Jaworski     100   -  394:404    50
+   5   11   38  Dawid Boczoń           100   +  321:305   150
+   6    9   15  Zbigniew Wietecki      119   -  276:419    69
+                                                --------------
+                                                 SUMA =   658 /  6 partii
+
+
+  23  Beata Madej            108 Lublin          
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1    4    4  Marcin Mroziuk         136   -  317:330    86
+   2   14   24  Roman Figiel           105   -  305:337    55
+   3   18   30  Andrzej Gostomski      100   +  356:304   150
+   4   15   28  Bożena Matysiak        101   +  384:374   151
+   5   12   19  Justyna Fugiel         113   +  413:312   163
+   6    8   14  Krzysztof Usakiewicz   119   +  397:304   169
+                                                --------------
+                                                 SUMA =   774 /  6 partii
+
+
+  24  Roman Figiel           105 Zawichost       
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1    5    5  Mariusz Skrobosz       135   -  298:444    85
+   2   14   23  Beata Madej            108   +  337:305   158
+   3   14   26  Ziemowit Pazda         102   +  465:167   152
+   4    7   14  Krzysztof Usakiewicz   119   +  428:332   169
+   5    4   11  Kamil Górka            128   -  323:479    78
+   6    7   20  Lucyna Śniadach        111   +  316:304   161
+                                                --------------
+                                                 SUMA =   803 /  6 partii
+
+
+  25  Grzegorz Pukniel       104 Lublin          
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1    6    6  Maciej Czupryniak      134   -  248:427    84
+   2   18   19  Justyna Fugiel         113   -  304:398    63
+   3   19   35  Michał Krzemień        100   +  350:336   150
+   4   16   34  Tomasz Figiel          100   -  308:352    50
+   5   18   31  Krzysztof Kokot        100   -  336:350    50
+   6   18   29  Ewa Ciszewska          100   +  428:329   150
+                                                --------------
+                                                 SUMA =   547 /  6 partii
+
+
+  26  Ziemowit Pazda         102 Wrocław         
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1    7    7  Kazio Merklejn         131   -  220:472    81
+   2   20   40  Adam Sulejewski        100   +  387:294   150
+   3   14   24  Roman Figiel           105   -  167:465    55
+   4   18   29  Ewa Ciszewska          100   +  412:377   150
+   5   14   36  Mariusz Makuch         100   -  272:414    50
+   6   16   31  Krzysztof Kokot        100   -  181:365    50
+                                                --------------
+                                                 SUMA =   536 /  6 partii
+
+
+  27  Beata Piotrowska       102 ŁÓdź            
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1    8    8  Stanisław Rydzik       131   -  280:415    81
+   2   16   30  Andrzej Gostomski      100   +  481:298   150
+   3    7    1  Tomasz Zwoliński       143   -  325:515    93
+   4   11   20  Lucyna Śniadach        111   -  315:388    61
+   5   15   17  Andrzej Kwiatkowski    117   +  445:387   167
+   6   11   39  Arkadiusz Jaworski     100   +  415:305   150
+                                                --------------
+                                                 SUMA =   702 /  6 partii
+
+
+  28  Bożena Matysiak        101 Kraków          
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1    9    9  Radosław Konca         130   -  298:370    80
+   2   15   37  Małgorzata Sulejewska  100   -  332:357    50
+   3   17   32  Piotr Madej            100   +  367:250   150
+   4   15   23  Beata Madej            108   -  374:384    58
+   5   16   21  Grzegorz Matysiak      109   -  305:321    59
+   6   17   17  Andrzej Kwiatkowski    117   -  332:412    67
+                                                --------------
+                                                 SUMA =   464 /  6 partii
+
+
+  29  Ewa Ciszewska          100 Katowice        
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1   10   10  Waldemar Czerwoniec    130   -  360:395    80
+   2   11   17  Andrzej Kwiatkowski    117   -  325:386    67
+   3   16   21  Grzegorz Matysiak      109   -  306:346    59
+   4   18   26  Ziemowit Pazda         102   -  377:412    52
+   5   19   32  Piotr Madej            100   +  368:245   150
+   6   18   25  Grzegorz Pukniel       104   -  329:428    54
+                                                --------------
+                                                 SUMA =   462 /  6 partii
+
+
+  30  Andrzej Gostomski      100 Łódź            
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1   11   11  Kamil Górka            128   -  285:396    78
+   2   16   27  Beata Piotrowska       102   -  298:481    52
+   3   18   23  Beata Madej            108   -  304:356    58
+   4   19   35  Michał Krzemień        100   -  266:364    50
+   5   20   40  Adam Sulejewski        100   +  368:277   150
+   6   20   32  Piotr Madej            100   +  352:316   150
+                                                --------------
+                                                 SUMA =   538 /  6 partii
+
+
+  31  Krzysztof Kokot        100 Nowy Targ       
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1   12   12  Jarosław Borowski      128   -  233:387    78
+   2   19   22  Filip Klar             109   -  282:312    59
+   3   20   40  Adam Sulejewski        100   +  342:292   150
+   4   17   36  Mariusz Makuch         100   -  340:343    50
+   5   18   25  Grzegorz Pukniel       104   +  350:336   154
+   6   16   26  Ziemowit Pazda         102   +  365:181   152
+                                                --------------
+                                                 SUMA =   643 /  6 partii
+
+
+  32  Piotr Madej            100 Lublin          
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1   13   13  Szymon Zaleski         121   -  332:445    71
+   2   13    1  Tomasz Zwoliński       143   -  299:441    93
+   3   17   28  Bożena Matysiak        101   -  250:367    51
+   4   20   40  Adam Sulejewski        100   +  308:282   150
+   5   19   29  Ewa Ciszewska          100   -  245:368    50
+   6   20   30  Andrzej Gostomski      100   -  316:352    50
+                                                --------------
+                                                 SUMA =   465 /  6 partii
+
+
+  33  Roman Sulima           100 Warszawa        
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1   14   14  Krzysztof Usakiewicz   119   -  337:372    69
+   2   12   21  Grzegorz Matysiak      109   +  346:331   159
+   3   11   38  Dawid Boczoń           100   +  400:340   150
+   4    8   19  Justyna Fugiel         113   +  378:309   163
+   5    5   16  Aleksandra Merklejn    118   +  406:376   168
+   6    3   12  Jarosław Borowski      128   +  317:288   178
+                                                --------------
+                                                 SUMA =   887 /  6 partii
+
+
+  34  Tomasz Figiel          100 Zawichost       
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1   15   15  Zbigniew Wietecki      119   -  280:358    69
+   2   17   35  Michał Krzemień        100   +  319:286   150
+   3   15   22  Filip Klar             109   -  303:425    59
+   4   16   25  Grzegorz Pukniel       104   +  352:308   154
+   5   13   37  Małgorzata Sulejewska  100   +  326:286   150
+   6   10   36  Mariusz Makuch         100   -  278:325    50
+                                                --------------
+                                                 SUMA =   632 /  6 partii
+
+
+  35  Michał Krzemień        100 Kraków          
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1   16   16  Aleksandra Merklejn    118   -  279:463    68
+   2   17   34  Tomasz Figiel          100   -  286:319    50
+   3   19   25  Grzegorz Pukniel       104   -  336:350    54
+   4   19   30  Andrzej Gostomski      100   +  364:266   150
+   5   17   10  Waldemar Czerwoniec    130   +  397:340   180
+   6   14   38  Dawid Boczoń           100   +  370:349   150
+                                                --------------
+                                                 SUMA =   652 /  6 partii
+
+
+  36  Mariusz Makuch         100 Zator           
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1   17   17  Andrzej Kwiatkowski    117   +  377:270   167
+   2   10   39  Arkadiusz Jaworski     100   -  263:403    50
+   3   13   37  Małgorzata Sulejewska  100   -  242:360    50
+   4   17   31  Krzysztof Kokot        100   +  343:340   150
+   5   14   26  Ziemowit Pazda         102   +  414:272   152
+   6   10   34  Tomasz Figiel          100   +  325:278   150
+                                                --------------
+                                                 SUMA =   719 /  6 partii
+
+
+  37  Małgorzata Sulejewska  100 Kraków          
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1   18   18  Magdalena Merklejn     117   -  289:442    67
+   2   15   28  Bożena Matysiak        101   +  357:332   151
+   3   13   36  Mariusz Makuch         100   +  360:242   150
+   4    9    2  Leszek Nowak           140   -  314:316    90
+   5   13   34  Tomasz Figiel          100   -  286:326    50
+   6   15   21  Grzegorz Matysiak      109   +  440:269   159
+                                                --------------
+                                                 SUMA =   667 /  6 partii
+
+
+  38  Dawid Boczoń           100 Zakopane        
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1   19   19  Justyna Fugiel         113   +  357:265   163
+   2    8   15  Zbigniew Wietecki      119   -  331:372    69
+   3   11   33  Roman Sulima           100   -  340:400    50
+   4   13   21  Grzegorz Matysiak      109   +  357:331   159
+   5   11   22  Filip Klar             109   -  305:321    59
+   6   14   35  Michał Krzemień        100   -  349:370    50
+                                                --------------
+                                                 SUMA =   550 /  6 partii
+
+
+  39  Arkadiusz Jaworski     100 Tychy           
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1            PAUZA
+   2   10   36  Mariusz Makuch         100   +  403:263   150
+   3    5   15  Zbigniew Wietecki      119   -  349:354    69
+   4   10   22  Filip Klar             109   +  404:394   159
+   5    7    9  Radosław Konca         130   -  349:390    80
+   6   11   27  Beata Piotrowska       102   -  305:415    52
+                                                --------------
+                                                 SUMA =   510 /  5 partii
+
+
+  40  Adam Sulejewski        100 Kraków          
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1            PAUZA
+   2   20   26  Ziemowit Pazda         102   -  294:387    52
+   3   20   31  Krzysztof Kokot        100   -  292:342    50
+   4   20   32  Piotr Madej            100   -  282:308    50
+   5   20   30  Andrzej Gostomski      100   -  277:368    50
+   6   19   10  Waldemar Czerwoniec    130   -  290:337    80
+                                                --------------
+                                                 SUMA =   282 /  5 partii
+
+
+   1  Tomasz Zwoliński       143 Warszawa        
+
+RUNDA STÓŁ      PRZECIWNIK             RNK       WYNIK   SKALP
+--------------------------------------------------------------
+   1    1   20  Lucyna Śniadach        111   -  334:443    61
+   2   13   32  Piotr Madej            100   +  441:299   150
+   3    7   27  Beata Piotrowska       102   +  515:325   152
+   4    3   15  Zbigniew Wietecki      119   +  465:271   169
+   5    2    6  Maciej Czupryniak      134   +  387:312   184
+   6    1   13  Szymon Zaleski         121   -  363:367    71
+                                                --------------
+                                                 SUMA =   787 /  6 partii
+
+
+</pre></div><div id='p_rundy' class='page'><pre></pre></div><div id='p_ranking' class='page'><pre></pre></div><div id='p_przebieg' class='page'>
+
+    </div><div style="clear:both;width:100%;" class="alignright">
+
+<script>
+<!--
+if ((document.getElementById("content").offsetHeight + document.getElementById("top").offsetHeight) > screen.height)
+    document.write("<br /><br /><a href='#top'>do góry</a>");
+-->
+</script>
+
+</div>
+</div>
+
+<div id="bottom">
+<ul id="bottomlinks">
+<div class='onleft'>
+ Osób on-line: 55</div>
+    <li><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+    <li><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+    <li><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+    <li><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+    <li><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+    <li><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+</ul>
+    SCRABBLE® jest zastrzeżonym znakiem towarowym J.W. Spears &amp; Sons&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://www.pfs.org.pl/prawaautorskie.php">© Prawa autorskie</a>
+</div>
+</body>
+</html>

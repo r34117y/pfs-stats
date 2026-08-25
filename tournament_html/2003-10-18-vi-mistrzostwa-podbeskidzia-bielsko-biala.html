@@ -1,0 +1,2281 @@
+
+<html>
+<head>
+    <title>Polska Federacja Scrabble :: VI Mistrzostwa Podbeskidzia</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="files/img/favicon.ico" />
+    <link rel="stylesheet" href="files/css/style.css" type="text/css" />
+	<link rel="stylesheet" href="files/css/style-index.css" type="text/css" />
+    <!--[if IE]><link rel="stylesheet" type="text/css" href="files/css/styleie.css" /><![endif]-->
+    <!--[if lt IE 7.]><script defer type="text/javascript" src="files/js/pngfix.js"></script><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="files/js/minmax.js"></script><![endif]-->
+    <script type="text/javascript" src="files/js/jquery.js"></script>
+    <script type="text/javascript" src="files/js/jquery-bp.js"></script>
+    <script type="text/javascript" src="files/js/java.js"></script>
+    <script>jSubmenu ("turnieje","kalendarz");jKalendarz();</script>
+    <script>
+    var url, page;
+
+    page = 'info';
+    url  = document.location.toString();
+
+    if (url.match ('#')) {
+      page = url.split ('#')[1];
+      if ($.inArray (page, [ 'info', 'relacja', 'klasyfikacja', 'hh', 'rundy', 'ranking', 'przebieg' ]) == -1)
+        page = 'info';
+    }
+
+    $(document).ready(function(){
+        $('a#listaucz').bind('click', function(event){
+            $('div#lista').toggle();
+            event.preventDefault();
+        }).toggle(function() { $(this).text('schowaj listę uczestników'); }, function() { $(this).text("pokaż listę uczestników"); });
+        $('div#lista table tr:last td').css({"border-bottom" : "none"});
+
+        $("a.przycisk").click (function (e) {
+            if ($(this).attr ('href') !== '#')
+                return true;
+
+            e.preventDefault ();
+
+            id       = this.id;
+            this.id += 'tmp';
+            window.location.hash = id;
+            this.id  = id;
+
+            $(".page").hide ();
+            $(".page#p_" + id).show ();
+
+            $("a.przycisk").removeClass ('active');
+            $(this).addClass ('active');
+
+            return false;
+        });
+
+        $("a.przycisk#" + page).click ();
+        $('html, body').animate ({ scrollTop: 0 }, 0);
+    });
+    </script>
+  <style type="text/css">
+    .page {
+        display: none;
+    }
+    #szczegoly{
+        width: 100%;
+        border-spacing: 0;
+        margin-top: 30px;
+        text-align: left;
+        font-size: inherit;
+    }
+    #szczegoly td{
+        padding: 10px 20px 10px 0;
+        vertical-align: top;
+    }
+    #szczegoly td:first-child{
+        font-weight: bold;
+        width: 160px;
+    }
+    div#lista{
+        display:none;
+        margin-top: 15px;
+    }
+    div#lista table{
+        margin-top: 10px;
+        text-align: left;
+        font-size: inherit;
+    }
+    div#lista table td{
+        padding: 3px 8px;
+        border-bottom: 1px dashed #1576AE;
+    }
+    div#lista table th{
+        padding: 0px 5px 10px 5px;
+    }
+    div#lista table td.ptaszek{
+        text-align: center;
+        background: url('files/img/tick.png') no-repeat center center;
+    }
+    div#lista table th{
+        white-space: nowrap;
+        width: auto;
+    }
+    div#lista table td:first-child, div#lista table th:first-child{
+        text-align:right;
+        width: auto;
+    }
+    </style>
+</head>
+
+<body>
+
+<script type="text/javascript">setMenu();</script>
+
+<div id="top" onclick="location.href='https://www.pfs.org.pl'">
+</div>
+<div id="menu">
+
+    <div id="m_glowna">
+        <div class="tab"><a href="https://www.pfs.org.pl/index.php"></a></div>
+
+        <ul>
+            <li class="sublink" id="aktualnosci"><a href="https://www.pfs.org.pl">Aktualności</a></li>
+            <li class="sublink" id="nowy"><a href="https://www.pfs.org.pl/dlanowych.php">Jestem tu nowy</a></li>
+            <li class="sublink" id="anagramator"><a href="https://www.pfs.org.pl/osps_online.php?main=1">Słownik online</a></li>
+            <li class="sublink" id="siodemka"><a href="https://www.pfs.org.pl/siodemka.php?main=1">Siódemka tygodnia</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+            <li class="sublink" id="dlasponsorow"><a href="https://www.pfs.org.pl/dlasponsorow.php">Dla sponsorów</a></li>
+            <li class="sublink" id="kontakt"><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+        </ul>
+    </div>
+    <div id="m_turnieje">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kalendarz.php"></a></div>
+        <ul>
+            <li class="sublink" id="kalendarz"><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+            <li class="sublink" id="regulaminy"><a href="https://www.pfs.org.pl/regulaminy.php">Regulaminy</a></li>
+            <li class="sublink" id="sedziowie"><a href="https://www.pfs.org.pl/sedziowie.php">Sędziowie</a></li>
+            <li class="sublink" id="gp"><a href="https://www.pfs.org.pl/gp2026.php">Grand Prix</a></li>
+<!--            <li class="sublink" id="mr"><a href="https://www.pfs.org.pl/mr2020.php">Mistrzostwa Regionów</a></li>-->
+            <li class="sublink" id="archiwum"><a href="https://www.pfs.org.pl/archiwum.php">Historia</a></li>
+            <li class="sublink" id="galeria"><a href="https://www.pfs.org.pl/galeria.php">Zdjęcia</a></li>
+            <li class="sublink" id="rekordy"><a href="https://www.pfs.org.pl/rekordy.php">Rekordy</a></li>
+        </ul>
+    </div>
+    <div id="m_pfs">
+        <div  class="tab"><a href="https://www.pfs.org.pl/opfs.php"></a></div>
+        <ul>
+            <li class="sublink" id="opfs"><a href="https://www.pfs.org.pl/opfs.php">O PFS</a></li>
+            <li class="sublink" id="jakprzystapic"><a href="https://www.pfs.org.pl/jakprzystapic.php">Jak przystąpić</a></li>
+            <li class="sublink" id="dlaczlonkow"><a href="https://www.pfs.org.pl/dlaczlonkow.php">Dla członków</a></li>
+            <li class="sublink" id="wladze"><a href="https://www.pfs.org.pl/wladze.php">Władze</a></li>
+            <li class="sublink" id="komisje"><a href="https://www.pfs.org.pl/komisje.php">Komisje</a></li>
+            <li class="sublink" id="statut"><a href="https://www.pfs.org.pl/statut.php">Statut</a></li>
+            <li class="sublink" id="uchwaly"><a href="https://www.pfs.org.pl/uchwaly.php">Uchwały</a></li>
+            <li class="sublink" id="honorowi"><a href="https://www.pfs.org.pl/honorowi.php">Honorowi członkowie</a></li>
+            <li class="sublink" id="finanse"><a href="https://www.pfs.org.pl/finanse.php">Finanse</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabble">
+        <div  class="tab"><a href="https://www.pfs.org.pl/osps_online.php?desktop=1"></a></div>
+        <ul>
+            <li class="sublink" id="osps_online"><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+            <li class="sublink" id="zds"><a href="https://www.pfs.org.pl/zds2.php">ZDS</a></li>
+            <li class="sublink" id="osps"><a href="https://www.pfs.org.pl/osps.php">OSPS</a></li>
+            <li class="sublink" id="aktualizacje"><a href="https://www.pfs.org.pl/osps_aktualizacje.php">Aktualizacje</a></li>
+            <li class="sublink" id="dwojki"><a href="https://www.pfs.org.pl/dwojki.php">2-literówki</a></li>
+            <li class="sublink" id="trojki"><a href="https://www.pfs.org.pl/trojki.php">3-literówki</a></li>
+            <li class="sublink" id="siodemkat"><a href="https://www.pfs.org.pl/siodemka.php">Siódemka tygodnia</a></li>
+            <li class="sublink" id="slowneroznosci"><a href="https://www.pfs.org.pl/slowneroznosci.php">Słowne różności</a></li>
+        </ul>
+    </div>
+    <div id="m_ranking">
+        <div  class="tab"><a href="https://www.pfs.org.pl/ranking.php"></a></div>
+        <ul>
+            <li class="sublink" id="aktranking"><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+            <li class="sublink" id="medale"><a href="https://www.pfs.org.pl/medale.php">Klasyfikacja medalowa</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabblisci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/mistrzowiepolski.php"></a></div>
+        <ul>
+            <li class="sublink" id="mistrzowiepolski"><a href="https://www.pfs.org.pl/mistrzowiepolski.php">Mistrzowie Polski</a></li>
+            <li class="sublink" id="zdobywcypp"><a href="https://www.pfs.org.pl/zdobywcypp.php">Zdobywcy Pucharu Polski</a></li>
+            <li class="sublink" id="zwyciezcygp"><a href="https://www.pfs.org.pl/zwyciezcygp.php">Zwycięzcy Grand Prix</a></li>
+            <li class="sublink" id="liderzyrankingu"><a href="https://www.pfs.org.pl/liderzyrankingu.php">Liderzy rankingu</a></li>
+            <li class="sublink" id="zwyciezcylemans"><a href="https://www.pfs.org.pl/zwyciezcylemans.php">Zwycięzcy 24h Le Mans</a></li>
+            <li class="sublink" id="zwyciezcykmp"><a href="https://www.pfs.org.pl/zwyciezcykmp.php">KMP</a>
+        </ul>
+    </div>
+    <div id="m_kluby">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kluby.php"></a></div>
+        <ul>
+            <li class="sublink" id="rejestrklubow"><a href="https://www.pfs.org.pl/kluby.php">Rejestr klubów</a></li>
+            <li class="sublink" id="kmp"><a href="https://www.pfs.org.pl/kmp.php">KMP</a></li>
+            <li class="sublink" id="wiescizklubow"><a href="https://www.pfs.org.pl/wiescizklubow.php">Wieści z klubów</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/about.php">Statystyki klubowe</a></li>
+        </ul>
+    </div>
+    <div id="m_roznosci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/historia.php"></a></div>
+        <ul>
+            <li class="sublink" id="historia"><a href="https://www.pfs.org.pl/historia.php">Historia</a></li>
+            <li class="sublink" id="odmiany"><a href="https://www.pfs.org.pl/odmiany.php">Odmiany</a></li>
+            <li class="sublink" id="anegdoty"><a href="https://www.pfs.org.pl/anegdoty.php">Anegdoty</a></li>
+            <li class="sublink" id="scrabblealia"><a href="https://www.pfs.org.pl/scrabblealia.php">Scrabblealia</a></li>
+            <li class="sublink" id="scrabblenet"><a href="https://www.pfs.org.pl/scrabblenet.php">Scrabble w internecie</a></li>
+            <li class="sublink" id="programy"><a href="https://www.pfs.org.pl/programy.php">Programy</a></li>
+            <li class="sublink" id="download"><a href="https://www.pfs.org.pl/download.php">Do pobrania</a></li>
+            <li class="sublink" id="ksiazki"><a href="https://www.pfs.org.pl/ksiazki.php">Książki</a></li>
+            <li class="sublink" id="slowniczek"><a href="https://www.pfs.org.pl/slowniczek.php">Słowniczek</a></li>
+        </ul>
+    </div>
+    <div id="m_english">
+        <div  class="tab"><a href="https://www.pfs.org.pl/english.php"></a></div>
+        <ul>
+            <li class="sublink" id="about"><a href="https://www.pfs.org.pl/english.php">About Polish Scrabble</a></li>
+            <li class="sublink" id="news"><a href="https://www.pfs.org.pl/en_news.php">News</a></li>
+            <li class="sublink" id="bartek"><a href="https://www.pfs.org.pl/bartek.php">Bartek w Johor Bahru</a></li>
+            <li class="sublink" id="franko"><a href="https://www.pfs.org.pl/franko.php">Scrabble frankofońskie</a></li>
+        </ul>
+    </div>
+</div>
+
+<div id="submenu"></div>
+<div id="content">
+<div id='nextTours'>
+		<div class='nextTour' onclick='location.href="turniej.php?id=1321"'>
+			<div class='karteczka small1'>
+				<span class='miasto'>Kraków</span><span class='dzien'><span class='big'>11</span><br />października</span></div>
+			<div class='kartka big1'>
+				<span class='miasto'>Kraków</span>
+				<span class='dzien'><b>11-12 października</b></span>
+				<span class='nazwaturnieju'>I Mistrzostwa Krakowskiego Klubu Scrabble "Ghost"</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=222"'>
+			<div class='karteczka small2'>
+				<span class='miasto'>Bielsko-Biała</span><span class='dzien'><span class='big'>18</span><br />października</span></div>
+			<div class='kartka big2'>
+				<span class='miasto'>Bielsko-Biała</span>
+				<span class='dzien'><b>18-19 października</b></span>
+				<span class='nazwaturnieju'>VI Mistrzostwa Podbeskidzia</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=221"'>
+			<div class='karteczka small3'>
+				<span class='miasto'>Łódź</span><span class='dzien'><span class='big'> 8</span><br />listopada</span></div>
+			<div class='kartka big3'>
+				<span class='miasto'>Łódź</span>
+				<span class='dzien'><b> 8- 9 listopada</b></span>
+				<span class='nazwaturnieju'>IX Mistrzostwa Łodzi</span><span class='gp'>Grand&nbsp;Prix&nbsp;2003</span></div>
+		</div></div><div class='naglowekrelacji'><span class='tytul'>VI Mistrzostwa Podbeskidzia<span class='nazwa'>18 - 19 października 2003 —  VI Mistrzostwa Podbeskidzia</span></span><a href='#' id='info' class='przycisk'>Informacje</a><a href='#' id='relacja' class='przycisk'>Relacja</a><a href='#' id='klasyfikacja' class='przycisk'>Wyniki</a><a href='#' id='hh' class='przycisk'>HH</a><a href='#' id='ranking' class='przycisk'>Ranking</a><div class='galleries'><a href='http://picasaweb.google.com/111288975904311020713/BielskoBiaA2003#'></a> <img src='files/img/gallery.png' style='visibility:hidden;' alt='galeria' /></div></div><h1 style='color:black; margin-top:0px; margin-bottom:30px; padding: 0px'>VI Mistrzostwa Podbeskidzia<span>Bielsko-Biała, 18 - 19 października 2003</span></h1><div id='p_relacja' class='page'><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><div class='relacja' style='clear:both;'><div><pre>
+1 Justyna Fugiel Sandomierz 10.0 4713
+2 Tomasz Zwoliński Warszawa 9.0 4979
+3 Krzysztof Mówka Toruń 9.0 4789 
+4 Mariusz Skrobosz Warszawa 9.0 4721 
+5 Andrzej Rechowicz Katowice 8.0 4952 
+6 Karol Wyrębkiewicz Łódź 8.0 4930 
+7 Mariusz Wrześniewski Warszawa 8.0 4851 
+8 Kamil Górka Łęczna 8.0 4828 
+9 Stanisław Ochot Katowice 8.0 4667 
+10 Michał Waszkiewicz Warszawa 8.0 4641 
+
+61 uczestników, 12 rund
+</pre></div><div class='autor'></div></div><div style='clear:both;'></div></div><div id='p_info' class='page'><br><p align='center'></p><br><br><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br>Zobacz, jak było na poprzednich turniejach:<br><a href='turniej.php?id=253'>V Mistrzostwa Podbeskidzia</a><br><a href='turniej.php?id=281'>IV Mistrzostwa Podbeskidzia</a><br><a href='turniej.php?id=304'>III Mistrzostwa Podbeskidzia</a><br><table id='szczegoly' class='ramkadolna'></table><br /><br /></div><div id='p_klasyfikacja' class='page'><pre>Wyniki turnieju VI Mistrzostwa Podbeskidzia
+
+Lp. Imię            Nazwisko             Miasto               Ranking  Duże pkt Małe pkt Skalpy   Różn. MP
+--- --------------- -------------------- -------------------- -------- -------- -------- -------- --------
+  1 Justyna         Fugiel               Sandomierz             127.02     10.0     4713     1880      867
+  2 Tomasz          Zwoliński            Warszawa               142.25      9.0     4979     1741      858
+  3 Krzysztof       Mówka                Toruń                  128.47      9.0     4789     1761      474
+  4 Mariusz         Skrobosz             Warszawa               142.43      9.0     4721     1770      507
+  5 Andrzej         Rechowicz            Katowice               125.95      8.0     4952     1600      708
+  6 Karol           Wyrębkiewicz         Łódź                   136.42      8.0     4930     1599      441
+  7 Mariusz         Wrześniewski         Warszawa               136.12      8.0     4851     1637      577
+  8 Kamil           Górka                Łęczna                 135.64      8.0     4828     1543      745
+  9 Stanisław       Ochot                Katowice               123.44      8.0     4667     1641      373
+ 10 Michał          Waszkiewicz          Warszawa               110.35      8.0     4641     1658      426
+ 11 Jerzy           Matyasik             Kraków                 117.50      8.0     4576     1547      378
+ 12 Kazio           Merklejn             Szczecin               134.83      7.0     4897     1448      746
+ 13 Dawid           Pikul                Poznań                 128.41      7.0     4715     1428      433
+ 14 Stanisław       Rydzik               Warszawa               135.95      7.0     4659     1489      453
+ 15 Anna            Kowalska-Demczyszyn  Bielsko Biała          120.20      7.0     4604     1477      201
+ 16 Grzegorz        Wilk                 Kraków                 100.00      7.0     4583     1510      185
+ 17 Jarosław        Puchalski            Łódź                   123.36      7.0     4574     1575      232
+ 18 Radosław        Konca                Warszawa               132.39      7.0     4500     1442      519
+ 19 Iwona           Baran                Kraków                 103.57      7.0     4472     1613      164
+ 20 Sławomir        Kucia                Kraków                 120.02      7.0     4469     1439      195
+ 21 Robert          Soszka               Warszawa               110.33      7.0     4279     1490       45
+ 22 Krzysztof       Pypno                Gliwice                123.44      7.0     4272     1521       -4
+ 23 Maciej          Śliwa                Zabrze                 105.66      7.0     4073     1469     -125
+ 24 Andrzej         Rakoczy              Kraków                 109.08      6.0     4731     1297      636
+ 25 Ewa             Ciszewska            Katowice               107.56      6.0     4641     1442      195
+ 26 Joanna          Stępień              Katowice               127.23      6.0     4465     1388     -123
+ 27 Paweł           Jackowski            Warszawa               124.30      6.0     4364     1410      -91
+ 28 Anna            Królak               Warszawa               101.00      6.0     4290     1362      242
+ 29 Paweł           Jędryka              Tarnów                 100.00      6.0     4282     1317      -45
+ 30 Marcin          Skowron              Zabrze                 100.00      6.0     4230     1325      198
+ 31 Krzysztof       Jaworski             Warszawa               102.30      6.0     4226     1320     -166
+ 32 Stefan          Dawidson             Częstochowa            110.25      6.0     4151     1231      264
+ 33 Leszek          Stecuła              Bytom                  108.10      6.0     4078     1352     -143
+ 34 Katarzyna       Żuławska             Katowice               109.42      6.0     4066     1309     -177
+ 35 Mariusz         Makuch               Zator                  100.00      6.0     3987     1321     -153
+ 36 Renata          Kowalska             Bielsko Biała          106.93      5.0     4302     1282     -119
+ 37 Paweł           Frynia               Konstantynów Łódzki    107.69      5.0     4299     1240     -213
+ 38 Jerzy           Luter                Bytom                  105.39      5.0     4203     1242     -305
+ 39 Bartosz         Orłowski             Bytom                  100.00      5.0     4121     1201     -222
+ 40 Arkadiusz       Biegun               Kraków                 100.00      5.0     4035     1231       31
+ 41 Leokadia        Litwinowicz          Gliwice                100.00      5.0     4008     1170     -141
+ 42 Joanna          Brychcy              Katowice               100.00      5.0     3886     1186     -105
+ 43 Sylwester       Gryz                 Zabrze                 100.00      5.0     3878     1167     -593
+ 44 Anna            Niedzielko           Szczecin               100.00      5.0     3804     1161     -321
+ 45 Magdalena       Ochot                Katowice               100.00      5.0     3725     1222     -260
+ 46 Teresa          Zalewska             Racibórz               100.00      4.5     3617     1012     -202
+ 47 Adam            Zalewski             Racibórz               100.00      4.5     3444     1014     -425
+ 48 Marcin          Królak               Warszawa               100.00      4.0     3878     1132     -470
+ 49 Krzysztof       Kokot                Nowy Targ              100.00      4.0     3761     1066     -432
+ 50 Paweł           Ochot                Katowice               100.00      4.0     2032      666      453
+ 51 Krzysztof       Kruk                 Łódź                   100.00      3.5     3717      887      101
+ 52 Jacek           Stolarczyk           Zator                  100.00      3.5     3191      893     -631
+ 53 Stanisław       Gasik                Warszawa               118.99      3.0     2570      656      296
+ 54 Agnieszka       Jaśkiewicz           Jastrzębie Zdrój       100.00      3.0     1738      550      225
+ 55 Maciej          Stolarczyk           Zator                  100.00      2.5     3115      769     -633
+ 56 Adam            Strzelczyk           Częstochowa            100.00      2.5     2114      586     -509
+ 57 Adam            Jurkowski            Knurów                 106.21      2.0     2629      645       83
+ 58 Piotr           Mossakowski          Chorzów                100.00      2.0     2303      652     -549
+ 59 Janusz          Czerwik              Zator                  100.00      1.5     2722      483     -941
+ 60 Marek           Urbańczyk            Bielsko Biała          100.00      1.0     1894      353     -483
+ 61 Jolanta         Kruk                 Łódź                   100.00      0.5     1406      293     -670
+</pre></div><div id='p_hh' class='page'><pre>Wyniki poszczególnych graczy w turnieju VI Mistrzostwa Podbeskidzia
+
+
+
+	Mariusz Skrobosz 142.43 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Ewa            Ciszewska             107.56 +  460: 395  158
+    2     5 Anna           Kowalska-Demczyszyn   120.20 +  462: 376  170
+    3     1 Joanna         Stępień               127.23 -  419: 430   77
+    4     4 Iwona          Baran                 103.57 +  349: 318  154
+    5     5 Michał         Waszkiewicz           110.35 -  341: 407   60
+    6     7 Krzysztof      Pypno                 123.44 +  331: 308  173
+    7     6 Paweł          Jackowski             124.30 +  338: 274  174
+    8     6 Stanisław      Rydzik                135.95 +  379: 328  186
+    9     3 Mariusz        Wrześniewski          136.12 +  455: 377  186
+   10     1 Justyna        Fugiel                127.02 +  404: 338  177
+   11     1 Krzysztof      Mówka                 128.47 +  461: 326  178
+   12     1 Justyna        Fugiel                127.02 -  322: 337   77
+                                                          --------------- ---- ------
+                                                                    1770  / 12 147.50
+
+
+
+
+	Tomasz Zwoliński 142.25 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Renata         Kowalska              106.93 +  481: 297  157
+    2     3 Krzysztof      Pypno                 123.44 -  342: 389   73
+    3     8 Radosław       Konca                 132.39 +  471: 312  182
+    4     6 Adam           Jurkowski             106.21 +  418: 401  156
+    5     3 Anna           Kowalska-Demczyszyn   120.20 +  439: 309  170
+    6     2 Ewa            Ciszewska             107.56 +  449: 264  158
+    7     2 Jarosław       Puchalski             123.36 +  410: 249  173
+    8     1 Justyna        Fugiel                127.02 -  295: 391   77
+    9     4 Stanisław      Ochot                 123.44 -  383: 421   73
+   10     5 Grzegorz       Wilk                  100.00 +  412: 402  150
+   11     3 Mariusz        Wrześniewski          136.12 +  412: 314  186
+   12     2 Karol          Wyrębkiewicz          136.42 +  467: 372  186
+                                                          --------------- ---- ------
+                                                                    1741  / 12 145.08
+
+
+
+
+	Karol Wyrębkiewicz 136.42 Łódź              
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Adam           Strzelczyk            100.00 +  476: 242  150
+    2     4 Iwona          Baran                 103.57 -  338: 420   54
+    3    10 Magdalena      Ochot                 100.00 +  464: 345  150
+    4     7 Michał         Waszkiewicz           110.35 -  281: 406   60
+    5    10 Sławomir       Kucia                 120.02 +  421: 310  170
+    6     8 Radosław       Konca                 132.39 +  398: 366  182
+    7     5 Grzegorz       Wilk                  100.00 -  383: 410   50
+    8     8 Joanna         Stępień               127.23 +  474: 310  177
+    9     5 Andrzej        Rechowicz             125.95 +  477: 441  176
+   10     4 Robert         Soszka                110.33 +  369: 363  160
+   11     4 Dawid          Pikul                 128.41 +  477: 409  178
+   12     2 Tomasz         Zwoliński             142.25 -  372: 467   92
+                                                          --------------- ---- ------
+                                                                    1599  / 12 133.25
+
+
+
+
+	Mariusz Wrześniewski 136.12 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Adam           Jurkowski             106.21 -  364: 404   56
+    2    18 Marcin         Królak                100.00 +  436: 268  150
+    3    12 Jerzy          Matyasik              117.50 +  391: 362  167
+    4    12 Katarzyna      Żuławska              109.42 +  518: 285  159
+    5     4 Stanisław      Ochot                 123.44 +  435: 335  173
+    6     3 Michał         Waszkiewicz           110.35 +  391: 309  160
+    7     3 Andrzej        Rechowicz             125.95 -  339: 440   76
+    8     3 Iwona          Baran                 103.57 +  465: 359  154
+    9     3 Mariusz        Skrobosz              142.43 -  377: 455   92
+   10     3 Jarosław       Puchalski             123.36 +  442: 270  173
+   11     3 Tomasz         Zwoliński             142.25 -  314: 412   92
+   12     4 Kazio          Merklejn              134.83 +  379: 375  185
+                                                          --------------- ---- ------
+                                                                    1637  / 12 136.42
+
+
+
+
+	Stanisław Rydzik 135.95 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Maciej         Śliwa                 105.66 +  372: 353  156
+    2     7 Jarosław       Puchalski             123.36 -  371: 426   73
+    3    22 Jolanta        Kruk                  100.00 +  578: 179  150
+    4     5 Grzegorz       Wilk                  100.00 +  411: 372  150
+    5     2 Justyna        Fugiel                127.02 -  355: 395   77
+    6     6 Dawid          Pikul                 128.41 +  385: 326  178
+    7     4 Michał         Waszkiewicz           110.35 -  375: 407   60
+    8     6 Mariusz        Skrobosz              142.43 -  328: 379   92
+    9    17 Leszek         Stecuła               108.10 +  473: 220  158
+   10     9 Anna           Królak                101.00 +  302: 300  151
+   11     7 Ewa            Ciszewska             107.56 +  427: 353  158
+   12     6 Kamil          Górka                 135.64 -  282: 496   86
+                                                          --------------- ---- ------
+                                                                    1489  / 12 124.08
+
+
+
+
+	Kamil Górka 135.64 Łęczna           
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Jerzy          Luter                 105.39 -  374: 414   55
+    2    16 Krzysztof      Mówka                 128.47 -  332: 484   78
+    3    23 Maciej         Śliwa                 105.66 +  365: 326  156
+    4    18 Anna           Niedzielko            100.00 +  447: 220  150
+    5    14 Renata         Kowalska              106.93 -  377: 387   57
+    6    17 Leokadia       Litwinowicz           100.00 +  351: 281  150
+    7    15 Arkadiusz      Biegun                100.00 +  386: 324  150
+    8    16 Paweł          Frynia                107.69 +  425: 344  158
+    9     9 Sławomir       Kucia                 120.02 +  484: 230  170
+   10     8 Michał         Waszkiewicz           110.35 +  422: 389  160
+   11     5 Stanisław      Ochot                 123.44 -  369: 402   73
+   12     6 Stanisław      Rydzik                135.95 +  496: 282  186
+                                                          --------------- ---- ------
+                                                                    1543  / 12 128.58
+
+
+
+
+	Kazio Merklejn 134.83 Szczecin                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Magdalena      Ochot                 100.00 +  370: 308  150
+    2     8 Grzegorz       Wilk                  100.00 +  358: 356  150
+    3     6 Iwona          Baran                 103.57 -  368: 461   54
+    4     9 Stanisław      Ochot                 123.44 -  319: 340   73
+    5    15 Jerzy          Matyasik              117.50 +  509: 392  167
+    6    13 Robert         Soszka                110.33 -  368: 393   60
+    7    12 Renata         Kowalska              106.93 -  353: 379   57
+    8    14 Jerzy          Luter                 105.39 +  496: 280  155
+    9    18 Arkadiusz      Biegun                100.00 +  445: 262  150
+   10    10 Krzysztof      Pypno                 123.44 +  475: 227  173
+   11     6 Jarosław       Puchalski             123.36 +  461: 374  173
+   12     4 Mariusz        Wrześniewski          136.12 -  375: 379   86
+                                                          --------------- ---- ------
+                                                                    1448  / 12 120.67
+
+
+
+
+	Radosław Konca 132.39 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Iwona          Baran                 103.57 -  372: 382   54
+    2    17 Renata         Kowalska              106.93 +  346: 293  157
+    3     8 Tomasz         Zwoliński             142.25 -  312: 471   92
+    4    24 Adam           Zalewski              100.00 +  470: 206  150
+    5    16 Arkadiusz      Biegun                100.00 +  325: 307  150
+    6     8 Karol          Wyrębkiewicz          136.42 -  366: 398   86
+    7    16 Magdalena      Ochot                 100.00 +  478: 219  150
+    8    12 Paweł          Jackowski             124.30 -  332: 380   74
+    9     6 Ewa            Ciszewska             107.56 +  354: 303  158
+   10    15 Mariusz        Makuch                100.00 +  376: 304  150
+   11    10 Iwona          Baran                 103.57 +  388: 336  154
+   12     8 Jerzy          Matyasik              117.50 -  381: 382   67
+                                                          --------------- ---- ------
+                                                                    1442  / 12 120.17
+
+
+
+
+	Krzysztof Mówka 128.47 Toruń                    
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Krzysztof      Jaworski              102.30 -  306: 408   52
+    2    16 Kamil          Górka                 135.64 +  484: 332  186
+    3    15 Bartosz        Orłowski              100.00 +  462: 305  150
+    4    10 Leszek         Stecuła               108.10 +  414: 269  158
+    5     7 Joanna         Stępień               127.23 +  370: 366  177
+    6     5 Paweł          Jackowski             124.30 +  456: 304  174
+    7     1 Justyna        Fugiel                127.02 +  478: 354  177
+    8     2 Andrzej        Rechowicz             125.95 +  377: 317  176
+    9     1 Jarosław       Puchalski             123.36 -  309: 447   73
+   10     2 Stanisław      Ochot                 123.44 +  390: 383  173
+   11     1 Mariusz        Skrobosz              142.43 -  326: 461   92
+   12     3 Stanisław      Ochot                 123.44 +  417: 369  173
+                                                          --------------- ---- ------
+                                                                    1761  / 12 146.75
+
+
+
+
+	Dawid Pikul 128.41 Poznań                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Anna           Królak                101.00 -  317: 404   51
+    2    28 Teresa         Zalewska              100.00 +  449: 208  150
+    3    16 Krzysztof      Jaworski              102.30 -  329: 421   52
+    4    16 Piotr          Mossakowski           100.00 +  435: 366  150
+    5    12 Marcin         Skowron               100.00 +  308: 297  150
+    6     6 Stanisław      Rydzik                135.95 -  326: 385   86
+    7    17 Sylwester      Gryz                  100.00 +  514: 321  150
+    8    11 Krzysztof      Pypno                 123.44 +  427: 350  173
+    9     7 Paweł          Jędryka               100.00 +  558: 236  150
+   10     7 Iwona          Baran                 103.57 +  378: 324  154
+   11     4 Karol          Wyrębkiewicz          136.42 -  409: 477   86
+   12     5 Andrzej        Rechowicz             125.95 -  265: 493   76
+                                                          --------------- ---- ------
+                                                                    1428  / 12 119.00
+
+
+
+
+	Joanna Stępień 127.23 Katowice                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Joanna         Brychcy               100.00 +  409: 229  150
+    2    13 Paweł          Frynia                107.69 +  379: 363  158
+    3     1 Mariusz        Skrobosz              142.43 +  430: 419  192
+    4     1 Jarosław       Puchalski             123.36 -  340: 460   73
+    5     7 Krzysztof      Mówka                 128.47 -  366: 370   78
+    6    14 Katarzyna      Żuławska              109.42 +  392: 380  159
+    7    10 Mariusz        Makuch                100.00 -  316: 340   50
+    8     8 Karol          Wyrębkiewicz          136.42 -  310: 474   86
+    9     8 Anna           Kowalska-Demczyszyn   120.20 +  425: 325  170
+   10    14 Andrzej        Rakoczy               109.08 -  342: 429   59
+   11    12 Andrzej        Rakoczy               109.08 +  432: 416  159
+   12    11 Iwona          Baran                 103.57 -  324: 383   54
+                                                          --------------- ---- ------
+                                                                    1388  / 12 115.67
+
+
+
+
+	Justyna Fugiel 127.02 Sandomierz             
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    12 Teresa         Zalewska              100.00 +  513: 200  150
+    2     2 Leszek         Stecuła               108.10 +  388: 264  158
+    3     2 Krzysztof      Pypno                 123.44 +  373: 334  173
+    4     2 Robert         Soszka                110.33 +  331: 296  160
+    5     2 Stanisław      Rydzik                135.95 +  395: 355  186
+    6     1 Jarosław       Puchalski             123.36 +  355: 296  173
+    7     1 Krzysztof      Mówka                 128.47 -  354: 478   78
+    8     1 Tomasz         Zwoliński             142.25 +  391: 295  192
+    9     2 Grzegorz       Wilk                  100.00 +  460: 309  150
+   10     1 Mariusz        Skrobosz              142.43 -  338: 404   92
+   11     2 Andrzej        Rechowicz             125.95 +  478: 293  176
+   12     1 Mariusz        Skrobosz              142.43 +  337: 322  192
+                                                          --------------- ---- ------
+                                                                    1880  / 12 156.67
+
+
+
+
+	Andrzej Rechowicz 125.95 Katowice                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    13 Adam           Zalewski              100.00 +  515: 225  150
+    2     1 Anna           Królak                101.00 +  336: 312  151
+    3     4 Michał         Waszkiewicz           110.35 +  413: 382  160
+    4     3 Paweł          Jackowski             124.30 -  417: 442   74
+    5     6 Iwona          Baran                 103.57 +  408: 362  154
+    6     4 Mariusz        Makuch                100.00 +  392: 339  150
+    7     3 Mariusz        Wrześniewski          136.12 +  440: 339  186
+    8     2 Krzysztof      Mówka                 128.47 -  317: 377   78
+    9     5 Karol          Wyrębkiewicz          136.42 -  441: 477   86
+   10     6 Maciej         Śliwa                 105.66 +  487: 246  156
+   11     2 Justyna        Fugiel                127.02 -  293: 478   77
+   12     5 Dawid          Pikul                 128.41 +  493: 265  178
+                                                          --------------- ---- ------
+                                                                    1600  / 12 133.33
+
+
+
+
+	Paweł Jackowski 124.30 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    14 Paweł          Jędryka               100.00 +  429: 339  150
+    2     9 Piotr          Mossakowski           100.00 +  327: 304  150
+    3     5 Sławomir       Kucia                 120.02 +  376: 356  170
+    4     3 Andrzej        Rechowicz             125.95 +  442: 417  176
+    5     1 Jarosław       Puchalski             123.36 -  352: 407   73
+    6     5 Krzysztof      Mówka                 128.47 -  304: 456   78
+    7     6 Mariusz        Skrobosz              142.43 -  274: 338   92
+    8    12 Radosław       Konca                 132.39 +  380: 332  182
+    9    12 Krzysztof      Pypno                 123.44 -  338: 389   73
+   10    11 Ewa            Ciszewska             107.56 -  396: 407   58
+   11    14 Paweł          Jędryka               100.00 -  351: 359   50
+   12    16 Paweł          Frynia                107.69 +  395: 351  158
+                                                          --------------- ---- ------
+                                                                    1410  / 12 117.50
+
+
+
+
+	Krzysztof Pypno 123.44 Gliwice                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    15 Marcin         Królak                100.00 +  390: 295  150
+    2     3 Tomasz         Zwoliński             142.25 +  389: 342  192
+    3     2 Justyna        Fugiel                127.02 -  334: 373   77
+    4     8 Jerzy          Luter                 105.39 -  345: 368   55
+    5    19 Leszek         Stecuła               108.10 +  375: 334  158
+    6     7 Mariusz        Skrobosz              142.43 -  308: 331   92
+    7    19 Joanna         Brychcy               100.00 +  373: 279  150
+    8    11 Dawid          Pikul                 128.41 -  350: 427   78
+    9    12 Paweł          Jackowski             124.30 +  389: 338  174
+   10    10 Kazio          Merklejn              134.83 -  227: 475   85
+   11    16 Marcin         Skowron               100.00 +  427: 368  150
+   12    14 Stefan         Dawidson              110.25 +  365: 346  160
+                                                          --------------- ---- ------
+                                                                    1521  / 12 126.75
+
+
+
+
+	Stanisław Ochot 123.44 Katowice                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    16 Janusz         Czerwik               100.00 +  455: 195  150
+    2     6 Robert         Soszka                110.33 -  348: 421   60
+    3    11 Anna           Królak                101.00 +  452: 320  151
+    4     9 Kazio          Merklejn              134.83 +  340: 319  185
+    5     4 Mariusz        Wrześniewski          136.12 -  335: 435   86
+    6    12 Renata         Kowalska              106.93 +  425: 324  157
+    7     7 Ewa            Ciszewska             107.56 +  402: 399  158
+    8     4 Michał         Waszkiewicz           110.35 +  335: 322  160
+    9     4 Tomasz         Zwoliński             142.25 +  421: 383  192
+   10     2 Krzysztof      Mówka                 128.47 -  383: 390   78
+   11     5 Kamil          Górka                 135.64 +  402: 369  186
+   12     3 Krzysztof      Mówka                 128.47 -  369: 417   78
+                                                          --------------- ---- ------
+                                                                    1641  / 12 136.75
+
+
+
+
+	Jarosław Puchalski 123.36 Łódź                     
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    17 Jacek          Stolarczyk            100.00 +  444: 232  150
+    2     7 Stanisław      Rydzik                135.95 +  426: 371  186
+    3     3 Marcin         Skowron               100.00 +  466: 385  150
+    4     1 Joanna         Stępień               127.23 +  460: 340  177
+    5     1 Paweł          Jackowski             124.30 +  407: 352  174
+    6     1 Justyna        Fugiel                127.02 -  296: 355   77
+    7     2 Tomasz         Zwoliński             142.25 -  249: 410   92
+    8     5 Robert         Soszka                110.33 +  390: 257  160
+    9     1 Krzysztof      Mówka                 128.47 +  447: 309  178
+   10     3 Mariusz        Wrześniewski          136.12 -  270: 442   86
+   11     6 Kazio          Merklejn              134.83 -  374: 461   85
+   12     7 Michał         Waszkiewicz           110.35 -  345: 428   60
+                                                          --------------- ---- ------
+                                                                    1575  / 12 131.25
+
+
+
+
+	Anna Kowalska-Demczyszyn 120.20 Bielsko Biała            
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    19 Sylwester      Gryz                  100.00 +  380: 332  150
+    2     5 Mariusz        Skrobosz              142.43 -  376: 462   92
+    3    18 Krzysztof      Kokot                 100.00 +  443: 289  150
+    4    11 Krzysztof      Jaworski              102.30 +  404: 357  152
+    5     3 Tomasz         Zwoliński             142.25 -  309: 439   92
+    6    15 Bartosz        Orłowski              100.00 +  421: 292  150
+    7     8 Robert         Soszka                110.33 -  379: 411   60
+    8     9 Sławomir       Kucia                 120.02 +  355: 344  170
+    9     8 Joanna         Stępień               127.23 -  325: 425   77
+   10    13 Katarzyna      Żuławska              109.42 +  461: 318  159
+   11     8 Jerzy          Matyasik              117.50 -  312: 323   67
+   12    10 Ewa            Ciszewska             107.56 +  439: 411  158
+                                                          --------------- ---- ------
+                                                                    1477  / 12 123.08
+
+
+
+
+	Sławomir Kucia 120.02 Kraków                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    20 Mariusz        Makuch                100.00 +  361: 216  150
+    2    10 Jerzy          Luter                 105.39 +  450: 403  155
+    3     5 Paweł          Jackowski             124.30 -  356: 376   74
+    4    14 Andrzej        Rakoczy               109.08 +  465: 358  159
+    5    10 Karol          Wyrębkiewicz          136.42 -  310: 421   86
+    6    11 Anna           Królak                101.00 +  365: 324  151
+    7    11 Paweł          Jędryka               100.00 -  310: 377   50
+    8     9 Anna           Kowalska-Demczyszyn   120.20 -  344: 355   70
+    9     9 Kamil          Górka                 135.64 -  230: 484   86
+   10    18 Marcin         Królak                100.00 +  481: 326  150
+   11    13 Paweł          Frynia                107.69 +  415: 328  158
+   12    12 Paweł          Jędryka               100.00 +  382: 306  150
+                                                          --------------- ---- ------
+                                                                    1439  / 12 119.92
+
+
+
+
+	Stanisław Gasik 118.99 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    21 Marcin         Skowron               100.00 -  290: 413   50
+    2    19 Maciej         Śliwa                 105.66 -  355: 388   56
+    3    25 Marcin         Królak                100.00 -  349: 351   50
+    4    27 Arkadiusz      Biegun                100.00 -  320: 362   50
+    5    29 Marek          Urbańczyk             100.00 +  405: 265  150
+    6    26 Maciej         Stolarczyk            100.00 +  496: 241  150
+    7    21 Krzysztof      Kruk                  100.00 +  355: 254  150
+                                                          --------------- ---- ------
+                                                                     656  /  7  93.71
+
+
+
+
+	Jerzy Matyasik 117.50 Kraków                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    22 Marek          Urbańczyk             100.00 +  356: 287  150
+    2    11 Marcin         Skowron               100.00 -  346: 362   50
+    3    12 Mariusz        Wrześniewski          136.12 -  362: 391   86
+    4    21 Krzysztof      Kokot                 100.00 +  438: 233  150
+    5    15 Kazio          Merklejn              134.83 -  392: 509   85
+    6    18 Leszek         Stecuła               108.10 +  386: 279  158
+    7    13 Krzysztof      Jaworski              102.30 +  372: 338  152
+    8    15 Maciej         Śliwa                 105.66 -  374: 375   56
+    9    19 Marcin         Królak                100.00 +  433: 327  150
+   10    12 Paweł          Frynia                107.69 +  412: 404  158
+   11     8 Anna           Kowalska-Demczyszyn   120.20 +  323: 312  170
+   12     8 Radosław       Konca                 132.39 +  382: 381  182
+                                                          --------------- ---- ------
+                                                                    1547  / 12 128.92
+
+
+
+
+	Michał Waszkiewicz 110.35 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    23 Leokadia       Litwinowicz           100.00 +  412: 329  150
+    2    12 Bartosz        Orłowski              100.00 +  353: 299  150
+    3     4 Andrzej        Rechowicz             125.95 -  382: 413   76
+    4     7 Karol          Wyrębkiewicz          136.42 +  406: 281  186
+    5     5 Mariusz        Skrobosz              142.43 +  407: 341  192
+    6     3 Mariusz        Wrześniewski          136.12 -  309: 391   86
+    7     4 Stanisław      Rydzik                135.95 +  407: 375  186
+    8     4 Stanisław      Ochot                 123.44 -  322: 335   73
+    9    11 Marcin         Skowron               100.00 +  398: 295  150
+   10     8 Kamil          Górka                 135.64 -  389: 422   86
+   11     9 Grzegorz       Wilk                  100.00 +  428: 389  150
+   12     7 Jarosław       Puchalski             123.36 +  428: 345  173
+                                                          --------------- ---- ------
+                                                                    1658  / 12 138.17
+
+
+
+
+	Robert Soszka 110.33 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    24 Krzysztof      Kokot                 100.00 +  376: 335  150
+    2     6 Stanisław      Ochot                 123.44 +  421: 348  173
+    3     7 Katarzyna      Żuławska              109.42 +  337: 331  159
+    4     2 Justyna        Fugiel                127.02 -  296: 331   77
+    5     8 Ewa            Ciszewska             107.56 -  329: 357   58
+    6    13 Kazio          Merklejn              134.83 +  393: 368  185
+    7     8 Anna           Kowalska-Demczyszyn   120.20 +  411: 379  170
+    8     5 Jarosław       Puchalski             123.36 -  257: 390   73
+    9    14 Krzysztof      Jaworski              102.30 +  417: 351  152
+   10     4 Karol          Wyrębkiewicz          136.42 -  363: 369   86
+   11    11 Maciej         Śliwa                 105.66 -  318: 353   56
+   12    13 Anna           Królak                101.00 +  361: 322  151
+                                                          --------------- ---- ------
+                                                                    1490  / 12 124.17
+
+
+
+
+	Stefan Dawidson 110.25 Częstochowa              
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    25 Grzegorz       Wilk                  100.00 -  340: 440   50
+    2    21 Krzysztof      Kruk                  100.00 +  411: 367  150
+    3    19 Joanna         Brychcy               100.00 -  259: 355   50
+    4    25 Janusz         Czerwik               100.00 +  458: 158  150
+    5    18 Bartosz        Orłowski              100.00 -  284: 377   50
+    6    20 Sylwester      Gryz                  100.00 -  316: 357   50
+    7    23 Krzysztof      Kokot                 100.00 -  266: 383   50
+    8    24 Jacek          Stolarczyk            100.00 +  487: 207  150
+    9    21 Anna           Niedzielko            100.00 +  335: 320  150
+   10    21 Magdalena      Ochot                 100.00 +  308: 259  150
+   11    17 Leszek         Stecuła               108.10 +  341: 299  158
+   12    14 Krzysztof      Pypno                 123.44 -  346: 365   73
+                                                          --------------- ---- ------
+                                                                    1231  / 12 102.58
+
+
+
+
+	Katarzyna Żuławska 109.42 Katowice                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    26 Arkadiusz      Biegun                100.00 +  334: 330  150
+    2    14 Krzysztof      Jaworski              102.30 +  394: 242  152
+    3     7 Robert         Soszka                110.33 -  331: 337   60
+    4    12 Mariusz        Wrześniewski          136.12 -  285: 518   86
+    5    17 Magdalena      Ochot                 100.00 +  380: 225  150
+    6    14 Joanna         Stępień               127.23 -  380: 392   77
+    7    14 Jerzy          Luter                 105.39 -  314: 378   55
+    8    19 Krzysztof      Kokot                 100.00 +  326: 294  150
+    9    16 Mariusz        Makuch                100.00 +  296: 283  150
+   10    13 Anna           Kowalska-Demczyszyn   120.20 -  318: 461   70
+   11    18 Paweł          Ochot                 100.00 +  410: 348  150
+   12    15 Andrzej        Rakoczy               109.08 -  298: 435   59
+                                                          --------------- ---- ------
+                                                                    1309  / 12 109.08
+
+
+
+
+	Andrzej Rakoczy 109.08 Kraków                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    27 Bartosz        Orłowski              100.00 -  349: 354   50
+    2    20 Marek          Urbańczyk             100.00 +  443: 281  150
+    3    14 Leszek         Stecuła               108.10 -  357: 402   58
+    4    14 Sławomir       Kucia                 120.02 -  358: 465   70
+    5    21 Maciej         Śliwa                 105.66 -  322: 369   56
+    6    25 Jacek          Stolarczyk            100.00 +  383: 259  150
+    7    22 Marcin         Królak                100.00 -  369: 370   50
+    8    22 Sylwester      Gryz                  100.00 +  496: 216  150
+    9    20 Joanna         Brychcy               100.00 +  374: 307  150
+   10    14 Joanna         Stępień               127.23 +  429: 342  177
+   11    12 Joanna         Stępień               127.23 -  416: 432   77
+   12    15 Katarzyna      Żuławska              109.42 +  435: 298  159
+                                                          --------------- ---- ------
+                                                                    1297  / 12 108.08
+
+
+
+
+	Leszek Stecuła 108.10 Bytom                    
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    28 Anna           Niedzielko            100.00 +  394: 327  150
+    2     2 Justyna        Fugiel                127.02 -  264: 388   77
+    3    14 Andrzej        Rakoczy               109.08 +  402: 357  159
+    4    10 Krzysztof      Mówka                 128.47 -  269: 414   78
+    5    19 Krzysztof      Pypno                 123.44 -  334: 375   73
+    6    18 Jerzy          Matyasik              117.50 -  279: 386   67
+    7    27 Marek          Urbańczyk             100.00 +  429: 256  150
+    8    21 Joanna         Brychcy               100.00 +  367: 304  150
+    9    17 Stanisław      Rydzik                135.95 -  220: 473   86
+   10    20 Krzysztof      Jaworski              102.30 +  417: 305  152
+   11    17 Stefan         Dawidson              110.25 -  299: 341   60
+   12    19 Leokadia       Litwinowicz           100.00 +  404: 295  150
+                                                          --------------- ---- ------
+                                                                    1352  / 12 112.67
+
+
+
+
+	Paweł Frynia 107.69 Konstantynów Łódzki      
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    29 Krzysztof      Kruk                  100.00 +  353: 278  150
+    2    13 Joanna         Stępień               127.23 -  363: 379   77
+    3     9 Jerzy          Luter                 105.39 -  354: 454   55
+    4    19 Leokadia       Litwinowicz           100.00 +  372: 349  150
+    5    11 Adam           Jurkowski             106.21 +  381: 360  156
+    6    10 Iwona          Baran                 103.57 -  336: 386   54
+    7    18 Bartosz        Orłowski              100.00 +  322: 275  150
+    8    16 Kamil          Górka                 135.64 -  344: 425   86
+    9    13 Anna           Królak                101.00 +  391: 384  151
+   10    12 Jerzy          Matyasik              117.50 -  404: 412   67
+   11    13 Sławomir       Kucia                 120.02 -  328: 415   70
+   12    16 Paweł          Jackowski             124.30 -  351: 395   74
+                                                          --------------- ---- ------
+                                                                    1240  / 12 103.33
+
+
+
+
+	Ewa Ciszewska 107.56 Katowice                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Mariusz        Skrobosz              142.43 -  395: 460   92
+    2    15 Adam           Jurkowski             106.21 +  368: 340  156
+    3    17 Leokadia       Litwinowicz           100.00 +  414: 304  150
+    4    13 Joanna         Brychcy               100.00 +  470: 273  150
+    5     8 Robert         Soszka                110.33 +  357: 329  160
+    6     2 Tomasz         Zwoliński             142.25 -  264: 449   92
+    7     7 Stanisław      Ochot                 123.44 -  399: 402   73
+    8    13 Renata         Kowalska              106.93 +  500: 273  157
+    9     6 Radosław       Konca                 132.39 -  303: 354   82
+   10    11 Paweł          Jackowski             124.30 +  407: 396  174
+   11     7 Stanisław      Rydzik                135.95 -  353: 427   86
+   12    10 Anna           Kowalska-Demczyszyn   120.20 -  411: 439   70
+                                                          --------------- ---- ------
+                                                                    1442  / 12 120.17
+
+
+
+
+	Renata Kowalska 106.93 Bielsko Biała            
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Tomasz         Zwoliński             142.25 -  297: 481   92
+    2    17 Radosław       Konca                 132.39 -  293: 346   82
+    3    29 Teresa         Zalewska              100.00 +  417: 192  150
+    4    26 Jolanta        Kruk                  100.00 +  410: 240  150
+    5    14 Kamil          Górka                 135.64 +  387: 377  186
+    6    12 Stanisław      Ochot                 123.44 -  324: 425   73
+    7    12 Kazio          Merklejn              134.83 +  379: 353  185
+    8    13 Ewa            Ciszewska             107.56 -  273: 500   58
+    9    15 Maciej         Śliwa                 105.66 -  309: 370   56
+   10    22 Paweł          Ochot                 100.00 -  342: 389   50
+   11    20 Bartosz        Orłowski              100.00 -  400: 404   50
+   12    22 Anna           Niedzielko            100.00 +  471: 344  150
+                                                          --------------- ---- ------
+                                                                    1282  / 12 106.83
+
+
+
+
+	Adam Jurkowski 106.21 Knurów                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Mariusz        Wrześniewski          136.12 +  404: 364  186
+    2    15 Ewa            Ciszewska             107.56 -  340: 368   58
+    3    21 Adam           Zalewski              100.00 +  406: 227  150
+    4     6 Tomasz         Zwoliński             142.25 -  401: 418   92
+    5    11 Paweł          Frynia                107.69 -  360: 381   58
+    6    16 Grzegorz       Wilk                  100.00 -  371: 379   50
+    7    20 Anna           Królak                101.00 -  347: 409   51
+                                                          --------------- ---- ------
+                                                                     645  /  7  92.14
+
+
+
+
+	Maciej Śliwa 105.66 Zabrze                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Stanisław      Rydzik                135.95 -  353: 372   86
+    2    19 Stanisław      Gasik                 118.99 +  388: 355  169
+    3    23 Kamil          Górka                 135.64 -  326: 365   86
+    4    20 Marcin         Królak                100.00 +  377: 274  150
+    5    21 Andrzej        Rakoczy               109.08 +  369: 322  159
+    6     9 Jerzy          Luter                 105.39 +  329: 314  155
+    7     9 Iwona          Baran                 103.57 -  279: 361   54
+    8    15 Jerzy          Matyasik              117.50 +  375: 374  167
+    9    15 Renata         Kowalska              106.93 +  370: 309  157
+   10     6 Andrzej        Rechowicz             125.95 -  246: 487   76
+   11    11 Robert         Soszka                110.33 +  353: 318  160
+   12     9 Grzegorz       Wilk                  100.00 -  308: 347   50
+                                                          --------------- ---- ------
+                                                                    1469  / 12 122.42
+
+
+
+
+	Jerzy Luter 105.39 Bytom                    
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Kamil          Górka                 135.64 +  414: 374  186
+    2    10 Sławomir       Kucia                 120.02 -  403: 450   70
+    3     9 Paweł          Frynia                107.69 +  454: 354  158
+    4     8 Krzysztof      Pypno                 123.44 +  368: 345  173
+    5     9 Mariusz        Makuch                100.00 -  324: 382   50
+    6     9 Maciej         Śliwa                 105.66 -  314: 329   56
+    7    14 Katarzyna      Żuławska              109.42 +  378: 314  159
+    8    14 Kazio          Merklejn              134.83 -  280: 496   85
+    9    10 Iwona          Baran                 103.57 -  303: 380   54
+   10    16 Bartosz        Orłowski              100.00 +  360: 319  150
+   11    15 Anna           Królak                101.00 -  315: 402   51
+   12    17 Marcin         Skowron               100.00 -  290: 363   50
+                                                          --------------- ---- ------
+                                                                    1242  / 12 103.50
+
+
+
+
+	Iwona Baran 103.57 Kraków                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Radosław       Konca                 132.39 +  382: 372  182
+    2     4 Karol          Wyrębkiewicz          136.42 +  420: 338  186
+    3     6 Kazio          Merklejn              134.83 +  461: 368  185
+    4     4 Mariusz        Skrobosz              142.43 -  318: 349   92
+    5     6 Andrzej        Rechowicz             125.95 -  362: 408   76
+    6    10 Paweł          Frynia                107.69 +  386: 336  158
+    7     9 Maciej         Śliwa                 105.66 +  361: 279  156
+    8     3 Mariusz        Wrześniewski          136.12 -  359: 465   86
+    9    10 Jerzy          Luter                 105.39 +  380: 303  155
+   10     7 Dawid          Pikul                 128.41 -  324: 378   78
+   11    10 Radosław       Konca                 132.39 -  336: 388   82
+   12    11 Joanna         Stępień               127.23 +  383: 324  177
+                                                          --------------- ---- ------
+                                                                    1613  / 12 134.42
+
+
+
+
+	Krzysztof Jaworski 102.30 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Krzysztof      Mówka                 128.47 +  408: 306  178
+    2    14 Katarzyna      Żuławska              109.42 -  242: 394   59
+    3    16 Dawid          Pikul                 128.41 +  421: 329  178
+    4    11 Anna           Kowalska-Demczyszyn   120.20 -  357: 404   70
+    5    13 Grzegorz       Wilk                  100.00 -  298: 376   50
+    6    21 Marcin         Królak                100.00 +  381: 352  150
+    7    13 Jerzy          Matyasik              117.50 -  338: 372   67
+    8    18 Bartosz        Orłowski              100.00 +  362: 324  150
+    9    14 Robert         Soszka                110.33 -  351: 417   60
+   10    20 Leszek         Stecuła               108.10 -  305: 417   58
+   11    19 Mariusz        Makuch                100.00 +  397: 348  150
+   12    18 Bartosz        Orłowski              100.00 +  366: 353  150
+                                                          --------------- ---- ------
+                                                                    1320  / 12 110.00
+
+
+
+
+	Anna Królak 101.00 Warszawa
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Dawid          Pikul                 128.41 +  404: 317  178
+    2     1 Andrzej        Rechowicz             125.95 -  312: 336   76
+    3    11 Stanisław      Ochot                 123.44 -  320: 452   73
+    4    23 Jacek          Stolarczyk            100.00 +  418: 247  150
+    5    20 Joanna         Brychcy               100.00 +  358: 314  150
+    6    11 Sławomir       Kucia                 120.02 -  324: 365   70
+    7    20 Adam           Jurkowski             106.21 +  409: 347  156
+    8    10 Paweł          Jędryka               100.00 +  337: 301  150
+    9    13 Paweł          Frynia                107.69 -  384: 391   58
+   10     9 Stanisław      Rydzik                135.95 -  300: 302   86
+   11    15 Jerzy          Luter                 105.39 +  402: 315  155
+   12    13 Robert         Soszka                110.33 -  322: 361   60
+                                                          --------------- ---- ------
+                                                                    1362  / 12 113.50
+
+
+
+
+	Arkadiusz Biegun 100.00 Kraków                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    26 Katarzyna      Żuławska              109.42 -  330: 334   59
+    2    25 Adam           Zalewski              100.00 -  331: 336   50
+    3    24 Marek          Urbańczyk             100.00 +  339: 271  150
+    4    27 Stanisław      Gasik                 118.99 +  362: 320  169
+    5    16 Radosław       Konca                 132.39 -  307: 325   82
+    6    24 Anna           Niedzielko            100.00 +  409: 229  150
+    7    15 Kamil          Górka                 135.64 -  324: 386   86
+    8    20 Magdalena      Ochot                 100.00 +  302: 285  150
+    9    18 Kazio          Merklejn              134.83 -  262: 445   85
+   10    19 Marcin         Skowron               100.00 -  281: 339   50
+   11    22 Sylwester      Gryz                  100.00 +  400: 327  150
+   12    20 Paweł          Ochot                 100.00 -  388: 407   50
+                                                          --------------- ---- ------
+                                                                    1231  / 12 102.58
+
+
+
+
+	Joanna Brychcy 100.00 Katowice                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Joanna         Stępień               127.23 -  229: 409   77
+    2    24 Sylwester      Gryz                  100.00 +  377: 264  150
+    3    19 Stefan         Dawidson              110.25 +  355: 259  160
+    4    13 Ewa            Ciszewska             107.56 -  273: 470   58
+    5    20 Anna           Królak                101.00 -  314: 358   51
+    6    22 Marcin         Skowron               100.00 +  288: 280  150
+    7    19 Krzysztof      Pypno                 123.44 -  279: 373   73
+    8    21 Leszek         Stecuła               108.10 -  304: 367   58
+    9    20 Andrzej        Rakoczy               109.08 -  307: 374   59
+   10    26 Maciej         Stolarczyk            100.00 +  417: 196  150
+   11    23 Magdalena      Ochot                 100.00 +  377: 260  150
+   12    21 Mariusz        Makuch                100.00 -  366: 381   50
+                                                          --------------- ---- ------
+                                                                    1186  / 12  98.83
+
+
+
+
+	Janusz Czerwik 100.00 Zator
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    16 Stanisław      Ochot                 123.44 -  195: 455   73
+    2    29 Magdalena      Ochot                 100.00 -  212: 408   50
+    3    30 PAUZA
+    4    25 Stefan         Dawidson              110.25 -  158: 458   60
+    5    27 Marcin         Królak                100.00 -  158: 399   50
+    6    28 Krzysztof      Kokot                 100.00 -  283: 367   50
+    7    28 Maciej         Stolarczyk            100.00 -  204: 278   50
+    8    28 Paweł          Ochot                 100.00 -  161: 521   50
+    9    27 Jacek          Stolarczyk            100.00 -  233: 340   50
+   10    27 Anna           Niedzielko            100.00 -  218: 437   50
+   11    28 PAUZA
+   12    28 PAUZA
+                                                          --------------- ---- ------
+                                                                     483  /  9  53.67
+
+
+
+
+	Sylwester Gryz 100.00 Zabrze
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    19 Anna           Kowalska-Demczyszyn   120.20 -  332: 380   70
+    2    24 Joanna         Brychcy               100.00 -  264: 377   50
+    3    27 Adam           Strzelczyk            100.00 -  326: 415   50
+    4    29 Maciej         Stolarczyk            100.00 +  353: 320  150
+    5    25 Jacek          Stolarczyk            100.00 +  381: 277  150
+    6    20 Stefan         Dawidson              110.25 +  357: 316  160
+    7    17 Dawid          Pikul                 128.41 -  321: 514   78
+    8    22 Andrzej        Rakoczy               109.08 -  216: 496   59
+    9    25 Agnieszka      Jaśkiewicz            100.00 -  271: 437   50
+   10    23 Adam           Zalewski              100.00 +  404: 239  150
+   11    22 Arkadiusz      Biegun                100.00 -  327: 400   50
+   12    23 Marcin         Królak                100.00 +  326: 300  150
+                                                          --------------- ---- ------
+                                                                    1167  / 12  97.25
+
+
+
+
+	Agnieszka Jaśkiewicz 100.00 Jastrzębie Zdrój
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    8    29 Adam           Zalewski              100.00 +  296: 269  150
+    9    25 Sylwester      Gryz                  100.00 +  437: 271  150
+   10    25 Jacek          Stolarczyk            100.00 +  323: 205  150
+   11    24 Anna           Niedzielko            100.00 -  357: 373   50
+   12    25 Teresa         Zalewska              100.00 -  325: 395   50
+                                                          --------------- ---- ------
+                                                                     550  /  5 110.00
+
+
+
+
+	Paweł Jędryka 100.00 Tarnów                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    14 Paweł          Jackowski             124.30 -  339: 429   74
+    2    22 Adam           Strzelczyk            100.00 +  407: 245  150
+    3    20 Mariusz        Makuch                100.00 -  343: 372   50
+    4    17 Bartosz        Orłowski              100.00 -  361: 374   50
+    5    22 Krzysztof      Kokot                 100.00 +  376: 332  150
+    6    19 Piotr          Mossakowski           100.00 +  482: 305  150
+    7    11 Sławomir       Kucia                 120.02 +  377: 310  170
+    8    10 Anna           Królak                101.00 -  301: 337   51
+    9     7 Dawid          Pikul                 128.41 -  236: 558   78
+   10    17 Leokadia       Litwinowicz           100.00 +  395: 332  150
+   11    14 Paweł          Jackowski             124.30 +  359: 351  174
+   12    12 Sławomir       Kucia                 120.02 -  306: 382   70
+                                                          --------------- ---- ------
+                                                                    1317  / 12 109.75
+
+
+
+
+	Krzysztof Kokot 100.00 Nowy Targ                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    24 Robert         Soszka                110.33 -  335: 376   60
+    2    23 Jacek          Stolarczyk            100.00 +  283: 261  150
+    3    18 Anna           Kowalska-Demczyszyn   120.20 -  289: 443   70
+    4    21 Jerzy          Matyasik              117.50 -  233: 438   67
+    5    22 Paweł          Jędryka               100.00 -  332: 376   50
+    6    28 Janusz         Czerwik               100.00 +  367: 283  150
+    7    23 Stefan         Dawidson              110.25 +  383: 266  160
+    8    19 Katarzyna      Żuławska              109.42 -  294: 326   59
+    9    26 Paweł          Ochot                 100.00 -  278: 367   50
+   10    24 Teresa         Zalewska              100.00 -  313: 385   50
+   11    25 Teresa         Zalewska              100.00 +  369: 362  150
+   12    24 Magdalena      Ochot                 100.00 -  285: 310   50
+                                                          --------------- ---- ------
+                                                                    1066  / 12  88.83
+
+
+
+
+	Jolanta Kruk 100.00 Łódź                     
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    2    30 PAUZA
+    3    22 Stanisław      Rydzik                135.95 -  179: 578   86
+    4    26 Renata         Kowalska              106.93 -  240: 410   57
+    5    28 Anna           Niedzielko            100.00 -  206: 355   50
+    6    29 Adam           Strzelczyk            100.00 -  233: 389   50
+    7    29 Teresa         Zalewska              100.00 -  248: 344   50
+                                                          --------------- ---- ------
+                                                                     293  /  5  58.60
+
+
+
+
+	Krzysztof Kruk 100.00 Łódź                     
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    29 Paweł          Frynia                107.69 -  278: 353   58
+    2    21 Stefan         Dawidson              110.25 -  367: 411   60
+    3    26 Jacek          Stolarczyk            100.00 -  297: 337   50
+    4    28 Marek          Urbańczyk             100.00 +  405: 234  150
+    5    24 Adam           Zalewski              100.00 -  248: 379   50
+    6    27 Teresa         Zalewska              100.00 +  347: 240  150
+    7    21 Stanisław      Gasik                 118.99 -  254: 355   69
+    8    26 Maciej         Stolarczyk            100.00 -  311: 325   50
+    9    23 Leokadia       Litwinowicz           100.00 -  294: 392   50
+   10    28 PAUZA
+   11    26 Adam           Zalewski              100.00 -  336: 343   50
+   12    27 Maciej         Stolarczyk            100.00 +  280: 247  150
+                                                          --------------- ---- ------
+                                                                     887  / 11  80.64
+
+
+
+
+	Marcin Królak 100.00 Warszawa
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    15 Krzysztof      Pypno                 123.44 -  295: 390   73
+    2    18 Mariusz        Wrześniewski          136.12 -  268: 436   86
+    3    25 Stanisław      Gasik                 118.99 +  351: 349  169
+    4    20 Maciej         Śliwa                 105.66 -  274: 377   56
+    5    27 Janusz         Czerwik               100.00 +  399: 158  150
+    6    21 Krzysztof      Jaworski              102.30 -  352: 381   52
+    7    22 Andrzej        Rakoczy               109.08 +  370: 369  159
+    8    23 Anna           Niedzielko            100.00 +  330: 243  150
+    9    19 Jerzy          Matyasik              117.50 -  327: 433   67
+   10    18 Sławomir       Kucia                 120.02 -  326: 481   70
+   11    21 Leokadia       Litwinowicz           100.00 -  286: 405   50
+   12    23 Sylwester      Gryz                  100.00 -  300: 326   50
+                                                          --------------- ---- ------
+                                                                    1132  / 12  94.33
+
+
+
+
+	Leokadia Litwinowicz 100.00 Gliwice
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    23 Michał         Waszkiewicz           110.35 -  329: 412   60
+    2    26 Maciej         Stolarczyk            100.00 +  290: 209  150
+    3    17 Ewa            Ciszewska             107.56 -  304: 414   58
+    4    19 Paweł          Frynia                107.69 -  349: 372   58
+    5    26 Teresa         Zalewska              100.00 +  392: 288  150
+    6    17 Kamil          Górka                 135.64 -  281: 351   86
+    7    26 Adam           Zalewski              100.00 +  338: 309  150
+    8    17 Marcin         Skowron               100.00 -  301: 415   50
+    9    23 Krzysztof      Kruk                  100.00 +  392: 294  150
+   10    17 Paweł          Jędryka               100.00 -  332: 395   50
+   11    21 Marcin         Królak                100.00 +  405: 286  150
+   12    19 Leszek         Stecuła               108.10 -  295: 404   58
+                                                          --------------- ---- ------
+                                                                    1170  / 12  97.50
+
+
+
+
+	Mariusz Makuch 100.00 Zator                    
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    20 Sławomir       Kucia                 120.02 -  216: 361   70
+    2    27 Anna           Niedzielko            100.00 +  362: 268  150
+    3    20 Paweł          Jędryka               100.00 +  372: 343  150
+    4    15 Marcin         Skowron               100.00 +  355: 258  150
+    5     9 Jerzy          Luter                 105.39 +  382: 324  155
+    6     4 Andrzej        Rechowicz             125.95 -  339: 392   76
+    7    10 Joanna         Stępień               127.23 +  340: 316  177
+    8     7 Grzegorz       Wilk                  100.00 -  305: 443   50
+    9    16 Katarzyna      Żuławska              109.42 -  283: 296   59
+   10    15 Radosław       Konca                 132.39 -  304: 376   82
+   11    19 Krzysztof      Jaworski              102.30 -  348: 397   52
+   12    21 Joanna         Brychcy               100.00 +  381: 366  150
+                                                          --------------- ---- ------
+                                                                    1321  / 12 110.08
+
+
+
+
+	Piotr Mossakowski 100.00 Chorzów                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    18 Maciej         Stolarczyk            100.00 +  367: 225  150
+    2     9 Paweł          Jackowski             124.30 -  304: 327   74
+    3    13 Grzegorz       Wilk                  100.00 -  324: 360   50
+    4    16 Dawid          Pikul                 128.41 -  366: 435   78
+    5    23 Adam           Strzelczyk            100.00 +  299: 285  150
+    6    19 Paweł          Jędryka               100.00 -  305: 482   50
+    7    25 Anna           Niedzielko            100.00 -  337: 338   50
+    8    25 Teresa         Zalewska              100.00 -    1: 400   50
+                                                          --------------- ---- ------
+                                                                     652  /  8  81.50
+
+
+
+
+	Anna Niedzielko 100.00 Szczecin
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    28 Leszek         Stecuła               108.10 -  327: 394   58
+    2    27 Mariusz        Makuch                100.00 -  268: 362   50
+    3    28 Maciej         Stolarczyk            100.00 +  350: 259  150
+    4    18 Kamil          Górka                 135.64 -  220: 447   86
+    5    28 Jolanta        Kruk                  100.00 +  355: 206  150
+    6    24 Arkadiusz      Biegun                100.00 -  229: 409   50
+    7    25 Piotr          Mossakowski           100.00 +  338: 337  150
+    8    23 Marcin         Królak                100.00 -  243: 330   50
+    9    21 Stefan         Dawidson              110.25 -  320: 335   60
+   10    27 Janusz         Czerwik               100.00 +  437: 218  150
+   11    24 Agnieszka      Jaśkiewicz            100.00 +  373: 357  150
+   12    22 Renata         Kowalska              106.93 -  344: 471   57
+                                                          --------------- ---- ------
+                                                                    1161  / 12  96.75
+
+
+
+
+	Magdalena Ochot 100.00 Katowice                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Kazio          Merklejn              134.83 -  308: 370   85
+    2    29 Janusz         Czerwik               100.00 +  408: 212  150
+    3    10 Karol          Wyrębkiewicz          136.42 -  345: 464   86
+    4    22 Adam           Strzelczyk            100.00 +  427: 256  150
+    5    17 Katarzyna      Żuławska              109.42 -  225: 380   59
+    6    23 Adam           Zalewski              100.00 +  339: 286  150
+    7    16 Radosław       Konca                 132.39 -  219: 478   82
+    8    20 Arkadiusz      Biegun                100.00 -  285: 302   50
+    9    24 Maciej         Stolarczyk            100.00 +  340: 267  150
+   10    21 Stefan         Dawidson              110.25 -  259: 308   60
+   11    23 Joanna         Brychcy               100.00 -  260: 377   50
+   12    24 Krzysztof      Kokot                 100.00 +  310: 285  150
+                                                          --------------- ---- ------
+                                                                    1222  / 12 101.83
+
+
+
+
+	Paweł Ochot 100.00 Katowice                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    8    28 Janusz         Czerwik               100.00 +  521: 161  150
+    9    26 Krzysztof      Kokot                 100.00 +  367: 278  150
+   10    22 Renata         Kowalska              106.93 +  389: 342  157
+   11    18 Katarzyna      Żuławska              109.42 -  348: 410   59
+   12    20 Arkadiusz      Biegun                100.00 +  407: 388  150
+                                                          --------------- ---- ------
+                                                                     666  /  5 133.20
+
+
+
+
+	Bartosz Orłowski 100.00 Bytom
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    27 Andrzej        Rakoczy               109.08 +  354: 349  159
+    2    12 Michał         Waszkiewicz           110.35 -  299: 353   60
+    3    15 Krzysztof      Mówka                 128.47 -  305: 462   78
+    4    17 Paweł          Jędryka               100.00 +  374: 361  150
+    5    18 Stefan         Dawidson              110.25 +  377: 284  160
+    6    15 Anna           Kowalska-Demczyszyn   120.20 -  292: 421   70
+    7    18 Paweł          Frynia                107.69 -  275: 322   58
+    8    18 Krzysztof      Jaworski              102.30 -  324: 362   52
+    9    22 Teresa         Zalewska              100.00 +  445: 303  150
+   10    16 Jerzy          Luter                 105.39 -  319: 360   55
+   11    20 Renata         Kowalska              106.93 +  404: 400  157
+   12    18 Krzysztof      Jaworski              102.30 -  353: 366   52
+                                                          --------------- ---- ------
+                                                                    1201  / 12 100.08
+
+
+
+
+	Marcin Skowron 100.00 Zabrze                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    21 Stanisław      Gasik                 118.99 +  413: 290  169
+    2    11 Jerzy          Matyasik              117.50 +  362: 346  167
+    3     3 Jarosław       Puchalski             123.36 -  385: 466   73
+    4    15 Mariusz        Makuch                100.00 -  258: 355   50
+    5    12 Dawid          Pikul                 128.41 -  297: 308   78
+    6    22 Joanna         Brychcy               100.00 -  280: 288   50
+    7    24 Adam           Strzelczyk            100.00 +  455: 282  150
+    8    17 Leokadia       Litwinowicz           100.00 +  415: 301  150
+    9    11 Michał         Waszkiewicz           110.35 -  295: 398   60
+   10    19 Arkadiusz      Biegun                100.00 +  339: 281  150
+   11    16 Krzysztof      Pypno                 123.44 -  368: 427   73
+   12    17 Jerzy          Luter                 105.39 +  363: 290  155
+                                                          --------------- ---- ------
+                                                                    1325  / 12 110.42
+
+
+
+
+	Jacek Stolarczyk 100.00 Zator
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    17 Jarosław       Puchalski             123.36 -  232: 444   73
+    2    23 Krzysztof      Kokot                 100.00 -  261: 283   50
+    3    26 Krzysztof      Kruk                  100.00 +  337: 297  150
+    4    23 Anna           Królak                101.00 -  247: 418   51
+    5    25 Sylwester      Gryz                  100.00 -  277: 381   50
+    6    25 Andrzej        Rakoczy               109.08 -  259: 383   59
+    7    30 PAUZA
+    8    24 Stefan         Dawidson              110.25 -  207: 487   60
+    9    27 Janusz         Czerwik               100.00 +  340: 233  150
+   10    25 Agnieszka      Jaśkiewicz            100.00 -  205: 323   50
+   11    27 Maciej         Stolarczyk            100.00 +  340: 248  150
+   12    26 Adam           Zalewski              100.00 -  186: 325   50
+                                                          --------------- ---- ------
+                                                                     893  / 11  81.18
+
+
+
+
+	Maciej Stolarczyk 100.00 Zator
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    18 Piotr          Mossakowski           100.00 -  225: 367   50
+    2    26 Leokadia       Litwinowicz           100.00 -  209: 290   50
+    3    28 Anna           Niedzielko            100.00 -  259: 350   50
+    4    29 Sylwester      Gryz                  100.00 -  320: 353   50
+    5    30 PAUZA
+    6    26 Stanisław      Gasik                 118.99 -  241: 496   69
+    7    28 Janusz         Czerwik               100.00 +  278: 204  150
+    8    26 Krzysztof      Kruk                  100.00 +  325: 311  150
+    9    24 Magdalena      Ochot                 100.00 -  267: 340   50
+   10    26 Joanna         Brychcy               100.00 -  196: 417   50
+   11    27 Jacek          Stolarczyk            100.00 -  248: 340   50
+   12    27 Krzysztof      Kruk                  100.00 -  247: 280   50
+                                                          --------------- ---- ------
+                                                                     769  / 11  69.91
+
+
+
+
+	Adam Strzelczyk 100.00 Częstochowa              
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Karol          Wyrębkiewicz          136.42 -  242: 476   86
+    2    22 Paweł          Jędryka               100.00 -  245: 407   50
+    3    27 Sylwester      Gryz                  100.00 +  415: 326  150
+    4    22 Magdalena      Ochot                 100.00 -  256: 427   50
+    5    23 Piotr          Mossakowski           100.00 -  285: 299   50
+    6    29 Jolanta        Kruk                  100.00 +  389: 233  150
+    7    24 Marcin         Skowron               100.00 -  282: 455   50
+    8    27 PAUZA
+                                                          --------------- ---- ------
+                                                                     586  /  7  83.71
+
+
+
+
+	Marek Urbańczyk 100.00 Bielsko Biała            
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    22 Jerzy          Matyasik              117.50 -  287: 356   67
+    2    20 Andrzej        Rakoczy               109.08 -  281: 443   59
+    3    24 Arkadiusz      Biegun                100.00 -  271: 339   50
+    4    28 Krzysztof      Kruk                  100.00 -  234: 405   50
+    5    29 Stanisław      Gasik                 118.99 -  265: 405   69
+    6    30 PAUZA
+    7    27 Leszek         Stecuła               108.10 -  256: 429   58
+    8    27 PAUZA
+                                                          --------------- ---- ------
+                                                                     353  /  6  58.83
+
+
+
+
+	Grzegorz Wilk 100.00 Kraków
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    25 Stefan         Dawidson              110.25 +  440: 340  160
+    2     8 Kazio          Merklejn              134.83 -  356: 358   85
+    3    13 Piotr          Mossakowski           100.00 +  360: 324  150
+    4     5 Stanisław      Rydzik                135.95 -  372: 411   86
+    5    13 Krzysztof      Jaworski              102.30 +  376: 298  152
+    6    16 Adam           Jurkowski             106.21 +  379: 371  156
+    7     5 Karol          Wyrębkiewicz          136.42 +  410: 383  186
+    8     7 Mariusz        Makuch                100.00 +  443: 305  150
+    9     2 Justyna        Fugiel                127.02 -  309: 460   77
+   10     5 Tomasz         Zwoliński             142.25 -  402: 412   92
+   11     9 Michał         Waszkiewicz           110.35 -  389: 428   60
+   12     9 Maciej         Śliwa                 105.66 +  347: 308  156
+                                                          --------------- ---- ------
+                                                                    1510  / 12 125.83
+
+
+
+
+	Teresa Zalewska 100.00 Racibórz
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    12 Justyna        Fugiel                127.02 -  200: 513   77
+    2    28 Dawid          Pikul                 128.41 -  208: 449   78
+    3    29 Renata         Kowalska              106.93 -  192: 417   57
+    4    30 PAUZA
+    5    26 Leokadia       Litwinowicz           100.00 -  288: 392   50
+    6    27 Krzysztof      Kruk                  100.00 -  240: 347   50
+    7    29 Jolanta        Kruk                  100.00 +  344: 248  150
+    8    25 Piotr          Mossakowski           100.00 +  400:   1  150
+    9    22 Bartosz        Orłowski              100.00 -  303: 445   50
+   10    24 Krzysztof      Kokot                 100.00 +  385: 313  150
+   11    25 Krzysztof      Kokot                 100.00 -  362: 369   50
+   12    25 Agnieszka      Jaśkiewicz            100.00 +  395: 325  150
+                                                          --------------- ---- ------
+                                                                    1012  / 11  92.00
+
+
+
+
+	Adam Zalewski 100.00 Racibórz
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    13 Andrzej        Rechowicz             125.95 -  225: 515   76
+    2    25 Arkadiusz      Biegun                100.00 +  336: 331  150
+    3    21 Adam           Jurkowski             106.21 -  227: 406   56
+    4    24 Radosław       Konca                 132.39 -  206: 470   82
+    5    24 Krzysztof      Kruk                  100.00 +  379: 248  150
+    6    23 Magdalena      Ochot                 100.00 -  286: 339   50
+    7    26 Leokadia       Litwinowicz           100.00 -  309: 338   50
+    8    29 Agnieszka      Jaśkiewicz            100.00 -  269: 296   50
+    9    28 PAUZA
+   10    23 Sylwester      Gryz                  100.00 -  239: 404   50
+   11    26 Krzysztof      Kruk                  100.00 +  343: 336  150
+   12    26 Jacek          Stolarczyk            100.00 +  325: 186  150
+                                                          --------------- ---- ------
+                                                                    1014  / 11  92.18
+
+
+</pre></div><div id='p_rundy' class='page'><pre></pre></div><div id='p_ranking' class='page'><pre>Lista rankingowa na dzień 08-11-2003
+
+Lp.  Imię i nazwisko                Miasto               Rank.  Skalpy Gry
+---- ------------------------------ -------------------- ------ ------ ----
+   1 Paweł Dawidson                 Częstochowa          142.63  26671  187
+   2 Tomasz Zwoliński               Warszawa             142.43  27346  192
+   3 Szymon Zaleski                 Poznań               141.82  17160  121
+   4 Mariusz Skrobosz               Warszawa             141.04  27079  192
+   5 Mateusz Żbikowski              Warszawa             140.95  27768  197
+   6 Wojciech Usakiewicz            Warszawa             139.51  27484  197
+   7 Dariusz Banaszek               Warszawa             136.92  24509  179
+   8 Szymon Fidziński               Warszawa             136.63  26369  193
+   9 Marcin Mroziuk                 Warszawa             136.26  25753  189
+  10 Mariusz Wrześniewski           Warszawa             136.14  26138  192
+  11 Kamil Górka                    Łęczna               135.69  25916  191
+  12 Karol Wyrębkiewicz             Łódź                 135.40  26810  198
+  13 Maciej Gałecki                 Łódź                 135.27  25971  192
+  14 Stanisław Rydzik               Warszawa             135.02  26734  198
+  15 Maciej Czupryniak              Milanówek            134.93  26986  200
+  16 Kazio Merklejn                 Szczecin             134.55  25699  191
+  17 Dariusz Puton                  Ruda Śląska          134.24  10605   79
+  18 Krzysztof Usakiewicz           Warszawa             133.28  24790  186
+  19 Grzegorz Święcki               Białystok            133.15  12250   92
+  20 Robert Duczemiński             Gorzów Wielkopolski  133.11  25690  193
+  21 Radosław Konca                 Warszawa             132.92  23925  180
+  22 Marek Syczuk                   Warszawa             131.91  25591  194
+  23 Małgorzata Kania               Milanówek            131.90  26380  200
+  24 Wojciech Zemło                 Łódź                 130.84  25775  197
+  25 Marcin Bożek                   Będzin               129.97   9488   73
+  26 Andrzej Oleksiak               Ostróda              129.67  25674  198
+  27 Justyna Fugiel                 Sandomierz           129.30  25730  199
+  28 Leszek Nowak                   Myślibórz            129.08   8261   64
+  29 Krzysztof Mówka                Toruń                128.97  25666  199
+  30 Dawid Pikul                    Poznań               128.39  25549  199
+  31 Sławomir Kordjalik             Warszawa             128.34  25411  198
+  32 Sławomir Nosek                 Mielec               127.75  13286  104
+  33 Adam Weremczuk                 Łódź                 127.72  22990  180
+  34 Jarosław Borowski              Bielsk Podlaski      127.28  14637  115
+  35 Wiktor Stępień                 Katowice             126.68  11655   92
+  36 Andrzej Rechowicz              Katowice             126.38  25023  198
+  37 Marek Roszak                   Poznań               126.00  25199  200
+  38 Stanisław Ochot                Katowice             125.63   9171   73
+  39 Waldemar Czerwoniec            Warszawa             125.61  20475  163
+  40 Joanna Stępień                 Katowice             125.45  23835  190
+  41 Andrzej Słapiński              Warszawa             125.22  13148  105
+  42 Jarosław Puchalski             Łódź                 124.96  24868  199
+  43 Krzysztof Pypno                Gliwice              123.88  11273   91
+  44 Paweł Jackowski                Warszawa             123.71  17072  138
+  45 Marcin Kozyra                  Warszawa             123.70  23875  193
+  46 Teresa Fortuna                 Lubin                123.29   4192   34
+  47 Ryszard Dębski                 Biała Podlaska       122.94  19301  157
+  48 Andrzej Szmidtke               Bolszewo             122.69  17300  141
+  49 Sergiusz Puchalski             Włocławek            122.38  17501  143
+  50 Andrzej Szepczyński            Kraków               122.28  11494   94
+  51 Aleksander Puchalski           Włocławek            122.08  22707  186
+  52 Filip Warzecha                 Gdynia               121.62  16175  133
+  53 Robert Kamiński                Wysokie Mazowieckie  121.57  24071  198
+  54 Aleksandra Merklejn            Szczecin             120.97  23952  198
+  55 Radosław Sowiński              Warszawa             120.85  24169  200
+  56 Maciej Grabowski               Warszawa             120.77  16304  135
+  57 Zbigniew Wietecki              Gorzów Wielkopolski  120.59  23274  193
+  58 Anna Kowalska-Demczyszyn       Bielsko Biała        120.40  20348  169
+  59 Krzysztof Bukowski             Milanówek            120.28  19005  158
+  60 Lucyna Korga                   Zabrze               120.16  23070  192
+  61 Sławomir Kucia                 Kraków               120.01  18722  156
+  62 Tomasz Figiel                  Zawichost            119.67   3590   30
+  63 Andrzej Kwiatkowski            Warszawa             119.28  23737  199
+  64 Walenty Siemaszko              Lipiany              119.16  15014  126
+  65 Marek Antosik                  Nowy Dwór Mazowieck  119.09   8098   68
+  66 Mariusz Orzeł                  Nowe Miasto Lubawsk  119.08  10717   90
+  67 Roman Sulima                   Warszawa             118.89  16883  142
+  68 Andrzej Lożyński               Piastów              118.88   5825   49
+  69 Magdalena Merklejn             Szczecin             118.85  23651  199
+  70 Maciej Perzyński               Piła                 118.60  12097  102
+  71 Marek Dudkiewicz               Milanówek            118.56  22053  186
+  72 Zdzisław Szota                 Warszawa             118.38  15744  133
+  73 Jerzy Matyasik                 Kraków               118.29  20464  173
+  74 Paweł Florek                   Nowa Wieś Wielka     118.28  17387  147
+  75 Stanisław Gasik                Warszawa             117.99  19115  162
+  76 Joanna Juszczak                Warszawa             117.91  22402  190
+  77 Mariusz Kubicki                Inowrocław           117.24  17937  153
+  78 Maciej Michalak                Łódź                 117.17   8319   71
+  79 Marek Charytoniuk              Biała Podlaska       117.14  16986  145
+  80 Jarosław Michalak              Łódź                 116.50  14096  121
+  81 Halina Roszak                  Poznań               116.39  23046  198
+  82 Rafał Matczak                  Pruszków             116.14  22183  191
+  83 Maciej Hebda                   Tarnów               115.45   3579   31
+  84 Beata Madej                    Lublin               115.19  22922  199
+  85 Jacek Pietruszka               Kraków               115.18   7026   61
+  86 Kamil Klinkosz                 Rumia                114.93  13792  120
+  87 Arkadiusz Jaworski             Tychy                114.83  16191  141
+  88 Irena Sołdan                   Rumia                114.38   7549   66
+  89 Edward Stefaniak               Biała Podlaska       114.19   8336   73
+  90 Janusz Kaczor                  Międzyrzec Podl.     113.96   6154   54
+  91 Michał Waszkiewicz             Warszawa             113.82  10927   96
+  92 Mariola Osajda-Matczak         Pruszków             113.58  21921  193
+  93 Katarzyna Stępień              Katowice             113.53  10104   89
+  94 Paweł Subocz                   Szczecin             113.47   7262   64
+  95 Michał Sak                     Lublin               113.35   4194   37
+  96 Krzysztof Szkudlarek           Pabianice            112.72   9581   85
+  97 Bogusław Puchalski             Włocławek            112.54  21496  191
+  98 Piotr Rosół                    Warszawa             112.48  22384  199
+  99 Grzegorz Matysiak              Kraków               112.34  14716  131
+ 100 Wojciech Próchniewicz          Warszawa             112.28  22455  200
+ 101 Ewa Strzelczyk                 Warszawa             112.23  22446  200
+ 102 Eugeniusz Wróblewski           Inowrocław           112.13  19959  178
+ 103 Jarosław Żuliński              Szczecin             112.07  10647   95
+ 104 Grażyna Chmielewska            Mrągowo              111.93   4701   42
+ 105 Maurycy Machnio                Lipiany              111.89   9287   83
+ 106 Marcin Figiel                  Zawichost            111.84  19013  170
+ 107 Robert Soszka                  Warszawa             111.72  13406  120
+ 108 Filip Klar                     Mielec               111.57  14839  133
+ 109 Dariusz Białobrzewski          Gdynia               111.57  14392  129
+ 110 Grzegorz Koczkodon             Ostróda              110.98  16314  147
+ 111 Stefan Dawidson                Częstochowa          110.77  21379  193
+ 112 Wiesław Olewiński              Warszawa             110.59  15151  137
+ 113 Katarzyna Żuławska             Katowice             110.48  20660  187
+ 114 Piotr Krzemiński               Warszawa             110.45  10603   96
+ 115 Jakub Zaryński                 Świnoujście          109.86   3955   36
+ 116 Maciej Kutera                  Warszawa             109.86  11645  106
+ 117 Kazimierz Merklejn             Szczecin             109.82  14057  128
+ 118 Paweł Majewski                 Warszawa             109.81  10981  100
+ 119 Paweł Jachowicz                Żyrardów             109.76   8232   75
+ 120 Lucyna Śniadach                Rumia                109.70  21610  197
+ 121 Kamil Nawrocki                 Bydgoszcz            109.44  10506   96
+ 122 Ewa Ciszewska                  Katowice             109.39   9079   83
+ 123 Elżbieta Jankowska             Wrocław              109.33   3936   36
+ 124 Władysław Zieliński            Lębork               109.25   5790   53
+ 125 Filip Sosin                    Warszawa             109.13  18879  173
+ 126 Beata Piotrowska               Łódź                 109.06  21485  197
+ 127 Jarosław Sobczak               Warszawa             109.01  20057  184
+ 128 Ryszard Niżewski               Warszawa             108.98  10026   92
+ 129 Andrzej Rakoczy                Kraków               108.97  12205  112
+ 130 Leszek Stecuła                 Bytom                108.71   9784   90
+ 131 Andrzej Tyczyno                Bydgoszcz            108.40  10406   96
+ 132 Jerzy Tatarczuk                Warszawa             108.03  11991  111
+ 133 Paweł Opyc                     Warszawa             107.89  20931  194
+ 134 Paweł Czubla                   Lublin               107.76   5819   54
+ 135 Maciej Śliwa                   Zabrze               107.67  10767  100
+ 136 Paweł Frynia                   Konstantynów Łódzki  107.17  10824  101
+ 137 Miłosz Wrzałek                 Reda                 107.16  13609  127
+ 138 Renata Kowalska                Bielsko Biała        106.92  17963  168
+ 139 Bogdan Kozłowski               Białystok            106.90   8873   83
+ 140 Andrzej Gostomski              Łódź                 106.78  21355  200
+ 141 Jacek Petrus                   Wrocław              106.47   9582   90
+ 142 Roman Figiel                   Zawichost            106.46  16607  156
+ 143 Zofia Gajewska                 Jelenia Góra         106.23   8286   78
+ 144 Jędrzej Florek                 Nowa Wieś Wielka     106.08  13897  131
+ 145 Wojciech Jacyno                Warszawa             106.08   4031   38
+ 146 Wojciech Gołęcki               Inowrocław           106.06  20575  194
+ 147 Iwona Baran                    Kraków               105.96  16424  155
+ 148 Grażyna Puton                  Ruda Śląska          105.85   3599   34
+ 149 Jerzy Luter                    Bytom                105.80  18410  174
+ 150 Iwona Rutkowska                Warszawa             105.80  14495  137
+ 151 Grażyna Furman                 Sosnowiec            105.67   3804   36
+ 152 Piotr Mossakowski              Chorzów              105.50   3376   32
+ 153 Agnieszka Stefaniuk            Warszawa             105.27  10211   97
+ 154 Jan Ziółkowski                 Rumia                105.25   8104   77
+ 155 Monika Siemaszko               Lipiany              105.21   5576   53
+ 156 Małgorzata Sulejewska          Kraków               105.19  11360  108
+ 157 Adam Jurkowski                 Knurów               104.97   8398   80
+ 158 Janina Jabłczyńska-Zając       Gdynia               104.95   8186   78
+ 159 Małgorzata Niciporuk           Rumia                104.86   6921   66
+ 160 Tomasz Żbikowski               Warszawa             104.71  20732  198
+ 161 Piotr Pietuchowski             Białystok            104.66   7117   68
+ 162 Jarosław Wypart                Częstochowa          104.63  12870  123
+ 163 Dorota Zielińska               Piaseczno            104.58  16733  160
+ 164 Anna Królak                    Warszawa             104.57   4392   42
+ 165 Grzegorz Pukniel               Lublin               104.30  20547  197
+ 166 Marek Sitkowski                Warszawa             104.00   4264   41
+ 167 Krystyna Augustyniak           Łódź                 103.81   9343   90
+ 168 Dorota Ziembowicz              Gliwice              103.59  20201  195
+ 169 Mariusz Michalski              Inowrocław           103.48  13038  126
+ 170 Krzysztof Jaworski             Warszawa             103.34   9197   89
+ 171 Rafał Dąbrowski                Ostróda              103.32   7026   68
+ 172 Mariusz Makuch                 Zator                103.11   3609   35
+ 173 Adam Słapiński                 Warszawa             102.25   8180   80
+ 174 Bogusław Koszarski             Lądek Zdrój          101.83  13340  131
+ 175 Paweł Szulc                    Szczecin             101.74   4782   47
+ 176 Joanna Kubik                   Częstochowa          101.65  10267  101
+ 177 Piotr Mańkowski                Warszawa             101.58   5993   59
+ 178 Adam Strzelczyk                Częstochowa          101.30   3039   30
+ 179 Zygmunt Skwarek                Katowice             101.28   3950   39
+ 180 Stanisław Harat                Kęty                 101.28   3646   36
+ 181 Bożena Matysiak                Kraków               101.26   6582   65
+ 182 Paweł Ochot                    Katowice             100.74   5742   57
+ 183 Małgorzata Szczygieł           Wrocław              100.57   4727   47
+ 184 Dariusz Nawrocki               Bydgoszcz            100.35  10637  106
+ 185 Maciej Zięba                   Wrocław              100.29   4814   48
+ 186 Alina Białobrzewska            Gdynia               100.29  13238  132
+ 187 Magdalena Oprządek             Siedlce              100.19   3206   32
+ 188 Bartłomiej Boczek              Toruń                100.08   3603   36
+ 189 Marianna Kozłowska             Białystok             99.84   7388   74
+ 190 Michał Szymkowski              Wrocław               99.66   3488   35
+ 191 Piotr Wojciekiewicz            Katowice              99.65   4584   46
+ 192 Agata Wojciechowska            Poznań                99.60   2988   30
+ 193 Ewa Fiszer                     Wrocław               99.55   4181   42
+ 194 Krzysztof Krzyżewski           Świętajno             99.44   3580   36
+ 195 Adam Legięć                    Warszawa              99.31   6455   65
+ 196 Andrzej Burczyk                Gdynia                99.12   4163   42
+ 197 Józef Wietecki                 Gorzów Wielkopolski   99.06   4755   48
+ 198 Renata Andracka                Poznań                98.94   4749   48
+ 199 Magdalena Podlaska             Warszawa              98.76   9876  100
+ 200 Marcin Królak                  Warszawa              98.63   2959   30
+ 201 Bogdan Pokojski                Piastów               98.62   3156   32
+ 202 Jolanta Kosmowska              Warszawa              98.45  19591  199
+ 203 Kszysztof Waberski             Łódź                  98.33   3540   36
+ 204 Henryk Ryś                     Warszawa              98.25   3537   36
+ 205 Andrzej Puchalski              Łódź                  98.17   3534   36
+ 206 Ewa Zając                      Mrągowo               98.12   4023   41
+ 207 Krzysztof Sojka                Łódź                  97.87   5285   54
+ 208 Renata Rosół                   Warszawa              97.79  18483  189
+ 209 Przemysław Pawlic              Wrocław               97.77   7333   75
+ 210 Michał Szkudlarek              Pabianice             97.50   4290   44
+ 211 Anna Pendowska                 Rumia                 97.02   6403   66
+ 212 Irena Ficak                    Mielec                96.85   9201   95
+ 213 Katarzyna Niedźwiedź           Lublin                96.36   4047   42
+ 214 Małgorzata Jóźwiak             Iława                 96.24   5582   58
+ 215 Kinga Niżewska                 Warszawa              96.16   5577   58
+ 216 Maria Jarosz                   Lublin                96.06  13736  143
+ 217 Marta Dobrzańska               Kraków                96.00   3264   34
+ 218 Joanna Ostrowska               Warszawa              95.71  18090  189
+ 219 Paulina Hennig                 Gniezno               95.70   4211   44
+ 220 Magdalena Mroziuk              Warszawa              95.69  11291  118
+ 221 Arkadiusz Biegun               Kraków                95.55   4491   47
+ 222 Beata Kościańska               Lublin                95.44   4581   48
+ 223 Sebastian Markiewicz           Warszawa              95.08   3423   36
+ 224 Aneta Szubiak                  Łódź                  95.02   5036   53
+ 225 Tomasz Korpysz                 Warszawa              94.59   4824   51
+ 226 Marek Kocikowski               Ostróda               94.39   7929   84
+ 227 Robert Drózd                   Wesoła                94.31   8488   90
+ 228 Adam Kotwica                   Gdańsk                93.94   4697   50
+ 229 Marta Szeliga-Frynia           Warszawa              93.71   4498   48
+ 230 Wojciech Sołdan                Rumia                 93.65   3746   40
+ 231 Norbert Skrzyński              Warszawa              93.24  11562  124
+ 232 Teresa Ząbek                   Warszawa              92.91   7526   81
+ 233 Marta Gostomska                Warszawa              92.90   9569  103
+ 234 Piotr Chmielewski              Mrągowo               92.53   3701   40
+ 235 Adam Cieśla                    Częstochowa           92.31   3323   36
+ 236 Grażyna Kaczyńska              Łódź                  91.59   4213   46
+ 237 Jacek Cichecki                 Józefów               91.33   2740   30
+ 238 Paweł Kokoszka                 Kłomnice              91.02   5916   65
+ 239 Piotr Ingling                  Warszawa              90.93  12367  136
+ 240 Sylwester Gryz                 Zabrze                90.43   3798   42
+ 241 Piotr Ziółkowski               Piaseczno             89.92   8812   98
+ 242 Anna Pawłowska                 Opacz Kol.            89.57   7882   88
+ 243 Agnieszka Krupka               Krosno                89.53   3581   40
+ 244 Ziemowit Pazda                 Wrocław               89.09   6236   70
+ 245 Waldemar Bulkowski             Chojnów               88.80   3108   35
+ 246 Maciej Soska                   Lublin                88.55   7350   83
+ 247 Ewa Jobs                       Ostróda               88.42   3183   36
+ 248 Michał Sosin                   Warszawa              88.28   3443   39
+ 249 Bogumiła Ilczuk                Warszawa              88.25   7501   85
+ 250 Krzysztof Kokot                Nowy Targ             88.12  10574  120
+ 251 Sebastian Orzelski             Bielsk Podlaski       88.11   4846   55
+ 252 Janusz Sojka                   Łódź                  87.74   3334   38
+ 253 Monika Dzik                    Poznań                87.61   2716   31
+ 254 Jerzy Augustyniak              Łódź                  87.22   7152   82
+ 255 Piotr Madej                    Lublin                86.85  11725  135
+ 256 Joanna Brychcy                 Katowice              86.70   6849   79
+ 257 Monika Rubinstein              Warszawa              86.23  11038  128
+ 258 Mariusz Rogalski               Iława                 85.03   3316   39
+ 259 Robert Włodarczyk              Wrocław               84.76   3475   41
+ 260 Krzysztof Kruk                 Łódź                  84.16   7238   86
+ 261 Mirosław Przepiórkowski        Inowrocław            83.41   2669   32
+ 262 Artur Kwiatkowski              Częstochowa           83.20   2496   30
+ 263 Jan Pawłowski                  Warszawa              83.00   5229   63
+ 264 Halina Łubniewicz              Łódź                  80.47   2575   32
+ 265 Kacper Jachowicz               Żyrardów              80.06   4163   52
+ 266 Jolanta Bednarska              Łódź                  79.16   3562   45
+ 267 Jolanta Kruk                   Łódź                  71.39   4712   66
+ 268 Adam Kędzior                   Lublin                70.93   3121   44
+ 269 Tomasz Sulejewski              Kraków                69.67   3553   51
+ 270 Barbara Szymańska              Gdańsk                68.12   2248   33
+ 271 Małgorzata Pawłowska           Opacz Kol.            64.05   2562   40
+
+
+
+
+Poczekalnia na dzień 08-11-2003
+
+Lp.  Imię i nazwisko                Miasto               Rank.  Skalpy Gry
+---- ------------------------------ -------------------- ------ ------ ----
+   1 Marcin Kamiński                Warszawa             123.72   3588   29
+   2 Grzegorz Jęczek                Łódź                  91.59   2656   29
+   3 Sebastian Dudek                Częstochowa           87.55   2539   29
+   4 Marek Urbańczyk                Bielsko Biała         83.52   2422   29
+   5 Grażyna Wesołowska             Łódź                  81.52   2364   29
+   6 Krystyna Puchalska             Łódź                  79.83   2315   29
+   7 Jarosław Kordalski             Lublin               111.11   3111   28
+   8 Krzysztof Kukier               Warszawa              87.82   2459   28
+   9 Adam Zalewski                  Racibórz              74.79   2094   28
+  10 Paweł Stefaniak                Biała Podlaska       125.88   3273   26
+  11 Jacek Baltyn                   Suchedniów            99.85   2596   26
+  12 Ilona Giryn                    Łódź                  94.46   2456   26
+  13 Lech Rawski                    Kraków                90.19   2345   26
+  14 Paweł Kapela                   Kraków                96.36   2409   25
+  15 Artur Owsiany                  Skierniewice         125.46   3011   24
+  16 Kazimierz Faron                Warszawa             118.25   2838   24
+  17 Andrzej Chmielewski            Warszawa             117.21   2813   24
+  18 Dominik Piasecki               Słupsk               115.21   2765   24
+  19 Andrzej Wróblewski             Warszawa             115.17   2764   24
+  20 Jerzy Paszek                   Tarnowskie Góry      114.96   2759   24
+  21 Marcin Skowron                 Zabrze               110.12   2643   24
+  22 Artur Tomczyk                  Piła                 107.79   2587   24
+  23 Krzysztof Noskowicz            Toruń                106.67   2560   24
+  24 Michał Trumpus                 Wrocław              105.75   2538   24
+  25 Tomasz Ciejka                  Kraków               105.58   2534   24
+  26 Jolanta Hoffmann               Kraków               105.21   2525   24
+  27 Mirosław Konsik                Gdańsk               104.17   2500   24
+  28 Tomasz Stencel                 Poznań               104.17   2500   24
+  29 Grzegorz Kulawiak              Warszawa              99.75   2394   24
+  30 Maria Grzegorzewska            Nowe Miasto Lubawsk   99.29   2383   24
+  31 Paweł Gajda                    Ostrów Wielkopolski   98.08   2354   24
+  32 Bartosz Orłowski               Bytom                 98.04   2353   24
+  33 Grzegorz Sokołowski            Słupsk                97.96   2351   24
+  34 Grzegorz Olędzki               Warszawa              97.83   2348   24
+  35 Tomasz Rubaj                   Lublin                97.79   2347   24
+  36 Mariusz Obłoza                 Szczecin              97.29   2335   24
+  37 Joanna Markiewicz              Żyrardów              94.21   2261   24
+  38 Michał Kołodziejczyk           Ostróda               90.12   2163   24
+  39 Sławomir Czyżewski             Poznań                88.67   2128   24
+  40 Anna Niedzielko                Szczecin              88.00   2112   24
+  41 Małgorzata Rawska              Kraków                86.96   2087   24
+  42 Joanna Rubaj                   Lublin                85.79   2059   24
+  43 Jacek Rzepa                    Tychy                 85.04   2041   24
+  44 Adam Graczyk                   Nowe Miasto Lubawsk   81.83   1964   24
+  45 Grzegorz Wilk                  Kraków               115.39   2654   23
+  46 Dawid Dawidson                 Częstochowa          108.00   2484   23
+  47 Krzysztof Borodziuk            Kostrzyn             104.65   2407   23
+  48 Marta Świątkowska              Wrocław              104.00   2392   23
+  49 Mariusz Skrzypczyński          Reda                 103.04   2370   23
+  50 Elżbieta Święcka               Białystok            102.26   2352   23
+  51 Robert Głowacki                Łódź                 101.87   2343   23
+  52 Eligiusz Jankowski             Wrocław              101.00   2323   23
+  53 Piotr Jakubiak                 Żyrardów              94.78   2180   23
+  54 Alfred Anuszkiewicz            Warszawa              89.74   2064   23
+  55 Mikołaj Fidziński              Dębica                81.91   1884   23
+  56 Wojciech Kwaśniak              Częstochowa           91.50   2013   22
+  57 Teresa Zalewska                Racibórz              85.36   1878   22
+  58 Marcin Tutka                   Wrocław               94.24   1979   21
+  59 Zdzisław Parnicki              Słupsk                86.95   1826   21
+  60 Ewa Lewandowska                Warszawa              79.00   1580   20
+  61 Anna Bielaszka                 Nowe Miasto Lubawsk   58.70   1174   20
+  62 Jarosław Kamienik              Słupsk               104.53   1986   19
+  63 Jan Bielaszka                  Nowe Miasto Lubawsk   90.16   1713   19
+  64 Małgorzata Kołodziejczyk       Ostróda               86.53   1644   19
+  65 Rafał Wesołowski               Warszawa              80.74   1534   19
+  66 Agata Szkamruk                 Warszawa             116.56   2098   18
+  67 Sylwester Wójcik               Lublin               113.61   2045   18
+  68 Marcin Jędrzejczyk             Warszawa             106.83   1923   18
+  69 Zbigniew Lewandowski           Słupsk               103.78   1868   18
+  70 Anita Bruska                   Gdynia               100.94   1817   18
+  71 Łukasz Święcki                 Białystok             94.17   1695   18
+  72 Dawid Boczoń                   Zakopane              93.22   1678   18
+  73 Wojciech Bochra                Lublin                70.06   1261   18
+  74 Krystian Wandzlewicz           Nowe Miasto Lubawsk  131.65   2238   17
+  75 Paulina Płatkiewicz            Zielona Góra         101.06   1718   17
+  76 Michał  Borejko                Wrocław               97.47   1657   17
+  77 Filip Sitkowski                Warszawa              92.00   1564   17
+  78 Jacek Wszyndybył               Chojnów               76.24   1296   17
+  79 Jacek Gigoła                   Gorzów Wielkopolski  111.62   1786   16
+  80 Bogusław Macal                 Szczecin              89.81   1437   16
+  81 Anna Czarnecka                 Zgierz                83.31   1333   16
+  82 Andrzej Bobik                  Chojnów               66.19   1059   16
+  83 Grzegorz Gardynik              Warszawa             103.53   1553   15
+  84 Jerzy Ciesielski               Łódź                  86.40   1296   15
+  85 Bogusław Kuma                  Słupsk               114.64   1605   14
+  86 Anna Piętka                    Szczecin              78.29   1096   14
+  87 Paweł Stanosz                  Warszawa             161.15   2095   13
+  88 Michał Krzemień                Kraków               115.00   1495   13
+  89 Tomasz Krzyszczyk              Siemianowice Śląski  102.77   1336   13
+  90 Krzysztof Krzyszczyk           Siemianowice Śląskie  99.38   1292   13
+  91 Andrzej Pikul                  Poznań                85.23   1108   13
+  92 Marzena Szulc                  Szczecin              82.69   1075   13
+  93 Sylwia Wilczek                 Warszawa              67.62    879   13
+  94 Martyna Białobrzewska          Gdynia                52.54    683   13
+  95 Łukasz Kozub                   Brzesko              135.50   1626   12
+  96 Mariola Pęczkowska             Warszawa             124.25   1491   12
+  97 Jakub Kozłowski                Warszawa             123.92   1487   12
+  98 Tomasz Wiśniewski              Chełmża              120.08   1441   12
+  99 Krzysztof Nowak                Lublin               116.33   1396   12
+ 100 Adam Grzona                    Toruń                111.17   1334   12
+ 101 Paweł Jędryka                  Tarnów               109.75   1317   12
+ 102 Paweł Kasprzak                 Warszawa             108.83   1306   12
+ 103 Artur Irzyk                    Kraków               107.50   1290   12
+ 104 Jacek Lewiński                 Wrocław              106.08   1273   12
+ 105 Robert Kaciński                Kazimierza Wielka    105.25   1263   12
+ 106 Leszek Owsianko                Warszawa             102.33   1228   12
+ 107 Magdalena Ochot                Katowice             101.83   1222   12
+ 108 Beata Kowal                    Lublin               100.17   1202   12
+ 109 Tomasz Lempart                 Kraków                99.00   1188   12
+ 110 Ewa Majewska                   Nowa Sól              98.92   1187   12
+ 111 Adam Czyściak                  Legnica               98.75   1185   12
+ 112 Paweł Górny                    Lublin                97.83   1174   12
+ 113 Leokadia Litwinowicz           Gliwice               97.50   1170   12
+ 114 Adam Paszek                    Tarnowskie Góry       96.92   1163   12
+ 115 Renata Puchalska               Włocławek             96.83   1162   12
+ 116 Andrzej Kroc                   Łódź                  96.67   1160   12
+ 117 Dorota Ryś                     Warszawa              95.67   1148   12
+ 118 Rafał Mirowski                 Częstochowa           94.92   1139   12
+ 119 Bartłomiej Dalecki             Rumia                 94.83   1138   12
+ 120 Katarzyna Kicińska             Lublin                94.58   1135   12
+ 121 Tomasz Juśkiewicz              Łódź                  94.42   1133   12
+ 122 Radosław Wróblewski            Mielec                94.33   1132   12
+ 123 Mirosław Sztukiert             Gdańsk                94.25   1131   12
+ 124 Bartosz Muszyński              Słupsk                93.67   1124   12
+ 125 Anna Arana                     Warszawa              93.17   1118   12
+ 126 Paweł Byczyński                Bydgoszcz             92.67   1112   12
+ 127 Bartłomiej Kosman              Bielsko Biała         92.58   1111   12
+ 128 Patryk Pytlak                  Kielce                90.92   1091   12
+ 129 Grzegorz Tecław                Poznań                90.83   1090   12
+ 130 Izabela Kurszewska             Białystok             89.92   1079   12
+ 131 Piotr Morawski                 Gdańsk                89.83   1078   12
+ 132 Stanisław Stanek               Olkusz                89.83   1078   12
+ 133 Dominika Śniadach              Rumia                 89.83   1078   12
+ 134 Michał Karwacki                Dąbrowa Górnicza      89.67   1076   12
+ 135 Małgorzata Szablowska          Wrocław               89.67   1076   12
+ 136 Małgorzata Górska              Bydgoszcz             88.83   1066   12
+ 137 Michał Zdanowicz               Lublin                88.58   1063   12
+ 138 Jacek Nowak                    Szczecin              87.58   1051   12
+ 139 Edward Smołka                  Zabrze                87.42   1049   12
+ 140 Tomasz Gapiński                Lorki                 86.83   1042   12
+ 141 Katarzyna Szulc                Szczecin              86.75   1041   12
+ 142 Piotr Grzybała                 Tarnów                86.33   1036   12
+ 143 Anna Skudlarska                Wrocław               86.17   1034   12
+ 144 Zbigniew Niedźwiedź            Lublin                86.08   1033   12
+ 145 Tomasz Jopek                   Wrocław               85.83   1030   12
+ 146 Anna Paradowska                Wejherowo             85.08   1021   12
+ 147 Zygmunt Sołtysiak              Piastów               80.67    968   12
+ 148 Wojciech Wąs                   Warszawa              79.58    955   12
+ 149 Sławomir Szymański             Dobrzelin             78.17    938   12
+ 150 Małgorzata Danielak            Lublin                77.75    933   12
+ 151 Tomasz Ulrych                  Tychy                 77.58    931   12
+ 152 Adrian Majewski                Nowa Sól              77.33    928   12
+ 153 Mirosław Norwajszas            Szczecin              77.00    924   12
+ 154 Stanisław Gajos                Strzelno              73.75    885   12
+ 155 Przemysław Kurszewski          Białystok             72.00    864   12
+ 156 Rafał Marks                    Warszawa              69.92    839   12
+ 157 Filip Dalecki                  Rumia                 61.33    736   12
+ 158 Jan Damer                      Lublin               140.09   1541   11
+ 159 Piotr Adamczyk                 Tarnów               101.64   1118   11
+ 160 Jakub Ciesielski               Poznań                96.82   1065   11
+ 161 Paweł Łęcki                    Gorzów Wielkopolski   96.64   1063   11
+ 162 Anna Mikuć                     Wrocław               89.82    988   11
+ 163 Eliza Krasna                   Rumia                 88.82    977   11
+ 164 Przemysław Załęcki             Wałbrzych             88.45    973   11
+ 165 Jadwiga Niedźwiedź             Lublin                85.36    939   11
+ 166 Katarzyna Grodzicka            Warszawa              81.36    895   11
+ 167 Paweł Pędzisz                  Lipiany               81.18    893   11
+ 168 Jacek Stolarczyk               Zator                 81.18    893   11
+ 169 Szymon Pobudkiewicz            Warszawa              80.91    890   11
+ 170 Sylwia Bil                     Dąbrowa Górnicza.     80.36    884   11
+ 171 Paweł Górski                   Bydgoszcz             80.18    882   11
+ 172 Lucjan Kaczmarek               Bydgoszcz             80.09    881   11
+ 173 Katarzyna Konopka              Ostróda               79.91    879   11
+ 174 Agnieszka Nieścierowicz        Szczecin              79.18    871   11
+ 175 Jacek Nowakowski               Bydgoszcz             78.00    858   11
+ 176 Jacek Mania                    Bielsko Biała         77.64    854   11
+ 177 Marta Zacharska                Słupsk                73.73    811   11
+ 178 Marcin Glazik                  Bydgoszcz             72.00    792   11
+ 179 Bartosz Białecki               Solec Kujawski        71.82    790   11
+ 180 Dariusz Gątarski               Rzeszów               71.27    784   11
+ 181 Tomasz Olędzki                 Warszawa              71.00    781   11
+ 182 Marcin Szopowski               Chojnów               71.00    781   11
+ 183 Adam Machnio                   Lipiany               70.64    777   11
+ 184 Olaf Czubla                    Łódź                  70.27    773   11
+ 185 Małgorzata Czart               Olsztyn               70.18    772   11
+ 186 Grzegorz Roszak                Poznań                70.18    772   11
+ 187 Dorota Krzyżaniak              Słupsk                70.00    770   11
+ 188 Maciej Stolarczyk              Zator                 69.91    769   11
+ 189 Slawomir Zieliński             Lębork                65.73    723   11
+ 190 Margarita Malkowska            Poznań                65.64    722   11
+ 191 Ryszard Czarniewski            Lipiany               62.73    690   11
+ 192 Agnieszka Kowalczuk            Lublin                61.00    671   11
+ 193 Krzysztof Krause               Poznań                60.18    662   11
+ 194 Grzegorz Wielgoszewski         Wrocław               59.91    659   11
+ 195 Gniewomir Białek               Dębica                56.45    621   11
+ 196 Anna Peschak                   Kraków                53.55    589   11
+ 197 Anna Zachorowska-Mazurkiewicz  Zabrze               105.50   1055   10
+ 198 Anna Kwaśniak                  Częstochowa           83.30    833   10
+ 199 Grzegorz Kaczmarek             Bydgoszcz             72.70    727   10
+ 200 Simona Pietrzak                Chojnów               72.70    727   10
+ 201 Martyna Kulczyńska             Ostróda               63.90    639   10
+ 202 Monika Kozłowska               Warszawa              53.10    531   10
+ 203 Daria Ślusarczyk               Chojnów               52.00    520   10
+ 204 Paweł Kamionka                 Szczecin             109.11    982    9
+ 205 Jarosław Soborak               Warszawa             107.56    968    9
+ 206 Jarosław Karwacki              Dąbrowa Górnicza     105.56    950    9
+ 207 Jacek Panek                    Warszawa              97.22    875    9
+ 208 Andrzej Szymański              Łódź                  84.44    760    9
+ 209 Grażyna Kędzierska             Lublin                68.44    616    9
+ 210 Justyna Horbowska              Lublin                65.56    590    9
+ 211 Janusz Czerwik                 Zator                 53.67    483    9
+ 212 Grzegorz Wiączkowski           Wrocław              108.50    868    8
+ 213 Lucjan Boroś                   Gdańsk                99.62    797    8
+ 214 Krystyna Badełek               Ogrodzieniec          75.00    600    8
+ 215 Iza Kraj                       Warszawa              66.88    535    8
+ 216 Łukasz Homa                    Bielsko Biała        139.29    975    7
+ 217 Janusz Grodzki                 Łódź                 131.14    918    7
+ 218 Maciej Mizgier                 Gdańsk               114.14    799    7
+ 219 Leszek Matuszak                Poznań               102.86    720    7
+ 220 Janusz Kasza                   Kraków               100.86    706    7
+ 221 Małgorzata Koprowska           Pabianice             98.43    689    7
+ 222 Czesław Kozak                  Częstochowa           93.43    654    7
+ 223 Kamil Piecewicz                Nowe Miasto Lubawsk   90.86    636    7
+ 224 Adam Pieńkowski                Rumia                 82.29    576    7
+ 225 Adam Sulejewski                Kraków                68.86    482    7
+ 226 Anna Kania                     Lublin                68.00    476    7
+ 227 Tomasz Leszczyński             Częstochowa           66.29    464    7
+ 228 Kamil Kozłowski                Częstochowa           65.57    459    7
+ 229 Sylwia Buks                    Warszawa              57.00    399    7
+ 230 Maciej Kwiatkowski             Częstochowa           54.29    380    7
+ 231 Piotr Niegowski                Ostróda               52.43    367    7
+ 232 Wojciech Olejarczyk            Nowe Miasto Lubawsk   52.00    364    7
+ 233 Andrzej Chylewski              Poznań               140.17    841    6
+ 234 Wojciech Morawski              Gliwice              125.83    755    6
+ 235 Bartosz Skórniewski            Warszawa             118.67    712    6
+ 236 Krzysztof Sporczyk             Warszawa             108.17    649    6
+ 237 Mikołaj Bednarek               Warszawa             104.17    625    6
+ 238 Hanna Lożyńska                 Piastów               93.00    558    6
+ 239 Tomasz Szepczyński             Kraków                87.00    522    6
+ 240 Tomasz Lus                     Piła                  86.17    517    6
+ 241 Karol Tokarczyk                Warszawa              86.17    517    6
+ 242 Sylwia Orłowska                Warszawa              85.67    514    6
+ 243 Leszek Orłowski                Warszawa              85.33    512    6
+ 244 Grzegorz Olszewski             Augustów              71.50    429    6
+ 245 Adrian Przybylski              Częstochowa           70.00    420    6
+ 246 Daniel Zyśk                    Nowy Dwór Mazowieck   69.83    419    6
+ 247 Ewelina Stankiewicz            Elbląg                69.50    417    6
+ 248 Michał Gołębiowski             Warszawa              69.33    416    6
+ 249 Łukasz Degórski                Warszawa              69.00    414    6
+ 250 Paweł Błędowski                Częstochowa           68.17    409    6
+ 251 Robert Buciak                  Szczecin              67.83    407    6
+ 252 Anna Kosińska                  Lewin Brzeski         67.50    405    6
+ 253 Patryk Pajdzik                 Lipiany               55.50    333    6
+ 254 Ewa Wink                       Warszawa              51.83    311    6
+ 255 Dawid Mońko                    Wrocław               51.33    308    6
+ 256 Andrzej Stańczyk               Kraków               135.00    675    5
+ 257 Sebastian Joński-Jastrzębowski Gdańsk               113.20    566    5
+ 258 Agnieszka Jaśkiewicz           Jastrzębie Zdrój     110.00    550    5
+ 259 Jacek Gasik                    Warszawa              93.60    468    5
+ 260 Zygmunt Korga                  Zabrze                76.00    380    5
+ 261 Paweł Morga                    Warszawa              76.00    380    5
+ 262 Piotr Tymoszuk                 Warszawa              75.60    378    5
+ 263 Joanna Kula                    Częstochowa           74.80    374    5
+ 264 Jacek Szczap                   Warszawa              74.60    373    5
+ 265 Elżbieta Korga                 Zabrze                74.40    372    5
+ 266 Zbigniew Szepczyński           Kraków                73.40    367    5
+ 267 Monika Kulawiak                Warszawa              72.80    364    5
+ 268 Krzysztof Orłowski             Warszawa              72.40    362    5
+ 269 Justyna Syrek                  Częstochowa           71.60    358    5
+ 270 Karolina Białobrzewska         Gdynia                59.40    297    5
+ 271 Elżbieta Paszkowska            Warszawa              56.40    282    5
+ 272 Rafał Kitowski                 Nowe Miasto Lubawsk   53.80    269    5
+ 273 Andrzej Nagwizda               Kraków                53.60    268    5
+ 274 Anna Mencina                   Warszawa              53.40    267    5
+ 275 Edyta Gomu#ka                  Cz#stochowa           50.80    254    5
+ 276 Tatiana Drzycimska             Wrocław              118.25    473    4
+ 277 Agata Gnabasik                 Poznań                82.50    330    4
+ 278 Piotr Konopka                  Ostróda               80.50    322    4
+ 279 Krzysztof Białecki             Warszawa              79.00    316    4
+ 280 Maria Majos                    Warszawa              77.75    311    4
+ 281 Piotr Michałek                 Warszawa              76.00    304    4
+ 282 Magdalena Majos                Warszawa              75.00    300    4
+ 283 Władysław Babula               Inowrocław            63.25    253    4
+ 284 Wojciech Łysak                 Sosnowiec             50.25    201    4
+ 285 Piotr Jakimowicz               Poznań               150.00    450    3
+ 286 Dominik Loch                   Częstochowa          119.67    359    3
+ 287 Piotr Jach                     Łódź                 116.67    350    3
+ 288 Elżbieta Dziewulska            Warszawa              96.67    290    3
+ 289 Elżbieta Polińska              Łódź                  95.67    287    3
+ 290 Sławomir Budek                 Warszawa              87.00    261    3
+ 291 Erwin Sak                      Lublin                86.33    259    3
+ 292 Elżbieta Kukla                 Częstochowa           85.33    256    3
+ 293 Anna Majos                     Warszawa              83.33    250    3
+ 294 Barbara Orzeł                  Nowe Miasto Lubawsk   83.33    250    3
+ 295 Agnieszka Usakiewicz           Warszawa              83.33    250    3
+ 296 Jolanta Turzańska              Zabrze                57.33    172    3
+ 297 Piotr Pyzel                    Warszawa              57.00    171    3
+ 298 Paweł Piotrowicz               Kurzętnik             55.67    167    3
+ 299 Eryk Białecki                  Warszawa              54.67    164    3
+ 300 Aleksandra Franaszczyk         Łódź                  54.33    163    3
+ 301 Bartosz Poliński               Łódź                  54.33    163    3
+ 302 Piotr Prokopczuk               Warszawa              54.00    162    3
+ 303 Teresa Prokopczuk              Warszawa              54.00    162    3
+ 304 Joanna Słapińska               Olsztyn               50.00    150    3
+ 305 Paweł Graczykowski             Łódź                 109.00    218    2
+ 306 Arkadiusz Karasewicz           Wrocław              104.00    208    2
+ 307 Stefan Tomaszczyk              Dębno                102.50    205    2
+ 308 Barbara Belof                  Polkowice            100.00    200    2
+ 309 Bartłomiej Olek                Lublin               100.00    200    2
+ 310 Anna Żyła                      Wrocław              100.00    200    2
+ 311 Jolanta Bieczyńska             Poznań                82.50    165    2
+ 312 Alicja Bielecka                Poznań                63.50    127    2
+ 313 Jadwiga Szkudlarek             Pabianice             59.50    119    2
+ 314 Tina Policińska                Częstochowa           58.00    116    2
+ 315 Sławomir Kurkiewicz            Warszawa              57.50    115    2
+ 316 Tomasz Molenda                 Szczecin              57.50    115    2
+ 317 Kamil Piskorz                  Piastów               57.00    114    2
+ 318 Cezary Bajorek                 Bydgoszcz             55.00    110    2
+ 319 Izabela Dudek                  Częstochowa           54.50    109    2
+ 320 Wojciech Knypiński             Bydgoszcz             54.50    109    2
+ 321 Izabela Redlińska              Warszawa              53.00    106    2
+ 322 Ewa Zielonka                   Krzeszów              53.00    106    2
+ 323 Andrzej Żak                    Kraków                53.00    106    2
+ 324 Janusz Naumowicz               Rumia                 52.00    104    2
+ 325 Damian Więciorkowski           Częstochowa           52.00    104    2
+ 326 Krzysztof Kononowicz           Piastów               51.00    102    2
+ 327 Ewa Gajkowska                  Warszawa              50.00    100    2
+ 328 Maciej Leszczyński             Łódź                  50.00    100    2
+ 329 Radosław Leszczyński           Łódź                  50.00    100    2
+ 330 Sylwia Skokowska               Chojnów               50.00    100    2
+ 331 Jagoda Żbikowska               Warszawa             150.00    150    1
+ 332 Magdalena Wanot                Warszawa              69.00     69    1
+ 333 Agnieszka Zuziak               Kraków                56.00     56    1
+ 334 Marek Kasprzak                 Częstochowa           53.00     53    1
+ 335 Beata Borowska                 Lublin                50.00     50    1
+ 336 Kinga Bossy                    Poznań                50.00     50    1
+ 337 Barbara Graczykowska           Łódź                  50.00     50    1
+ 338 Agata Majos                    Warszawa              50.00     50    1
+</pre></div><div id='p_przebieg' class='page'>
+
+    </div><div style="clear:both;width:100%;" class="alignright">
+
+<script>
+<!--
+if ((document.getElementById("content").offsetHeight + document.getElementById("top").offsetHeight) > screen.height)
+    document.write("<br /><br /><a href='#top'>do góry</a>");
+-->
+</script>
+
+</div>
+</div>
+
+<div id="bottom">
+<ul id="bottomlinks">
+<div class='onleft'>
+ Osób on-line: 51</div>
+    <li><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+    <li><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+    <li><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+    <li><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+    <li><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+    <li><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+</ul>
+    SCRABBLE® jest zastrzeżonym znakiem towarowym J.W. Spears &amp; Sons&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://www.pfs.org.pl/prawaautorskie.php">© Prawa autorskie</a>
+</div>
+</body>
+</html>

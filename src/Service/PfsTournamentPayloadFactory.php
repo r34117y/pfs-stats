@@ -18,6 +18,7 @@ final readonly class PfsTournamentPayloadFactory
         return new TournamentRound(
             tournament: [
                 'org' => 'pfs',
+                'pfsUrlId' => $calendarTournament->urlId,
                 'dateStart' => $calendarTournament->startDate->format('Y-m-d'),
                 'name' => $results->tournamentName,
                 'city' => $calendarTournament->location,

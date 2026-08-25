@@ -1,0 +1,891 @@
+
+<html>
+<head>
+    <title>Polska Federacja Scrabble :: II Otwarte Mistrzostwa Ziemi Szczecińskiej</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="files/img/favicon.ico" />
+    <link rel="stylesheet" href="files/css/style.css" type="text/css" />
+	<link rel="stylesheet" href="files/css/style-index.css" type="text/css" />
+    <!--[if IE]><link rel="stylesheet" type="text/css" href="files/css/styleie.css" /><![endif]-->
+    <!--[if lt IE 7.]><script defer type="text/javascript" src="files/js/pngfix.js"></script><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="files/js/minmax.js"></script><![endif]-->
+    <script type="text/javascript" src="files/js/jquery.js"></script>
+    <script type="text/javascript" src="files/js/jquery-bp.js"></script>
+    <script type="text/javascript" src="files/js/java.js"></script>
+    <script>jSubmenu ("turnieje","kalendarz");jKalendarz();</script>
+    <script>
+    var url, page;
+
+    page = 'info';
+    url  = document.location.toString();
+
+    if (url.match ('#')) {
+      page = url.split ('#')[1];
+      if ($.inArray (page, [ 'info', 'relacja', 'klasyfikacja', 'hh', 'rundy', 'ranking', 'przebieg' ]) == -1)
+        page = 'info';
+    }
+
+    $(document).ready(function(){
+        $('a#listaucz').bind('click', function(event){
+            $('div#lista').toggle();
+            event.preventDefault();
+        }).toggle(function() { $(this).text('schowaj listę uczestników'); }, function() { $(this).text("pokaż listę uczestników"); });
+        $('div#lista table tr:last td').css({"border-bottom" : "none"});
+
+        $("a.przycisk").click (function (e) {
+            if ($(this).attr ('href') !== '#')
+                return true;
+
+            e.preventDefault ();
+
+            id       = this.id;
+            this.id += 'tmp';
+            window.location.hash = id;
+            this.id  = id;
+
+            $(".page").hide ();
+            $(".page#p_" + id).show ();
+
+            $("a.przycisk").removeClass ('active');
+            $(this).addClass ('active');
+
+            return false;
+        });
+
+        $("a.przycisk#" + page).click ();
+        $('html, body').animate ({ scrollTop: 0 }, 0);
+    });
+    </script>
+  <style type="text/css">
+    .page {
+        display: none;
+    }
+    #szczegoly{
+        width: 100%;
+        border-spacing: 0;
+        margin-top: 30px;
+        text-align: left;
+        font-size: inherit;
+    }
+    #szczegoly td{
+        padding: 10px 20px 10px 0;
+        vertical-align: top;
+    }
+    #szczegoly td:first-child{
+        font-weight: bold;
+        width: 160px;
+    }
+    div#lista{
+        display:none;
+        margin-top: 15px;
+    }
+    div#lista table{
+        margin-top: 10px;
+        text-align: left;
+        font-size: inherit;
+    }
+    div#lista table td{
+        padding: 3px 8px;
+        border-bottom: 1px dashed #1576AE;
+    }
+    div#lista table th{
+        padding: 0px 5px 10px 5px;
+    }
+    div#lista table td.ptaszek{
+        text-align: center;
+        background: url('files/img/tick.png') no-repeat center center;
+    }
+    div#lista table th{
+        white-space: nowrap;
+        width: auto;
+    }
+    div#lista table td:first-child, div#lista table th:first-child{
+        text-align:right;
+        width: auto;
+    }
+    </style>
+</head>
+
+<body>
+
+<script type="text/javascript">setMenu();</script>
+
+<div id="top" onclick="location.href='https://www.pfs.org.pl'">
+</div>
+<div id="menu">
+
+    <div id="m_glowna">
+        <div class="tab"><a href="https://www.pfs.org.pl/index.php"></a></div>
+
+        <ul>
+            <li class="sublink" id="aktualnosci"><a href="https://www.pfs.org.pl">Aktualności</a></li>
+            <li class="sublink" id="nowy"><a href="https://www.pfs.org.pl/dlanowych.php">Jestem tu nowy</a></li>
+            <li class="sublink" id="anagramator"><a href="https://www.pfs.org.pl/osps_online.php?main=1">Słownik online</a></li>
+            <li class="sublink" id="siodemka"><a href="https://www.pfs.org.pl/siodemka.php?main=1">Siódemka tygodnia</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+            <li class="sublink" id="dlasponsorow"><a href="https://www.pfs.org.pl/dlasponsorow.php">Dla sponsorów</a></li>
+            <li class="sublink" id="kontakt"><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+        </ul>
+    </div>
+    <div id="m_turnieje">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kalendarz.php"></a></div>
+        <ul>
+            <li class="sublink" id="kalendarz"><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+            <li class="sublink" id="regulaminy"><a href="https://www.pfs.org.pl/regulaminy.php">Regulaminy</a></li>
+            <li class="sublink" id="sedziowie"><a href="https://www.pfs.org.pl/sedziowie.php">Sędziowie</a></li>
+            <li class="sublink" id="gp"><a href="https://www.pfs.org.pl/gp2026.php">Grand Prix</a></li>
+<!--            <li class="sublink" id="mr"><a href="https://www.pfs.org.pl/mr2020.php">Mistrzostwa Regionów</a></li>-->
+            <li class="sublink" id="archiwum"><a href="https://www.pfs.org.pl/archiwum.php">Historia</a></li>
+            <li class="sublink" id="galeria"><a href="https://www.pfs.org.pl/galeria.php">Zdjęcia</a></li>
+            <li class="sublink" id="rekordy"><a href="https://www.pfs.org.pl/rekordy.php">Rekordy</a></li>
+        </ul>
+    </div>
+    <div id="m_pfs">
+        <div  class="tab"><a href="https://www.pfs.org.pl/opfs.php"></a></div>
+        <ul>
+            <li class="sublink" id="opfs"><a href="https://www.pfs.org.pl/opfs.php">O PFS</a></li>
+            <li class="sublink" id="jakprzystapic"><a href="https://www.pfs.org.pl/jakprzystapic.php">Jak przystąpić</a></li>
+            <li class="sublink" id="dlaczlonkow"><a href="https://www.pfs.org.pl/dlaczlonkow.php">Dla członków</a></li>
+            <li class="sublink" id="wladze"><a href="https://www.pfs.org.pl/wladze.php">Władze</a></li>
+            <li class="sublink" id="komisje"><a href="https://www.pfs.org.pl/komisje.php">Komisje</a></li>
+            <li class="sublink" id="statut"><a href="https://www.pfs.org.pl/statut.php">Statut</a></li>
+            <li class="sublink" id="uchwaly"><a href="https://www.pfs.org.pl/uchwaly.php">Uchwały</a></li>
+            <li class="sublink" id="honorowi"><a href="https://www.pfs.org.pl/honorowi.php">Honorowi członkowie</a></li>
+            <li class="sublink" id="finanse"><a href="https://www.pfs.org.pl/finanse.php">Finanse</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabble">
+        <div  class="tab"><a href="https://www.pfs.org.pl/osps_online.php?desktop=1"></a></div>
+        <ul>
+            <li class="sublink" id="osps_online"><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+            <li class="sublink" id="zds"><a href="https://www.pfs.org.pl/zds2.php">ZDS</a></li>
+            <li class="sublink" id="osps"><a href="https://www.pfs.org.pl/osps.php">OSPS</a></li>
+            <li class="sublink" id="aktualizacje"><a href="https://www.pfs.org.pl/osps_aktualizacje.php">Aktualizacje</a></li>
+            <li class="sublink" id="dwojki"><a href="https://www.pfs.org.pl/dwojki.php">2-literówki</a></li>
+            <li class="sublink" id="trojki"><a href="https://www.pfs.org.pl/trojki.php">3-literówki</a></li>
+            <li class="sublink" id="siodemkat"><a href="https://www.pfs.org.pl/siodemka.php">Siódemka tygodnia</a></li>
+            <li class="sublink" id="slowneroznosci"><a href="https://www.pfs.org.pl/slowneroznosci.php">Słowne różności</a></li>
+        </ul>
+    </div>
+    <div id="m_ranking">
+        <div  class="tab"><a href="https://www.pfs.org.pl/ranking.php"></a></div>
+        <ul>
+            <li class="sublink" id="aktranking"><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+            <li class="sublink" id="medale"><a href="https://www.pfs.org.pl/medale.php">Klasyfikacja medalowa</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabblisci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/mistrzowiepolski.php"></a></div>
+        <ul>
+            <li class="sublink" id="mistrzowiepolski"><a href="https://www.pfs.org.pl/mistrzowiepolski.php">Mistrzowie Polski</a></li>
+            <li class="sublink" id="zdobywcypp"><a href="https://www.pfs.org.pl/zdobywcypp.php">Zdobywcy Pucharu Polski</a></li>
+            <li class="sublink" id="zwyciezcygp"><a href="https://www.pfs.org.pl/zwyciezcygp.php">Zwycięzcy Grand Prix</a></li>
+            <li class="sublink" id="liderzyrankingu"><a href="https://www.pfs.org.pl/liderzyrankingu.php">Liderzy rankingu</a></li>
+            <li class="sublink" id="zwyciezcylemans"><a href="https://www.pfs.org.pl/zwyciezcylemans.php">Zwycięzcy 24h Le Mans</a></li>
+            <li class="sublink" id="zwyciezcykmp"><a href="https://www.pfs.org.pl/zwyciezcykmp.php">KMP</a>
+        </ul>
+    </div>
+    <div id="m_kluby">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kluby.php"></a></div>
+        <ul>
+            <li class="sublink" id="rejestrklubow"><a href="https://www.pfs.org.pl/kluby.php">Rejestr klubów</a></li>
+            <li class="sublink" id="kmp"><a href="https://www.pfs.org.pl/kmp.php">KMP</a></li>
+            <li class="sublink" id="wiescizklubow"><a href="https://www.pfs.org.pl/wiescizklubow.php">Wieści z klubów</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/about.php">Statystyki klubowe</a></li>
+        </ul>
+    </div>
+    <div id="m_roznosci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/historia.php"></a></div>
+        <ul>
+            <li class="sublink" id="historia"><a href="https://www.pfs.org.pl/historia.php">Historia</a></li>
+            <li class="sublink" id="odmiany"><a href="https://www.pfs.org.pl/odmiany.php">Odmiany</a></li>
+            <li class="sublink" id="anegdoty"><a href="https://www.pfs.org.pl/anegdoty.php">Anegdoty</a></li>
+            <li class="sublink" id="scrabblealia"><a href="https://www.pfs.org.pl/scrabblealia.php">Scrabblealia</a></li>
+            <li class="sublink" id="scrabblenet"><a href="https://www.pfs.org.pl/scrabblenet.php">Scrabble w internecie</a></li>
+            <li class="sublink" id="programy"><a href="https://www.pfs.org.pl/programy.php">Programy</a></li>
+            <li class="sublink" id="download"><a href="https://www.pfs.org.pl/download.php">Do pobrania</a></li>
+            <li class="sublink" id="ksiazki"><a href="https://www.pfs.org.pl/ksiazki.php">Książki</a></li>
+            <li class="sublink" id="slowniczek"><a href="https://www.pfs.org.pl/slowniczek.php">Słowniczek</a></li>
+        </ul>
+    </div>
+    <div id="m_english">
+        <div  class="tab"><a href="https://www.pfs.org.pl/english.php"></a></div>
+        <ul>
+            <li class="sublink" id="about"><a href="https://www.pfs.org.pl/english.php">About Polish Scrabble</a></li>
+            <li class="sublink" id="news"><a href="https://www.pfs.org.pl/en_news.php">News</a></li>
+            <li class="sublink" id="bartek"><a href="https://www.pfs.org.pl/bartek.php">Bartek w Johor Bahru</a></li>
+            <li class="sublink" id="franko"><a href="https://www.pfs.org.pl/franko.php">Scrabble frankofońskie</a></li>
+        </ul>
+    </div>
+</div>
+
+<div id="submenu"></div>
+<div id="content">
+<div id='nextTours'>
+		<div class='nextTour' onclick='location.href="turniej.php?id=375"'>
+			<div class='karteczka small1'>
+				<span class='miasto'>Inowrocław</span><span class='dzien'><span class='big'>18</span><br />kwietnia</span></div>
+			<div class='kartka big1'>
+				<span class='miasto'>Inowrocław</span>
+				<span class='dzien'><b>18-19 kwietnia</b></span>
+				<span class='nazwaturnieju'>II Otwarte Mistrzostwa Kujaw</span><span class='gp'>Grand&nbsp;Prix&nbsp;1998</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=374"'>
+			<div class='karteczka small2'>
+				<span class='miasto'>Szczecin</span><span class='dzien'><span class='big'>25</span><br />kwietnia</span></div>
+			<div class='kartka big2'>
+				<span class='miasto'>Szczecin</span>
+				<span class='dzien'><b>25-26 kwietnia</b></span>
+				<span class='nazwaturnieju'>II Otwarte Mistrzostwa Ziemi Szczecińskiej</span><span class='gp'>Grand&nbsp;Prix&nbsp;1998</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=373"'>
+			<div class='karteczka small3'>
+				<span class='miasto'>Piastów</span><span class='dzien'><span class='big'> 1</span><br />maja</span></div>
+			<div class='kartka big3'>
+				<span class='miasto'>Piastów</span>
+				<span class='dzien'><b> 1- 2 maja</b></span>
+				<span class='nazwaturnieju'>II Otwarte Mistrzostwa Piastowa</span><span class='gp'>Grand&nbsp;Prix&nbsp;1998</span></div>
+		</div></div><div class='naglowekrelacji'><span class='tytul'>II Otwarte Mistrzostwa Ziemi Szczecińskiej<span class='nazwa'>25 - 26 kwietnia 1998 —  II Otwarte Mistrzostwa Ziemi Szczecińskiej</span></span><a href='#' id='info' class='przycisk'>Informacje</a><a href='#' id='relacja' class='przycisk'>Relacja</a><a href='#' id='klasyfikacja' class='przycisk'>Wyniki</a><a href='#' id='hh' class='przycisk'>HH</a><div class='galleries'><img src='files/img/gallery.png' style='visibility:hidden;' alt='galeria' /></div></div><h1 style='color:black; margin-top:0px; margin-bottom:30px; padding: 0px'>II Otwarte Mistrzostwa Ziemi Szczecińskiej<span><img src='files/img/map-2.png' style='vertical-align: bottom;' title='Grand Prix'> Szczecin, 25 - 26 kwietnia 1998 <br>Grand&nbsp;Prix&nbsp;1998</span></h1><div id='p_relacja' class='page'><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><div class='relacja' style='clear:both;'><div><pre>
+ 1. Tomasz Zwoliński (Warszawa)
+ 2. Robert Duczemiński (Gorzów Wielkopolski)
+ 3. Maciej Czupryniak (Milanówek)
+ 4. Halina Roszak (Tczew)
+ 5. Małgorzata Kania (Milanówek)
+ 6. Leszek Nowak (Myślibórz)
+ 7. Wojciech Usakiewicz (Warszawa)
+ 8. Kazimierz M. Merklejn (Szczecin)
+ 9. Jacek Gigoła (Gorzów Wielkopolski)
+ 10. Tomasz Szymański (Gorzów Wielkopolski) 
+
+28 uczestników, 12 rund 
+</pre></div><div class='autor'></div></div><div style='clear:both;'></div></div><div id='p_info' class='page'><br><p align='center'></p><br><br><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br>Zobacz, jak było na poprzednich turniejach:<br><a href='turniej.php?id=404'>I Otwarte Mistrzostwa Szczecina</a><br><table id='szczegoly' class='ramkadolna'></table><br /><br /></div><div id='p_klasyfikacja' class='page'><pre>Wyniki turnieju II Mistrzostwa Ziemi Szczecińskiej
+
+Lp. Imię            Nazwisko             Miasto               Ranking  Duże pkt Małe pkt Skalpy   Różn. MP
+--- --------------- -------------------- -------------------- -------- -------- -------- -------- --------
+  1 Tomasz          Zwoliński            Skierdy                138.00      9.0     4905     1667     1100
+  2 Robert          Duczemiński          Gorzów Wielkopolski    136.00      9.0     4620     1692      795
+  3 Maciej          Czupryniak           Milanówek              123.00      8.0     4762     1602      887
+  4 Halina          Roszak               Poznań                 108.00      8.0     4590     1597      774
+  5 Małgorzata      Kania                Milanówek              125.00      8.0     4301     1586      591
+  6 Leszek          Nowak                Myślibórz              108.00      7.5     4338     1538      424
+  7 Wojciech        Usakiewicz           Warszawa               116.00      7.0     4352     1480      350
+  8 Kazimierz.J     Merklejn             Szczecin               100.00      7.0     4093     1406       45
+  9 Jacek           Gigoła               Gorzów Wielkopolski    114.00      6.5     4097     1407      127
+ 10 Tomasz          Szymański            Gorzów Wielkopolski    123.00      6.0     4290     1342      316
+ 11 Marek           Roszak               Poznań                 128.00      6.0     4214     1368     -144
+ 12 Krzysztof       Usakiewicz           Warszawa               100.00      6.0     4125     1317      477
+ 13 Walenty         Siemaszko            Lipiany                109.00      6.0     4086     1264      143
+ 14 Kazimierz       Merklejn             Szczecin               106.00      6.0     3996     1294      382
+ 15 Magdalena       Merklejn             Szczecin               100.00      6.0     3839     1379     -465
+ 16 Aleksandra      Merklejn-Kaczanowska Szczecin               100.00      6.0     3777     1315      193
+ 17 Edmund          Łagutko              Ośno Lubuskie          100.00      6.0     3285     1223     -182
+ 18 Tomasz          Łagutko              Ośno Lubuskie          100.00      5.0     3275     1159     -212
+ 19 Michał          Siemaszko            Lipiany                100.00      4.0     3082     1056     -623
+ 20 Sławomir        Charysz              Lipiany                100.00      4.0     2498     1029     -840
+ 21 Jarek           Dąbrowski            Ośno Lubuskie          100.00      4.0     2359      995     -699
+ 22 Maurycy         Machnio              Lipiany                100.00      3.0     2746      951     -881
+ 23 Patryk          Pajdzik              Lipiany                100.00      2.0      851      625    -1542
+ 24 Mateusz         Alwin                Lipiany                100.00      2.0      675      388     -158
+ 25 Gizela          Rybczyńska           Szczecin               100.00      0.0      622      178     -257
+ 26 Adam            Machnio              Lipiany                100.00      0.0      548      150     -152
+ 27 Agnieszka       Kacperska            Osetna                 100.00      0.0      420      150     -327
+ 28 Michał          Kowaliński           Lipiany                100.00      0.0      130       50     -122
+</pre></div><div id='p_hh' class='page'><pre>Wyniki poszczególnych graczy w turnieju II Mistrzostwa Ziemi Szczecińskiej
+
+
+
+	Tomasz Zwoliński 138.00 Skierdy         
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Mateusz        Alwin                 100.00 +  469: 108  150
+    2     1 Tomasz         Szymański             123.00 +  535: 274  173
+    3     1 Robert         Duczemiński           136.00 +  357: 288  186
+    4     1 Leszek         Nowak                 108.00 +  332: 322  158
+    5     1 Maciej         Czupryniak            123.00 -  377: 386   73
+    6     2 Magdalena      Merklejn              100.00 -  435: 442   50
+    7     2 Marek          Roszak                128.00 +  429: 391  178
+    8     1 Halina         Roszak                108.00 +  378: 315  158
+    9     1 Wojciech       Usakiewicz            116.00 +  444: 342  166
+   10     1 Małgorzata     Kania                 125.00 -  338: 368   75
+   11     1 Kazimierz.J    Merklejn              100.00 +  451: 306  150
+   12     1 Krzysztof      Usakiewicz            100.00 +  360: 263  150
+                                                          --------------- ---- ------
+                                                                    1667  / 12 138.92
+
+
+
+
+	Robert Duczemiński 136.00 Gorzów Wielkopolski          
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Maurycy        Machnio               100.00 +  456: 184  150
+    2     2 Halina         Roszak                108.00 +  353: 298  158
+    3     1 Tomasz         Zwoliński             138.00 -  288: 357   88
+    4     4 Jacek          Gigoła                114.00 +  438: 381  164
+    5     3 Wojciech       Usakiewicz            116.00 +  442: 382  166
+    6     3 Małgorzata     Kania                 125.00 -  328: 367   75
+    7     3 Maciej         Czupryniak            123.00 -  316: 365   73
+    8     3 Magdalena      Merklejn              100.00 +  447: 207  150
+    9     4 Leszek         Nowak                 108.00 +  337: 330  158
+   10     4 Tomasz         Szymański             123.00 +  358: 307  173
+   11     4 Marek          Roszak                128.00 +  435: 246  178
+   12     3 Walenty        Siemaszko             109.00 +  422: 401  159
+                                                          --------------- ---- ------
+                                                                    1692  / 12 141.00
+
+
+
+
+	Marek Roszak 128.00 Poznań                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Gizela         Rybczyńska            100.00 +  364: 223  150
+    2     5 Aleksandra     Merklejn-Kaczanowska  100.00 +  380: 264  150
+    3     3 Magdalena      Merklejn              100.00 -  226: 433   50
+    4     6 Wojciech       Usakiewicz            116.00 -  291: 448   66
+    5     7 Tomasz         Łagutko               100.00 +  403: 266  150
+    6     5 Leszek         Nowak                 108.00 +  541: 309  158
+    7     2 Tomasz         Zwoliński             138.00 -  391: 429   88
+    8     4 Małgorzata     Kania                 125.00 +  409: 249  175
+    9     2 Halina         Roszak                108.00 +  369: 365  158
+   10     2 Maciej         Czupryniak            123.00 -  348: 502   73
+   11     4 Robert         Duczemiński           136.00 -  246: 435   86
+   12     7 Jacek          Gigoła                114.00 -  246: 435   64
+                                                          --------------- ---- ------
+                                                                    1368  / 12 114.00
+
+
+
+
+	Małgorzata Kania 125.00 Milanówek                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Patryk         Pajdzik               100.00 +  389: 159  150
+    2     4 Kazimierz      Merklejn              106.00 +  414: 296  156
+    3     2 Leszek         Nowak                 108.00 -  296: 356   58
+    4     3 Halina         Roszak                108.00 -  347: 407   58
+    5     5 Tomasz         Szymański             123.00 +  369: 277  173
+    6     3 Robert         Duczemiński           136.00 +  367: 328  186
+    7     4 Wojciech       Usakiewicz            116.00 -  337: 346   66
+    8     4 Marek          Roszak                128.00 -  249: 409   78
+    9     6 Krzysztof      Usakiewicz            100.00 +  387: 257  150
+   10     1 Tomasz         Zwoliński             138.00 +  368: 338  188
+   11     2 Maciej         Czupryniak            123.00 +  363: 329  173
+   12     5 Aleksandra     Merklejn-Kaczanowska  100.00 +  415: 208  150
+                                                          --------------- ---- ------
+                                                                    1586  / 12 132.17
+
+
+
+
+	Maciej Czupryniak 123.00 Milanówek                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Jarek          Dąbrowski             100.00 +  405: 197  150
+    2     3 Leszek         Nowak                 108.00 -  361: 374   58
+    3     4 Tomasz         Szymański             123.00 +  514: 259  173
+    4     2 Magdalena      Merklejn              100.00 +  434: 233  150
+    5     1 Tomasz         Zwoliński             138.00 +  386: 377  188
+    6     1 Halina         Roszak                108.00 -  315: 373   58
+    7     3 Robert         Duczemiński           136.00 +  365: 316  186
+    8     2 Wojciech       Usakiewicz            116.00 -  385: 490   66
+    9     3 Jacek          Gigoła                114.00 +  400: 232  164
+   10     2 Marek          Roszak                128.00 +  502: 348  178
+   11     2 Małgorzata     Kania                 125.00 -  329: 363   75
+   12     4 Kazimierz      Merklejn              106.00 +  366: 313  156
+                                                          --------------- ---- ------
+                                                                    1602  / 12 133.50
+
+
+
+
+	Tomasz Szymański 123.00 Gorzów Wielkopolski      
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Sławomir       Charysz               100.00 +  538: 120  150
+    2     1 Tomasz         Zwoliński             138.00 -  274: 535   88
+    3     4 Maciej         Czupryniak            123.00 -  259: 514   73
+    4     7 Kazimierz.J    Merklejn              100.00 +  453: 265  150
+    5     5 Małgorzata     Kania                 125.00 -  277: 369   75
+    6     6 Aleksandra     Merklejn-Kaczanowska  100.00 +  374: 269  150
+    7     5 Jacek          Gigoła                114.00 -  323: 358   64
+    8     6 Kazimierz      Merklejn              106.00 +  387: 278  156
+    9     5 Magdalena      Merklejn              100.00 +  344: 307  150
+   10     4 Robert         Duczemiński           136.00 -  307: 358   86
+   11     6 Krzysztof      Usakiewicz            100.00 -  369: 403   50
+   12     9 Michał         Siemaszko             100.00 +  385: 198  150
+                                                          --------------- ---- ------
+                                                                    1342  / 12 111.83
+
+
+
+
+	Wojciech Usakiewicz 116.00 Warszawa               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Aleksandra     Merklejn-Kaczanowska  100.00 -  254: 348   50
+    2     9 Michał         Siemaszko             100.00 +  341: 243  150
+    3     8 Tomasz         Łagutko               100.00 +  378: 226  150
+    4     6 Marek          Roszak                128.00 +  448: 291  178
+    5     3 Robert         Duczemiński           136.00 -  382: 442   86
+    6     4 Jacek          Gigoła                114.00 +  342: 327  164
+    7     4 Małgorzata     Kania                 125.00 +  346: 337  175
+    8     2 Maciej         Czupryniak            123.00 +  490: 385  173
+    9     1 Tomasz         Zwoliński             138.00 -  342: 444   88
+   10     3 Halina         Roszak                108.00 -  312: 393   58
+   11     5 Leszek         Nowak                 108.00 -  305: 370   58
+   12     8 Jarek          Dąbrowski             100.00 +  412: 196  150
+                                                          --------------- ---- ------
+                                                                    1480  / 12 123.33
+
+
+
+
+	Jacek Gigoła 114.00 Gorzów Wielkopolski        
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Kazimierz.J    Merklejn              100.00 -  310: 344   50
+    2     8 Krzysztof      Usakiewicz            100.00 +  349: 272  150
+    3     6 Kazimierz      Merklejn              106.00 +  371: 283  156
+    4     4 Robert         Duczemiński           136.00 -  381: 438   86
+    5     6 Walenty        Siemaszko             109.00 +  388: 331  159
+    6     4 Wojciech       Usakiewicz            116.00 -  327: 342   66
+    7     5 Tomasz         Szymański             123.00 +  358: 323  173
+    8     5 Leszek         Nowak                 108.00 =  369: 369  108
+    9     3 Maciej         Czupryniak            123.00 -  232: 400   73
+   10     7 Aleksandra     Merklejn-Kaczanowska  100.00 +  292: 290  150
+   11     3 Halina         Roszak                108.00 -  285: 332   58
+   12     7 Marek          Roszak                128.00 +  435: 246  178
+                                                          --------------- ---- ------
+                                                                    1407  / 12 117.25
+
+
+
+
+	Walenty Siemaszko 109.00 Lipiany                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Magdalena      Merklejn              100.00 -  337: 347   50
+    2     7 Tomasz         Łagutko               100.00 +  382: 242  150
+    3     5 Halina         Roszak                108.00 -  239: 514   58
+    4     8 Kazimierz      Merklejn              106.00 +  332: 322  156
+    5     6 Jacek          Gigoła                114.00 -  331: 388   64
+    6     9 Michał         Siemaszko             100.00 +  428: 255  150
+    7     7 Aleksandra     Merklejn-Kaczanowska  100.00 +  324: 295  150
+    8     7 Krzysztof      Usakiewicz            100.00 -  269: 387   50
+    9     8 Edmund         Łagutko               100.00 +  322: 223  150
+   10     5 Kazimierz.J    Merklejn              100.00 -  315: 348   50
+   11     8 Maurycy        Machnio               100.00 +  406: 200  150
+   12     3 Robert         Duczemiński           136.00 -  401: 422   86
+                                                          --------------- ---- ------
+                                                                    1264  / 12 105.33
+
+
+
+
+	Leszek Nowak 108.00 Myślibórz                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Michał         Siemaszko             100.00 +  415: 253  150
+    2     3 Maciej         Czupryniak            123.00 +  374: 361  173
+    3     2 Małgorzata     Kania                 125.00 +  356: 296  175
+    4     1 Tomasz         Zwoliński             138.00 -  322: 332   88
+    5     2 Halina         Roszak                108.00 -  310: 346   58
+    6     5 Marek          Roszak                128.00 -  309: 541   78
+    7     6 Kazimierz.J    Merklejn              100.00 +  390: 242  150
+    8     5 Jacek          Gigoła                114.00 =  369: 369  114
+    9     4 Robert         Duczemiński           136.00 -  330: 337   86
+   10     6 Magdalena      Merklejn              100.00 +  443: 268  150
+   11     5 Wojciech       Usakiewicz            116.00 +  370: 305  166
+   12     6 Edmund         Łagutko               100.00 +  350: 264  150
+                                                          --------------- ---- ------
+                                                                    1538  / 12 128.17
+
+
+
+
+	Halina Roszak 108.00 Poznań                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Krzysztof      Usakiewicz            100.00 +  433: 272  150
+    2     2 Robert         Duczemiński           136.00 -  298: 353   86
+    3     5 Walenty        Siemaszko             109.00 +  514: 239  159
+    4     3 Małgorzata     Kania                 125.00 +  407: 347  175
+    5     2 Leszek         Nowak                 108.00 +  346: 310  158
+    6     1 Maciej         Czupryniak            123.00 +  373: 315  173
+    7     1 Magdalena      Merklejn              100.00 +  480: 301  150
+    8     1 Tomasz         Zwoliński             138.00 -  315: 378   88
+    9     2 Marek          Roszak                128.00 -  365: 369   78
+   10     3 Wojciech       Usakiewicz            116.00 +  393: 312  166
+   11     3 Jacek          Gigoła                114.00 +  332: 285  164
+   12     2 Kazimierz.J    Merklejn              100.00 -  334: 335   50
+                                                          --------------- ---- ------
+                                                                    1597  / 12 133.08
+
+
+
+
+	Kazimierz Merklejn 106.00 Szczecin                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    12 Edmund         Łagutko               100.00 +  388: 221  150
+    2     4 Małgorzata     Kania                 125.00 -  296: 414   75
+    3     6 Jacek          Gigoła                114.00 -  283: 371   64
+    4     8 Walenty        Siemaszko             109.00 -  322: 332   59
+    5     9 Sławomir       Charysz               100.00 +  376: 214  150
+    6     8 Tomasz         Łagutko               100.00 +  350: 244  150
+    7     8 Jarek          Dąbrowski             100.00 +  409: 166  150
+    8     6 Tomasz         Szymański             123.00 -  278: 387   73
+    9     7 Kazimierz.J    Merklejn              100.00 -  233: 415   50
+   10     9 Maurycy        Machnio               100.00 +  374: 242  150
+   11     7 Magdalena      Merklejn              100.00 +  374: 242  150
+   12     4 Maciej         Czupryniak            123.00 -  313: 366   73
+                                                          --------------- ---- ------
+                                                                    1294  / 12 107.83
+
+
+
+
+	Mateusz Alwin 100.00 Lipiany                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Tomasz         Zwoliński             138.00 -  108: 469   88
+    2    13 Sławomir       Charysz               100.00 +  287: 252  150
+    3    10 Patryk         Pajdzik               100.00 +  280: 112  150
+                                                          --------------- ---- ------
+                                                                     388  /  3 129.33
+
+
+
+
+	Sławomir Charysz 100.00 Lipiany                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Tomasz         Szymański             123.00 -  120: 538   73
+    2    13 Mateusz        Alwin                 100.00 -  252: 287   50
+    3    13 Agnieszka      Kacperska             100.00 +  280: 168  150
+    4    10 Maurycy        Machnio               100.00 +  216: 200  150
+    5     9 Kazimierz      Merklejn              106.00 -  214: 376   56
+    6    10 Jarek          Dąbrowski             100.00 -  139: 223   50
+    7    12 Michał         Kowaliński            100.00 +  252: 130  150
+    8    10 Edmund         Łagutko               100.00 -  172: 372   50
+    9    11 Patryk         Pajdzik               100.00 +  261:  29  150
+   10     8 Krzysztof      Usakiewicz            100.00 -  175: 464   50
+   11    11 Michał         Siemaszko             100.00 -  204: 284   50
+   12    11 Tomasz         Łagutko               100.00 -  213: 267   50
+                                                          --------------- ---- ------
+                                                                    1029  / 12  85.75
+
+
+
+
+	Jarek Dąbrowski 100.00 Ośno Lubuskie            
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Maciej         Czupryniak            123.00 -  197: 405   73
+    2    11 Maurycy        Machnio               100.00 -  183: 255   50
+    3    12 Gizela         Rybczyńska            100.00 +  233: 188  150
+    4    11 Patryk         Pajdzik               100.00 +  270: 100  150
+    5     8 Edmund         Łagutko               100.00 -  205: 291   50
+    6    10 Sławomir       Charysz               100.00 +  223: 139  150
+    7     8 Kazimierz      Merklejn              106.00 -  166: 409   56
+    8    11 Michał         Siemaszko             100.00 -  218: 281   50
+   10    10 Tomasz         Łagutko               100.00 +  269: 267  150
+   11     9 Aleksandra     Merklejn-Kaczanowska  100.00 -  199: 311   50
+   12     8 Wojciech       Usakiewicz            116.00 -  196: 412   66
+                                                          --------------- ---- ------
+                                                                     995  / 11  90.45
+
+
+
+
+	Agnieszka Kacperska 100.00 Osetna                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    13 Tomasz         Łagutko               100.00 -  135: 342   50
+    2    12 Patryk         Pajdzik               100.00 -  117: 125   50
+    3    13 Sławomir       Charysz               100.00 -  168: 280   50
+                                                          --------------- ---- ------
+                                                                     150  /  3  50.00
+
+
+
+
+	Michał Kowaliński 100.00 Lipiany                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    7    12 Sławomir       Charysz               100.00 -  130: 252   50
+                                                          --------------- ---- ------
+                                                                      50  /  1  50.00
+
+
+
+
+	Adam Machnio 100.00 Lipiany                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    4    12 Michał         Siemaszko             100.00 -  211: 270   50
+    5    12 Patryk         Pajdzik               100.00 -  124: 189   50
+    6    12 Maurycy        Machnio               100.00 -  213: 241   50
+                                                          --------------- ---- ------
+                                                                     150  /  3  50.00
+
+
+
+
+	Maurycy Machnio 100.00 Lipiany                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Robert         Duczemiński           136.00 -  184: 456   86
+    2    11 Jarek          Dąbrowski             100.00 +  255: 183  150
+    3     9 Edmund         Łagutko               100.00 -  231: 282   50
+    4    10 Sławomir       Charysz               100.00 -  200: 216   50
+    5    11 Michał         Siemaszko             100.00 -  216: 329   50
+    6    12 Adam           Machnio               100.00 +  241: 213  150
+    7    11 Patryk         Pajdzik               100.00 +  344: 109  150
+    8     9 Aleksandra     Merklejn-Kaczanowska  100.00 -  174: 432   50
+    9    10 Tomasz         Łagutko               100.00 -  212: 299   50
+   10     9 Kazimierz      Merklejn              106.00 -  242: 374   56
+   11     8 Walenty        Siemaszko             109.00 -  200: 406   59
+   12    10 Magdalena      Merklejn              100.00 -  247: 328   50
+                                                          --------------- ---- ------
+                                                                     951  / 12  79.25
+
+
+
+
+	Kazimierz.J Merklejn 100.00 Szczecin               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Jacek          Gigoła                114.00 +  344: 310  164
+    2     6 Magdalena      Merklejn              100.00 -  305: 358   50
+    3     7 Aleksandra     Merklejn-Kaczanowska  100.00 -  333: 389   50
+    4     7 Tomasz         Szymański             123.00 -  265: 453   73
+    5    10 Krzysztof      Usakiewicz            100.00 +  460: 275  150
+    6     7 Edmund         Łagutko               100.00 +  397: 254  150
+    7     6 Leszek         Nowak                 108.00 -  242: 390   58
+    8     8 Tomasz         Łagutko               100.00 +  343: 286  150
+    9     7 Kazimierz      Merklejn              106.00 +  415: 233  156
+   10     5 Walenty        Siemaszko             109.00 +  348: 315  159
+   11     1 Tomasz         Zwoliński             138.00 -  306: 451   88
+   12     2 Halina         Roszak                108.00 +  335: 334  158
+                                                          --------------- ---- ------
+                                                                    1406  / 12 117.17
+
+
+
+
+	Magdalena Merklejn 100.00 Szczecin               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Walenty        Siemaszko             109.00 +  347: 337  159
+    2     6 Kazimierz.J    Merklejn              100.00 +  358: 305  150
+    3     3 Marek          Roszak                128.00 +  433: 226  178
+    4     2 Maciej         Czupryniak            123.00 -  233: 434   73
+    5     4 Aleksandra     Merklejn-Kaczanowska  100.00 +  373: 232  150
+    6     2 Tomasz         Zwoliński             138.00 +  442: 435  188
+    7     1 Halina         Roszak                108.00 -  301: 480   58
+    8     3 Robert         Duczemiński           136.00 -  207: 447   86
+    9     5 Tomasz         Szymański             123.00 -  307: 344   73
+   10     6 Leszek         Nowak                 108.00 -  268: 443   58
+   11     7 Kazimierz      Merklejn              106.00 -  242: 374   56
+   12    10 Maurycy        Machnio               100.00 +  328: 247  150
+                                                          --------------- ---- ------
+                                                                    1379  / 12 114.92
+
+
+
+
+	Aleksandra Merklejn-Kaczanowska 100.00 Szczecin                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Wojciech       Usakiewicz            116.00 +  348: 254  166
+    2     5 Marek          Roszak                128.00 -  264: 380   78
+    3     7 Kazimierz.J    Merklejn              100.00 +  389: 333  150
+    4     5 Edmund         Łagutko               100.00 +  355: 252  150
+    5     4 Magdalena      Merklejn              100.00 -  232: 373   50
+    6     6 Tomasz         Szymański             123.00 -  269: 374   73
+    7     7 Walenty        Siemaszko             109.00 -  295: 324   59
+    8     9 Maurycy        Machnio               100.00 +  432: 174  150
+    9     9 Michał         Siemaszko             100.00 +  384: 214  150
+   10     7 Jacek          Gigoła                114.00 -  290: 292   64
+   11     9 Jarek          Dąbrowski             100.00 +  311: 199  150
+   12     5 Małgorzata     Kania                 125.00 -  208: 415   75
+                                                          --------------- ---- ------
+                                                                    1315  / 12 109.58
+
+
+
+
+	Patryk Pajdzik 100.00 Lipiany                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Małgorzata     Kania                 125.00 -  159: 389   75
+    2    12 Agnieszka      Kacperska             100.00 +  125: 117  150
+    3    10 Mateusz        Alwin                 100.00 -  112: 280   50
+    4    11 Jarek          Dąbrowski             100.00 -  100: 270   50
+    5    12 Adam           Machnio               100.00 +  189: 124  150
+    6    11 Krzysztof      Usakiewicz            100.00 -   28: 608   50
+    7    11 Maurycy        Machnio               100.00 -  109: 344   50
+    9    11 Sławomir       Charysz               100.00 -   29: 261   50
+                                                          --------------- ---- ------
+                                                                     625  /  8  78.12
+
+
+
+
+	Gizela Rybczyńska 100.00 Szczecin                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Marek          Roszak                128.00 -  223: 364   78
+    2    10 Edmund         Łagutko               100.00 -  211: 282   50
+    3    12 Jarek          Dąbrowski             100.00 -  188: 233   50
+                                                          --------------- ---- ------
+                                                                     178  /  3  59.33
+
+
+
+
+	Michał Siemaszko 100.00 Lipiany                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Leszek         Nowak                 108.00 -  253: 415   58
+    2     9 Wojciech       Usakiewicz            116.00 -  243: 341   66
+    3    11 Krzysztof      Usakiewicz            100.00 -  258: 308   50
+    4    12 Adam           Machnio               100.00 +  270: 211  150
+    5    11 Maurycy        Machnio               100.00 +  329: 216  150
+    6     9 Walenty        Siemaszko             109.00 -  255: 428   59
+    7    10 Tomasz         Łagutko               100.00 -  266: 295   50
+    8    11 Jarek          Dąbrowski             100.00 +  281: 218  150
+    9     9 Aleksandra     Merklejn-Kaczanowska  100.00 -  214: 384   50
+   10    11 Edmund         Łagutko               100.00 -  231: 300   50
+   11    11 Sławomir       Charysz               100.00 +  284: 204  150
+   12     9 Tomasz         Szymański             123.00 -  198: 385   73
+                                                          --------------- ---- ------
+                                                                    1056  / 12  88.00
+
+
+
+
+	Krzysztof Usakiewicz 100.00 Warszawa               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Halina         Roszak                108.00 -  272: 433   58
+    2     8 Jacek          Gigoła                114.00 -  272: 349   64
+    3    11 Michał         Siemaszko             100.00 +  308: 258  150
+    4     9 Tomasz         Łagutko               100.00 -  264: 288   50
+    5    10 Kazimierz.J    Merklejn              100.00 -  275: 460   50
+    6    11 Patryk         Pajdzik               100.00 +  608:  28  150
+    7     9 Edmund         Łagutko               100.00 +  352: 272  150
+    8     7 Walenty        Siemaszko             109.00 +  387: 269  159
+    9     6 Małgorzata     Kania                 125.00 -  257: 387   75
+   10     8 Sławomir       Charysz               100.00 +  464: 175  150
+   11     6 Tomasz         Szymański             123.00 +  403: 369  173
+   12     1 Tomasz         Zwoliński             138.00 -  263: 360   88
+                                                          --------------- ---- ------
+                                                                    1317  / 12 109.75
+
+
+
+
+	Edmund Łagutko 100.00 Ośno Lubuskie            
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    12 Kazimierz      Merklejn              106.00 -  221: 388   56
+    2    10 Gizela         Rybczyńska            100.00 +  282: 211  150
+    3     9 Maurycy        Machnio               100.00 +  282: 231  150
+    4     5 Aleksandra     Merklejn-Kaczanowska  100.00 -  252: 355   50
+    5     8 Jarek          Dąbrowski             100.00 +  291: 205  150
+    6     7 Kazimierz.J    Merklejn              100.00 -  254: 397   50
+    7     9 Krzysztof      Usakiewicz            100.00 -  272: 352   50
+    8    10 Sławomir       Charysz               100.00 +  372: 172  150
+    9     8 Walenty        Siemaszko             109.00 -  223: 322   59
+   10    11 Michał         Siemaszko             100.00 +  300: 231  150
+   11    10 Tomasz         Łagutko               100.00 +  272: 253  150
+   12     6 Leszek         Nowak                 108.00 -  264: 350   58
+                                                          --------------- ---- ------
+                                                                    1223  / 12 101.92
+
+
+
+
+	Tomasz Łagutko 100.00 Ośno Lubuskie            
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    13 Agnieszka      Kacperska             100.00 +  342: 135  150
+    2     7 Walenty        Siemaszko             109.00 -  242: 382   59
+    3     8 Wojciech       Usakiewicz            116.00 -  226: 378   66
+    4     9 Krzysztof      Usakiewicz            100.00 +  288: 264  150
+    5     7 Marek          Roszak                128.00 -  266: 403   78
+    6     8 Kazimierz      Merklejn              106.00 -  244: 350   56
+    7    10 Michał         Siemaszko             100.00 +  295: 266  150
+    8     8 Kazimierz.J    Merklejn              100.00 -  286: 343   50
+    9    10 Maurycy        Machnio               100.00 +  299: 212  150
+   10    10 Jarek          Dąbrowski             100.00 -  267: 269   50
+   11    10 Edmund         Łagutko               100.00 -  253: 272   50
+   12    11 Sławomir       Charysz               100.00 +  267: 213  150
+                                                          --------------- ---- ------
+                                                                    1159  / 12  96.58
+
+
+</pre></div><div id='p_rundy' class='page'><pre></pre></div><div id='p_ranking' class='page'><pre></pre></div><div id='p_przebieg' class='page'>
+
+    </div><div style="clear:both;width:100%;" class="alignright">
+
+<script>
+<!--
+if ((document.getElementById("content").offsetHeight + document.getElementById("top").offsetHeight) > screen.height)
+    document.write("<br /><br /><a href='#top'>do góry</a>");
+-->
+</script>
+
+</div>
+</div>
+
+<div id="bottom">
+<ul id="bottomlinks">
+<div class='onleft'>
+ Osób on-line: 53</div>
+    <li><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+    <li><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+    <li><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+    <li><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+    <li><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+    <li><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+</ul>
+    SCRABBLE® jest zastrzeżonym znakiem towarowym J.W. Spears &amp; Sons&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://www.pfs.org.pl/prawaautorskie.php">© Prawa autorskie</a>
+</div>
+</body>
+</html>

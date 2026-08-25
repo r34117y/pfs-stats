@@ -1,0 +1,615 @@
+
+<html>
+<head>
+    <title>Polska Federacja Scrabble :: Hanysowe scrabblowanie</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="files/img/favicon.ico" />
+    <link rel="stylesheet" href="files/css/style.css" type="text/css" />
+	<link rel="stylesheet" href="files/css/style-index.css" type="text/css" />
+    <!--[if IE]><link rel="stylesheet" type="text/css" href="files/css/styleie.css" /><![endif]-->
+    <!--[if lt IE 7.]><script defer type="text/javascript" src="files/js/pngfix.js"></script><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="files/js/minmax.js"></script><![endif]-->
+    <script type="text/javascript" src="files/js/jquery.js"></script>
+    <script type="text/javascript" src="files/js/jquery-bp.js"></script>
+    <script type="text/javascript" src="files/js/java.js"></script>
+    <script>jSubmenu ("turnieje","kalendarz");jKalendarz();</script>
+    <script>
+    var url, page;
+
+    page = 'info';
+    url  = document.location.toString();
+
+    if (url.match ('#')) {
+      page = url.split ('#')[1];
+      if ($.inArray (page, [ 'info', 'relacja', 'klasyfikacja', 'hh', 'rundy', 'ranking', 'przebieg' ]) == -1)
+        page = 'info';
+    }
+
+    $(document).ready(function(){
+        $('a#listaucz').bind('click', function(event){
+            $('div#lista').toggle();
+            event.preventDefault();
+        }).toggle(function() { $(this).text('schowaj listę uczestników'); }, function() { $(this).text("pokaż listę uczestników"); });
+        $('div#lista table tr:last td').css({"border-bottom" : "none"});
+
+        $("a.przycisk").click (function (e) {
+            if ($(this).attr ('href') !== '#')
+                return true;
+
+            e.preventDefault ();
+
+            id       = this.id;
+            this.id += 'tmp';
+            window.location.hash = id;
+            this.id  = id;
+
+            $(".page").hide ();
+            $(".page#p_" + id).show ();
+
+            $("a.przycisk").removeClass ('active');
+            $(this).addClass ('active');
+
+            return false;
+        });
+
+        $("a.przycisk#" + page).click ();
+        $('html, body').animate ({ scrollTop: 0 }, 0);
+    });
+    </script>
+  <style type="text/css">
+    .page {
+        display: none;
+    }
+    #szczegoly{
+        width: 100%;
+        border-spacing: 0;
+        margin-top: 30px;
+        text-align: left;
+        font-size: inherit;
+    }
+    #szczegoly td{
+        padding: 10px 20px 10px 0;
+        vertical-align: top;
+    }
+    #szczegoly td:first-child{
+        font-weight: bold;
+        width: 160px;
+    }
+    div#lista{
+        display:none;
+        margin-top: 15px;
+    }
+    div#lista table{
+        margin-top: 10px;
+        text-align: left;
+        font-size: inherit;
+    }
+    div#lista table td{
+        padding: 3px 8px;
+        border-bottom: 1px dashed #1576AE;
+    }
+    div#lista table th{
+        padding: 0px 5px 10px 5px;
+    }
+    div#lista table td.ptaszek{
+        text-align: center;
+        background: url('files/img/tick.png') no-repeat center center;
+    }
+    div#lista table th{
+        white-space: nowrap;
+        width: auto;
+    }
+    div#lista table td:first-child, div#lista table th:first-child{
+        text-align:right;
+        width: auto;
+    }
+    </style>
+</head>
+
+<body>
+
+<script type="text/javascript">setMenu();</script>
+
+<div id="top" onclick="location.href='https://www.pfs.org.pl'">
+</div>
+<div id="menu">
+
+    <div id="m_glowna">
+        <div class="tab"><a href="https://www.pfs.org.pl/index.php"></a></div>
+
+        <ul>
+            <li class="sublink" id="aktualnosci"><a href="https://www.pfs.org.pl">Aktualności</a></li>
+            <li class="sublink" id="nowy"><a href="https://www.pfs.org.pl/dlanowych.php">Jestem tu nowy</a></li>
+            <li class="sublink" id="anagramator"><a href="https://www.pfs.org.pl/osps_online.php?main=1">Słownik online</a></li>
+            <li class="sublink" id="siodemka"><a href="https://www.pfs.org.pl/siodemka.php?main=1">Siódemka tygodnia</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+            <li class="sublink" id="dlasponsorow"><a href="https://www.pfs.org.pl/dlasponsorow.php">Dla sponsorów</a></li>
+            <li class="sublink" id="kontakt"><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+        </ul>
+    </div>
+    <div id="m_turnieje">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kalendarz.php"></a></div>
+        <ul>
+            <li class="sublink" id="kalendarz"><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+            <li class="sublink" id="regulaminy"><a href="https://www.pfs.org.pl/regulaminy.php">Regulaminy</a></li>
+            <li class="sublink" id="sedziowie"><a href="https://www.pfs.org.pl/sedziowie.php">Sędziowie</a></li>
+            <li class="sublink" id="gp"><a href="https://www.pfs.org.pl/gp2026.php">Grand Prix</a></li>
+<!--            <li class="sublink" id="mr"><a href="https://www.pfs.org.pl/mr2020.php">Mistrzostwa Regionów</a></li>-->
+            <li class="sublink" id="archiwum"><a href="https://www.pfs.org.pl/archiwum.php">Historia</a></li>
+            <li class="sublink" id="galeria"><a href="https://www.pfs.org.pl/galeria.php">Zdjęcia</a></li>
+            <li class="sublink" id="rekordy"><a href="https://www.pfs.org.pl/rekordy.php">Rekordy</a></li>
+        </ul>
+    </div>
+    <div id="m_pfs">
+        <div  class="tab"><a href="https://www.pfs.org.pl/opfs.php"></a></div>
+        <ul>
+            <li class="sublink" id="opfs"><a href="https://www.pfs.org.pl/opfs.php">O PFS</a></li>
+            <li class="sublink" id="jakprzystapic"><a href="https://www.pfs.org.pl/jakprzystapic.php">Jak przystąpić</a></li>
+            <li class="sublink" id="dlaczlonkow"><a href="https://www.pfs.org.pl/dlaczlonkow.php">Dla członków</a></li>
+            <li class="sublink" id="wladze"><a href="https://www.pfs.org.pl/wladze.php">Władze</a></li>
+            <li class="sublink" id="komisje"><a href="https://www.pfs.org.pl/komisje.php">Komisje</a></li>
+            <li class="sublink" id="statut"><a href="https://www.pfs.org.pl/statut.php">Statut</a></li>
+            <li class="sublink" id="uchwaly"><a href="https://www.pfs.org.pl/uchwaly.php">Uchwały</a></li>
+            <li class="sublink" id="honorowi"><a href="https://www.pfs.org.pl/honorowi.php">Honorowi członkowie</a></li>
+            <li class="sublink" id="finanse"><a href="https://www.pfs.org.pl/finanse.php">Finanse</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabble">
+        <div  class="tab"><a href="https://www.pfs.org.pl/osps_online.php?desktop=1"></a></div>
+        <ul>
+            <li class="sublink" id="osps_online"><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+            <li class="sublink" id="zds"><a href="https://www.pfs.org.pl/zds2.php">ZDS</a></li>
+            <li class="sublink" id="osps"><a href="https://www.pfs.org.pl/osps.php">OSPS</a></li>
+            <li class="sublink" id="aktualizacje"><a href="https://www.pfs.org.pl/osps_aktualizacje.php">Aktualizacje</a></li>
+            <li class="sublink" id="dwojki"><a href="https://www.pfs.org.pl/dwojki.php">2-literówki</a></li>
+            <li class="sublink" id="trojki"><a href="https://www.pfs.org.pl/trojki.php">3-literówki</a></li>
+            <li class="sublink" id="siodemkat"><a href="https://www.pfs.org.pl/siodemka.php">Siódemka tygodnia</a></li>
+            <li class="sublink" id="slowneroznosci"><a href="https://www.pfs.org.pl/slowneroznosci.php">Słowne różności</a></li>
+        </ul>
+    </div>
+    <div id="m_ranking">
+        <div  class="tab"><a href="https://www.pfs.org.pl/ranking.php"></a></div>
+        <ul>
+            <li class="sublink" id="aktranking"><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+            <li class="sublink" id="medale"><a href="https://www.pfs.org.pl/medale.php">Klasyfikacja medalowa</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabblisci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/mistrzowiepolski.php"></a></div>
+        <ul>
+            <li class="sublink" id="mistrzowiepolski"><a href="https://www.pfs.org.pl/mistrzowiepolski.php">Mistrzowie Polski</a></li>
+            <li class="sublink" id="zdobywcypp"><a href="https://www.pfs.org.pl/zdobywcypp.php">Zdobywcy Pucharu Polski</a></li>
+            <li class="sublink" id="zwyciezcygp"><a href="https://www.pfs.org.pl/zwyciezcygp.php">Zwycięzcy Grand Prix</a></li>
+            <li class="sublink" id="liderzyrankingu"><a href="https://www.pfs.org.pl/liderzyrankingu.php">Liderzy rankingu</a></li>
+            <li class="sublink" id="zwyciezcylemans"><a href="https://www.pfs.org.pl/zwyciezcylemans.php">Zwycięzcy 24h Le Mans</a></li>
+            <li class="sublink" id="zwyciezcykmp"><a href="https://www.pfs.org.pl/zwyciezcykmp.php">KMP</a>
+        </ul>
+    </div>
+    <div id="m_kluby">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kluby.php"></a></div>
+        <ul>
+            <li class="sublink" id="rejestrklubow"><a href="https://www.pfs.org.pl/kluby.php">Rejestr klubów</a></li>
+            <li class="sublink" id="kmp"><a href="https://www.pfs.org.pl/kmp.php">KMP</a></li>
+            <li class="sublink" id="wiescizklubow"><a href="https://www.pfs.org.pl/wiescizklubow.php">Wieści z klubów</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/about.php">Statystyki klubowe</a></li>
+        </ul>
+    </div>
+    <div id="m_roznosci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/historia.php"></a></div>
+        <ul>
+            <li class="sublink" id="historia"><a href="https://www.pfs.org.pl/historia.php">Historia</a></li>
+            <li class="sublink" id="odmiany"><a href="https://www.pfs.org.pl/odmiany.php">Odmiany</a></li>
+            <li class="sublink" id="anegdoty"><a href="https://www.pfs.org.pl/anegdoty.php">Anegdoty</a></li>
+            <li class="sublink" id="scrabblealia"><a href="https://www.pfs.org.pl/scrabblealia.php">Scrabblealia</a></li>
+            <li class="sublink" id="scrabblenet"><a href="https://www.pfs.org.pl/scrabblenet.php">Scrabble w internecie</a></li>
+            <li class="sublink" id="programy"><a href="https://www.pfs.org.pl/programy.php">Programy</a></li>
+            <li class="sublink" id="download"><a href="https://www.pfs.org.pl/download.php">Do pobrania</a></li>
+            <li class="sublink" id="ksiazki"><a href="https://www.pfs.org.pl/ksiazki.php">Książki</a></li>
+            <li class="sublink" id="slowniczek"><a href="https://www.pfs.org.pl/slowniczek.php">Słowniczek</a></li>
+        </ul>
+    </div>
+    <div id="m_english">
+        <div  class="tab"><a href="https://www.pfs.org.pl/english.php"></a></div>
+        <ul>
+            <li class="sublink" id="about"><a href="https://www.pfs.org.pl/english.php">About Polish Scrabble</a></li>
+            <li class="sublink" id="news"><a href="https://www.pfs.org.pl/en_news.php">News</a></li>
+            <li class="sublink" id="bartek"><a href="https://www.pfs.org.pl/bartek.php">Bartek w Johor Bahru</a></li>
+            <li class="sublink" id="franko"><a href="https://www.pfs.org.pl/franko.php">Scrabble frankofońskie</a></li>
+        </ul>
+    </div>
+</div>
+
+<div id="submenu"></div>
+<div id="content">
+<div id='nextTours'>
+		<div class='nextTour' onclick='location.href="turniej.php?id=11"'>
+			<div class='karteczka small1'>
+				<span class='miasto'>Graboszyce</span><span class='dzien'><span class='big'>15</span><br />marca</span></div>
+			<div class='kartka big1'>
+				<span class='miasto'>Graboszyce</span>
+				<span class='dzien'><b>15-16 marca</b></span>
+				<span class='nazwaturnieju'>III Mistrzostwa Doliny Karpia Graboszyce (koło Zatora) </span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=12"'>
+			<div class='karteczka small2'>
+				<span class='miasto'>Katowice</span><span class='dzien'><span class='big'>29</span><br />marca</span></div>
+			<div class='kartka big2'>
+				<span class='miasto'>Katowice</span>
+				<span class='dzien'><b>29 marca</b></span>
+				<span class='nazwaturnieju'>Hanysowe scrabblowanie</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=13"'>
+			<div class='karteczka small3'>
+				<span class='miasto'>Inowrocław</span><span class='dzien'><span class='big'>29</span><br />marca</span></div>
+			<div class='kartka big3'>
+				<span class='miasto'>Inowrocław</span>
+				<span class='dzien'><b>29-30 marca</b></span>
+				<span class='nazwaturnieju'>XII Mistrzostwa Ziemi Kujawskiej w Scrabble &#8222;O Kryształowe Jajo Świąteczne&#8221;</span></div>
+		</div></div><div class='naglowekrelacji'><span class='tytul'>Ale Leszek gryfnie groł!<span class='nazwa'>29 marca 2008 —  Hanysowe scrabblowanie</span></span><a href='#' id='info' class='przycisk'>Informacje</a><a href='#' id='relacja' class='przycisk'>Relacja</a><a href='#' id='klasyfikacja' class='przycisk'>Wyniki</a><a href='#' id='hh' class='przycisk'>HH</a><a href='#' id='rundy' class='przycisk'>Rundy</a><div class='galleries'><img src='files/img/gallery.png' style='visibility:hidden;' alt='galeria' /></div></div><h1 style='color:black; margin-top:0px; margin-bottom:30px; padding: 0px'>Hanysowe scrabblowanie<span>Katowice, 29 marca 2008 <br>turniej&nbsp;nierankingowy</span></h1><div id='p_relacja' class='page'><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><div class='relacja' style='clear:both;'><figure style='display:inline-block;float:left;margin:5px'><img src='https://pfs.org.pl/foto_action.php?id=434' alt='Ale Leszek gryfnie groł!' /></figure><div>Drugi już raz w Katowicach-Kostuchnie odbyło się <b>Hanysowe Scrabblowanie</b>.
+Graczki i gracze z woj. śląskiego rywalizowali w turnieju, którego dodatkową konkurencją jest układanie najdroższego słowa występującego w gwarze śląskiej, a zarazem zawartego w OSPS. Po puchar sięgnął w tej dziedzinie <b>Edward Smołka</b>,
+który ułożył za 30 pkt. słowo "gryfie" (gryf — zdolność, zręczność, spryt). Triumfatorem całych rozgrywek został <b>Leszek Stecuła</b> z Bytomia, przed <b>Jakubem Nalepą</b> i <b>Maćkiem Rzychoniem</b>. Rodzinnie, karmiąc nas i pojąc oraz zapewniając dla wszystkich osób uczestniczących nagrody, przyjęła nas w Kostuchnie <b>Asia Brychcy</b>. Dziękujemy, a za miesiąc znów zapraszamy do Katowic, na mistrzostwa tego miasta.</div><div class='autor'>relacja: Maciej Śliwa</div></div><div style='clear:both;'></div></div><div id='p_info' class='page'><br><p align='center'></p><br><br><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br>Zobacz, jak było na poprzednich turniejach:<br><a href='turniej.php?id=67'>Hanysowe scrabblowanie</a><br><table id='szczegoly' class='ramkadolna'><tr><td>Rodzaj turnieju</td><td>zamknięty (dla uczestników z Górnego Śląska)</td></tr><tr><td>Sposób rozgrywania</td><td>- liczba rund: 6<br> 
+ - system: połówkowy (rundy 1-5), duńczyk (runda 6)</td></tr><tr><td>Miejsce rozgrywek</td><td>Katowice-Kostuchna<br>Miejski Dom Kultury "Południe"<br>ul. Boya-Żeleńskiego 83</td></tr><tr><td>Obrońca tytułu</td><td>Janusz Krupiński</td></tr><tr><td>Sędzia</td><td>Maciej Śliwa</td></tr><tr><td>Harmonogram</td><td><b>29.03.08 (sobota &mdash; 6 rund)</b><br> 
+ &mdash; 10:30 &mdash; rozpoczęcie turnieju<br> 
+ &mdash; ok. 13:30 do&nbsp;15:00 &mdash; przerwa obiadowa<br> 
+ &mdash; 18:00 &mdash; zakończenie turnieju</td></tr><tr><td>Wpisowe</td><td>- 13 zł<br> 
+ &mdash; członkowie PFS &mdash; 8 zł za&nbsp;dzień<br> 
+ &mdash; młodzież szkolna &mdash; 4 zł za&nbsp;dzień (do liceum włącznie)<br> 
+ &mdash; debiutanci &mdash; bez opłat</td></tr><tr><td>Dojazd</td><td>Z dworca autobusowego w&nbsp;Katowicach liniami 689 i&nbsp;688, czas dojazdu z&nbsp;centrum ok 35 min. Samochodem najlepiej trasą Katowice-Tychy.</td></tr><tr><td>Wyżywienie</td><td>Restauracje i&nbsp;bary w&nbsp;pobliżu, pizza na&nbsp;zamówienie.</td></tr><tr><td>Nagrody</td><td>Puchary i&nbsp;nagrody pieniężne dla najlepszej trójki.
+ <br>Uwaga! Nagroda dla gracza, który ułoży "najdroższe" śląskie słowo, będące w&nbsp;OSPS.</td></tr><tr><td>Organizatorzy</td><td>Joanna Brychcy (Kirke szalona) &mdash; 512 353 979,
+ <a href="mailto:kiane3@wp.pl">kiane3@wp.pl</a></td></tr><tr><td>Sponsorzy</td><td>MDK "Południe"<br>Księgarnia Dworcowa</td></tr></table><br /><br /></div><div id='p_klasyfikacja' class='page'><pre>Wyniki turnieju Hanysowe scrabblowanie
+
+Lp. Imię            Nazwisko             Miasto               Ranking  Duże pkt Małe pkt Skalpy   Różn. MP
+--- --------------- -------------------- -------------------- -------- -------- -------- -------- --------
+  1 Leszek          Stecuła              Bytom                  115.50      5.0     2420      853      439
+  2 Jakub           Nalepa               Gliwice                124.56      5.0     2253      916       73
+  3 Maciej          Rzychoń              Katowice               127.55      4.0     2325      786      224
+  4 Dariusz         Puton                Ruda Śląska            132.59      4.0     2268      820      239
+  5 Janusz          Krupiński            Sosnowiec              117.23      3.0     2476      655      325
+  6 Katarzyna       Żuławska             Katowice               110.80      3.0     2380      730      282
+  7 Ewa             Ciszewska            Katowice               128.28      3.0     2215      675      136
+  8 Anna            Bargiel              Ruda Śląska            100.00      3.0     2191      645      -28
+  9 Łukasz          Sornek               Mikołów                100.00      3.0     2020      667     -427
+ 10 Jerzy           Luter                Bytom                  110.76      2.0     2073      561     -100
+ 11 Joanna          Brychcy              Katowice               105.82      2.0     1978      573     -427
+ 12 Kamil           Puton                Ruda Śląska            100.00      2.0     1969      583     -247
+ 13 Katarzyna       Pawluch              Zabrze                 100.00      2.0     1843      542     -234
+ 14 Edward          Smołka               Zabrze                 100.00      1.0     1871      444     -255
+</pre></div><div id='p_hh' class='page'><pre>Wyniki poszczególnych graczy w turnieju Hanysowe scrabblowanie
+
+
+
+	Dariusz Puton 132.59 Ruda Śląska            
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Jerzy          Luter                 110.76 +  352: 263  161
+    2     3 Janusz         Krupiński             117.23 +  411: 365  167
+    3     2 Maciej         Rzychoń               127.55 -  342: 343   78
+    4     2 Katarzyna      Żuławska              110.80 +  382: 343  161
+    5     1 Jakub          Nalepa                124.56 -  390: 395   75
+    6     3 Ewa            Ciszewska             128.28 +  391: 320  178
+                                                          --------------- ---- ------
+                                                                     820  /  6 136.67
+
+
+
+
+	Ewa Ciszewska 128.28 Katowice                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Joanna         Brychcy               105.82 -  334: 360   56
+    2     4 Jakub          Nalepa                124.56 -  384: 393   75
+    3     6 Jerzy          Luter                 110.76 +  405: 304  161
+    4     5 Edward         Smołka                100.00 +  390: 324  150
+    5     4 Kamil          Puton                 100.00 +  382: 307  150
+    6     3 Dariusz        Puton                 132.59 -  320: 391   83
+                                                          --------------- ---- ------
+                                                                     675  /  6 112.50
+
+
+
+
+	Maciej Rzychoń 127.55 Katowice                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Anna           Bargiel               100.00 +  466: 307  150
+    2     2 Joanna         Brychcy               105.82 +  427: 320  156
+    3     2 Dariusz        Puton                 132.59 +  343: 342  183
+    4     1 Jakub          Nalepa                124.56 -  417: 420   75
+    5     2 Katarzyna      Żuławska              110.80 -  286: 393   61
+    6     2 Katarzyna      Żuławska              110.80 +  386: 319  161
+                                                          --------------- ---- ------
+                                                                     786  /  6 131.00
+
+
+
+
+	Jakub Nalepa 124.56 Gliwice                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Katarzyna      Pawluch               100.00 +  394: 329  150
+    2     4 Ewa            Ciszewska             128.28 +  393: 384  178
+    3     1 Katarzyna      Żuławska              110.80 +  400: 303  161
+    4     1 Maciej         Rzychoń               127.55 +  420: 417  178
+    5     1 Dariusz        Puton                 132.59 +  395: 390  183
+    6     1 Leszek         Stecuła               115.50 -  251: 357   66
+                                                          --------------- ---- ------
+                                                                     916  /  6 152.67
+
+
+
+
+	Janusz Krupiński 117.23 Sosnowiec               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Kamil          Puton                 100.00 +  408: 324  150
+    2     3 Dariusz        Puton                 132.59 -  365: 411   83
+    3     3 Leszek         Stecuła               115.50 -  406: 537   66
+    4     4 Łukasz         Sornek                100.00 -  282: 340   50
+    5     5 Joanna         Brychcy               105.82 +  541: 293  156
+    6     4 Łukasz         Sornek                100.00 +  474: 246  150
+                                                          --------------- ---- ------
+                                                                     655  /  6 109.17
+
+
+
+
+	Leszek Stecuła 115.50 Bytom                    
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Edward         Smołka                100.00 +  394: 277  150
+    2     1 Katarzyna      Żuławska              110.80 -  311: 482   61
+    3     3 Janusz         Krupiński             117.23 +  537: 406  167
+    4     3 Kamil          Puton                 100.00 +  395: 253  150
+    5     3 Łukasz         Sornek                100.00 +  426: 312  150
+    6     1 Jakub          Nalepa                124.56 +  357: 251  175
+                                                          --------------- ---- ------
+                                                                     853  /  6 142.17
+
+
+
+
+	Katarzyna Żuławska 110.80 Katowice                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Łukasz         Sornek                100.00 +  540: 333  150
+    2     1 Leszek         Stecuła               115.50 +  482: 311  166
+    3     1 Jakub          Nalepa                124.56 -  303: 400   75
+    4     2 Dariusz        Puton                 132.59 -  343: 382   83
+    5     2 Maciej         Rzychoń               127.55 +  393: 286  178
+    6     2 Maciej         Rzychoń               127.55 -  319: 386   78
+                                                          --------------- ---- ------
+                                                                     730  /  6 121.67
+
+
+
+
+	Jerzy Luter 110.76 Bytom                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Dariusz        Puton                 132.59 -  263: 352   83
+    2     7 Kamil          Puton                 100.00 -  346: 400   50
+    3     6 Ewa            Ciszewska             128.28 -  304: 405   78
+    4     7 Anna           Bargiel               100.00 -  398: 413   50
+    5     7 Katarzyna      Pawluch               100.00 +  440: 286  150
+    6     6 Kamil          Puton                 100.00 +  322: 317  150
+                                                          --------------- ---- ------
+                                                                     561  /  6  93.50
+
+
+
+
+	Joanna Brychcy 105.82 Katowice                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Ewa            Ciszewska             128.28 +  360: 334  178
+    2     2 Maciej         Rzychoń               127.55 -  320: 427   78
+    3     4 Łukasz         Sornek                100.00 -  383: 388   50
+    4     6 Katarzyna      Pawluch               100.00 +  320: 296  150
+    5     5 Janusz         Krupiński             117.23 -  293: 541   67
+    6     5 Anna           Bargiel               100.00 -  302: 419   50
+                                                          --------------- ---- ------
+                                                                     573  /  6  95.50
+
+
+
+
+	Anna Bargiel 100.00 Ruda Śląska              
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Maciej         Rzychoń               127.55 -  307: 466   78
+    2     5 Łukasz         Sornek                100.00 -  342: 401   50
+    3     7 Katarzyna      Pawluch               100.00 -  329: 339   50
+    4     7 Jerzy          Luter                 110.76 +  413: 398  161
+    5     6 Edward         Smołka                100.00 +  381: 313  150
+    6     5 Joanna         Brychcy               105.82 +  419: 302  156
+                                                          --------------- ---- ------
+                                                                     645  /  6 107.50
+
+
+
+
+	Katarzyna Pawluch 100.00 Zabrze
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Jakub          Nalepa                124.56 -  329: 394   75
+    2     6 Edward         Smołka                100.00 -  242: 335   50
+    3     7 Anna           Bargiel               100.00 +  339: 329  150
+    4     6 Joanna         Brychcy               105.82 -  296: 320   56
+    5     7 Jerzy          Luter                 110.76 -  286: 440   61
+    6     7 Edward         Smołka                100.00 +  351: 259  150
+                                                          --------------- ---- ------
+                                                                     542  /  6  90.33
+
+
+
+
+	Kamil Puton 100.00 Ruda Śląska              
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Janusz         Krupiński             117.23 -  324: 408   67
+    2     7 Jerzy          Luter                 110.76 +  400: 346  161
+    3     5 Edward         Smołka                100.00 +  368: 363  150
+    4     3 Leszek         Stecuła               115.50 -  253: 395   66
+    5     4 Ewa            Ciszewska             128.28 -  307: 382   78
+    6     6 Jerzy          Luter                 110.76 -  317: 322   61
+                                                          --------------- ---- ------
+                                                                     583  /  6  97.17
+
+
+
+
+	Edward Smołka 100.00 Zabrze                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Leszek         Stecuła               115.50 -  277: 394   66
+    2     6 Katarzyna      Pawluch               100.00 +  335: 242  150
+    3     5 Kamil          Puton                 100.00 -  363: 368   50
+    4     5 Ewa            Ciszewska             128.28 -  324: 390   78
+    5     6 Anna           Bargiel               100.00 -  313: 381   50
+    6     7 Katarzyna      Pawluch               100.00 -  259: 351   50
+                                                          --------------- ---- ------
+                                                                     444  /  6  74.00
+
+
+
+
+	Łukasz Sornek 100.00 Mikołów
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Katarzyna      Żuławska              110.80 -  333: 540   61
+    2     5 Anna           Bargiel               100.00 +  401: 342  150
+    3     4 Joanna         Brychcy               105.82 +  388: 383  156
+    4     4 Janusz         Krupiński             117.23 +  340: 282  167
+    5     3 Leszek         Stecuła               115.50 -  312: 426   66
+    6     4 Janusz         Krupiński             117.23 -  246: 474   67
+                                                          --------------- ---- ------
+                                                                     667  /  6 111.17
+
+
+</pre></div><div id='p_rundy' class='page'><pre>Wyniki poszczególnych rund turnieju Hanysowe scrabblowanie
+
+
+
+Runda nr  1
+-----------
+Stół Gospodarz                             Go¶ć                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Dariusz        Puton                - Jerzy          Luter                 352: 263
+   2 Joanna         Brychcy              - Ewa            Ciszewska             360: 334
+   3 Maciej         Rzychoń              - Anna           Bargiel               466: 307
+   4 Katarzyna      Pawluch              - Jakub          Nalepa                329: 394
+   5 Janusz         Krupiński            - Kamil          Puton                 408: 324
+   6 Edward         Smołka               - Leszek         Stecuła               277: 394
+   7 Katarzyna      Żuławska             - Łukasz         Sornek                540: 333
+
+
+Runda nr  2
+-----------
+Stół Gospodarz                             Go¶ć                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Leszek         Stecuła              - Katarzyna      Żuławska              311: 482
+   2 Joanna         Brychcy              - Maciej         Rzychoń               320: 427
+   3 Dariusz        Puton                - Janusz         Krupiński             411: 365
+   4 Ewa            Ciszewska            - Jakub          Nalepa                384: 393
+   5 Łukasz         Sornek               - Anna           Bargiel               401: 342
+   6 Katarzyna      Pawluch              - Edward         Smołka                242: 335
+   7 Jerzy          Luter                - Kamil          Puton                 346: 400
+
+
+Runda nr  3
+-----------
+Stół Gospodarz                             Go¶ć                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Jakub          Nalepa               - Katarzyna      Żuławska              400: 303
+   2 Maciej         Rzychoń              - Dariusz        Puton                 343: 342
+   3 Janusz         Krupiński            - Leszek         Stecuła               406: 537
+   4 Łukasz         Sornek               - Joanna         Brychcy               388: 383
+   5 Kamil          Puton                - Edward         Smołka                368: 363
+   6 Ewa            Ciszewska            - Jerzy          Luter                 405: 304
+   7 Anna           Bargiel              - Katarzyna      Pawluch               329: 339
+
+
+Runda nr  4
+-----------
+Stół Gospodarz                             Go¶ć                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Jakub          Nalepa               - Maciej         Rzychoń               420: 417
+   2 Katarzyna      Żuławska             - Dariusz        Puton                 343: 382
+   3 Leszek         Stecuła              - Kamil          Puton                 395: 253
+   4 Janusz         Krupiński            - Łukasz         Sornek                282: 340
+   5 Edward         Smołka               - Ewa            Ciszewska             324: 390
+   6 Joanna         Brychcy              - Katarzyna      Pawluch               320: 296
+   7 Anna           Bargiel              - Jerzy          Luter                 413: 398
+
+
+Runda nr  5
+-----------
+Stół Gospodarz                             Go¶ć                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Jakub          Nalepa               - Dariusz        Puton                 395: 390
+   2 Katarzyna      Żuławska             - Maciej         Rzychoń               393: 286
+   3 Łukasz         Sornek               - Leszek         Stecuła               312: 426
+   4 Kamil          Puton                - Ewa            Ciszewska             307: 382
+   5 Joanna         Brychcy              - Janusz         Krupiński             293: 541
+   6 Anna           Bargiel              - Edward         Smołka                381: 313
+   7 Jerzy          Luter                - Katarzyna      Pawluch               440: 286
+
+
+Runda nr  6
+-----------
+Stół Gospodarz                             Go¶ć                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Leszek         Stecuła              - Jakub          Nalepa                357: 251
+   2 Maciej         Rzychoń              - Katarzyna      Żuławska              386: 319
+   3 Ewa            Ciszewska            - Dariusz        Puton                 320: 391
+   4 Janusz         Krupiński            - Łukasz         Sornek                474: 246
+   5 Anna           Bargiel              - Joanna         Brychcy               419: 302
+   6 Jerzy          Luter                - Kamil          Puton                 322: 317
+   7 Katarzyna      Pawluch              - Edward         Smołka                351: 259
+</pre></div><div id='p_ranking' class='page'><pre></pre></div><div id='p_przebieg' class='page'>
+
+    </div><div style="clear:both;width:100%;" class="alignright">
+
+<script>
+<!--
+if ((document.getElementById("content").offsetHeight + document.getElementById("top").offsetHeight) > screen.height)
+    document.write("<br /><br /><a href='#top'>do góry</a>");
+-->
+</script>
+
+</div>
+</div>
+
+<div id="bottom">
+<ul id="bottomlinks">
+<div class='onleft'>
+ Osób on-line: 59</div>
+    <li><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+    <li><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+    <li><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+    <li><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+    <li><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+    <li><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+</ul>
+    SCRABBLE® jest zastrzeżonym znakiem towarowym J.W. Spears &amp; Sons&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://www.pfs.org.pl/prawaautorskie.php">© Prawa autorskie</a>
+</div>
+</body>
+</html>

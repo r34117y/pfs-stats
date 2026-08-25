@@ -1,0 +1,938 @@
+
+<html>
+<head>
+    <title>Polska Federacja Scrabble :: X Mistrzostwa Polski Nauczycieli w Scrabble</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="files/img/favicon.ico" />
+    <link rel="stylesheet" href="files/css/style.css" type="text/css" />
+	<link rel="stylesheet" href="files/css/style-index.css" type="text/css" />
+    <!--[if IE]><link rel="stylesheet" type="text/css" href="files/css/styleie.css" /><![endif]-->
+    <!--[if lt IE 7.]><script defer type="text/javascript" src="files/js/pngfix.js"></script><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="files/js/minmax.js"></script><![endif]-->
+    <script type="text/javascript" src="files/js/jquery.js"></script>
+    <script type="text/javascript" src="files/js/jquery-bp.js"></script>
+    <script type="text/javascript" src="files/js/java.js"></script>
+    <script>jSubmenu ("turnieje","kalendarz");jKalendarz();</script>
+    <script>
+    var url, page;
+
+    page = 'info';
+    url  = document.location.toString();
+
+    if (url.match ('#')) {
+      page = url.split ('#')[1];
+      if ($.inArray (page, [ 'info', 'relacja', 'klasyfikacja', 'hh', 'rundy', 'ranking', 'przebieg' ]) == -1)
+        page = 'info';
+    }
+
+    $(document).ready(function(){
+        $('a#listaucz').bind('click', function(event){
+            $('div#lista').toggle();
+            event.preventDefault();
+        }).toggle(function() { $(this).text('schowaj listę uczestników'); }, function() { $(this).text("pokaż listę uczestników"); });
+        $('div#lista table tr:last td').css({"border-bottom" : "none"});
+
+        $("a.przycisk").click (function (e) {
+            if ($(this).attr ('href') !== '#')
+                return true;
+
+            e.preventDefault ();
+
+            id       = this.id;
+            this.id += 'tmp';
+            window.location.hash = id;
+            this.id  = id;
+
+            $(".page").hide ();
+            $(".page#p_" + id).show ();
+
+            $("a.przycisk").removeClass ('active');
+            $(this).addClass ('active');
+
+            return false;
+        });
+
+        $("a.przycisk#" + page).click ();
+        $('html, body').animate ({ scrollTop: 0 }, 0);
+    });
+    </script>
+  <style type="text/css">
+    .page {
+        display: none;
+    }
+    #szczegoly{
+        width: 100%;
+        border-spacing: 0;
+        margin-top: 30px;
+        text-align: left;
+        font-size: inherit;
+    }
+    #szczegoly td{
+        padding: 10px 20px 10px 0;
+        vertical-align: top;
+    }
+    #szczegoly td:first-child{
+        font-weight: bold;
+        width: 160px;
+    }
+    div#lista{
+        display:none;
+        margin-top: 15px;
+    }
+    div#lista table{
+        margin-top: 10px;
+        text-align: left;
+        font-size: inherit;
+    }
+    div#lista table td{
+        padding: 3px 8px;
+        border-bottom: 1px dashed #1576AE;
+    }
+    div#lista table th{
+        padding: 0px 5px 10px 5px;
+    }
+    div#lista table td.ptaszek{
+        text-align: center;
+        background: url('files/img/tick.png') no-repeat center center;
+    }
+    div#lista table th{
+        white-space: nowrap;
+        width: auto;
+    }
+    div#lista table td:first-child, div#lista table th:first-child{
+        text-align:right;
+        width: auto;
+    }
+    </style>
+</head>
+
+<body>
+
+<script type="text/javascript">setMenu();</script>
+
+<div id="top" onclick="location.href='https://www.pfs.org.pl'">
+</div>
+<div id="menu">
+
+    <div id="m_glowna">
+        <div class="tab"><a href="https://www.pfs.org.pl/index.php"></a></div>
+
+        <ul>
+            <li class="sublink" id="aktualnosci"><a href="https://www.pfs.org.pl">Aktualności</a></li>
+            <li class="sublink" id="nowy"><a href="https://www.pfs.org.pl/dlanowych.php">Jestem tu nowy</a></li>
+            <li class="sublink" id="anagramator"><a href="https://www.pfs.org.pl/osps_online.php?main=1">Słownik online</a></li>
+            <li class="sublink" id="siodemka"><a href="https://www.pfs.org.pl/siodemka.php?main=1">Siódemka tygodnia</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+            <li class="sublink" id="dlasponsorow"><a href="https://www.pfs.org.pl/dlasponsorow.php">Dla sponsorów</a></li>
+            <li class="sublink" id="kontakt"><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+        </ul>
+    </div>
+    <div id="m_turnieje">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kalendarz.php"></a></div>
+        <ul>
+            <li class="sublink" id="kalendarz"><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+            <li class="sublink" id="regulaminy"><a href="https://www.pfs.org.pl/regulaminy.php">Regulaminy</a></li>
+            <li class="sublink" id="sedziowie"><a href="https://www.pfs.org.pl/sedziowie.php">Sędziowie</a></li>
+            <li class="sublink" id="gp"><a href="https://www.pfs.org.pl/gp2026.php">Grand Prix</a></li>
+<!--            <li class="sublink" id="mr"><a href="https://www.pfs.org.pl/mr2020.php">Mistrzostwa Regionów</a></li>-->
+            <li class="sublink" id="archiwum"><a href="https://www.pfs.org.pl/archiwum.php">Historia</a></li>
+            <li class="sublink" id="galeria"><a href="https://www.pfs.org.pl/galeria.php">Zdjęcia</a></li>
+            <li class="sublink" id="rekordy"><a href="https://www.pfs.org.pl/rekordy.php">Rekordy</a></li>
+        </ul>
+    </div>
+    <div id="m_pfs">
+        <div  class="tab"><a href="https://www.pfs.org.pl/opfs.php"></a></div>
+        <ul>
+            <li class="sublink" id="opfs"><a href="https://www.pfs.org.pl/opfs.php">O PFS</a></li>
+            <li class="sublink" id="jakprzystapic"><a href="https://www.pfs.org.pl/jakprzystapic.php">Jak przystąpić</a></li>
+            <li class="sublink" id="dlaczlonkow"><a href="https://www.pfs.org.pl/dlaczlonkow.php">Dla członków</a></li>
+            <li class="sublink" id="wladze"><a href="https://www.pfs.org.pl/wladze.php">Władze</a></li>
+            <li class="sublink" id="komisje"><a href="https://www.pfs.org.pl/komisje.php">Komisje</a></li>
+            <li class="sublink" id="statut"><a href="https://www.pfs.org.pl/statut.php">Statut</a></li>
+            <li class="sublink" id="uchwaly"><a href="https://www.pfs.org.pl/uchwaly.php">Uchwały</a></li>
+            <li class="sublink" id="honorowi"><a href="https://www.pfs.org.pl/honorowi.php">Honorowi członkowie</a></li>
+            <li class="sublink" id="finanse"><a href="https://www.pfs.org.pl/finanse.php">Finanse</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabble">
+        <div  class="tab"><a href="https://www.pfs.org.pl/osps_online.php?desktop=1"></a></div>
+        <ul>
+            <li class="sublink" id="osps_online"><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+            <li class="sublink" id="zds"><a href="https://www.pfs.org.pl/zds2.php">ZDS</a></li>
+            <li class="sublink" id="osps"><a href="https://www.pfs.org.pl/osps.php">OSPS</a></li>
+            <li class="sublink" id="aktualizacje"><a href="https://www.pfs.org.pl/osps_aktualizacje.php">Aktualizacje</a></li>
+            <li class="sublink" id="dwojki"><a href="https://www.pfs.org.pl/dwojki.php">2-literówki</a></li>
+            <li class="sublink" id="trojki"><a href="https://www.pfs.org.pl/trojki.php">3-literówki</a></li>
+            <li class="sublink" id="siodemkat"><a href="https://www.pfs.org.pl/siodemka.php">Siódemka tygodnia</a></li>
+            <li class="sublink" id="slowneroznosci"><a href="https://www.pfs.org.pl/slowneroznosci.php">Słowne różności</a></li>
+        </ul>
+    </div>
+    <div id="m_ranking">
+        <div  class="tab"><a href="https://www.pfs.org.pl/ranking.php"></a></div>
+        <ul>
+            <li class="sublink" id="aktranking"><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+            <li class="sublink" id="medale"><a href="https://www.pfs.org.pl/medale.php">Klasyfikacja medalowa</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabblisci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/mistrzowiepolski.php"></a></div>
+        <ul>
+            <li class="sublink" id="mistrzowiepolski"><a href="https://www.pfs.org.pl/mistrzowiepolski.php">Mistrzowie Polski</a></li>
+            <li class="sublink" id="zdobywcypp"><a href="https://www.pfs.org.pl/zdobywcypp.php">Zdobywcy Pucharu Polski</a></li>
+            <li class="sublink" id="zwyciezcygp"><a href="https://www.pfs.org.pl/zwyciezcygp.php">Zwycięzcy Grand Prix</a></li>
+            <li class="sublink" id="liderzyrankingu"><a href="https://www.pfs.org.pl/liderzyrankingu.php">Liderzy rankingu</a></li>
+            <li class="sublink" id="zwyciezcylemans"><a href="https://www.pfs.org.pl/zwyciezcylemans.php">Zwycięzcy 24h Le Mans</a></li>
+            <li class="sublink" id="zwyciezcykmp"><a href="https://www.pfs.org.pl/zwyciezcykmp.php">KMP</a>
+        </ul>
+    </div>
+    <div id="m_kluby">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kluby.php"></a></div>
+        <ul>
+            <li class="sublink" id="rejestrklubow"><a href="https://www.pfs.org.pl/kluby.php">Rejestr klubów</a></li>
+            <li class="sublink" id="kmp"><a href="https://www.pfs.org.pl/kmp.php">KMP</a></li>
+            <li class="sublink" id="wiescizklubow"><a href="https://www.pfs.org.pl/wiescizklubow.php">Wieści z klubów</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/about.php">Statystyki klubowe</a></li>
+        </ul>
+    </div>
+    <div id="m_roznosci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/historia.php"></a></div>
+        <ul>
+            <li class="sublink" id="historia"><a href="https://www.pfs.org.pl/historia.php">Historia</a></li>
+            <li class="sublink" id="odmiany"><a href="https://www.pfs.org.pl/odmiany.php">Odmiany</a></li>
+            <li class="sublink" id="anegdoty"><a href="https://www.pfs.org.pl/anegdoty.php">Anegdoty</a></li>
+            <li class="sublink" id="scrabblealia"><a href="https://www.pfs.org.pl/scrabblealia.php">Scrabblealia</a></li>
+            <li class="sublink" id="scrabblenet"><a href="https://www.pfs.org.pl/scrabblenet.php">Scrabble w internecie</a></li>
+            <li class="sublink" id="programy"><a href="https://www.pfs.org.pl/programy.php">Programy</a></li>
+            <li class="sublink" id="download"><a href="https://www.pfs.org.pl/download.php">Do pobrania</a></li>
+            <li class="sublink" id="ksiazki"><a href="https://www.pfs.org.pl/ksiazki.php">Książki</a></li>
+            <li class="sublink" id="slowniczek"><a href="https://www.pfs.org.pl/slowniczek.php">Słowniczek</a></li>
+        </ul>
+    </div>
+    <div id="m_english">
+        <div  class="tab"><a href="https://www.pfs.org.pl/english.php"></a></div>
+        <ul>
+            <li class="sublink" id="about"><a href="https://www.pfs.org.pl/english.php">About Polish Scrabble</a></li>
+            <li class="sublink" id="news"><a href="https://www.pfs.org.pl/en_news.php">News</a></li>
+            <li class="sublink" id="bartek"><a href="https://www.pfs.org.pl/bartek.php">Bartek w Johor Bahru</a></li>
+            <li class="sublink" id="franko"><a href="https://www.pfs.org.pl/franko.php">Scrabble frankofońskie</a></li>
+        </ul>
+    </div>
+</div>
+
+<div id="submenu"></div>
+<div id="content">
+<div id='nextTours'>
+		<div class='nextTour' onclick='location.href="turniej.php?id=770"'>
+			<div class='karteczka small1'>
+				<span class='miasto'>Kraków</span><span class='dzien'><span class='big'>26</span><br />lipca</span></div>
+			<div class='kartka big1'>
+				<span class='miasto'>Kraków</span>
+				<span class='dzien'><b>26-27 lipca</b></span>
+				<span class='nazwaturnieju'>XVIII Otwarte Mistrzostwa Krakowa w Scrabble</span><span class='gp'>Grand&nbsp;Prix&nbsp;2014</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=773"'>
+			<div class='karteczka small2'>
+				<span class='miasto'>Wałcz</span><span class='dzien'><span class='big'>14</span><br />sierpnia</span></div>
+			<div class='kartka big2'>
+				<span class='miasto'>Wałcz</span>
+				<span class='dzien'><b>14 sierpnia</b></span>
+				<span class='nazwaturnieju'>X Mistrzostwa Polski Nauczycieli w Scrabble</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=774"'>
+			<div class='karteczka small3'>
+				<span class='miasto'>Wałcz</span><span class='dzien'><span class='big'>15</span><br />sierpnia</span></div>
+			<div class='kartka big3'>
+				<span class='miasto'>Wałcz</span>
+				<span class='dzien'><b>15-17 sierpnia</b></span>
+				<span class='nazwaturnieju'>X Mistrzostwa Ziemi Wałeckiej "Wałeckie Scrabblobranie"</span><span class='gp'>Grand&nbsp;Prix&nbsp;2014</span></div>
+		</div></div><div class='naglowekrelacji'><span class='tytul'>Puchar i tytuł powędrował do Poznania!<br> Nalepszy wśród nauczycieli – Michał Rogalewicz!<span class='nazwa'>14 sierpnia 2014 —  X Mistrzostwa Polski Nauczycieli w Scrabble</span></span><a href='#' id='info' class='przycisk'>Informacje</a><a href='#' id='relacja' class='przycisk'>Relacja</a><a href='#' id='klasyfikacja' class='przycisk'>Wyniki</a><a href='#' id='hh' class='przycisk'>HH</a><a href='#' id='rundy' class='przycisk'>Rundy</a><a href='live/index.php?id=773' class='przycisk'>Przebieg</a><div class='galleries'><a href='https://www.facebook.com/media/set/?set=a.796672743697556.1073741852.160348680663302&type=1'></a> <img src='files/img/gallery.png' style='visibility:hidden;' alt='galeria' /></div></div><h1 style='color:black; margin-top:0px; margin-bottom:30px; padding: 0px'>X Mistrzostwa Polski Nauczycieli w Scrabble<span>Wałcz, 14 sierpnia 2014 <br>turniej&nbsp;nierankingowy</span></h1><div id='p_relacja' class='page'><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><div class='relacja' style='clear:both;'><figure style='display:inline-block;float:left;margin:5px'><img src='https://pfs.org.pl/foto_action.php?id=930' alt='Puchar i tytuł powędrował do Poznania!<br> Nalepszy wśród nauczycieli – Michał Rogalewicz!' /></figure><div>W sierpniu, w Wałczu tradycyjnie spotkali się nauczyciele, aby po roku treningu zmierzyć się przy planszy scrabble. Gościnne Gimnazjum Nr 2 w Wałczu przywitało dwudziestu jeden uczestników na jubileuszowych X Mistrzostwach Polski Nauczycieli w scrabble.<br><br>
+
+Walka o tytuł mistrza toczyła się przez 8 rund. Czołówka klasyfikacji zmieniała się z każdą rozegraną rundą, co wskazywało na niezwykle wyrównaną walkę. W tym roku mocno męskie podium. Najlepsze wyniki uzyskał w tym dniu <b>Michał Rogalewicz</b> z Poznania. Jako jedyny w gronie startujących uzyskał siedem wygranych. Do niego też należał najwyższy wynik liczby małych punktów w grach. Zaraz za nim na drugim miejscu sklasyfikowany został <b>Dariusz Maciejuk</b> z Warszawy (sześć wygranych partii). Trzeci na podium stanął <b>Piotr Pietuchowski</b>.<br><br> 
+
+Mistrzowie obdarowani zostali pamiątkowymi medalami i nagrodami, które wręczono podczas zakończenia czterodniowych zmagań scrabblowych w Wałczu. 
+Zwyciężyły umysły ścisłe – tak podsumowała mistrzostwa pomysłodawczyni imprezy i organizatorka <b>Jolanta Chłopińska</b>, podczas gali wręczania nagród.<br><br>
+
+Gratulujemy wysokich wyników i zapraszamy na kolejne mistrzostwa. Serdecznie zachęcamy do uczestnictwa w przyszłorocznym turnieju, a formę proponujemy szlifować praktycznie w każdy weekend na ogólnopolskich turniejach scrabble.<br><br>
+
+Dziękujemy organizatorom, sponsorom i wszystkim osobom zaangażowanym w powstanie tej imprezy. 
+</div><div class='autor'>relacja: Sławomir Zabawa</div></div><div style='clear:both;'></div></div><div id='p_info' class='page'><br><p align='center'></p><br><br><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br>Zobacz, jak było na poprzednich turniejach:<br><a href='turniej.php?id=733'>IX Mistrzostwa Polski Nauczycieli w&nbsp;Scrabble</a><br><a href='turniej.php?id=622'>VIII Mistrzostwa Polski Nauczycieli</a><br><a href='turniej.php?id=602'>VII  Mistrzostwa Polski Nauczycieli w Scrabble</a><br><table id='szczegoly' class='ramkadolna'><tr><td>Rodzaj turnieju</td><td>Zamknięty. Uczestnikami mogą być nauczyciele czynni lub emerytowani wszystkich typów szkół i placówek oświatowych, nauczyciele delegowani do pracy w kuratoriach, OKE, CKE, MEN, wykładowcy wyższych uczelni, nauczyciele przeniesieni w stan nieczynny.</td></tr><tr><td>Sposób rozgrywania</td><td>liczba rund: 8<br>
+system: połówkowy (rundy 1-7), duńczyk (runda 8)
+</td></tr><tr><td>Miejsce rozgrywek</td><td>Hala widowiskowo-sportowa Gimnazjum nr 2 w Wałczu</td></tr><tr><td>Obrońca tytułu</td><td>Aleksandra Kaczanowska</td></tr><tr><td>Sędzia</td><td>Sławomir Zabawa</td></tr><tr><td>Harmonogram</td><td><b>14 sierpnia</b> (8 rund)<br>
+od 10:30 — zapisy<br>
+11:00 — rozpoczęcie turnieju<br>
+ok. 14:30 — przerwa obiadowa<br>
+ok. 19:00 — zakończenie gier
+</td></tr><tr><td>Wpisowe</td><td>20 zł</td></tr><tr><td>Dojazd</td><td>Centrum miasta, w razie problemów tel. 502563852</td></tr><tr><td>Wyżywienie</td><td>Na miejscu, całodzienne za 32 zł</td></tr><tr><td>Noclegi</td><td>Na miejscu lub we własnym zakresie</td></tr><tr><td>Nagrody</td><td>I miejsce puchar, II i III medale, I-III nagrody pieniężne.</td></tr><tr><td>Zgłoszenia uczestników</td><td><a href='' id='listaucz'>pokaż listę uczestników</a>
+            <div id='lista'>
+            <table width=100%><td width=10% >Lp.</td><td width=25% style='font-weight:bold;'>Imię i nazwisko</td><td width=25% style='font-weight:bold;border-left:#1576AE 1px dashed;'>Miasto</td><td width=20% style='font-weight:bold;border-left:#1576AE 1px dashed;'>Status uczestnika</td><td width=20% style='font-weight:bold;border-left:#1576AE 1px dashed;'>Data zgłoszenia</td><tr>
+					<td>1</td>
+					<td>Piotr Pietuchowski</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Białystok</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td>
+                </tr><tr>
+					<td>2</td>
+					<td>Sławomir Wolski</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Wrocław</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td>
+                </tr><tr>
+					<td>3</td>
+					<td>Adnieszka Kozak</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Gdynia</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td>
+                </tr><tr>
+					<td>4</td>
+					<td>Anna Niedzielko</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Szczecin</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td>
+                </tr><tr>
+					<td>5</td>
+					<td>Maciej Śliwa</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Zabrze</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td>
+                </tr><tr>
+					<td>6</td>
+					<td>Dariusz Maciejuk</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Warszawa</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td>
+                </tr><tr>
+					<td>7</td>
+					<td>Agnieszka Matus</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Milanówek</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td>
+                </tr><tr>
+					<td>8</td>
+					<td>Małgorzata Deszczyńska</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Warszawa</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td>
+                </tr><tr>
+					<td>9</td>
+					<td>Magdalena Kupczyńska</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Szczecin</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td>
+                </tr><tr>
+					<td>10</td>
+					<td>Lucyna Śniadach</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Rumia</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td>
+                </tr><tr>
+					<td>11</td>
+					<td>Rafał Stachowski</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Police</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td>
+                </tr><tr>
+					<td>12</td>
+					<td>Walenty Siemaszko</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Lipiany</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td>
+                </tr><tr>
+					<td>13</td>
+					<td>Michał Rogalewicz</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Poznań</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td>
+                </tr><tr>
+					<td>14</td>
+					<td>Anna Zachorowska-Mazurkiewicz</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Kraków</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td>
+                </tr><tr>
+					<td>15</td>
+					<td>Aleksandra Kaczanowska</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Szczecin</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td>
+                </tr><tr>
+					<td>16</td>
+					<td>Piotr Broda</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Sandomierz</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td>
+                </tr><tr>
+					<td>17</td>
+					<td>Jolanta Chłopińska</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Wałcz</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td>
+                </tr><tr>
+					<td>18</td>
+					<td>Zofia Górka</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Łęczna</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td>
+                </tr><tr>
+					<td>19</td>
+					<td>Lech Szymczak</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>Puławy</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td>
+                </tr><tr>
+					<td>20</td>
+					<td>marcin białkowski</td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'>piła</td></td>
+                <td style='font-style:italic;border-left:#1576AE 1px dashed;'></td><td style='font-style:italic;border-left:#1576AE 1px dashed;'></td>
+                </tr></table>
+				</div></td></tr><tr><td>Organizatorzy</td><td>Jolanta Chłopińska 502563852, Gimnazjum nr 2 w Wałczu 672584728</td></tr><tr><td>Sponsorzy</td><td>ZNP oddział Wałcz, Gimnazjum nr 2</td></tr></table><br /><br /></div><div id='p_klasyfikacja' class='page'><pre>﻿Wyniki turnieju X Mistrzostwa Polski Nauczycieli w Scrabble
+
+Lp. Imię            Nazwisko             Miasto               Ranking  Duże pkt Małe pkt Skalpy   Różn. MP
+--- --------------- -------------------- -------------------- -------- -------- -------- -------- --------
+  1 Michał          Rogalewicz           Poznań                 127.20      7.0     3145     1263      549
+  2 Dariusz         Maciejuk             Warszawa               133.33      6.0     2999     1170      318
+  3 Piotr           Pietuchowski         Białystok              141.59      6.0     2881     1113      297
+  4 Małgorzata      Deszczyńska          Warszawa               134.18      5.0     3172     1079      347
+  5 Czesława        Pawłowska            Wrocław                113.00      5.0     3036     1074      145
+  6 Walenty         Siemaszko            Lipiany                118.06      5.0     2922     1067       62
+  7 Sławomir        Wolski               Wrocław                111.72      5.0     2922     1057      -16
+  8 Magdalena       Kupczyńska           Szczecin               115.20      4.0     3089      921      185
+  9 Aleksandra      Kaczanowska          Szczecin               120.70      4.0     3082      920      242
+ 10 Piotr           Broda                Sandomierz             129.03      4.0     3012      896      154
+ 11 Rafał           Stachowski           Police                 117.21      4.0     2985      943      -39
+ 12 Jolanta         Chłopińska           Wałcz                  132.07      4.0     2966      942     -163
+ 13 Agnieszka       Matus                Milanówek              114.79      3.5     2944      768      419
+ 14 Lech            Szymczak             Mniszki                104.69      3.5     2786      770      199
+ 15 Anna            Niedzielko           Szczecin               114.85      3.0     2760      861     -330
+ 16 Lucyna          Śniadach             Rumia                  113.75      3.0     2717      871     -272
+ 17 Maciej          Śliwa                Zabrze                 112.62      2.5     2561      626      148
+ 18 Agnieszka       Kozak                Gdynia                 104.97      2.5     2379      598      -21
+ 19 Anna            Zachorowska-Mazurkiewicz Zabrze                 100.00      2.5     2353      673     -273
+ 20 Marcin          Białkowski           Piła                   100.00      2.5     2303      642       64
+ 21 Zofia           Górka                Łęczna                 114.79      0.5     2548      446       85
+</pre></div><div id='p_hh' class='page'><pre>﻿Wyniki poszczególnych graczy w turnieju X Mistrzostwa Polski Nauczycieli w Scrabble
+
+
+
+	Piotr Pietuchowski 141.59 Białystok                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    2    10 Piotr          Broda                 129.03 +  428: 367  179
+    3     6 Magdalena      Kupczyńska            115.20 +  454: 366  165
+    4     5 Rafał          Stachowski            117.21 +  415: 349  167
+    5     3 Małgorzata     Deszczyńska           134.18 -  307: 434   84
+    6     6 Aleksandra     Kaczanowska           120.70 +  386: 379  171
+    7     3 Jolanta        Chłopińska            132.07 +  488: 361  182
+    8     3 Magdalena      Kupczyńska            115.20 +  403: 328  165
+                                                          --------------- ---- ------
+                                                                    1113  /  7 159.00
+
+
+
+
+	Małgorzata Deszczyńska 134.18 Warszawa          
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Anna           Niedzielko            114.85 +  402: 372  165
+    2     4 Marcin         Białkowski            100.00 +  358: 279  150
+    3     2 Rafał          Stachowski            117.21 +  464: 399  167
+    4     1 Dariusz        Maciejuk              133.33 -  316: 353   83
+    5     3 Piotr          Pietuchowski          141.59 +  434: 307  192
+    6     2 Walenty        Siemaszko             118.06 +  453: 315  168
+    7     1 Michał         Rogalewicz            127.20 -  417: 423   77
+    8     1 Michał         Rogalewicz            127.20 -  328: 377   77
+                                                          --------------- ---- ------
+                                                                    1079  /  8 134.88
+
+
+
+
+	Dariusz Maciejuk 133.33 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Zofia          Górka                 114.79 +  372: 337  165
+    2     2 Jolanta        Chłopińska            132.07 +  428: 350  182
+    3     1 Lucyna         Śniadach              113.75 +  372: 244  164
+    4     1 Małgorzata     Deszczyńska           134.18 +  353: 316  184
+    5     1 Walenty        Siemaszko             118.06 -  343: 354   68
+    6     1 Michał         Rogalewicz            127.20 -  324: 327   77
+    7     4 Sławomir       Wolski                111.72 +  388: 365  162
+    8     2 Walenty        Siemaszko             118.06 +  419: 388  168
+                                                          --------------- ---- ------
+                                                                    1170  /  8 146.25
+
+
+
+
+	Jolanta Chłopińska 132.07 Wałcz
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Agnieszka      Matus                 114.79 +  423: 418  165
+    2     2 Dariusz        Maciejuk              133.33 -  350: 428   83
+    3     4 Marcin         Białkowski            100.00 +  416: 310  150
+    4     3 Sławomir       Wolski                111.72 -  358: 415   62
+    5     4 Czesława       Pawłowska             113.00 +  388: 322  163
+    6     4 Lucyna         Śniadach              113.75 +  367: 327  164
+    7     3 Piotr          Pietuchowski          141.59 -  361: 488   92
+    8     4 Czesława       Pawłowska             113.00 -  303: 421   63
+                                                          --------------- ---- ------
+                                                                     942  /  8 117.75
+
+
+
+
+	Piotr Broda 129.03 Sandomierz
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Lucyna         Śniadach              113.75 -  334: 381   64
+    2    10 Piotr          Pietuchowski          141.59 -  367: 428   92
+    3     9 Agnieszka      Matus                 114.79 -  290: 392   65
+    4    10 Marcin         Białkowski            100.00 +  398: 319  150
+    5     9 Anna           Zachorowska-Mazurkiewicz  100.00 +  453: 283  150
+    6     8 Agnieszka      Kozak                 104.97 -  414: 440   55
+    7     7 Anna           Niedzielko            114.85 +  431: 297  165
+    8     6 Lech           Szymczak              104.69 +  325: 318  155
+                                                          --------------- ---- ------
+                                                                     896  /  8 112.00
+
+
+
+
+	Michał Rogalewicz 127.20 Poznań
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Czesława       Pawłowska             113.00 +  501: 263  163
+    2     1 Lucyna         Śniadach              113.75 -  347: 366   64
+    3     3 Walenty        Siemaszko             118.06 +  356: 336  168
+    4     2 Lech           Szymczak              104.69 +  398: 319  155
+    5     2 Sławomir       Wolski                111.72 +  416: 243  162
+    6     1 Dariusz        Maciejuk              133.33 +  327: 324  183
+    7     1 Małgorzata     Deszczyńska           134.18 +  423: 417  184
+    8     1 Małgorzata     Deszczyńska           134.18 +  377: 328  184
+                                                          --------------- ---- ------
+                                                                    1263  /  8 157.88
+
+
+
+
+	Aleksandra Kaczanowska 120.70 Szczecin                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Maciej         Śliwa                 112.62 +  422: 355  163
+    2     3 Rafał          Stachowski            117.21 -  344: 348   67
+    3     5 Czesława       Pawłowska             113.00 -  288: 525   63
+    4     8 Agnieszka      Kozak                 104.97 +  488: 290  155
+    5     5 Anna           Niedzielko            114.85 -  334: 387   65
+    6     6 Piotr          Pietuchowski          141.59 -  379: 386   92
+    7     9 Anna           Zachorowska-Mazurkiewicz  100.00 +  417: 252  150
+    8     7 Anna           Niedzielko            114.85 +  410: 297  165
+                                                          --------------- ---- ------
+                                                                     920  /  8 115.00
+
+
+
+
+	Walenty Siemaszko 118.06 Lipiany                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Sławomir       Wolski                111.72 +  389: 331  162
+    2     5 Anna           Zachorowska-Mazurkiewicz  100.00 +  359: 321  150
+    3     3 Michał         Rogalewicz            127.20 -  336: 356   77
+    4     6 Agnieszka      Matus                 114.79 +  416: 336  165
+    5     1 Dariusz        Maciejuk              133.33 +  354: 343  183
+    6     2 Małgorzata     Deszczyńska           134.18 -  315: 453   84
+    7     2 Czesława       Pawłowska             113.00 +  365: 301  163
+    8     2 Dariusz        Maciejuk              133.33 -  388: 419   83
+                                                          --------------- ---- ------
+                                                                    1067  /  8 133.38
+
+
+
+
+	Rafał Stachowski 117.21 Police
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Lech           Szymczak              104.69 +  362: 316  155
+    2     3 Aleksandra     Kaczanowska           120.70 +  348: 344  171
+    3     2 Małgorzata     Deszczyńska           134.18 -  399: 464   84
+    4     5 Piotr          Pietuchowski          141.59 -  349: 415   92
+    5     7 Lucyna         Śniadach              113.75 -  310: 339   64
+    6     9 Zofia          Górka                 114.79 +  398: 350  165
+    7     6 Marcin         Białkowski            100.00 +  384: 335  150
+    8     5 Sławomir       Wolski                111.72 -  435: 461   62
+                                                          --------------- ---- ------
+                                                                     943  /  8 117.88
+
+
+
+
+	Magdalena Kupczyńska 115.20 Szczecin               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Marcin         Białkowski            100.00 -  325: 341   50
+    2     7 Anna           Niedzielko            114.85 +  390: 340  165
+    3     6 Piotr          Pietuchowski          141.59 -  366: 454   92
+    4     7 Anna           Zachorowska-Mazurkiewicz  100.00 +  426: 277  150
+    5     6 Lech           Szymczak              104.69 +  537: 339  155
+    6     3 Sławomir       Wolski                111.72 -  309: 383   62
+    7     5 Agnieszka      Kozak                 104.97 +  408: 367  155
+    8     3 Piotr          Pietuchowski          141.59 -  328: 403   92
+                                                          --------------- ---- ------
+                                                                     921  /  8 115.12
+
+
+
+
+	Anna Niedzielko 114.85 Szczecin
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Małgorzata     Deszczyńska           134.18 -  372: 402   84
+    2     7 Magdalena      Kupczyńska            115.20 -  340: 390   65
+    3    10 Zofia          Górka                 114.79 +  339: 320  165
+    4     9 Maciej         Śliwa                 112.62 +  361: 347  163
+    5     5 Aleksandra     Kaczanowska           120.70 +  387: 334  171
+    6     5 Czesława       Pawłowska             113.00 -  367: 456   63
+    7     7 Piotr          Broda                 129.03 -  297: 431   79
+    8     7 Aleksandra     Kaczanowska           120.70 -  297: 410   71
+                                                          --------------- ---- ------
+                                                                     861  /  8 107.62
+
+
+
+
+	Zofia Górka 114.79 Łęczna
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Dariusz        Maciejuk              133.33 -  337: 372   83
+    2     9 Czesława       Pawłowska             113.00 -  320: 349   63
+    3    10 Anna           Niedzielko            114.85 -  320: 339   65
+    4    11 PAUZA
+    5    10 Agnieszka      Kozak                 104.97 -  293: 361   55
+    6     9 Rafał          Stachowski            117.21 -  350: 398   67
+    7    10 Maciej         Śliwa                 112.62 -  316: 325   63
+    8    10 Anna           Zachorowska-Mazurkiewicz  100.00 -  312: 319   50
+                                                          --------------- ---- ------
+                                                                     446  /  7  63.71
+
+
+
+
+	Agnieszka Matus 114.79 Milanówek
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Jolanta        Chłopińska            132.07 -  418: 423   82
+    2     6 Sławomir       Wolski                111.72 -  345: 350   62
+    3     9 Piotr          Broda                 129.03 +  392: 290  179
+    4     6 Walenty        Siemaszko             118.06 -  336: 416   68
+    5     8 Maciej         Śliwa                 112.62 +  367: 305  163
+    6     7 Marcin         Białkowski            100.00 -  358: 419   50
+    7    11 PAUZA
+    8     8 Lucyna         Śniadach              113.75 +  428: 322  164
+                                                          --------------- ---- ------
+                                                                     768  /  7 109.71
+
+
+
+
+	Lucyna Śniadach 113.75 Rumia                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Piotr          Broda                 129.03 +  381: 334  179
+    2     1 Michał         Rogalewicz            127.20 +  366: 347  177
+    3     1 Dariusz        Maciejuk              133.33 -  244: 372   83
+    4     4 Czesława       Pawłowska             113.00 -  359: 399   63
+    5     7 Rafał          Stachowski            117.21 +  339: 310  167
+    6     4 Jolanta        Chłopińska            132.07 -  327: 367   82
+    7     8 Lech           Szymczak              104.69 -  379: 432   55
+    8     8 Agnieszka      Matus                 114.79 -  322: 428   65
+                                                          --------------- ---- ------
+                                                                     871  /  8 108.88
+
+
+
+
+	Czesława Pawłowska 113.00 Wrocław                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Michał         Rogalewicz            127.20 -  263: 501   77
+    2     9 Zofia          Górka                 114.79 +  349: 320  165
+    3     5 Aleksandra     Kaczanowska           120.70 +  525: 288  171
+    4     4 Lucyna         Śniadach              113.75 +  399: 359  164
+    5     4 Jolanta        Chłopińska            132.07 -  322: 388   82
+    6     5 Anna           Niedzielko            114.85 +  456: 367  165
+    7     2 Walenty        Siemaszko             118.06 -  301: 365   68
+    8     4 Jolanta        Chłopińska            132.07 +  421: 303  182
+                                                          --------------- ---- ------
+                                                                    1074  /  8 134.25
+
+
+
+
+	Maciej Śliwa 112.62 Zabrze                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Aleksandra     Kaczanowska           120.70 -  355: 422   71
+    2     8 Lech           Szymczak              104.69 -  259: 350   55
+    3    11 PAUZA
+    4     9 Anna           Niedzielko            114.85 -  347: 361   65
+    5     8 Agnieszka      Matus                 114.79 -  305: 367   65
+    6    10 Anna           Zachorowska-Mazurkiewicz  100.00 -  285: 303   50
+    7    10 Zofia          Górka                 114.79 +  325: 316  165
+    8     9 Agnieszka      Kozak                 104.97 +  385: 294  155
+                                                          --------------- ---- ------
+                                                                     626  /  7  89.43
+
+
+
+
+	Sławomir Wolski 111.72 Wrocław
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Walenty        Siemaszko             118.06 -  331: 389   68
+    2     6 Agnieszka      Matus                 114.79 +  350: 345  165
+    3     7 Anna           Zachorowska-Mazurkiewicz  100.00 +  374: 298  150
+    4     3 Jolanta        Chłopińska            132.07 +  415: 358  182
+    5     2 Michał         Rogalewicz            127.20 -  243: 416   77
+    6     3 Magdalena      Kupczyńska            115.20 +  383: 309  165
+    7     4 Dariusz        Maciejuk              133.33 -  365: 388   83
+    8     5 Rafał          Stachowski            117.21 +  461: 435  167
+                                                          --------------- ---- ------
+                                                                    1057  /  8 132.12
+
+
+
+
+	Agnieszka Kozak 104.97 Gdynia                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    2    11 PAUZA
+    3     8 Lech           Szymczak              104.69 -  327: 412   55
+    4     8 Aleksandra     Kaczanowska           120.70 -  290: 488   71
+    5    10 Zofia          Górka                 114.79 +  361: 293  165
+    6     8 Piotr          Broda                 129.03 +  440: 414  179
+    7     5 Magdalena      Kupczyńska            115.20 -  367: 408   65
+    8     9 Maciej         Śliwa                 112.62 -  294: 385   63
+                                                          --------------- ---- ------
+                                                                     598  /  6  99.67
+
+
+
+
+	Lech Szymczak 104.69 Mniszki
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Rafał          Stachowski            117.21 -  316: 362   67
+    2     8 Maciej         Śliwa                 112.62 +  350: 259  163
+    3     8 Agnieszka      Kozak                 104.97 +  412: 327  155
+    4     2 Michał         Rogalewicz            127.20 -  319: 398   77
+    5     6 Magdalena      Kupczyńska            115.20 -  339: 537   65
+    6    11 PAUZA
+    7     8 Lucyna         Śniadach              113.75 +  432: 379  164
+    8     6 Piotr          Broda                 129.03 -  318: 325   79
+                                                          --------------- ---- ------
+                                                                     770  /  7 110.00
+
+
+
+
+	Marcin Białkowski 100.00 Piła                     
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Magdalena      Kupczyńska            115.20 +  341: 325  165
+    2     4 Małgorzata     Deszczyńska           134.18 -  279: 358   84
+    3     4 Jolanta        Chłopińska            132.07 -  310: 416   82
+    4    10 Piotr          Broda                 129.03 -  319: 398   79
+    5    11 PAUZA
+    6     7 Agnieszka      Matus                 114.79 +  419: 358  165
+    7     6 Rafał          Stachowski            117.21 -  335: 384   67
+                                                          --------------- ---- ------
+                                                                     642  /  6 107.00
+
+
+
+
+	Anna Zachorowska-Mazurkiewicz 100.00 Zabrze                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 PAUZA
+    2     5 Walenty        Siemaszko             118.06 -  321: 359   68
+    3     7 Sławomir       Wolski                111.72 -  298: 374   62
+    4     7 Magdalena      Kupczyńska            115.20 -  277: 426   65
+    5     9 Piotr          Broda                 129.03 -  283: 453   79
+    6    10 Maciej         Śliwa                 112.62 +  303: 285  163
+    7     9 Aleksandra     Kaczanowska           120.70 -  252: 417   71
+    8    10 Zofia          Górka                 114.79 +  319: 312  165
+                                                          --------------- ---- ------
+                                                                     673  /  7  96.14
+
+
+</pre></div><div id='p_rundy' class='page'><pre>﻿Wyniki poszczególnych rund turnieju X Mistrzostwa Polski Nauczycieli w Scrabble
+
+
+
+Runda nr  1
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Małgorzata     Deszczyńska          - Anna           Niedzielko            402: 372
+   2 Zofia          Górka                - Dariusz        Maciejuk              337: 372
+   3 Jolanta        Chłopińska           - Agnieszka      Matus                 423: 418
+   4 Lucyna         Śniadach             - Piotr          Broda                 381: 334
+   5 Michał         Rogalewicz           - Czesława       Pawłowska             501: 263
+   6 Maciej         Śliwa                - Aleksandra     Kaczanowska           355: 422
+   7 Walenty        Siemaszko            - Sławomir       Wolski                389: 331
+   8 Lech           Szymczak             - Rafał          Stachowski            316: 362
+   9 Magdalena      Kupczyńska           - Marcin         Białkowski            325: 341
+  10 Anna           Zachorowska-Mazurkiewicz - BYE            BYE                   300:   0
+
+
+Runda nr  2
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Lucyna         Śniadach             - Michał         Rogalewicz            366: 347
+   2 Dariusz        Maciejuk             - Jolanta        Chłopińska            428: 350
+   3 Rafał          Stachowski           - Aleksandra     Kaczanowska           348: 344
+   4 Marcin         Białkowski           - Małgorzata     Deszczyńska           279: 358
+   5 Walenty        Siemaszko            - Anna           Zachorowska-Mazurkiewicz  359: 321
+   6 Agnieszka      Matus                - Sławomir       Wolski                345: 350
+   7 Anna           Niedzielko           - Magdalena      Kupczyńska            340: 390
+   8 Maciej         Śliwa                - Lech           Szymczak              259: 350
+   9 Czesława       Pawłowska            - Zofia          Górka                 349: 320
+  10 Piotr          Pietuchowski         - Piotr          Broda                 428: 367
+  11 Agnieszka      Kozak                - BYE            BYE                   300:   0
+
+
+Runda nr  3
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Dariusz        Maciejuk             - Lucyna         Śniadach              372: 244
+   2 Rafał          Stachowski           - Małgorzata     Deszczyńska           399: 464
+   3 Michał         Rogalewicz           - Walenty        Siemaszko             356: 336
+   4 Marcin         Białkowski           - Jolanta        Chłopińska            310: 416
+   5 Aleksandra     Kaczanowska          - Czesława       Pawłowska             288: 525
+   6 Magdalena      Kupczyńska           - Piotr          Pietuchowski          366: 454
+   7 Sławomir       Wolski               - Anna           Zachorowska-Mazurkiewicz  374: 298
+   8 Lech           Szymczak             - Agnieszka      Kozak                 412: 327
+   9 Piotr          Broda                - Agnieszka      Matus                 290: 392
+  10 Zofia          Górka                - Anna           Niedzielko            320: 339
+  11 Maciej         Śliwa                - BYE            BYE                   300:   0
+
+
+Runda nr  4
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Małgorzata     Deszczyńska          - Dariusz        Maciejuk              316: 353
+   2 Lech           Szymczak             - Michał         Rogalewicz            319: 398
+   3 Jolanta        Chłopińska           - Sławomir       Wolski                358: 415
+   4 Czesława       Pawłowska            - Lucyna         Śniadach              399: 359
+   5 Piotr          Pietuchowski         - Rafał          Stachowski            415: 349
+   6 Agnieszka      Matus                - Walenty        Siemaszko             336: 416
+   7 Anna           Zachorowska-Mazurkiewicz - Magdalena      Kupczyńska            277: 426
+   8 Aleksandra     Kaczanowska          - Agnieszka      Kozak                 488: 290
+   9 Anna           Niedzielko           - Maciej         Śliwa                 361: 347
+  10 Piotr          Broda                - Marcin         Białkowski            398: 319
+  11 Zofia          Górka                - BYE            BYE                   300:   0
+
+
+Runda nr  5
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Dariusz        Maciejuk             - Walenty        Siemaszko             343: 354
+   2 Sławomir       Wolski               - Michał         Rogalewicz            243: 416
+   3 Małgorzata     Deszczyńska          - Piotr          Pietuchowski          434: 307
+   4 Jolanta        Chłopińska           - Czesława       Pawłowska             388: 322
+   5 Aleksandra     Kaczanowska          - Anna           Niedzielko            334: 387
+   6 Magdalena      Kupczyńska           - Lech           Szymczak              537: 339
+   7 Rafał          Stachowski           - Lucyna         Śniadach              310: 339
+   8 Agnieszka      Matus                - Maciej         Śliwa                 367: 305
+   9 Piotr          Broda                - Anna           Zachorowska-Mazurkiewicz  453: 283
+  10 Agnieszka      Kozak                - Zofia          Górka                 361: 293
+  11 Marcin         Białkowski           - BYE            BYE                   300:   0
+
+
+Runda nr  6
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Michał         Rogalewicz           - Dariusz        Maciejuk              327: 324
+   2 Walenty        Siemaszko            - Małgorzata     Deszczyńska           315: 453
+   3 Sławomir       Wolski               - Magdalena      Kupczyńska            383: 309
+   4 Lucyna         Śniadach             - Jolanta        Chłopińska            327: 367
+   5 Anna           Niedzielko           - Czesława       Pawłowska             367: 456
+   6 Piotr          Pietuchowski         - Aleksandra     Kaczanowska           386: 379
+   7 Marcin         Białkowski           - Agnieszka      Matus                 419: 358
+   8 Agnieszka      Kozak                - Piotr          Broda                 440: 414
+   9 Rafał          Stachowski           - Zofia          Górka                 398: 350
+  10 Anna           Zachorowska-Mazurkiewicz - Maciej         Śliwa                 303: 285
+  11 Lech           Szymczak             - BYE            BYE                   300:   0
+
+
+Runda nr  7
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Małgorzata     Deszczyńska          - Michał         Rogalewicz            417: 423
+   2 Czesława       Pawłowska            - Walenty        Siemaszko             301: 365
+   3 Jolanta        Chłopińska           - Piotr          Pietuchowski          361: 488
+   4 Sławomir       Wolski               - Dariusz        Maciejuk              365: 388
+   5 Agnieszka      Kozak                - Magdalena      Kupczyńska            367: 408
+   6 Marcin         Białkowski           - Rafał          Stachowski            335: 384
+   7 Anna           Niedzielko           - Piotr          Broda                 297: 431
+   8 Lucyna         Śniadach             - Lech           Szymczak              379: 432
+   9 Aleksandra     Kaczanowska          - Anna           Zachorowska-Mazurkiewicz  417: 252
+  10 Maciej         Śliwa                - Zofia          Górka                 325: 316
+  11 Agnieszka      Matus                - BYE            BYE                   300:   0
+
+
+Runda nr  8
+-----------
+Stół Gospodarz                             Gość                                Wynik
+---- ----------------------------------- - ----------------------------------- ---------
+   1 Michał         Rogalewicz           - Małgorzata     Deszczyńska           377: 328
+   2 Walenty        Siemaszko            - Dariusz        Maciejuk              388: 419
+   3 Magdalena      Kupczyńska           - Piotr          Pietuchowski          328: 403
+   4 Czesława       Pawłowska            - Jolanta        Chłopińska            421: 303
+   5 Rafał          Stachowski           - Sławomir       Wolski                435: 461
+   6 Piotr          Broda                - Lech           Szymczak              325: 318
+   7 Anna           Niedzielko           - Aleksandra     Kaczanowska           297: 410
+   8 Agnieszka      Matus                - Lucyna         Śniadach              428: 322
+   9 Agnieszka      Kozak                - Maciej         Śliwa                 294: 385
+  10 Anna           Zachorowska-Mazurkiewicz - Zofia          Górka                 319: 312
+</pre></div><div id='p_ranking' class='page'><pre></pre></div><div id='p_przebieg' class='page'>
+
+    </div><div style="clear:both;width:100%;" class="alignright">
+
+<script>
+<!--
+if ((document.getElementById("content").offsetHeight + document.getElementById("top").offsetHeight) > screen.height)
+    document.write("<br /><br /><a href='#top'>do góry</a>");
+-->
+</script>
+
+</div>
+</div>
+
+<div id="bottom">
+<ul id="bottomlinks">
+<div class='onleft'>
+ Osób on-line: 58</div>
+    <li><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+    <li><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+    <li><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+    <li><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+    <li><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+    <li><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+</ul>
+    SCRABBLE® jest zastrzeżonym znakiem towarowym J.W. Spears &amp; Sons&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://www.pfs.org.pl/prawaautorskie.php">© Prawa autorskie</a>
+</div>
+</body>
+</html>

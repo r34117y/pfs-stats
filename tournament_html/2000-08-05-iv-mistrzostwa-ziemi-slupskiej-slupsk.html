@@ -1,0 +1,952 @@
+
+<html>
+<head>
+    <title>Polska Federacja Scrabble :: IV Mistrzostwa Ziemi Słupskiej</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="files/img/favicon.ico" />
+    <link rel="stylesheet" href="files/css/style.css" type="text/css" />
+	<link rel="stylesheet" href="files/css/style-index.css" type="text/css" />
+    <!--[if IE]><link rel="stylesheet" type="text/css" href="files/css/styleie.css" /><![endif]-->
+    <!--[if lt IE 7.]><script defer type="text/javascript" src="files/js/pngfix.js"></script><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="files/js/minmax.js"></script><![endif]-->
+    <script type="text/javascript" src="files/js/jquery.js"></script>
+    <script type="text/javascript" src="files/js/jquery-bp.js"></script>
+    <script type="text/javascript" src="files/js/java.js"></script>
+    <script>jSubmenu ("turnieje","kalendarz");jKalendarz();</script>
+    <script>
+    var url, page;
+
+    page = 'info';
+    url  = document.location.toString();
+
+    if (url.match ('#')) {
+      page = url.split ('#')[1];
+      if ($.inArray (page, [ 'info', 'relacja', 'klasyfikacja', 'hh', 'rundy', 'ranking', 'przebieg' ]) == -1)
+        page = 'info';
+    }
+
+    $(document).ready(function(){
+        $('a#listaucz').bind('click', function(event){
+            $('div#lista').toggle();
+            event.preventDefault();
+        }).toggle(function() { $(this).text('schowaj listę uczestników'); }, function() { $(this).text("pokaż listę uczestników"); });
+        $('div#lista table tr:last td').css({"border-bottom" : "none"});
+
+        $("a.przycisk").click (function (e) {
+            if ($(this).attr ('href') !== '#')
+                return true;
+
+            e.preventDefault ();
+
+            id       = this.id;
+            this.id += 'tmp';
+            window.location.hash = id;
+            this.id  = id;
+
+            $(".page").hide ();
+            $(".page#p_" + id).show ();
+
+            $("a.przycisk").removeClass ('active');
+            $(this).addClass ('active');
+
+            return false;
+        });
+
+        $("a.przycisk#" + page).click ();
+        $('html, body').animate ({ scrollTop: 0 }, 0);
+    });
+    </script>
+  <style type="text/css">
+    .page {
+        display: none;
+    }
+    #szczegoly{
+        width: 100%;
+        border-spacing: 0;
+        margin-top: 30px;
+        text-align: left;
+        font-size: inherit;
+    }
+    #szczegoly td{
+        padding: 10px 20px 10px 0;
+        vertical-align: top;
+    }
+    #szczegoly td:first-child{
+        font-weight: bold;
+        width: 160px;
+    }
+    div#lista{
+        display:none;
+        margin-top: 15px;
+    }
+    div#lista table{
+        margin-top: 10px;
+        text-align: left;
+        font-size: inherit;
+    }
+    div#lista table td{
+        padding: 3px 8px;
+        border-bottom: 1px dashed #1576AE;
+    }
+    div#lista table th{
+        padding: 0px 5px 10px 5px;
+    }
+    div#lista table td.ptaszek{
+        text-align: center;
+        background: url('files/img/tick.png') no-repeat center center;
+    }
+    div#lista table th{
+        white-space: nowrap;
+        width: auto;
+    }
+    div#lista table td:first-child, div#lista table th:first-child{
+        text-align:right;
+        width: auto;
+    }
+    </style>
+</head>
+
+<body>
+
+<script type="text/javascript">setMenu();</script>
+
+<div id="top" onclick="location.href='https://www.pfs.org.pl'">
+</div>
+<div id="menu">
+
+    <div id="m_glowna">
+        <div class="tab"><a href="https://www.pfs.org.pl/index.php"></a></div>
+
+        <ul>
+            <li class="sublink" id="aktualnosci"><a href="https://www.pfs.org.pl">Aktualności</a></li>
+            <li class="sublink" id="nowy"><a href="https://www.pfs.org.pl/dlanowych.php">Jestem tu nowy</a></li>
+            <li class="sublink" id="anagramator"><a href="https://www.pfs.org.pl/osps_online.php?main=1">Słownik online</a></li>
+            <li class="sublink" id="siodemka"><a href="https://www.pfs.org.pl/siodemka.php?main=1">Siódemka tygodnia</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+            <li class="sublink" id="dlasponsorow"><a href="https://www.pfs.org.pl/dlasponsorow.php">Dla sponsorów</a></li>
+            <li class="sublink" id="kontakt"><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+        </ul>
+    </div>
+    <div id="m_turnieje">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kalendarz.php"></a></div>
+        <ul>
+            <li class="sublink" id="kalendarz"><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+            <li class="sublink" id="regulaminy"><a href="https://www.pfs.org.pl/regulaminy.php">Regulaminy</a></li>
+            <li class="sublink" id="sedziowie"><a href="https://www.pfs.org.pl/sedziowie.php">Sędziowie</a></li>
+            <li class="sublink" id="gp"><a href="https://www.pfs.org.pl/gp2026.php">Grand Prix</a></li>
+<!--            <li class="sublink" id="mr"><a href="https://www.pfs.org.pl/mr2020.php">Mistrzostwa Regionów</a></li>-->
+            <li class="sublink" id="archiwum"><a href="https://www.pfs.org.pl/archiwum.php">Historia</a></li>
+            <li class="sublink" id="galeria"><a href="https://www.pfs.org.pl/galeria.php">Zdjęcia</a></li>
+            <li class="sublink" id="rekordy"><a href="https://www.pfs.org.pl/rekordy.php">Rekordy</a></li>
+        </ul>
+    </div>
+    <div id="m_pfs">
+        <div  class="tab"><a href="https://www.pfs.org.pl/opfs.php"></a></div>
+        <ul>
+            <li class="sublink" id="opfs"><a href="https://www.pfs.org.pl/opfs.php">O PFS</a></li>
+            <li class="sublink" id="jakprzystapic"><a href="https://www.pfs.org.pl/jakprzystapic.php">Jak przystąpić</a></li>
+            <li class="sublink" id="dlaczlonkow"><a href="https://www.pfs.org.pl/dlaczlonkow.php">Dla członków</a></li>
+            <li class="sublink" id="wladze"><a href="https://www.pfs.org.pl/wladze.php">Władze</a></li>
+            <li class="sublink" id="komisje"><a href="https://www.pfs.org.pl/komisje.php">Komisje</a></li>
+            <li class="sublink" id="statut"><a href="https://www.pfs.org.pl/statut.php">Statut</a></li>
+            <li class="sublink" id="uchwaly"><a href="https://www.pfs.org.pl/uchwaly.php">Uchwały</a></li>
+            <li class="sublink" id="honorowi"><a href="https://www.pfs.org.pl/honorowi.php">Honorowi członkowie</a></li>
+            <li class="sublink" id="finanse"><a href="https://www.pfs.org.pl/finanse.php">Finanse</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabble">
+        <div  class="tab"><a href="https://www.pfs.org.pl/osps_online.php?desktop=1"></a></div>
+        <ul>
+            <li class="sublink" id="osps_online"><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+            <li class="sublink" id="zds"><a href="https://www.pfs.org.pl/zds2.php">ZDS</a></li>
+            <li class="sublink" id="osps"><a href="https://www.pfs.org.pl/osps.php">OSPS</a></li>
+            <li class="sublink" id="aktualizacje"><a href="https://www.pfs.org.pl/osps_aktualizacje.php">Aktualizacje</a></li>
+            <li class="sublink" id="dwojki"><a href="https://www.pfs.org.pl/dwojki.php">2-literówki</a></li>
+            <li class="sublink" id="trojki"><a href="https://www.pfs.org.pl/trojki.php">3-literówki</a></li>
+            <li class="sublink" id="siodemkat"><a href="https://www.pfs.org.pl/siodemka.php">Siódemka tygodnia</a></li>
+            <li class="sublink" id="slowneroznosci"><a href="https://www.pfs.org.pl/slowneroznosci.php">Słowne różności</a></li>
+        </ul>
+    </div>
+    <div id="m_ranking">
+        <div  class="tab"><a href="https://www.pfs.org.pl/ranking.php"></a></div>
+        <ul>
+            <li class="sublink" id="aktranking"><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+            <li class="sublink" id="medale"><a href="https://www.pfs.org.pl/medale.php">Klasyfikacja medalowa</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabblisci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/mistrzowiepolski.php"></a></div>
+        <ul>
+            <li class="sublink" id="mistrzowiepolski"><a href="https://www.pfs.org.pl/mistrzowiepolski.php">Mistrzowie Polski</a></li>
+            <li class="sublink" id="zdobywcypp"><a href="https://www.pfs.org.pl/zdobywcypp.php">Zdobywcy Pucharu Polski</a></li>
+            <li class="sublink" id="zwyciezcygp"><a href="https://www.pfs.org.pl/zwyciezcygp.php">Zwycięzcy Grand Prix</a></li>
+            <li class="sublink" id="liderzyrankingu"><a href="https://www.pfs.org.pl/liderzyrankingu.php">Liderzy rankingu</a></li>
+            <li class="sublink" id="zwyciezcylemans"><a href="https://www.pfs.org.pl/zwyciezcylemans.php">Zwycięzcy 24h Le Mans</a></li>
+            <li class="sublink" id="zwyciezcykmp"><a href="https://www.pfs.org.pl/zwyciezcykmp.php">KMP</a>
+        </ul>
+    </div>
+    <div id="m_kluby">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kluby.php"></a></div>
+        <ul>
+            <li class="sublink" id="rejestrklubow"><a href="https://www.pfs.org.pl/kluby.php">Rejestr klubów</a></li>
+            <li class="sublink" id="kmp"><a href="https://www.pfs.org.pl/kmp.php">KMP</a></li>
+            <li class="sublink" id="wiescizklubow"><a href="https://www.pfs.org.pl/wiescizklubow.php">Wieści z klubów</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/about.php">Statystyki klubowe</a></li>
+        </ul>
+    </div>
+    <div id="m_roznosci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/historia.php"></a></div>
+        <ul>
+            <li class="sublink" id="historia"><a href="https://www.pfs.org.pl/historia.php">Historia</a></li>
+            <li class="sublink" id="odmiany"><a href="https://www.pfs.org.pl/odmiany.php">Odmiany</a></li>
+            <li class="sublink" id="anegdoty"><a href="https://www.pfs.org.pl/anegdoty.php">Anegdoty</a></li>
+            <li class="sublink" id="scrabblealia"><a href="https://www.pfs.org.pl/scrabblealia.php">Scrabblealia</a></li>
+            <li class="sublink" id="scrabblenet"><a href="https://www.pfs.org.pl/scrabblenet.php">Scrabble w internecie</a></li>
+            <li class="sublink" id="programy"><a href="https://www.pfs.org.pl/programy.php">Programy</a></li>
+            <li class="sublink" id="download"><a href="https://www.pfs.org.pl/download.php">Do pobrania</a></li>
+            <li class="sublink" id="ksiazki"><a href="https://www.pfs.org.pl/ksiazki.php">Książki</a></li>
+            <li class="sublink" id="slowniczek"><a href="https://www.pfs.org.pl/slowniczek.php">Słowniczek</a></li>
+        </ul>
+    </div>
+    <div id="m_english">
+        <div  class="tab"><a href="https://www.pfs.org.pl/english.php"></a></div>
+        <ul>
+            <li class="sublink" id="about"><a href="https://www.pfs.org.pl/english.php">About Polish Scrabble</a></li>
+            <li class="sublink" id="news"><a href="https://www.pfs.org.pl/en_news.php">News</a></li>
+            <li class="sublink" id="bartek"><a href="https://www.pfs.org.pl/bartek.php">Bartek w Johor Bahru</a></li>
+            <li class="sublink" id="franko"><a href="https://www.pfs.org.pl/franko.php">Scrabble frankofońskie</a></li>
+        </ul>
+    </div>
+</div>
+
+<div id="submenu"></div>
+<div id="content">
+<div id='nextTours'>
+		<div class='nextTour' onclick='location.href="turniej.php?id=309"'>
+			<div class='karteczka small1'>
+				<span class='miasto'>Biała Podlaska</span><span class='dzien'><span class='big'>23</span><br />czerwca</span></div>
+			<div class='kartka big1'>
+				<span class='miasto'>Biała Podlaska</span>
+				<span class='dzien'><b>23-24 czerwca</b></span>
+				<span class='nazwaturnieju'>IV Mistrzostwa Podlasia</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=308"'>
+			<div class='karteczka small2'>
+				<span class='miasto'>Słupsk</span><span class='dzien'><span class='big'> 5</span><br />sierpnia</span></div>
+			<div class='kartka big2'>
+				<span class='miasto'>Słupsk</span>
+				<span class='dzien'><b> 5- 6 sierpnia</b></span>
+				<span class='nazwaturnieju'>IV Mistrzostwa Ziemi Słupskiej</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=306"'>
+			<div class='karteczka small3'>
+				<span class='miasto'>Katowice</span><span class='dzien'><span class='big'>12</span><br />sierpnia</span></div>
+			<div class='kartka big3'>
+				<span class='miasto'>Katowice</span>
+				<span class='dzien'><b>12-15 sierpnia</b></span>
+				<span class='nazwaturnieju'>I Maraton Scrabble</span></div>
+		</div></div><div class='naglowekrelacji'><span class='tytul'>IV Mistrzostwa Ziemi Słupskiej<span class='nazwa'>05 - 06 sierpnia 2000 —  IV Mistrzostwa Ziemi Słupskiej</span></span><a href='#' id='info' class='przycisk'>Informacje</a><a href='#' id='relacja' class='przycisk'>Relacja</a><a href='#' id='klasyfikacja' class='przycisk'>Wyniki</a><a href='#' id='hh' class='przycisk'>HH</a><div class='galleries'><img src='files/img/gallery.png' style='visibility:hidden;' alt='galeria' /></div></div><h1 style='color:black; margin-top:0px; margin-bottom:30px; padding: 0px'>IV Mistrzostwa Ziemi Słupskiej<span>Słupsk, 05 - 06 sierpnia 2000</span></h1><div id='p_relacja' class='page'><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><div class='relacja' style='clear:both;'><div><pre>
+ 1. Tomasz Zwoliński (Warszawa) 12.0 4986
+ 2. Kazimierz M.Merklejn (Szczecin) 9.0 4341
+ 3. Mateusz Żbikowski (Warszawa) 8.0 4311
+ 4. Wojciech Gołęcki (Inowrocław) 8.0 4034
+ 5. Mariusz Kubicki (Inowrocław) 7.0 4386
+ 6. Ziemowit Pazda (Wrocław) 7.0 4276
+ 7. Mariusz Orzeł (Nowe Miasto Lub.) 7.0 4271
+ 8. Krzysztof Bukowski (Nowe Miasto Lub.) 6.5 4426
+ 9. Marcin Mroziuk (Strzegom) 6.0 4412
+ 10. Wiktor Stępień (Katowice) 6.0 4356
+
+ 30 uczestników, 12 rund 
+</pre></div><div class='autor'></div></div><div style='clear:both;'></div></div><div id='p_info' class='page'><br><p align='center'></p><br><br><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br>Zobacz, jak było na poprzednich turniejach:<br><a href='turniej.php?id=336'>III Otwarte Mistrzostwa Ziemi Słupskiej</a><br><a href='turniej.php?id=366'>II Otwarte Mistrzostwa Ziemi Słupskiej</a><br><a href='turniej.php?id=396'>I Otwarte Mistrzostwa Ziemi Słupskiej</a><br><table id='szczegoly' class='ramkadolna'></table><br /><br /></div><div id='p_klasyfikacja' class='page'><pre>Wyniki turnieju IV Mistrzostwa Ziemi Słupskiej
+
+Lp. Imię            Nazwisko             Miasto               Ranking  Duże pkt Małe pkt Skalpy   Różn. MP
+--- --------------- -------------------- -------------------- -------- -------- -------- -------- --------
+  1 Tomasz          Zwoliński            Warszawa               144.22     12.0     4986     1935     1137
+  2 Kazimierz.J     Merklejn             Szczecin               113.54      9.0     4341     1609      482
+  3 Mateusz         Żbikowski            Warszawa               117.11      8.0     4311     1646      -62
+  4 Wojciech        Gołęcki              Inowrocław             101.44      8.0     4034     1476      335
+  5 Mariusz         Kubicki              Inowrocław             114.83      7.0     4386     1425      321
+  6 Ziemowit        Pazda                Wrocław                100.00      7.0     4276     1442      361
+  7 Mariusz         Orzeł                Nowe Miasto Lubawskie   129.83      7.0     4271     1472       48
+  8 Krzysztof       Bukowski             Milanówek              120.29      6.5     4426     1397       72
+  9 Marcin          Mroziuk              Warszawa               134.55      6.0     4412     1347      403
+ 10 Wiktor          Stępień              Katowice               118.31      6.0     4356     1413      227
+ 11 Zbigniew        Wietecki             Gorzów Wielkopolski    117.92      6.0     4325     1370      -22
+ 12 Piotr           Jachimowicz          Warszawa               100.52      6.0     4194     1356      141
+ 13 Aleksandra      Merklejn-Kaczanowska Szczecin               107.82      6.0     4180     1332        7
+ 14 Eugeniusz       Wróblewski           Inowrocław             100.00      6.0     3946     1285      113
+ 15 Jarosław        Kamienik             Słupsk                 100.00      5.5     3358     1102      -42
+ 16 Bogusław        Kuma                 Słupsk                 100.00      5.5     3355     1098     -147
+ 17 Magdalena       Merklejn             Szczecin               108.73      5.0     4218     1276      306
+ 18 Piotr           Morawski             Gdańsk                 100.00      5.0     3595     1150     -334
+ 19 Lucyna          ¦niadach             Rumia                  100.00      5.0     2335      933       75
+ 20 Witalis         Sapis                Słupsk                 100.00      4.5     3202     1017     -146
+ 21 Jacek           Nowak                Szczecin               100.00      4.0     3801     1050     -320
+ 22 Stanisław       Gasik                Warszawa               113.82      4.0     2566      779      369
+ 23 Zdzisław        Parnicki             Słupsk                 100.00      3.5     3342      896     -148
+ 24 Małgorzata      Kłos                 Gdańsk                 100.00      3.5     3263      850       28
+ 25 Barbara         Orzeł                Nowe Miasto Lubawskie   100.00      3.0     2404      759       93
+ 26 Szymon          Jachimek             Gdynia                 100.00      3.0     2225      674      -90
+ 27 Dominika        ¦niadach             Rumia                  100.00      3.0     2029      665     -116
+ 28 Andrzej         Kwiatkowski          Warszawa               118.12      2.5     1927      604      233
+ 29 Filip           Warzecha             Gdynia                 100.00      2.5     1689      509      -73
+ 30 Roman           Sikorski             Kobylnica              100.00      1.5     2683      681    -1151
+</pre></div><div id='p_hh' class='page'><pre>Wyniki poszczególnych graczy w turnieju IV Mistrzostwa Ziemi Słupskiej
+
+
+
+	Tomasz Zwoliński 144.22 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Ziemowit       Pazda                 100.00 +  395: 304  150
+    2     3 Magdalena      Merklejn              108.73 +  371: 322  159
+    3     2 Barbara        Orzeł                 100.00 +  402: 333  150
+    4     1 Mateusz        Żbikowski             117.11 +  395: 302  167
+    5     1 Aleksandra     Merklejn-Kaczanowska  107.82 +  404: 348  158
+    6     1 Mariusz        Orzeł                 129.83 +  467: 278  180
+    7     1 Lucyna         ¦niadach              100.00 +  434: 269  150
+    8     1 Piotr          Jachimowicz           100.52 +  448: 408  151
+    9     1 Andrzej        Kwiatkowski           118.12 +  393: 378  168
+   10     1 Wiktor         Stępień               118.31 +  348: 330  168
+   11     1 Mateusz        Żbikowski             117.11 +  349: 323  167
+   12     1 Mateusz        Żbikowski             117.11 +  580: 254  167
+                                                          --------------- ---- ------
+                                                                    1935  / 12 161.25
+
+
+
+
+	Marcin Mroziuk 134.55 Warszawa
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Eugeniusz      Wróblewski            100.00 +  451: 308  150
+    2     1 Mariusz        Kubicki               114.83 +  381: 312  165
+    3     1 Mateusz        Żbikowski             117.11 -  278: 306   67
+    4     3 Mariusz        Orzeł                 129.83 -  364: 394   80
+    5     6 Magdalena      Merklejn              108.73 +  382: 299  159
+    6     4 Zbigniew       Wietecki              117.92 -  380: 424   68
+    7     6 Wiktor         Stępień               118.31 -  304: 322   68
+    8     8 Krzysztof      Bukowski              120.29 -  296: 475   70
+    9     9 Witalis        Sapis                 100.00 +  438: 215  150
+   10     8 Jacek          Nowak                 100.00 +  446: 313  150
+   11     5 Krzysztof      Bukowski              120.29 -  356: 407   70
+   12     7 Jarosław       Kamienik              100.00 +  336: 234  150
+                                                          --------------- ---- ------
+                                                                    1347  / 12 112.25
+
+
+
+
+	Mariusz Orzeł 129.83 Nowe Miasto Lubawskie       
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Barbara        Orzeł                 100.00 -  266: 389   50
+    2    11 Bogusław       Kuma                  100.00 +  469: 182  150
+    3     5 Wiktor         Stępień               118.31 +  369: 308  168
+    4     3 Marcin         Mroziuk               134.55 +  394: 364  185
+    5     2 Zbigniew       Wietecki              117.92 +  387: 313  168
+    6     1 Tomasz         Zwoliński             144.22 -  278: 467   94
+    7     3 Ziemowit       Pazda                 100.00 -  309: 381   50
+    8     5 Kazimierz.J    Merklejn              113.54 -  334: 357   64
+    9     7 Magdalena      Merklejn              108.73 +  381: 332  159
+   10     4 Mariusz        Kubicki               114.83 -  334: 387   65
+   11     7 Piotr          Jachimowicz           100.52 +  375: 372  151
+   12     5 Wiktor         Stępień               118.31 +  375: 371  168
+                                                          --------------- ---- ------
+                                                                    1472  / 12 122.67
+
+
+
+
+	Krzysztof Bukowski 120.29 Milanówek
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Lucyna         ¦niadach              100.00 -  315: 375   50
+    2     9 Stanisław      Gasik                 113.82 +  409: 375  164
+    3     6 Magdalena      Merklejn              108.73 +  368: 315  159
+    4     4 Barbara        Orzeł                 100.00 +  341: 299  150
+    5     3 Mateusz        Żbikowski             117.11 -  334: 456   67
+    6     5 Ziemowit       Pazda                 100.00 -  260: 368   50
+    7     9 Piotr          Morawski              100.00 -  321: 405   50
+    8     8 Marcin         Mroziuk               134.55 +  475: 296  185
+    9     6 Zbigniew       Wietecki              117.92 +  502: 379  168
+   10     3 Andrzej        Kwiatkowski           118.12 =  352: 352  118
+   11     5 Marcin         Mroziuk               134.55 +  407: 356  185
+   12     3 Wojciech       Gołęcki               101.44 -  342: 378   51
+                                                          --------------- ---- ------
+                                                                    1397  / 12 116.42
+
+
+
+
+	Wiktor Stępień 118.31 Katowice               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Bogusław       Kuma                  100.00 +  396: 265  150
+    2     2 Mateusz        Żbikowski             117.11 -  366: 376   67
+    3     5 Mariusz        Orzeł                 129.83 -  308: 369   80
+    4     8 Mariusz        Kubicki               114.83 +  436: 318  165
+    5     5 Wojciech       Gołęcki               101.44 +  393: 322  151
+    6     3 Lucyna         ¦niadach              100.00 -  289: 385   50
+    7     6 Marcin         Mroziuk               134.55 +  322: 304  185
+    8     4 Zbigniew       Wietecki              117.92 +  418: 336  168
+    9     3 Aleksandra     Merklejn-Kaczanowska  107.82 +  379: 340  158
+   10     1 Tomasz         Zwoliński             144.22 -  330: 348   94
+   11     3 Mariusz        Kubicki               114.83 -  348: 391   65
+   12     5 Mariusz        Orzeł                 129.83 -  371: 375   80
+                                                          --------------- ---- ------
+                                                                    1413  / 12 117.75
+
+
+
+
+	Andrzej Kwiatkowski 118.12 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    8     3 Aleksandra     Merklejn-Kaczanowska  107.82 +  416: 317  158
+    9     1 Tomasz         Zwoliński             144.22 -  378: 393   94
+   10     3 Krzysztof      Bukowski              120.29 =  352: 352  120
+   11     2 Kazimierz.J    Merklejn              113.54 -  390: 395   64
+   12     4 Zbigniew       Wietecki              117.92 +  391: 237  168
+                                                          --------------- ---- ------
+                                                                     604  /  5 120.80
+
+
+
+
+	Zbigniew Wietecki 117.92 Gorzów Wielkopolski          
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Zdzisław       Parnicki              100.00 +  362: 244  150
+    2     5 Aleksandra     Merklejn-Kaczanowska  107.82 -  324: 339   58
+    3     8 Eugeniusz      Wróblewski            100.00 +  369: 367  150
+    4     5 Kazimierz.J    Merklejn              113.54 +  424: 256  164
+    5     2 Mariusz        Orzeł                 129.83 -  313: 387   80
+    6     4 Marcin         Mroziuk               134.55 +  424: 380  185
+    7     2 Mateusz        Żbikowski             117.11 -  394: 396   67
+    8     4 Wiktor         Stępień               118.31 -  336: 418   68
+    9     6 Krzysztof      Bukowski              120.29 -  379: 502   70
+   10     6 Piotr          Jachimowicz           100.52 +  367: 359  151
+   11     6 Magdalena      Merklejn              108.73 +  396: 308  159
+   12     4 Andrzej        Kwiatkowski           118.12 -  237: 391   68
+                                                          --------------- ---- ------
+                                                                    1370  / 12 114.17
+
+
+
+
+	Mateusz Żbikowski 117.11 Warszawa         
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Roman          Sikorski              100.00 +  398: 183  150
+    2     2 Wiktor         Stępień               118.31 +  376: 366  168
+    3     1 Marcin         Mroziuk               134.55 +  306: 278  185
+    4     1 Tomasz         Zwoliński             144.22 -  302: 395   94
+    5     3 Krzysztof      Bukowski              120.29 +  456: 334  170
+    6     2 Aleksandra     Merklejn-Kaczanowska  107.82 +  409: 378  158
+    7     2 Zbigniew       Wietecki              117.92 +  396: 394  168
+    8     2 Ziemowit       Pazda                 100.00 +  371: 298  150
+    9     2 Piotr          Jachimowicz           100.52 +  429: 355  151
+   10     2 Kazimierz.J    Merklejn              113.54 -  291: 463   64
+   11     1 Tomasz         Zwoliński             144.22 -  323: 349   94
+   12     1 Tomasz         Zwoliński             144.22 -  254: 580   94
+                                                          --------------- ---- ------
+                                                                    1646  / 12 137.17
+
+
+
+
+	Mariusz Kubicki 114.83 Inowrocław               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Szymon         Jachimek              100.00 +  461: 354  150
+    2     1 Marcin         Mroziuk               134.55 -  312: 381   85
+    3     4 Piotr          Jachimowicz           100.52 -  317: 326   51
+    4     8 Wiktor         Stępień               118.31 -  318: 436   68
+    5    11 Eugeniusz      Wróblewski            100.00 +  420: 292  150
+    6     8 Piotr          Morawski              100.00 +  447: 277  150
+    7     4 Aleksandra     Merklejn-Kaczanowska  107.82 -  363: 413   58
+    8     7 Jarosław       Kamienik              100.00 +  379: 222  150
+    9     5 Wojciech       Gołęcki               101.44 +  305: 294  151
+   10     4 Mariusz        Orzeł                 129.83 +  387: 334  180
+   11     3 Wiktor         Stępień               118.31 +  391: 348  168
+   12     2 Kazimierz.J    Merklejn              113.54 -  286: 388   64
+                                                          --------------- ---- ------
+                                                                    1425  / 12 118.75
+
+
+
+
+	Stanisław Gasik 113.82 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Dominika       ¦niadach              100.00 -  327: 333   50
+    2     9 Krzysztof      Bukowski              120.29 -  375: 409   70
+    3    12 Roman          Sikorski              100.00 +  312: 249  150
+    4    10 Magdalena      Merklejn              108.73 -  292: 362   59
+    5    12 Zdzisław       Parnicki              100.00 +  390: 236  150
+    6     9 Jacek          Nowak                 100.00 +  476: 248  150
+    7     7 Barbara        Orzeł                 100.00 +  394: 360  150
+                                                          --------------- ---- ------
+                                                                     779  /  7 111.29
+
+
+
+
+	Kazimierz.J Merklejn 113.54 Szczecin               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Piotr          Morawski              100.00 +  352: 216  150
+    2     6 Piotr          Jachimowicz           100.52 -  276: 294   51
+    3    10 Zdzisław       Parnicki              100.00 +  418: 255  150
+    4     5 Zbigniew       Wietecki              117.92 -  256: 424   68
+    5     9 Witalis        Sapis                 100.00 +  325: 294  150
+    6     7 Wojciech       Gołęcki               101.44 -  347: 379   51
+    7     8 Magdalena      Merklejn              108.73 +  374: 361  159
+    8     5 Mariusz        Orzeł                 129.83 +  357: 334  180
+    9     4 Ziemowit       Pazda                 100.00 +  390: 335  150
+   10     2 Mateusz        Żbikowski             117.11 +  463: 291  167
+   11     2 Andrzej        Kwiatkowski           118.12 +  395: 390  168
+   12     2 Mariusz        Kubicki               114.83 +  388: 286  165
+                                                          --------------- ---- ------
+                                                                    1609  / 12 134.08
+
+
+
+
+	Magdalena Merklejn 108.73 Szczecin               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Filip          Warzecha              100.00 +  391: 192  150
+    2     3 Tomasz         Zwoliński             144.22 -  322: 371   94
+    3     6 Krzysztof      Bukowski              120.29 -  315: 368   70
+    4    10 Stanisław      Gasik                 113.82 +  362: 292  164
+    5     6 Marcin         Mroziuk               134.55 -  299: 382   85
+    6    10 Szymon         Jachimek              100.00 +  360: 284  150
+    7     8 Kazimierz.J    Merklejn              113.54 -  361: 374   64
+    8     9 Eugeniusz      Wróblewski            100.00 +  385: 262  150
+    9     7 Mariusz        Orzeł                 129.83 -  332: 381   80
+   10     9 Witalis        Sapis                 100.00 +  473: 264  150
+   11     6 Zbigniew       Wietecki              117.92 -  308: 396   68
+   12     8 Piotr          Jachimowicz           100.52 -  310: 346   51
+                                                          --------------- ---- ------
+                                                                    1276  / 12 106.33
+
+
+
+
+	Aleksandra Merklejn-Kaczanowska 107.82 Szczecin                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    12 Witalis        Sapis                 100.00 +  370: 201  150
+    2     5 Zbigniew       Wietecki              117.92 +  339: 324  168
+    3     3 Wojciech       Gołęcki               101.44 +  298: 282  151
+    4     2 Piotr          Jachimowicz           100.52 +  355: 349  151
+    5     1 Tomasz         Zwoliński             144.22 -  348: 404   94
+    6     2 Mateusz        Żbikowski             117.11 -  378: 409   67
+    7     4 Mariusz        Kubicki               114.83 +  413: 363  165
+    8     3 Andrzej        Kwiatkowski           118.12 -  317: 416   68
+    9     3 Wiktor         Stępień               118.31 -  340: 379   68
+   10     5 Ziemowit       Pazda                 100.00 -  260: 354   50
+   11     8 Eugeniusz      Wróblewski            100.00 +  390: 263  150
+   12     6 Ziemowit       Pazda                 100.00 -  372: 429   50
+                                                          --------------- ---- ------
+                                                                    1332  / 12 111.00
+
+
+
+
+	Wojciech Gołęcki 101.44 Inowrocław               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    13 Jacek          Nowak                 100.00 +  340: 229  150
+    2     7 Dominika       ¦niadach              100.00 +  330: 310  150
+    3     3 Aleksandra     Merklejn-Kaczanowska  107.82 -  282: 298   58
+    4     7 Witalis        Sapis                 100.00 +  312: 245  150
+    5     5 Wiktor         Stępień               118.31 -  322: 393   68
+    6     7 Kazimierz.J    Merklejn              113.54 +  379: 347  164
+    7     5 Piotr          Jachimowicz           100.52 -  326: 333   51
+    8     6 Piotr          Morawski              100.00 +  356: 303  150
+    9     5 Mariusz        Kubicki               114.83 -  294: 305   65
+   10     7 Jarosław       Kamienik              100.00 +  361: 245  150
+   11     4 Ziemowit       Pazda                 100.00 +  354: 349  150
+   12     3 Krzysztof      Bukowski              120.29 +  378: 342  170
+                                                          --------------- ---- ------
+                                                                    1476  / 12 123.00
+
+
+
+
+	Piotr Jachimowicz 100.52 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    14 Jarosław       Kamienik              100.00 +  358: 244  150
+    2     6 Kazimierz.J    Merklejn              113.54 +  294: 276  164
+    3     4 Mariusz        Kubicki               114.83 +  326: 317  165
+    4     2 Aleksandra     Merklejn-Kaczanowska  107.82 -  349: 355   58
+    5     4 Lucyna         ¦niadach              100.00 -  315: 316   50
+    6     6 Barbara        Orzeł                 100.00 +  379: 290  150
+    7     5 Wojciech       Gołęcki               101.44 +  333: 326  151
+    8     1 Tomasz         Zwoliński             144.22 -  408: 448   94
+    9     2 Mateusz        Żbikowski             117.11 -  355: 429   67
+   10     6 Zbigniew       Wietecki              117.92 -  359: 367   68
+   11     7 Mariusz        Orzeł                 129.83 -  372: 375   80
+   12     8 Magdalena      Merklejn              108.73 +  346: 310  159
+                                                          --------------- ---- ------
+                                                                    1356  / 12 113.00
+
+
+
+
+	Szymon Jachimek 100.00 Gdynia                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Mariusz        Kubicki               114.83 -  354: 461   65
+    2     8 Małgorzata     Kłos                  100.00 +  348: 226  150
+    3     7 Jacek          Nowak                 100.00 -  334: 353   50
+    4     9 Eugeniusz      Wróblewski            100.00 +  325: 277  150
+    5     7 Barbara        Orzeł                 100.00 -  258: 370   50
+    6    10 Magdalena      Merklejn              108.73 -  284: 360   59
+    7    12 Zdzisław       Parnicki              100.00 +  322: 268  150
+                                                          --------------- ---- ------
+                                                                     674  /  7  96.29
+
+
+
+
+	Jarosław Kamienik 100.00 Słupsk                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    14 Piotr          Jachimowicz           100.52 -  244: 358   51
+    2    12 Zdzisław       Parnicki              100.00 -  250: 334   50
+    3    13 Ziemowit       Pazda                 100.00 -  214: 401   50
+    4    14 Filip          Warzecha              100.00 +  264: 198  150
+    5    15 PAUZA
+    6    12 Bogusław       Kuma                  100.00 +  426: 272  150
+    7    10 Dominika       ¦niadach              100.00 +  312: 267  150
+    8     7 Mariusz        Kubicki               114.83 -  222: 379   65
+    9     8 Piotr          Morawski              100.00 +  299: 271  150
+   10     7 Wojciech       Gołęcki               101.44 -  245: 361   51
+   11     9 Piotr          Morawski              100.00 +  348: 223  150
+   12     7 Marcin         Mroziuk               134.55 -  234: 336   85
+                                                          --------------- ---- ------
+                                                                    1102  / 11 100.18
+
+
+
+
+	Bogusław Kuma 100.00 Słupsk                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Wiktor         Stępień               118.31 -  265: 396   68
+    2    11 Mariusz        Orzeł                 129.83 -  182: 469   80
+    3    14 Piotr          Morawski              100.00 -  228: 367   50
+    4    15 PAUZA
+    5    14 Filip          Warzecha              100.00 +  297: 240  150
+    6    12 Jarosław       Kamienik              100.00 -  272: 426   50
+    7    14 Małgorzata     Kłos                  100.00 +  311: 269  150
+    8    10 Witalis        Sapis                 100.00 -  198: 281   50
+    9    10 Jacek          Nowak                 100.00 -  313: 358   50
+   10    12 Roman          Sikorski              100.00 +  400: 169  150
+   11    10 Jacek          Nowak                 100.00 +  302: 250  150
+   12    10 Witalis        Sapis                 100.00 +  287: 277  150
+                                                          --------------- ---- ------
+                                                                    1098  / 11  99.82
+
+
+
+
+	Małgorzata Kłos 100.00 Gdańsk                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    15 PAUZA
+    2     8 Szymon         Jachimek              100.00 -  226: 348   50
+    3    11 Witalis        Sapis                 100.00 -  253: 279   50
+    4    13 Roman          Sikorski              100.00 -  277: 280   50
+    5    13 Dominika       ¦niadach              100.00 -  241: 290   50
+    6    14 Filip          Warzecha              100.00 -  249: 255   50
+    7    14 Bogusław       Kuma                  100.00 -  269: 311   50
+    8    12 Zdzisław       Parnicki              100.00 +  300: 283  150
+    9    11 Eugeniusz      Wróblewski            100.00 -  286: 336   50
+   10    11 Piotr          Morawski              100.00 -  255: 347   50
+   11    12 Roman          Sikorski              100.00 +  324: 239  150
+   12    12 Roman          Sikorski              100.00 +  283: 267  150
+                                                          --------------- ---- ------
+                                                                     850  / 11  77.27
+
+
+
+
+	Piotr Morawski 100.00 Gdańsk                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Kazimierz.J    Merklejn              113.54 -  216: 352   64
+    2    13 Jacek          Nowak                 100.00 -  267: 461   50
+    3    14 Bogusław       Kuma                  100.00 +  367: 228  150
+    4    12 Zdzisław       Parnicki              100.00 +  335: 286  150
+    5    10 Roman          Sikorski              100.00 +  368: 215  150
+    6     8 Mariusz        Kubicki               114.83 -  277: 447   65
+    7     9 Krzysztof      Bukowski              120.29 +  405: 321  170
+    8     6 Wojciech       Gołęcki               101.44 -  303: 356   51
+    9     8 Jarosław       Kamienik              100.00 -  271: 299   50
+   10    11 Małgorzata     Kłos                  100.00 +  347: 255  150
+   11     9 Jarosław       Kamienik              100.00 -  223: 348   50
+   12     9 Eugeniusz      Wróblewski            100.00 -  216: 361   50
+                                                          --------------- ---- ------
+                                                                    1150  / 12  95.83
+
+
+
+
+	Jacek Nowak 100.00 Szczecin                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    13 Wojciech       Gołęcki               101.44 -  229: 340   51
+    2    13 Piotr          Morawski              100.00 +  461: 267  150
+    3     7 Szymon         Jachimek              100.00 +  353: 334  150
+    4     6 Lucyna         ¦niadach              100.00 -  282: 333   50
+    5     8 Ziemowit       Pazda                 100.00 -  320: 440   50
+    6     9 Stanisław      Gasik                 113.82 -  248: 476   64
+    7    11 Eugeniusz      Wróblewski            100.00 -  280: 333   50
+    8    11 Roman          Sikorski              100.00 +  451: 206  150
+    9    10 Bogusław       Kuma                  100.00 +  358: 313  150
+   10     8 Marcin         Mroziuk               134.55 -  313: 446   85
+   11    10 Bogusław       Kuma                  100.00 -  250: 302   50
+   12    11 Zdzisław       Parnicki              100.00 -  256: 331   50
+                                                          --------------- ---- ------
+                                                                    1050  / 12  87.50
+
+
+
+
+	Barbara Orzeł 100.00 Nowe Miasto Lubawskie         
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Mariusz        Orzeł                 129.83 +  389: 266  180
+    2     4 Lucyna         ¦niadach              100.00 +  363: 271  150
+    3     2 Tomasz         Zwoliński             144.22 -  333: 402   94
+    4     4 Krzysztof      Bukowski              120.29 -  299: 341   70
+    5     7 Szymon         Jachimek              100.00 +  370: 258  150
+    6     6 Piotr          Jachimowicz           100.52 -  290: 379   51
+    7     7 Stanisław      Gasik                 113.82 -  360: 394   64
+                                                          --------------- ---- ------
+                                                                     759  /  7 108.43
+
+
+
+
+	Zdzisław Parnicki 100.00 Słupsk                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Zbigniew       Wietecki              117.92 -  244: 362   68
+    2    12 Jarosław       Kamienik              100.00 +  334: 250  150
+    3    10 Kazimierz.J    Merklejn              113.54 -  255: 418   64
+    4    12 Piotr          Morawski              100.00 -  286: 335   50
+    5    12 Stanisław      Gasik                 113.82 -  236: 390   64
+    6    15 PAUZA
+    7    12 Szymon         Jachimek              100.00 -  268: 322   50
+    8    12 Małgorzata     Kłos                  100.00 -  283: 300   50
+    9    12 Roman          Sikorski              100.00 +  350: 182  150
+   10    10 Eugeniusz      Wróblewski            100.00 -  239: 401   50
+   11    11 Witalis        Sapis                 100.00 -  216: 274   50
+   12    11 Jacek          Nowak                 100.00 +  331: 256  150
+                                                          --------------- ---- ------
+                                                                     896  / 11  81.45
+
+
+
+
+	Ziemowit Pazda 100.00 Wrocław                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Tomasz         Zwoliński             144.22 -  304: 395   94
+    2    10 Eugeniusz      Wróblewski            100.00 -  305: 372   50
+    3    13 Jarosław       Kamienik              100.00 +  401: 214  150
+    4    11 Dominika       ¦niadach              100.00 +  312: 298  150
+    5     8 Jacek          Nowak                 100.00 +  440: 320  150
+    6     5 Krzysztof      Bukowski              120.29 +  368: 260  170
+    7     3 Mariusz        Orzeł                 129.83 +  381: 309  180
+    8     2 Mateusz        Żbikowski             117.11 -  298: 371   67
+    9     4 Kazimierz.J    Merklejn              113.54 -  335: 390   64
+   10     5 Aleksandra     Merklejn-Kaczanowska  107.82 +  354: 260  158
+   11     4 Wojciech       Gołęcki               101.44 -  349: 354   51
+   12     6 Aleksandra     Merklejn-Kaczanowska  107.82 +  429: 372  158
+                                                          --------------- ---- ------
+                                                                    1442  / 12 120.17
+
+
+
+
+	Witalis Sapis 100.00 Słupsk                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    12 Aleksandra     Merklejn-Kaczanowska  107.82 -  201: 370   58
+    2    14 Filip          Warzecha              100.00 +  335: 207  150
+    3    11 Małgorzata     Kłos                  100.00 +  279: 253  150
+    4     7 Wojciech       Gołęcki               101.44 -  245: 312   51
+    5     9 Kazimierz.J    Merklejn              113.54 -  294: 325   64
+    6    11 Dominika       ¦niadach              100.00 -  237: 269   50
+    7    15 PAUZA
+    8    10 Bogusław       Kuma                  100.00 +  281: 198  150
+    9     9 Marcin         Mroziuk               134.55 -  215: 438   85
+   10     9 Magdalena      Merklejn              108.73 -  264: 473   59
+   11    11 Zdzisław       Parnicki              100.00 +  274: 216  150
+   12    10 Bogusław       Kuma                  100.00 -  277: 287   50
+                                                          --------------- ---- ------
+                                                                    1017  / 11  92.45
+
+
+
+
+	Roman Sikorski 100.00 Kobylnica                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Mateusz        Żbikowski             117.11 -  183: 398   67
+    2    15 PAUZA
+    3    12 Stanisław      Gasik                 113.82 -  249: 312   64
+    4    13 Małgorzata     Kłos                  100.00 +  280: 277  150
+    5    10 Piotr          Morawski              100.00 -  215: 368   50
+    6    13 Eugeniusz      Wróblewski            100.00 -  167: 374   50
+    7    13 Filip          Warzecha              100.00 -  226: 297   50
+    8    11 Jacek          Nowak                 100.00 -  206: 451   50
+    9    12 Zdzisław       Parnicki              100.00 -  182: 350   50
+   10    12 Bogusław       Kuma                  100.00 -  169: 400   50
+   11    12 Małgorzata     Kłos                  100.00 -  239: 324   50
+   12    12 Małgorzata     Kłos                  100.00 -  267: 283   50
+                                                          --------------- ---- ------
+                                                                     681  / 11  61.91
+
+
+
+
+	Filip Warzecha 100.00 Gdynia                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Magdalena      Merklejn              108.73 -  192: 391   59
+    2    14 Witalis        Sapis                 100.00 -  207: 335   50
+    3    15 PAUZA
+    4    14 Jarosław       Kamienik              100.00 -  198: 264   50
+    5    14 Bogusław       Kuma                  100.00 -  240: 297   50
+    6    14 Małgorzata     Kłos                  100.00 +  255: 249  150
+    7    13 Roman          Sikorski              100.00 +  297: 226  150
+                                                          --------------- ---- ------
+                                                                     509  /  6  84.83
+
+
+
+
+	Eugeniusz Wróblewski 100.00 Inowrocław               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Marcin         Mroziuk               134.55 -  308: 451   85
+    2    10 Ziemowit       Pazda                 100.00 +  372: 305  150
+    3     8 Zbigniew       Wietecki              117.92 -  367: 369   68
+    4     9 Szymon         Jachimek              100.00 -  277: 325   50
+    5    11 Mariusz        Kubicki               114.83 -  292: 420   65
+    6    13 Roman          Sikorski              100.00 +  374: 167  150
+    7    11 Jacek          Nowak                 100.00 +  333: 280  150
+    8     9 Magdalena      Merklejn              108.73 -  262: 385   59
+    9    11 Małgorzata     Kłos                  100.00 +  336: 286  150
+   10    10 Zdzisław       Parnicki              100.00 +  401: 239  150
+   11     8 Aleksandra     Merklejn-Kaczanowska  107.82 -  263: 390   58
+   12     9 Piotr          Morawski              100.00 +  361: 216  150
+                                                          --------------- ---- ------
+                                                                    1285  / 12 107.08
+
+
+
+
+	Dominika ¦niadach 100.00 Rumia                    
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Stanisław      Gasik                 113.82 +  333: 327  164
+    2     7 Wojciech       Gołęcki               101.44 -  310: 330   51
+    3     9 Lucyna         ¦niadach              100.00 -  262: 386   50
+    4    11 Ziemowit       Pazda                 100.00 -  298: 312   50
+    5    13 Małgorzata     Kłos                  100.00 +  290: 241  150
+    6    11 Witalis        Sapis                 100.00 +  269: 237  150
+    7    10 Jarosław       Kamienik              100.00 -  267: 312   50
+                                                          --------------- ---- ------
+                                                                     665  /  7  95.00
+
+
+
+
+	Lucyna ¦niadach 100.00 Rumia                
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Krzysztof      Bukowski              120.29 +  375: 315  170
+    2     4 Barbara        Orzeł                 100.00 -  271: 363   50
+    3     9 Dominika       ¦niadach              100.00 +  386: 262  150
+    4     6 Jacek          Nowak                 100.00 +  333: 282  150
+    5     4 Piotr          Jachimowicz           100.52 +  316: 315  151
+    6     3 Wiktor         Stępień               118.31 +  385: 289  168
+    7     1 Tomasz         Zwoliński             144.22 -  269: 434   94
+                                                          --------------- ---- ------
+                                                                     933  /  7 133.29
+
+
+</pre></div><div id='p_rundy' class='page'><pre></pre></div><div id='p_ranking' class='page'><pre></pre></div><div id='p_przebieg' class='page'>
+
+    </div><div style="clear:both;width:100%;" class="alignright">
+
+<script>
+<!--
+if ((document.getElementById("content").offsetHeight + document.getElementById("top").offsetHeight) > screen.height)
+    document.write("<br /><br /><a href='#top'>do góry</a>");
+-->
+</script>
+
+</div>
+</div>
+
+<div id="bottom">
+<ul id="bottomlinks">
+<div class='onleft'>
+ Osób on-line: 54</div>
+    <li><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+    <li><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+    <li><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+    <li><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+    <li><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+    <li><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+</ul>
+    SCRABBLE® jest zastrzeżonym znakiem towarowym J.W. Spears &amp; Sons&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://www.pfs.org.pl/prawaautorskie.php">© Prawa autorskie</a>
+</div>
+</body>
+</html>

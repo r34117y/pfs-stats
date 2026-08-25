@@ -1,0 +1,951 @@
+
+<html>
+<head>
+    <title>Polska Federacja Scrabble :: VI Turniej o złoty kisiel</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=9" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="files/img/favicon.ico" />
+    <link rel="stylesheet" href="files/css/style.css" type="text/css" />
+	<link rel="stylesheet" href="files/css/style-index.css" type="text/css" />
+    <!--[if IE]><link rel="stylesheet" type="text/css" href="files/css/styleie.css" /><![endif]-->
+    <!--[if lt IE 7.]><script defer type="text/javascript" src="files/js/pngfix.js"></script><![endif]-->
+    <!--[if IE]><script type="text/javascript" src="files/js/minmax.js"></script><![endif]-->
+    <script type="text/javascript" src="files/js/jquery.js"></script>
+    <script type="text/javascript" src="files/js/jquery-bp.js"></script>
+    <script type="text/javascript" src="files/js/java.js"></script>
+    <script>jSubmenu ("turnieje","kalendarz");jKalendarz();</script>
+    <script>
+    var url, page;
+
+    page = 'info';
+    url  = document.location.toString();
+
+    if (url.match ('#')) {
+      page = url.split ('#')[1];
+      if ($.inArray (page, [ 'info', 'relacja', 'klasyfikacja', 'hh', 'rundy', 'ranking', 'przebieg' ]) == -1)
+        page = 'info';
+    }
+
+    $(document).ready(function(){
+        $('a#listaucz').bind('click', function(event){
+            $('div#lista').toggle();
+            event.preventDefault();
+        }).toggle(function() { $(this).text('schowaj listę uczestników'); }, function() { $(this).text("pokaż listę uczestników"); });
+        $('div#lista table tr:last td').css({"border-bottom" : "none"});
+
+        $("a.przycisk").click (function (e) {
+            if ($(this).attr ('href') !== '#')
+                return true;
+
+            e.preventDefault ();
+
+            id       = this.id;
+            this.id += 'tmp';
+            window.location.hash = id;
+            this.id  = id;
+
+            $(".page").hide ();
+            $(".page#p_" + id).show ();
+
+            $("a.przycisk").removeClass ('active');
+            $(this).addClass ('active');
+
+            return false;
+        });
+
+        $("a.przycisk#" + page).click ();
+        $('html, body').animate ({ scrollTop: 0 }, 0);
+    });
+    </script>
+  <style type="text/css">
+    .page {
+        display: none;
+    }
+    #szczegoly{
+        width: 100%;
+        border-spacing: 0;
+        margin-top: 30px;
+        text-align: left;
+        font-size: inherit;
+    }
+    #szczegoly td{
+        padding: 10px 20px 10px 0;
+        vertical-align: top;
+    }
+    #szczegoly td:first-child{
+        font-weight: bold;
+        width: 160px;
+    }
+    div#lista{
+        display:none;
+        margin-top: 15px;
+    }
+    div#lista table{
+        margin-top: 10px;
+        text-align: left;
+        font-size: inherit;
+    }
+    div#lista table td{
+        padding: 3px 8px;
+        border-bottom: 1px dashed #1576AE;
+    }
+    div#lista table th{
+        padding: 0px 5px 10px 5px;
+    }
+    div#lista table td.ptaszek{
+        text-align: center;
+        background: url('files/img/tick.png') no-repeat center center;
+    }
+    div#lista table th{
+        white-space: nowrap;
+        width: auto;
+    }
+    div#lista table td:first-child, div#lista table th:first-child{
+        text-align:right;
+        width: auto;
+    }
+    </style>
+</head>
+
+<body>
+
+<script type="text/javascript">setMenu();</script>
+
+<div id="top" onclick="location.href='https://www.pfs.org.pl'">
+</div>
+<div id="menu">
+
+    <div id="m_glowna">
+        <div class="tab"><a href="https://www.pfs.org.pl/index.php"></a></div>
+
+        <ul>
+            <li class="sublink" id="aktualnosci"><a href="https://www.pfs.org.pl">Aktualności</a></li>
+            <li class="sublink" id="nowy"><a href="https://www.pfs.org.pl/dlanowych.php">Jestem tu nowy</a></li>
+            <li class="sublink" id="anagramator"><a href="https://www.pfs.org.pl/osps_online.php?main=1">Słownik online</a></li>
+            <li class="sublink" id="siodemka"><a href="https://www.pfs.org.pl/siodemka.php?main=1">Siódemka tygodnia</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+            <li class="sublink" id="dlasponsorow"><a href="https://www.pfs.org.pl/dlasponsorow.php">Dla sponsorów</a></li>
+            <li class="sublink" id="kontakt"><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+        </ul>
+    </div>
+    <div id="m_turnieje">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kalendarz.php"></a></div>
+        <ul>
+            <li class="sublink" id="kalendarz"><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+            <li class="sublink" id="regulaminy"><a href="https://www.pfs.org.pl/regulaminy.php">Regulaminy</a></li>
+            <li class="sublink" id="sedziowie"><a href="https://www.pfs.org.pl/sedziowie.php">Sędziowie</a></li>
+            <li class="sublink" id="gp"><a href="https://www.pfs.org.pl/gp2026.php">Grand Prix</a></li>
+<!--            <li class="sublink" id="mr"><a href="https://www.pfs.org.pl/mr2020.php">Mistrzostwa Regionów</a></li>-->
+            <li class="sublink" id="archiwum"><a href="https://www.pfs.org.pl/archiwum.php">Historia</a></li>
+            <li class="sublink" id="galeria"><a href="https://www.pfs.org.pl/galeria.php">Zdjęcia</a></li>
+            <li class="sublink" id="rekordy"><a href="https://www.pfs.org.pl/rekordy.php">Rekordy</a></li>
+        </ul>
+    </div>
+    <div id="m_pfs">
+        <div  class="tab"><a href="https://www.pfs.org.pl/opfs.php"></a></div>
+        <ul>
+            <li class="sublink" id="opfs"><a href="https://www.pfs.org.pl/opfs.php">O PFS</a></li>
+            <li class="sublink" id="jakprzystapic"><a href="https://www.pfs.org.pl/jakprzystapic.php">Jak przystąpić</a></li>
+            <li class="sublink" id="dlaczlonkow"><a href="https://www.pfs.org.pl/dlaczlonkow.php">Dla członków</a></li>
+            <li class="sublink" id="wladze"><a href="https://www.pfs.org.pl/wladze.php">Władze</a></li>
+            <li class="sublink" id="komisje"><a href="https://www.pfs.org.pl/komisje.php">Komisje</a></li>
+            <li class="sublink" id="statut"><a href="https://www.pfs.org.pl/statut.php">Statut</a></li>
+            <li class="sublink" id="uchwaly"><a href="https://www.pfs.org.pl/uchwaly.php">Uchwały</a></li>
+            <li class="sublink" id="honorowi"><a href="https://www.pfs.org.pl/honorowi.php">Honorowi członkowie</a></li>
+            <li class="sublink" id="finanse"><a href="https://www.pfs.org.pl/finanse.php">Finanse</a></li>
+            <li class="sublink"><a href="http://forum.pfs.org.pl">Forum</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabble">
+        <div  class="tab"><a href="https://www.pfs.org.pl/osps_online.php?desktop=1"></a></div>
+        <ul>
+            <li class="sublink" id="osps_online"><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+            <li class="sublink" id="zds"><a href="https://www.pfs.org.pl/zds2.php">ZDS</a></li>
+            <li class="sublink" id="osps"><a href="https://www.pfs.org.pl/osps.php">OSPS</a></li>
+            <li class="sublink" id="aktualizacje"><a href="https://www.pfs.org.pl/osps_aktualizacje.php">Aktualizacje</a></li>
+            <li class="sublink" id="dwojki"><a href="https://www.pfs.org.pl/dwojki.php">2-literówki</a></li>
+            <li class="sublink" id="trojki"><a href="https://www.pfs.org.pl/trojki.php">3-literówki</a></li>
+            <li class="sublink" id="siodemkat"><a href="https://www.pfs.org.pl/siodemka.php">Siódemka tygodnia</a></li>
+            <li class="sublink" id="slowneroznosci"><a href="https://www.pfs.org.pl/slowneroznosci.php">Słowne różności</a></li>
+        </ul>
+    </div>
+    <div id="m_ranking">
+        <div  class="tab"><a href="https://www.pfs.org.pl/ranking.php"></a></div>
+        <ul>
+            <li class="sublink" id="aktranking"><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+            <li class="sublink" id="medale"><a href="https://www.pfs.org.pl/medale.php">Klasyfikacja medalowa</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+        </ul>
+    </div>
+    <div id="m_scrabblisci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/mistrzowiepolski.php"></a></div>
+        <ul>
+            <li class="sublink" id="mistrzowiepolski"><a href="https://www.pfs.org.pl/mistrzowiepolski.php">Mistrzowie Polski</a></li>
+            <li class="sublink" id="zdobywcypp"><a href="https://www.pfs.org.pl/zdobywcypp.php">Zdobywcy Pucharu Polski</a></li>
+            <li class="sublink" id="zwyciezcygp"><a href="https://www.pfs.org.pl/zwyciezcygp.php">Zwycięzcy Grand Prix</a></li>
+            <li class="sublink" id="liderzyrankingu"><a href="https://www.pfs.org.pl/liderzyrankingu.php">Liderzy rankingu</a></li>
+            <li class="sublink" id="zwyciezcylemans"><a href="https://www.pfs.org.pl/zwyciezcylemans.php">Zwycięzcy 24h Le Mans</a></li>
+            <li class="sublink" id="zwyciezcykmp"><a href="https://www.pfs.org.pl/zwyciezcykmp.php">KMP</a>
+        </ul>
+    </div>
+    <div id="m_kluby">
+        <div  class="tab"><a href="https://www.pfs.org.pl/kluby.php"></a></div>
+        <ul>
+            <li class="sublink" id="rejestrklubow"><a href="https://www.pfs.org.pl/kluby.php">Rejestr klubów</a></li>
+            <li class="sublink" id="kmp"><a href="https://www.pfs.org.pl/kmp.php">KMP</a></li>
+            <li class="sublink" id="wiescizklubow"><a href="https://www.pfs.org.pl/wiescizklubow.php">Wieści z klubów</a></li>
+            <li class="sublink"><a href="http://scrabble.stats.org.pl/about.php">Statystyki klubowe</a></li>
+        </ul>
+    </div>
+    <div id="m_roznosci">
+        <div  class="tab"><a href="https://www.pfs.org.pl/historia.php"></a></div>
+        <ul>
+            <li class="sublink" id="historia"><a href="https://www.pfs.org.pl/historia.php">Historia</a></li>
+            <li class="sublink" id="odmiany"><a href="https://www.pfs.org.pl/odmiany.php">Odmiany</a></li>
+            <li class="sublink" id="anegdoty"><a href="https://www.pfs.org.pl/anegdoty.php">Anegdoty</a></li>
+            <li class="sublink" id="scrabblealia"><a href="https://www.pfs.org.pl/scrabblealia.php">Scrabblealia</a></li>
+            <li class="sublink" id="scrabblenet"><a href="https://www.pfs.org.pl/scrabblenet.php">Scrabble w internecie</a></li>
+            <li class="sublink" id="programy"><a href="https://www.pfs.org.pl/programy.php">Programy</a></li>
+            <li class="sublink" id="download"><a href="https://www.pfs.org.pl/download.php">Do pobrania</a></li>
+            <li class="sublink" id="ksiazki"><a href="https://www.pfs.org.pl/ksiazki.php">Książki</a></li>
+            <li class="sublink" id="slowniczek"><a href="https://www.pfs.org.pl/slowniczek.php">Słowniczek</a></li>
+        </ul>
+    </div>
+    <div id="m_english">
+        <div  class="tab"><a href="https://www.pfs.org.pl/english.php"></a></div>
+        <ul>
+            <li class="sublink" id="about"><a href="https://www.pfs.org.pl/english.php">About Polish Scrabble</a></li>
+            <li class="sublink" id="news"><a href="https://www.pfs.org.pl/en_news.php">News</a></li>
+            <li class="sublink" id="bartek"><a href="https://www.pfs.org.pl/bartek.php">Bartek w Johor Bahru</a></li>
+            <li class="sublink" id="franko"><a href="https://www.pfs.org.pl/franko.php">Scrabble frankofońskie</a></li>
+        </ul>
+    </div>
+</div>
+
+<div id="submenu"></div>
+<div id="content">
+<div id='nextTours'>
+		<div class='nextTour' onclick='location.href="turniej.php?id=232"'>
+			<div class='karteczka small1'>
+				<span class='miasto'>Bielsk Podlaski</span><span class='dzien'><span class='big'>12</span><br />lipca</span></div>
+			<div class='kartka big1'>
+				<span class='miasto'>Bielsk Podlaski</span>
+				<span class='dzien'><b>12-13 lipca</b></span>
+				<span class='nazwaturnieju'>V Mistrzostwa Podlasia</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=231"'>
+			<div class='karteczka small2'>
+				<span class='miasto'>Dębno Lubuskie</span><span class='dzien'><span class='big'>26</span><br />lipca</span></div>
+			<div class='kartka big2'>
+				<span class='miasto'>Dębno Lubuskie</span>
+				<span class='dzien'><b>26-27 lipca</b></span>
+				<span class='nazwaturnieju'>VI Turniej o złoty kisiel</span></div>
+		</div>
+		<div class='nextTour' onclick='location.href="turniej.php?id=230"'>
+			<div class='karteczka small3'>
+				<span class='miasto'>Kraków</span><span class='dzien'><span class='big'> 9</span><br />sierpnia</span></div>
+			<div class='kartka big3'>
+				<span class='miasto'>Kraków</span>
+				<span class='dzien'><b> 9-10 sierpnia</b></span>
+				<span class='nazwaturnieju'>VII Mistrzostwa Krakowa</span><span class='gp'>Grand&nbsp;Prix&nbsp;2003</span></div>
+		</div></div><div class='naglowekrelacji'><span class='tytul'>VI Turniej o&nbsp;złoty kisiel<span class='nazwa'>26 - 27 lipca 2003 —  VI Turniej o złoty kisiel</span></span><a href='#' id='info' class='przycisk'>Informacje</a><a href='#' id='relacja' class='przycisk'>Relacja</a><a href='#' id='klasyfikacja' class='przycisk'>Wyniki</a><a href='#' id='hh' class='przycisk'>HH</a><div class='galleries'><img src='files/img/gallery.png' style='visibility:hidden;' alt='galeria' /></div></div><h1 style='color:black; margin-top:0px; margin-bottom:30px; padding: 0px'>VI Turniej o złoty kisiel<span>Dębno Lubuskie, 26 - 27 lipca 2003</span></h1><div id='p_relacja' class='page'><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><div class='relacja' style='clear:both;'><div><pre>
+ 1 Szymon Zaleski Poznań 10.0 5123 
+ 2 Wojciech Usakiewicz Warszawa 9.0 4853 
+ 3 Radosław Konca Warszawa 9.0 4540 
+ 4 Krzysztof Usakiewicz Warszawa 8.0 4696 
+ 5 Joanna Stępień Katowice 8.0 4650 
+ 6 Kazio Merklejn Szczecin 8.0 4639 
+ 7 Halina Roszak Poznań 7.0 4502 
+ 8 Krzysztof Mówka Toruń 7.0 4468 
+ 9 Dawid Pikul Poznań 7.0 4334 
+ 10 Robert Duczemiński Gorzów Wielkopolski 7.0 4192 
+ 
+ 30 uczestników, 12 rund 
+</pre></div><div class='autor'></div></div><div style='clear:both;'></div></div><div id='p_info' class='page'><br><p align='center'></p><br><br><p align='left'><a href='https://www.pfs.org.pl/relacja_konkurs.php'>Konkurs Relacja z turnieju</a></p><br><table id='szczegoly' class='ramkadolna'></table><br /><br /></div><div id='p_klasyfikacja' class='page'><pre>Wyniki turnieju Turniej o Złoty Kisiel
+
+Lp. Imię            Nazwisko             Miasto               Ranking  Duże pkt Małe pkt Skalpy   Różn. MP
+--- --------------- -------------------- -------------------- -------- -------- -------- -------- --------
+  1 Szymon          Zaleski              Poznań                 140.87     10.0     5123     1929     1065
+  2 Wojciech        Usakiewicz           Warszawa               135.75      9.0     4853     1868      600
+  3 Radosław        Konca                Warszawa               131.06      9.0     4540     1802      508
+  4 Krzysztof       Usakiewicz           Warszawa               128.26      8.0     4696     1724      439
+  5 Joanna          Stępień              Katowice               125.94      8.0     4650     1676      590
+  6 Kazio           Merklejn             Szczecin               133.95      8.0     4639     1702      320
+  7 Halina          Roszak               Poznań                 117.21      7.0     4502     1524      -16
+  8 Krzysztof       Mówka                Toruń                  124.56      7.0     4468     1531      508
+  9 Dawid           Pikul                Poznań                 124.58      7.0     4334     1538      181
+ 10 Robert          Duczemiński          Gorzów Wielkopolski    132.43      7.0     4192     1632     -454
+ 11 Beata           Madej                Lublin                 114.86      6.0     4479     1454      245
+ 12 Aleksandra      Merklejn             Szczecin               118.45      6.0     4448     1511     -103
+ 13 Marek           Roszak               Poznań                 124.92      6.0     4423     1498      -48
+ 14 Walenty         Siemaszko            Lipiany                119.59      6.0     4391     1519       19
+ 15 Zbigniew        Wietecki             Gorzów Wielkopolski    121.92      6.0     4217     1378     -179
+ 16 Mateusz         Żbikowski            Warszawa               140.04      5.0     4666     1339      158
+ 17 Ewa             Strzelczyk           Warszawa               109.79      5.0     4453     1302      -18
+ 18 Tomasz          Zwoliński            Warszawa               138.31      5.0     4196     1412      -27
+ 19 Mariusz         Kubicki              Inowrocław             119.94      5.0     3933     1265     -486
+ 20 Monika          Siemaszko            Lipiany                102.75      5.0     3924     1260     -557
+ 21 Józef           Wietecki             Gorzów Wielkopolski    100.00      5.0     3922     1173     -277
+ 22 Miłosz          Wrzałek              Reda                   102.87      4.0     4224     1204     -351
+ 23 Eugeniusz       Wróblewski           Inowrocław             110.77      4.0     4028     1209     -182
+ 24 Wojciech        Gołęcki              Inowrocław             105.25      4.0     3900     1135     -358
+ 25 Magdalena       Merklejn             Szczecin               118.48      4.0     2720      928       64
+ 26 Piotr           Madej                Lublin                 100.00      2.0     3952      971     -402
+ 27 Krzysztof       Kruk                 Łódź                   100.00      1.0     1339      401     -548
+ 28 Agnieszka       Usakiewicz           Warszawa               100.00      1.0     1011      250      -59
+ 29 Stefan          Tomaszczyk           Dębno                  100.00      1.0      512      205     -124
+ 30 Jolanta         Kruk                 Łódź                   100.00      0.0     1286      286     -508
+</pre></div><div id='p_hh' class='page'><pre>Wyniki poszczególnych graczy w turnieju Turniej o Złoty Kisiel
+
+
+
+	Szymon Zaleski 140.87 Poznań                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Walenty        Siemaszko             119.59 -  321: 418   70
+    2     9 Miłosz         Wrzałek               102.87 +  376: 338  153
+    3     8 Halina         Roszak                117.21 +  527: 320  167
+    4     5 Radosław       Konca                 131.06 +  521: 188  181
+    5     2 Aleksandra     Merklejn              118.45 +  355: 333  168
+    6     3 Wojciech       Usakiewicz            135.75 +  420: 335  186
+    7     1 Krzysztof      Usakiewicz            128.26 +  471: 374  178
+    8     1 Robert         Duczemiński           132.43 +  490: 319  182
+    9     1 Kazio          Merklejn              133.95 +  398: 320  184
+   10     1 Tomasz         Zwoliński             138.31 +  500: 365  188
+   11     1 Wojciech       Usakiewicz            135.75 -  363: 412   86
+   12     1 Wojciech       Usakiewicz            135.75 +  381: 336  186
+                                                          --------------- ---- ------
+                                                                    1929  / 12 160.75
+
+
+
+
+	Mateusz Żbikowski 140.04 Warszawa         
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Magdalena      Merklejn              118.48 -  414: 415   68
+    2     8 Eugeniusz      Wróblewski            110.77 +  424: 247  161
+    3     4 Wojciech       Usakiewicz            135.75 -  368: 483   86
+    4     8 Ewa            Strzelczyk            109.79 +  467: 280  160
+    5     4 Tomasz         Zwoliński             138.31 -  270: 460   88
+    6     8 Piotr          Madej                 100.00 +  474: 248  150
+    7     6 Marek          Roszak                124.92 -  340: 367   75
+    8     7 Beata          Madej                 114.86 +  411: 332  165
+    9     5 Robert         Duczemiński           132.43 -  330: 359   82
+   10     7 Joanna         Stępień               125.94 -  348: 498   76
+   11     8 Marek          Roszak                124.92 -  330: 550   75
+   12    10 Miłosz         Wrzałek               102.87 +  490: 269  153
+                                                          --------------- ---- ------
+                                                                    1339  / 12 111.58
+
+
+
+
+	Tomasz Zwoliński 138.31 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Aleksandra     Merklejn              118.45 +  458: 333  168
+    2     3 Magdalena      Merklejn              118.48 +  425: 338  168
+    3     3 Robert         Duczemiński           132.43 -  374: 397   82
+    4     3 Piotr          Madej                 100.00 +  373: 324  150
+    5     4 Mateusz        Żbikowski             140.04 +  460: 270  190
+    6     1 Krzysztof      Usakiewicz            128.26 -  324: 482   78
+    7     2 Kazio          Merklejn              133.95 -  372: 384   84
+    8     4 Marek          Roszak                124.92 +  356: 295  175
+    9     4 Radosław       Konca                 131.06 -  335: 531   81
+   10     1 Szymon         Zaleski               140.87 -  365: 500   91
+   11     6 Dawid          Pikul                 124.58 -  -10:  -9   75
+   12     8 Walenty        Siemaszko             119.59 -  364: 378   70
+                                                          --------------- ---- ------
+                                                                    1412  / 12 117.67
+
+
+
+
+	Wojciech Usakiewicz 135.75 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Halina         Roszak                117.21 +  377: 372  167
+    2     5 Radosław       Konca                 131.06 +  423: 295  181
+    3     4 Mateusz        Żbikowski             140.04 +  483: 368  190
+    4     2 Robert         Duczemiński           132.43 +  397: 313  182
+    5     1 Krzysztof      Usakiewicz            128.26 -  320: 356   78
+    6     3 Szymon         Zaleski               140.87 -  335: 420   91
+    7     4 Walenty        Siemaszko             119.59 +  399: 357  170
+    8     3 Kazio          Merklejn              133.95 +  425: 322  184
+    9     3 Aleksandra     Merklejn              118.45 +  527: 397  168
+   10     2 Krzysztof      Mówka                 124.56 +  419: 309  175
+   11     1 Szymon         Zaleski               140.87 +  412: 363  191
+   12     1 Szymon         Zaleski               140.87 -  336: 381   91
+                                                          --------------- ---- ------
+                                                                    1868  / 12 155.67
+
+
+
+
+	Kazio Merklejn 133.95 Szczecin                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Beata          Madej                 114.86 +  475: 340  165
+    2     2 Walenty        Siemaszko             119.59 -  283: 360   70
+    3    10 Mariusz        Kubicki               119.94 +  405: 308  170
+    4     4 Zbigniew       Wietecki              121.92 +  454: 364  172
+    5     5 Robert         Duczemiński           132.43 +  519: 366  182
+    6     2 Magdalena      Merklejn              118.48 +  401: 343  168
+    7     2 Tomasz         Zwoliński             138.31 +  384: 372  188
+    8     3 Wojciech       Usakiewicz            135.75 -  322: 425   86
+    9     1 Szymon         Zaleski               140.87 -  320: 398   91
+   10     3 Krzysztof      Usakiewicz            128.26 -  312: 405   78
+   11     3 Beata          Madej                 114.86 +  332: 329  165
+   12     3 Halina         Roszak                117.21 +  432: 309  167
+                                                          --------------- ---- ------
+                                                                    1702  / 12 141.83
+
+
+
+
+	Robert Duczemiński 132.43 Gorzów Wielkopolski          
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Eugeniusz      Wróblewski            110.77 +  325: 324  161
+    2     7 Dawid          Pikul                 124.58 +  396: 375  175
+    3     3 Tomasz         Zwoliński             138.31 +  397: 374  188
+    4     2 Wojciech       Usakiewicz            135.75 -  313: 397   86
+    5     5 Kazio          Merklejn              133.95 -  366: 519   84
+    6     5 Krzysztof      Mówka                 124.56 +  321: 308  175
+    7     5 Radosław       Konca                 131.06 +  346: 340  181
+    8     1 Szymon         Zaleski               140.87 -  319: 490   91
+    9     5 Mateusz        Żbikowski             140.04 +  359: 330  190
+   10     5 Beata          Madej                 114.86 -  273: 412   65
+   11     5 Joanna         Stępień               125.94 -  338: 357   76
+   12     7 Ewa            Strzelczyk            109.79 +  439: 420  160
+                                                          --------------- ---- ------
+                                                                    1632  / 12 136.00
+
+
+
+
+	Radosław Konca 131.06 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Ewa            Strzelczyk            109.79 +  435: 275  160
+    2     5 Wojciech       Usakiewicz            135.75 -  295: 423   86
+    3     5 Joanna         Stępień               125.94 +  402: 266  176
+    4     5 Szymon         Zaleski               140.87 -  188: 521   91
+    5     9 Piotr          Madej                 100.00 +  417: 274  150
+    6     6 Marek          Roszak                124.92 +  395: 293  175
+    7     5 Robert         Duczemiński           132.43 -  340: 346   82
+    8     6 Walenty        Siemaszko             119.59 +  376: 317  170
+    9     4 Tomasz         Zwoliński             138.31 +  531: 335  188
+   10     4 Aleksandra     Merklejn              118.45 +  375: 362  168
+   11     2 Krzysztof      Usakiewicz            128.26 +  421: 288  178
+   12     2 Krzysztof      Usakiewicz            128.26 +  365: 332  178
+                                                          --------------- ---- ------
+                                                                    1802  / 12 150.17
+
+
+
+
+	Krzysztof Usakiewicz 128.26 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Wojciech       Gołęcki               105.25 +  451: 286  155
+    2     4 Mariusz        Kubicki               119.94 +  458: 295  170
+    3     2 Marek          Roszak                124.92 +  418: 289  175
+    4     1 Walenty        Siemaszko             119.59 +  408: 357  170
+    5     1 Wojciech       Usakiewicz            135.75 +  356: 320  186
+    6     1 Tomasz         Zwoliński             138.31 +  482: 324  188
+    7     1 Szymon         Zaleski               140.87 -  374: 471   91
+    8     2 Aleksandra     Merklejn              118.45 -  362: 474   68
+    9     2 Krzysztof      Mówka                 124.56 +  362: 343  175
+   10     3 Kazio          Merklejn              133.95 +  405: 312  184
+   11     2 Radosław       Konca                 131.06 -  288: 421   81
+   12     2 Radosław       Konca                 131.06 -  332: 365   81
+                                                          --------------- ---- ------
+                                                                    1724  / 12 143.67
+
+
+
+
+	Joanna Stępień 125.94 Katowice                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Miłosz         Wrzałek               102.87 +  434: 409  153
+    2     6 Marek          Roszak                124.92 -  404: 425   75
+    3     5 Radosław       Konca                 131.06 -  266: 402   81
+    4    11 Mariusz        Kubicki               119.94 +  331: 267  170
+    5    10 Halina         Roszak                117.21 +  403: 302  167
+    6     7 Aleksandra     Merklejn              118.45 -  279: 313   68
+    7     7 Dawid          Pikul                 124.58 +  382: 311  175
+    8     5 Krzysztof      Mówka                 124.56 -  310: 371   75
+    9     8 Zbigniew       Wietecki              121.92 +  461: 301  172
+   10     7 Mateusz        Żbikowski             140.04 +  498: 348  190
+   11     5 Robert         Duczemiński           132.43 +  357: 338  182
+   12     4 Aleksandra     Merklejn              118.45 +  525: 273  168
+                                                          --------------- ---- ------
+                                                                    1676  / 12 139.67
+
+
+
+
+	Marek Roszak 124.92 Poznań                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Monika         Siemaszko             102.75 +  348: 344  153
+    2     6 Joanna         Stępień               125.94 +  425: 404  176
+    3     2 Krzysztof      Usakiewicz            128.26 -  289: 418   78
+    4     7 Magdalena      Merklejn              118.48 -  355: 463   68
+    5     6 Zbigniew       Wietecki              121.92 +  460: 302  172
+    6     6 Radosław       Konca                 131.06 -  293: 395   81
+    7     6 Mateusz        Żbikowski             140.04 +  367: 340  190
+    8     4 Tomasz         Zwoliński             138.31 -  295: 356   88
+    9     9 Ewa            Strzelczyk            109.79 +  382: 337  160
+   10     6 Halina         Roszak                117.21 -  323: 427   67
+   11     8 Mateusz        Żbikowski             140.04 +  550: 330  190
+   12     6 Dawid          Pikul                 124.58 -  336: 355   75
+                                                          --------------- ---- ------
+                                                                    1498  / 12 124.83
+
+
+
+
+	Dawid Pikul 124.58 Poznań                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Jolanta        Kruk                  100.00 +  433: 281  150
+    2     7 Robert         Duczemiński           132.43 -  375: 396   82
+    3     6 Aleksandra     Merklejn              118.45 -  350: 410   68
+    4     9 Wojciech       Gołęcki               105.25 +  425: 401  155
+    5     7 Beata          Madej                 114.86 +  431: 413  165
+    6     4 Walenty        Siemaszko             119.59 -  371: 479   70
+    7     7 Joanna         Stępień               125.94 -  311: 382   76
+    8     8 Mariusz        Kubicki               119.94 +  501: 300  170
+    9     6 Halina         Roszak                117.21 -  327: 434   67
+   10     8 Zbigniew       Wietecki              121.92 +  464: 331  172
+   11     6 Tomasz         Zwoliński             138.31 +   -9: -10  188
+   12     6 Marek          Roszak                124.92 +  355: 336  175
+                                                          --------------- ---- ------
+                                                                    1538  / 12 128.17
+
+
+
+
+	Krzysztof Mówka 124.56 Toruń                    
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    12 Krzysztof      Kruk                  100.00 +  533: 229  150
+    2     1 Zbigniew       Wietecki              121.92 +  384: 363  172
+    3     1 Walenty        Siemaszko             119.59 -  292: 360   70
+    4     6 Aleksandra     Merklejn              118.45 -  293: 382   68
+    5     8 Monika         Siemaszko             102.75 +  418: 231  153
+    6     5 Robert         Duczemiński           132.43 -  308: 321   82
+    7     9 Eugeniusz      Wróblewski            110.77 +  472: 268  161
+    8     5 Joanna         Stępień               125.94 +  371: 310  176
+    9     2 Krzysztof      Usakiewicz            128.26 -  343: 362   78
+   10     2 Wojciech       Usakiewicz            135.75 -  309: 419   86
+   11     7 Walenty        Siemaszko             119.59 +  377: 364  170
+   12     5 Beata          Madej                 114.86 +  368: 351  165
+                                                          --------------- ---- ------
+                                                                    1531  / 12 127.58
+
+
+
+
+	Zbigniew Wietecki 121.92 Gorzów Wielkopolski          
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    13 Piotr          Madej                 100.00 +  426: 362  150
+    2     1 Krzysztof      Mówka                 124.56 -  363: 384   75
+    3     7 Monika         Siemaszko             102.75 +  442: 294  153
+    4     4 Kazio          Merklejn              133.95 -  364: 454   84
+    5     6 Marek          Roszak                124.92 -  302: 460   75
+    6     9 Eugeniusz      Wróblewski            110.77 -  285: 358   61
+    7    10 Ewa            Strzelczyk            109.79 +  376: 314  160
+    8     9 Wojciech       Gołęcki               105.25 +  341: 261  155
+    9     8 Joanna         Stępień               125.94 -  301: 461   76
+   10     8 Dawid          Pikul                 124.58 -  331: 464   75
+   11    10 Eugeniusz      Wróblewski            110.77 +  278: 274  161
+   12     9 Monika         Siemaszko             102.75 +  408: 310  153
+                                                          --------------- ---- ------
+                                                                    1378  / 12 114.83
+
+
+
+
+	Mariusz Kubicki 119.94 Inowrocław               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    14 Józef          Wietecki              100.00 +  379: 280  150
+    2     4 Krzysztof      Usakiewicz            128.26 -  295: 458   78
+    3    10 Kazio          Merklejn              133.95 -  308: 405   84
+    4    11 Joanna         Stępień               125.94 -  267: 331   76
+    5    11 Wojciech       Gołęcki               105.25 +  307: 282  155
+    6    11 Ewa            Strzelczyk            109.79 +  335: 324  160
+    7     8 Beata          Madej                 114.86 -  312: 396   65
+    8     8 Dawid          Pikul                 124.58 -  300: 501   75
+    9    10 Miłosz         Wrzałek               102.87 -  293: 407   53
+   10    11 Monika         Siemaszko             102.75 -  345: 369   53
+   11    12 Wojciech       Gołęcki               105.25 +  393: 270  155
+   12    11 Eugeniusz      Wróblewski            110.77 +  399: 396  161
+                                                          --------------- ---- ------
+                                                                    1265  / 12 105.42
+
+
+
+
+	Walenty Siemaszko 119.59 Lipiany                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     1 Szymon         Zaleski               140.87 +  418: 321  191
+    2     2 Kazio          Merklejn              133.95 +  360: 283  184
+    3     1 Krzysztof      Mówka                 124.56 +  360: 292  175
+    4     1 Krzysztof      Usakiewicz            128.26 -  357: 408   78
+    5     3 Magdalena      Merklejn              118.48 -  325: 400   68
+    6     4 Dawid          Pikul                 124.58 +  479: 371  175
+    7     4 Wojciech       Usakiewicz            135.75 -  357: 399   86
+    8     6 Radosław       Konca                 131.06 -  317: 376   81
+    9     7 Beata          Madej                 114.86 -  267: 414   65
+   10     9 Miłosz         Wrzałek               102.87 +  409: 367  153
+   11     7 Krzysztof      Mówka                 124.56 -  364: 377   75
+   12     8 Tomasz         Zwoliński             138.31 +  378: 364  188
+                                                          --------------- ---- ------
+                                                                    1519  / 12 126.58
+
+
+
+
+	Magdalena Merklejn 118.48 Szczecin                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     2 Mateusz        Żbikowski             140.04 +  415: 414  190
+    2     3 Tomasz         Zwoliński             138.31 -  338: 425   88
+    3    11 Miłosz         Wrzałek               102.87 +  428: 321  153
+    4     7 Marek          Roszak                124.92 +  463: 355  175
+    5     3 Walenty        Siemaszko             119.59 +  400: 325  170
+    6     2 Kazio          Merklejn              133.95 -  343: 401   84
+    7     3 Aleksandra     Merklejn              118.45 -  333: 415   68
+                                                          --------------- ---- ------
+                                                                     928  /  7 132.57
+
+
+
+
+	Aleksandra Merklejn 118.45 Szczecin                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     3 Tomasz         Zwoliński             138.31 -  333: 458   88
+    2    14 Krzysztof      Kruk                  100.00 +  375: 274  150
+    3     6 Dawid          Pikul                 124.58 +  410: 350  175
+    4     6 Krzysztof      Mówka                 124.56 +  382: 293  175
+    5     2 Szymon         Zaleski               140.87 -  333: 355   91
+    6     7 Joanna         Stępień               125.94 +  313: 279  176
+    7     3 Magdalena      Merklejn              118.48 +  415: 333  168
+    8     2 Krzysztof      Usakiewicz            128.26 +  474: 362  178
+    9     3 Wojciech       Usakiewicz            135.75 -  397: 527   86
+   10     4 Radosław       Konca                 131.06 -  362: 375   81
+   11     4 Halina         Roszak                117.21 -  381: 420   67
+   12     4 Joanna         Stępień               125.94 -  273: 525   76
+                                                          --------------- ---- ------
+                                                                    1511  / 12 125.92
+
+
+
+
+	Halina Roszak 117.21 Poznań                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     4 Wojciech       Usakiewicz            135.75 -  372: 377   86
+    2    10 Wojciech       Gołęcki               105.25 +  413: 375  155
+    3     8 Szymon         Zaleski               140.87 -  320: 527   91
+    4    10 Monika         Siemaszko             102.75 -  351: 378   53
+    5    10 Joanna         Stępień               125.94 -  302: 403   76
+    6    13 Józef          Wietecki              100.00 +  358: 272  150
+    7    12 Piotr          Madej                 100.00 +  398: 350  150
+    8    11 Eugeniusz      Wróblewski            110.77 +  398: 373  161
+    9     6 Dawid          Pikul                 124.58 +  434: 327  175
+   10     6 Marek          Roszak                124.92 +  427: 323  175
+   11     4 Aleksandra     Merklejn              118.45 +  420: 381  168
+   12     3 Kazio          Merklejn              133.95 -  309: 432   84
+                                                          --------------- ---- ------
+                                                                    1524  / 12 127.00
+
+
+
+
+	Beata Madej 114.86 Lublin                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     5 Kazio          Merklejn              133.95 -  340: 475   84
+    2    13 Ewa            Strzelczyk            109.79 -  380: 419   60
+    3    12 Józef          Wietecki              100.00 +  329: 328  150
+    4    12 Eugeniusz      Wróblewski            110.77 +  342: 291  161
+    5     7 Dawid          Pikul                 124.58 -  413: 431   75
+    6    10 Monika         Siemaszko             102.75 +  441: 327  153
+    7     8 Mariusz        Kubicki               119.94 +  396: 312  170
+    8     7 Mateusz        Żbikowski             140.04 -  332: 411   90
+    9     7 Walenty        Siemaszko             119.59 +  414: 267  170
+   10     5 Robert         Duczemiński           132.43 +  412: 273  182
+   11     3 Kazio          Merklejn              133.95 -  329: 332   84
+   12     5 Krzysztof      Mówka                 124.56 -  351: 368   75
+                                                          --------------- ---- ------
+                                                                    1454  / 12 121.17
+
+
+
+
+	Eugeniusz Wróblewski 110.77 Inowrocław               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     6 Robert         Duczemiński           132.43 -  324: 325   82
+    2     8 Mateusz        Żbikowski             140.04 -  247: 424   90
+    3    14 Jolanta        Kruk                  100.00 +  344: 274  150
+    4    12 Beata          Madej                 114.86 -  291: 342   65
+    5    12 Miłosz         Wrzałek               102.87 +  426: 378  153
+    6     9 Zbigniew       Wietecki              121.92 +  358: 285  172
+    7     9 Krzysztof      Mówka                 124.56 -  268: 472   75
+    8    11 Halina         Roszak                117.21 -  373: 398   67
+    9    11 Monika         Siemaszko             102.75 +  426: 237  153
+   10    10 Ewa            Strzelczyk            109.79 -  301: 398   60
+   11    10 Zbigniew       Wietecki              121.92 -  274: 278   72
+   12    11 Mariusz        Kubicki               119.94 -  396: 399   70
+                                                          --------------- ---- ------
+                                                                    1209  / 12 100.75
+
+
+
+
+	Ewa Strzelczyk 109.79 Warszawa                 
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     7 Radosław       Konca                 131.06 -  275: 435   81
+    2    13 Beata          Madej                 114.86 +  419: 380  165
+    3     9 Piotr          Madej                 100.00 -  331: 402   50
+    4     8 Mateusz        Żbikowski             140.04 -  280: 467   90
+    5    13 Józef          Wietecki              100.00 +  481: 309  150
+    6    11 Mariusz        Kubicki               119.94 -  324: 335   70
+    7    10 Zbigniew       Wietecki              121.92 -  314: 376   72
+    8    10 Miłosz         Wrzałek               102.87 +  472: 252  153
+    9     9 Marek          Roszak                124.92 -  337: 382   75
+   10    10 Eugeniusz      Wróblewski            110.77 +  398: 301  161
+   11     9 Miłosz         Wrzałek               102.87 +  402: 393  153
+   12     7 Robert         Duczemiński           132.43 -  420: 439   82
+                                                          --------------- ---- ------
+                                                                    1302  / 12 108.50
+
+
+
+
+	Wojciech Gołęcki 105.25 Inowrocław               
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     8 Krzysztof      Usakiewicz            128.26 -  286: 451   78
+    2    10 Halina         Roszak                117.21 -  375: 413   67
+    3    13 Krzysztof      Kruk                  100.00 +  364: 316  150
+    4     9 Dawid          Pikul                 124.58 -  401: 425   75
+    5    11 Mariusz        Kubicki               119.94 -  282: 307   70
+    6    12 Miłosz         Wrzałek               102.87 -  318: 340   53
+    7    13 Józef          Wietecki              100.00 +  414: 325  150
+    8     9 Zbigniew       Wietecki              121.92 -  261: 341   72
+    9    12 Stefan         Tomaszczyk            100.00 -  282: 307   50
+   10    13 Piotr          Madej                 100.00 +  306: 303  150
+   11    12 Mariusz        Kubicki               119.94 -  270: 393   70
+   12    13 Piotr          Madej                 100.00 +  341: 337  150
+                                                          --------------- ---- ------
+                                                                    1135  / 12  94.58
+
+
+
+
+	Miłosz Wrzałek 102.87 Reda                     
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1     9 Joanna         Stępień               125.94 -  409: 434   76
+    2     9 Szymon         Zaleski               140.87 -  338: 376   91
+    3    11 Magdalena      Merklejn              118.48 -  321: 428   68
+    4    13 Krzysztof      Kruk                  100.00 +  358: 239  150
+    5    12 Eugeniusz      Wróblewski            110.77 -  378: 426   61
+    6    12 Wojciech       Gołęcki               105.25 +  340: 318  155
+    7    11 Monika         Siemaszko             102.75 +  392: 288  153
+    8    10 Ewa            Strzelczyk            109.79 -  252: 472   60
+    9    10 Mariusz        Kubicki               119.94 +  407: 293  170
+   10     9 Walenty        Siemaszko             119.59 -  367: 409   70
+   11     9 Ewa            Strzelczyk            109.79 -  393: 402   60
+   12    10 Mateusz        Żbikowski             140.04 -  269: 490   90
+                                                          --------------- ---- ------
+                                                                    1204  / 12 100.33
+
+
+
+
+	Monika Siemaszko 102.75 Lipiany                  
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    10 Marek          Roszak                124.92 -  344: 348   75
+    2    12 Józef          Wietecki              100.00 +  357: 265  150
+    3     7 Zbigniew       Wietecki              121.92 -  294: 442   72
+    4    10 Halina         Roszak                117.21 +  378: 351  167
+    5     8 Krzysztof      Mówka                 124.56 -  231: 418   75
+    6    10 Beata          Madej                 114.86 -  327: 441   65
+    7    11 Miłosz         Wrzałek               102.87 -  288: 392   53
+    8    12 Piotr          Madej                 100.00 +  386: 284  150
+    9    11 Eugeniusz      Wróblewski            110.77 -  237: 426   61
+   10    11 Mariusz        Kubicki               119.94 +  369: 345  170
+   11    11 Józef          Wietecki              100.00 +  403: 361  150
+   12     9 Zbigniew       Wietecki              121.92 -  310: 408   72
+                                                          --------------- ---- ------
+                                                                    1260  / 12 105.00
+
+
+
+
+	Jolanta Kruk 100.00 Łódź                     
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    11 Dawid          Pikul                 124.58 -  281: 433   75
+    2    11 Piotr          Madej                 100.00 -  192: 404   50
+    3    14 Eugeniusz      Wróblewski            110.77 -  274: 344   61
+    4    14 Józef          Wietecki              100.00 -  282: 332   50
+    5    14 Krzysztof      Kruk                  100.00 -  257: 281   50
+                                                          --------------- ---- ------
+                                                                     286  /  5  57.20
+
+
+
+
+	Krzysztof Kruk 100.00 Łódź                     
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    12 Krzysztof      Mówka                 124.56 -  229: 533   75
+    2    14 Aleksandra     Merklejn              118.45 -  274: 375   68
+    3    13 Wojciech       Gołęcki               105.25 -  316: 364   55
+    4    13 Miłosz         Wrzałek               102.87 -  239: 358   53
+    5    14 Jolanta        Kruk                  100.00 +  281: 257  150
+                                                          --------------- ---- ------
+                                                                     401  /  5  80.20
+
+
+
+
+	Piotr Madej 100.00 Lublin                   
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    13 Zbigniew       Wietecki              121.92 -  362: 426   72
+    2    11 Jolanta        Kruk                  100.00 +  404: 192  150
+    3     9 Ewa            Strzelczyk            109.79 +  402: 331  160
+    4     3 Tomasz         Zwoliński             138.31 -  324: 373   88
+    5     9 Radosław       Konca                 131.06 -  274: 417   81
+    6     8 Mateusz        Żbikowski             140.04 -  248: 474   90
+    7    12 Halina         Roszak                117.21 -  350: 398   67
+    8    12 Monika         Siemaszko             102.75 -  284: 386   53
+    9    13 Józef          Wietecki              100.00 -  334: 356   50
+   10    13 Wojciech       Gołęcki               105.25 -  303: 306   55
+   11    13 Agnieszka      Usakiewicz            100.00 -  330: 354   50
+   12    13 Wojciech       Gołęcki               105.25 -  337: 341   55
+                                                          --------------- ---- ------
+                                                                     971  / 12  80.92
+
+
+
+
+	Stefan Tomaszczyk 100.00 Dębno
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    8    13 Józef          Wietecki              100.00 -  205: 354   50
+    9    12 Wojciech       Gołęcki               105.25 +  307: 282  155
+                                                          --------------- ---- ------
+                                                                     205  /  2 102.50
+
+
+
+
+	Agnieszka Usakiewicz 100.00 Warszawa
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+   10    12 Józef          Wietecki              100.00 -  332: 338   50
+   11    13 Piotr          Madej                 100.00 +  354: 330  150
+   12    12 Józef          Wietecki              100.00 -  325: 402   50
+                                                          --------------- ---- ------
+                                                                     250  /  3  83.33
+
+
+
+
+	Józef Wietecki 100.00 Gorzów Wielkopolski
+
+Runda Stół  Przeciwnik                          Ranking   Wynik     Skalp
+----- ----- ----------------------------------- ------- - --------- -----
+    1    14 Mariusz        Kubicki               119.94 -  280: 379   70
+    2    12 Monika         Siemaszko             102.75 -  265: 357   53
+    3    12 Beata          Madej                 114.86 -  328: 329   65
+    4    14 Jolanta        Kruk                  100.00 +  332: 282  150
+    5    13 Ewa            Strzelczyk            109.79 -  309: 481   60
+    6    13 Halina         Roszak                117.21 -  272: 358   67
+    7    13 Wojciech       Gołęcki               105.25 -  325: 414   55
+    8    13 Stefan         Tomaszczyk            100.00 +  354: 205  150
+    9    13 Piotr          Madej                 100.00 +  356: 334  150
+   10    12 Agnieszka      Usakiewicz            100.00 +  338: 332  150
+   11    11 Monika         Siemaszko             102.75 -  361: 403   53
+   12    12 Agnieszka      Usakiewicz            100.00 +  402: 325  150
+                                                          --------------- ---- ------
+                                                                    1173  / 12  97.75
+
+
+</pre></div><div id='p_rundy' class='page'><pre></pre></div><div id='p_ranking' class='page'><pre></pre></div><div id='p_przebieg' class='page'>
+
+    </div><div style="clear:both;width:100%;" class="alignright">
+
+<script>
+<!--
+if ((document.getElementById("content").offsetHeight + document.getElementById("top").offsetHeight) > screen.height)
+    document.write("<br /><br /><a href='#top'>do góry</a>");
+-->
+</script>
+
+</div>
+</div>
+
+<div id="bottom">
+<ul id="bottomlinks">
+<div class='onleft'>
+ Osób on-line: 51</div>
+    <li><a href="https://www.pfs.org.pl/kalendarz.php">Kalendarz</a></li>
+    <li><a href="https://www.pfs.org.pl/ranking.php">Aktualny ranking</a></li>
+    <li><a href="https://www.pfs.org.pl/osps_online.php">Słownik online</a></li>
+    <li><a href="http://scrabble.stats.org.pl/">Statystyki</a></li>
+    <li><a href="http://forum.pfs.org.pl">Forum PFS</a></li>
+    <li><a href="https://www.pfs.org.pl/kontakt.php">Kontakt</a></li>
+</ul>
+    SCRABBLE® jest zastrzeżonym znakiem towarowym J.W. Spears &amp; Sons&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="https://www.pfs.org.pl/prawaautorskie.php">© Prawa autorskie</a>
+</div>
+</body>
+</html>
