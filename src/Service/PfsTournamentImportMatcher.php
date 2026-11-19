@@ -28,6 +28,7 @@ final readonly class PfsTournamentImportMatcher
             $usedSuffixesByDate[$importedTournament->getDatePrefix()][] = $importedTournament->getSuffix();
         }
 
+        usort($calendarTournaments, static fn (CalendarTournament $a, CalendarTournament $b): int => $a->endDate <=> $b->endDate);
         $todayDate = $today->setTime(0, 0);
         $pendingImports = [];
 

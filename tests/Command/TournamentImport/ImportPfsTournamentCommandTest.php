@@ -30,6 +30,12 @@ final class ImportPfsTournamentCommandTest extends TestCase
         self::assertStringContainsString('Option --pfsid must be a positive integer.', $tester->getDisplay());
     }
 
+    public function testRejectsMalformedPositiveIdWithoutFetching(): void
+    {
+        $tester = new CommandTester($this->command());
+        self::assertSame(Command::INVALID, $tester->execute(['--pfsid' => '1399abc']));
+    }
+
     public function testDisplaysRankingCountsAfterSuccessfulImport(): void
     {
         $restoreHttps = in_array('https', stream_get_wrappers(), true);
@@ -94,7 +100,7 @@ HTML,
 
                     public function calculateRankingSnapshotAfterTournament(int $organizationId, int $tournamentId): ?array
                     {
-                        return null;
+                        return ['rows' => [['playerId'=>1,'position'=>1,'rankExact'=>150.0,'games'=>30]], 'waitingRows' => []];
                     }
                 },
             ),

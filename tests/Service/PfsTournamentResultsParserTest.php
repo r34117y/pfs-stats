@@ -64,6 +64,22 @@ final class PfsTournamentResultsParserTest extends TestCase
         self::assertSame(184, $firstGame->scalp);
     }
 
+    public function testParsesCurrentForfeitWithoutRankingScalps(): void
+    {
+        $r = (new PfsTournamentResultsParser())->parse($this->fixtureHtml('current-1451.html'));
+        $players = array_column($r->players, null, 'playerName');
+        self::assertSame(0, $players['Maria Uryga']->roundsPlayed);
+        self::assertNull($players['Maria Uryga']->games[0]->scalp);
+        self::assertSame(400, $players['Artur Irzyk']->games[0]->pointsFor);
+    }
+
+    public function testParsesCurrentFifteenRoundTournament(): void
+    {
+        $r = (new PfsTournamentResultsParser())->parse($this->fixtureHtml('current-1399.html'));
+        self::assertCount(120, $r->players);
+        self::assertSame(15, max(array_column($r->roundGames, 'round')));
+    }
+
     public function testParsesByeRows(): void
     {
         $parser = new PfsTournamentResultsParser();

@@ -26,7 +26,8 @@ final readonly class RefreshCacheAfterImportService
         bool $clearCacheApp = false,
         bool $warmup = false,
         ?callable $reporter = null,
-        ?int $orgId = null
+        ?int $orgId = null,
+        bool $reuseVersion = false,
     ): RefreshCacheAfterImportResult {
         if ($clearCacheApp) {
             $this->report($reporter, 'Clearing cache.app pool...');
@@ -34,7 +35,7 @@ final readonly class RefreshCacheAfterImportService
         }
 
         $currentVersion = $this->datasetVersionService->getVersion();
-        $newVersion = $this->datasetVersionService->bumpVersion($datasetVersion);
+        $newVersion = $reuseVersion ? $currentVersion : $this->datasetVersionService->bumpVersion($datasetVersion);
 
         $result = new RefreshCacheAfterImportResult(
             previousDatasetVersion: $currentVersion,
@@ -47,7 +48,7 @@ final readonly class RefreshCacheAfterImportService
 
         @ini_set('memory_limit', '768M');
 
-        $paths = $this->buildWarmupPaths($orgId);
+        $paths = $this->buildWarmupPaths($orgId ?? 21);
         if ($paths === []) {
             $this->report($reporter, 'No warmup paths resolved.');
             return $result;

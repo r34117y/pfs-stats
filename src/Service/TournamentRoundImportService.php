@@ -24,6 +24,7 @@ final readonly class TournamentRoundImportService
         private PfsNameNormalizer $nameNormalizer,
         private PlayerCatalogService $playerCatalogService,
         private OldMethodCurrentRankingServiceInterface $oldMethodCurrentRankingService,
+        private ?PfsPlayerIdentityResolver $identityResolver = null,
     ) {
     }
 
@@ -31,7 +32,7 @@ final readonly class TournamentRoundImportService
      * @throws Exception
      * @throws Throwable
      */
-    public function import(TournamentRound $payload): TournamentRoundImportResult
+    public function import(TournamentRound $payload, array $confirmedDebutants = []): TournamentRoundImportResult
     {
         $tournament = $this->requireArray($payload->tournament, 'tournament');
         $players = $this->requireList($payload->players, 'players');
@@ -68,6 +69,8 @@ final readonly class TournamentRoundImportService
 
         return $this->connection->transactional(function (Connection $connection) use (
             $organization,
+            $payload,
+            $confirmedDebutants,
             $players,
             $results,
             $ranking,
@@ -77,6 +80,13 @@ final readonly class TournamentRoundImportService
             $city,
             $pfsUrlId,
         ): TournamentRoundImportResult {
+            if (($connection->getParams()['driver'] ?? '') === 'pdo_pgsql') {
+                $connection->executeStatement('SELECT pg_advisory_xact_lock(:namespace, :organization)', ['namespace' => 73673, 'organization' => (int) $organization['id']]);
+                $existing = $pfsUrlId !== null ? $connection->fetchOne('SELECT id FROM tournament WHERE organization_id = ? AND urlid = ?', [$organization['id'], $pfsUrlId]) : false;
+                if ($existing || $this->findExistingTournamentId((int) $organization['id'], $dateCode, $tournamentName, $city) !== null) {
+                    throw new ConflictHttpException('Tournament already exists after acquiring import lock.');
+                }
+            }
             $rankingRowsInsertedByType = [
                 RankingType::FUCKED => 0,
                 RankingType::FUCKED_WAITING => 0,
@@ -84,6 +94,8 @@ final readonly class TournamentRoundImportService
                 RankingType::NORMAL_WAITING => 0,
             ];
             $catalog = $this->playerCatalogService->loadPlayerCatalog((int) $organization['id']);
+            $resolver = $this->identityResolver ?? new PfsPlayerIdentityResolver($this->nameNormalizer);
+            $identityIndex = $resolver->index($catalog);
             $resolvedPlayersByStartingPosition = [];
             $resolvedPlayersByName = [];
             $createdPlayerIds = [];
@@ -101,14 +113,16 @@ final readonly class TournamentRoundImportService
                     throw new BadRequestHttpException(sprintf('Duplicate startingPosition %d in players payload.', $startingPosition));
                 }
 
-                $resolved = $this->resolvePlayer($catalog, $fullName);
+                $resolved = $resolver->resolve($identityIndex, $fullName, $playerRow['city'] ?? null);
                 if ($resolved === null) {
                     $resolved = $this->createPlayer(
                         $connection,
                         (int) $organization['id'],
                         $fullName,
+                        $playerRow['city'] ?? null,
                     );
                     $catalog[] = $resolved;
+                    $resolver->add($identityIndex, $resolved);
                     $createdPlayerIds[] = $resolved["playerId"];
                 }
 
@@ -219,7 +233,7 @@ final readonly class TournamentRoundImportService
                     'table_no' => $table,
                     'result1' => $score1,
                     'result2' => $score2,
-                    'ranko' => (int) round($guest['tournamentRank'] ?? 100),
+                    'ranko' => ($resultRow['rankingEligible'] ?? true) ? (int) round($guest['tournamentRank'] ?? 100) : null,
                     'host' => 1,
                     'gcg' => null,
                     'gcg_updated_at' => null,
@@ -234,7 +248,7 @@ final readonly class TournamentRoundImportService
                     'table_no' => $table,
                     'result1' => $score2,
                     'result2' => $score1,
-                    'ranko' => (int) round($host['tournamentRank']),
+                    'ranko' => ($resultRow['rankingEligible'] ?? true) ? (int) round($host['tournamentRank']) : null,
                     'host' => 2,
                     'gcg' => null,
                     'gcg_updated_at' => null,
@@ -279,9 +293,14 @@ final readonly class TournamentRoundImportService
 
                 $resolved = $rankingCache[$playerName] ?? null;
                 if ($resolved === null) {
-                    $resolvedCatalogPlayer = $this->resolvePlayer($catalog, $playerName);
-                    if ($rankingRow['main'] && $resolvedCatalogPlayer === null) {
-                        throw new LogicException('Ranking player does not exist in db: ' . $playerName);
+                    $resolvedCatalogPlayer = $resolver->resolve($identityIndex, $playerName, $rankingRow['city'] ?? null);
+                    if ($resolvedCatalogPlayer === null && isset($confirmedDebutants[$playerName]) && $confirmedDebutants[$playerName]['date'] <= $dateCode) {
+                        $resolvedCatalogPlayer = $this->createPlayer($connection, (int) $organization['id'], $playerName);
+                        $resolver->add($identityIndex, $resolvedCatalogPlayer);
+                        $createdPlayerIds[] = $resolvedCatalogPlayer['playerId'];
+                    }
+                    if ($resolvedCatalogPlayer === null) {
+                        throw new LogicException('Ranking player does not exist in db; confirmed evidence required: ' . $playerName);
                     }
 
                     $resolved = [
@@ -306,10 +325,14 @@ final readonly class TournamentRoundImportService
                 $rankingRowsInsertedByType[$rtype]++;
             }
 
-            $oldMethodRankingSnapshot = $this->oldMethodCurrentRankingService->calculateRankingSnapshotAfterTournament(
+            $isPfs = strtoupper((string) $organization['code']) === 'PFS';
+            $oldMethodRankingSnapshot = $isPfs ? $this->oldMethodCurrentRankingService->calculateRankingSnapshotAfterTournament(
                 (int) $organization['id'],
                 $tournamentId,
-            );
+            ) : null;
+            if (($oldMethodRankingSnapshot === null || (($oldMethodRankingSnapshot['rows'] ?? []) === [] && ($oldMethodRankingSnapshot['waitingRows'] ?? []) === [])) && $isPfs && $dateCode >= 20230507) {
+                throw new LogicException('Required old ranking snapshot is missing; import was rolled back.');
+            }
             if ($oldMethodRankingSnapshot !== null) {
                 $this->insertOldMethodRankingSnapshot(
                     $connection,
@@ -328,6 +351,7 @@ final readonly class TournamentRoundImportService
                 "data" => json_encode([
                     "tournamentDbId" => $tournamentId,
                     "createdPlayerIds" => array_values(array_unique($createdPlayerIds)),
+                    "payload" => ["tournament" => $payload->tournament, "players" => $payload->players, "results" => $payload->results, "rankDay" => $payload->rankDay, "ranking" => $payload->ranking],
                     "importedAt" => (new DateTimeImmutable())->format(DateTimeInterface::ATOM),
                 ], JSON_THROW_ON_ERROR),
             ]);
@@ -414,6 +438,8 @@ final readonly class TournamentRoundImportService
                 throw new BadRequestHttpException(sprintf('Could not resolve game participants for %s.', $context));
             }
 
+            if (($resultRow['rankingEligible'] ?? true) === false) { continue; }
+
             $stats[$host['playerId']]['games']++;
             $stats[$host['playerId']]['hostGames']++;
 
@@ -480,64 +506,7 @@ final readonly class TournamentRoundImportService
         return round($sum / max(1, count($playersByStartingPosition)), 3);
     }
 
-    /**
-     * @param list<array<string, mixed>> $catalog
-     * @return array<string, mixed>|null
-     */
-    private function resolvePlayer(array $catalog, string $playerName): ?array
-    {
-        if ($playerName === 'Kazimierz Merklejn') {
-            $playerName = 'Kazimierz.J Merklejn';
-        }
-
-        if ($playerName === 'Anna Demczyszyn') {
-            $playerName = 'Anna Kowalska-Demczyszyn';
-        }
-
-        if ($playerName === 'Ala Białobrzewska') {
-            $playerName = 'Alina Białobrzewska';
-        }
-
-        if ($playerName === 'Teresa Radziewicz-Choińska') {
-            $playerName = 'Teresa Radziewicz';
-        }
-
-        if ($playerName === 'Maciej Labe') {
-            $playerName = 'dane ukryte.3';
-        }
-
-        $exactMatches = array_values(array_filter(
-            $catalog,
-            static fn (array $candidate): bool => $candidate['nameShow'] === $playerName,
-        ));
-        if ($exactMatches !== []) {
-            if (count($exactMatches) > 1) {
-                throw new LogicException('More than one player matches for ' . $playerName);
-            }
-            return $exactMatches[0];
-        }
-
-        $normalizedName = $this->nameNormalizer->normalizeForMatch($playerName);
-        $normalizedMatches = array_values(array_filter(
-            $catalog,
-            fn (array $candidate): bool => $candidate['normalized'] === $normalizedName,
-        ));
-        if ($normalizedMatches === []) {
-            return null;
-        }
-
-        if (count($normalizedMatches) === 1) {
-            return $normalizedMatches[0];
-        }
-
-        throw new LogicException('More than one player matches for ' . $playerName);
-    }
-
-    /**
-     * @return array<string, mixed>
-     * @throws Exception
-     */
-    private function createPlayer(Connection $connection, int $organizationId, string $nameShow): array
+    private function createPlayer(Connection $connection, int $organizationId, string $nameShow, ?string $city = null): array
     {
         $nameShow = $this->trimToLength($nameShow, 40);
         $nameAlph = $this->trimToLength($this->nameNormalizer->toAlphabeticalName($nameShow), 40);
@@ -551,8 +520,8 @@ final readonly class TournamentRoundImportService
         }
 
         $playerId = (int) $connection->fetchOne(
-            'INSERT INTO player (name_show, name_alph, first_name, last_name, slug)
-             VALUES (:nameShow, :nameAlph, :firstName, :lastName, :slug)
+            'INSERT INTO player (name_show, name_alph, first_name, last_name, slug, city)
+             VALUES (:nameShow, :nameAlph, :firstName, :lastName, :slug, :city)
              RETURNING id',
             [
                 'nameShow' => $nameShow,
@@ -560,6 +529,7 @@ final readonly class TournamentRoundImportService
                 'firstName' => $firstName,
                 'lastName' => $lastName,
                 'slug' => $this->buildSlug($nameShow),
+                'city' => $city,
             ],
         );
 

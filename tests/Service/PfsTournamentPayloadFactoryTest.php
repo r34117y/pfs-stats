@@ -113,6 +113,7 @@ final class PfsTournamentPayloadFactoryTest extends TestCase
             'score2' => 390,
         ], $payload->results[0]);
         self::assertSame([
+            'rankingEligible' => false,
             'round' => 1,
             'table' => 2,
             'host' => 3,

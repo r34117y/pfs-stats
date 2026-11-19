@@ -54,7 +54,7 @@ final readonly class PfsTournamentPayloadFactory
      */
     private function buildPlayers(ParsedTournamentResults $results, array $startingPositionsByName): array
     {
-        return array_map(function (ParsedTournamentStandingRow $standing) use ($startingPositionsByName): array {
+        return array_map(function (ParsedTournamentStandingRow $standing) use ($startingPositionsByName, $results): array {
             $position = $startingPositionsByName[$this->normalizeName($standing->playerName)] ?? null;
             if ($position === null) {
                 throw new \RuntimeException(sprintf('Could not resolve starting position for player "%s".', $standing->playerName));
@@ -84,11 +84,15 @@ final readonly class PfsTournamentPayloadFactory
      */
     private function buildResults(ParsedTournamentResults $results, array $startingPositionsByName): array
     {
-        return array_map(function (ParsedTournamentRoundGame $game) use ($startingPositionsByName): array {
+        return array_map(function (ParsedTournamentRoundGame $game) use ($startingPositionsByName, $results): array {
             $hostPosition = $this->resolveStartingPosition($startingPositionsByName, $game->hostName);
             $guestPosition = $game->guestName === null ? 0 : $this->resolveStartingPosition($startingPositionsByName, $game->guestName);
 
-            return [
+            $eligible = false;
+            foreach ($results->players[$hostPosition - 1]->games as $hhGame) {
+                if ($hhGame->round === $game->round && $hhGame->table === $game->table) { $eligible = !$hhGame->isBye && $hhGame->scalp !== null && !PfsTournamentSourceValidator::isForfeit($hhGame->pointsFor, $hhGame->pointsAgainst); break; }
+            }
+            return ($eligible ? [] : ['rankingEligible' => false]) + [
                 'round' => $game->round,
                 'table' => $game->table,
                 'host' => $hostPosition,
@@ -157,6 +161,6 @@ final readonly class PfsTournamentPayloadFactory
 
     private function normalizeName(string $name): string
     {
-        return mb_strtolower(trim((string) preg_replace('/\s+/u', ' ', $name)));
+        return (new PfsNameNormalizer())->normalizeForMatch($name);
     }
 }

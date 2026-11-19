@@ -15,18 +15,21 @@ final readonly class RefreshCacheAfterImportLauncher
     ) {
     }
 
-    public function launchWarmup(): void
+    public function launchWarmup(?string $datasetVersion = null, ?int $organizationId = null): bool
     {
         $phpBinary = $this->resolvePhpCliBinary();
         if ($phpBinary === null) {
             $this->logger->warning('Failed to resolve PHP CLI binary for cache refresh after tournament import.');
-            return;
+            return false;
         }
 
+        $options = $datasetVersion === null ? '' : ' --reuse-version --dataset-version=' . escapeshellarg($datasetVersion);
+        if ($organizationId !== null) { $options .= ' --org=' . $organizationId; }
         $command = sprintf(
-            'cd %s && nohup %s bin/console app:cache:refresh-after-import --warmup > /dev/null 2>&1 &',
+            'cd %s && nohup %s bin/console app:cache:refresh-after-import --warmup%s > /dev/null 2>&1 &',
             escapeshellarg($this->projectDir),
             escapeshellarg($phpBinary),
+            $options,
         );
 
         $handle = @popen($command, 'r');
@@ -34,10 +37,10 @@ final readonly class RefreshCacheAfterImportLauncher
             $this->logger->warning('Failed to launch cache refresh after tournament import.', [
                 'php_binary' => $phpBinary,
             ]);
-            return;
+            return false;
         }
 
-        @pclose($handle);
+        return @pclose($handle) === 0;
     }
 
     private function resolvePhpCliBinary(): ?string

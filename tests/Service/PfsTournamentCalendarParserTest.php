@@ -9,6 +9,13 @@ use PHPUnit\Framework\TestCase;
 
 final class PfsTournamentCalendarParserTest extends TestCase
 {
+    public function testOfficialRankingMarkerDistinguishesOtherEvents(): void
+    {
+        $p=new PfsTournamentCalendarParser();
+        $h="<tr><td><a href='../turniej.php?id=1'>Main</a> (turniej&nbsp;rankingowy)</td></tr><tr><td><a href='../turniej.php?id=2'>Masters</a> (turniej&nbsp;nierankingowy)</td></tr>";
+        self::assertTrue($p->isRankingEvent($h,1));self::assertFalse($p->isRankingEvent($h,2));
+    }
+
     public function testParsesCalendarEntriesAndInfersDateRange(): void
     {
         $parser = new PfsTournamentCalendarParser();

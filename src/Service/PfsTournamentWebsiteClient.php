@@ -6,6 +6,8 @@ final readonly class PfsTournamentWebsiteClient
 {
     private const BASE_URL = 'https://www.pfs.org.pl';
 
+    public function __construct(private ?\Closure $fetcher = null) {}
+
     public function fetchCalendarHtml(int $year): string
     {
         return $this->fetch(sprintf('%s/kalendarz.php?rok=%d', self::BASE_URL, $year));
@@ -18,6 +20,7 @@ final readonly class PfsTournamentWebsiteClient
 
     private function fetch(string $url): string
     {
+        if ($this->fetcher !== null) { return ($this->fetcher)($url); }
         $context = stream_context_create([
             'http' => [
                 'header' => "User-Agent: scrabble-stats-api/1.0\r\n",

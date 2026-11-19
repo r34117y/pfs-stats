@@ -26,7 +26,8 @@ final readonly class PlayerCatalogService
             "SELECT
                 p.id AS player_id,
                 p.name_show,
-                p.name_alph
+                p.name_alph,
+                p.city
             FROM player_organization po
             INNER JOIN player p ON p.id = po.player_id
             WHERE po.organization_id = :organizationId
@@ -42,6 +43,7 @@ final readonly class PlayerCatalogService
                 'playerId' => (int) $row['player_id'],
                 'nameShow' => (string) $row['name_show'],
                 'nameAlph' => (string) ($row['name_alph'] ?? ''),
+                'city' => (string) ($row['city'] ?? ''),
                 'normalized' => $this->nameNormalizer->normalizeForMatch((string) $row['name_show'])
             ];
         }, $rows);

@@ -37,6 +37,20 @@ final readonly class PfsTournamentCalendarParser
         return $tournaments;
     }
 
+    public function isRankingEvent(string $html, int $pfsId): bool
+    {
+        foreach (preg_split('~</tr>~i', $html) as $fragment) {
+            $start = strripos($fragment, '<tr');
+            if ($start === false) { continue; }
+            $row = substr($fragment, $start);
+            if (!preg_match("~href=['\"][^'\"]*turniej.php\\?id=" . $pfsId . "(?:#[^'\"]*)?['\"]~", $row)) { continue; }
+            $text = mb_strtolower(html_entity_decode(strip_tags($row), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+            $text = preg_replace('/\s+/u', ' ', $text);
+            return !str_contains($text, 'nierankingowy') && (str_contains($text, 'rankingowy') || str_contains($text, 'grand prix'));
+        }
+        throw new \RuntimeException('Cannot determine ranking eligibility from calendar row: PFS ' . $pfsId);
+    }
+
     private function extractTagContents(string $fragment, string $tag): ?string
     {
         if (!preg_match(sprintf('~<%1$s>(.*?)</%1$s>~su', preg_quote($tag, '~')), $fragment, $match)) {

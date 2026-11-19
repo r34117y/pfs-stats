@@ -28,6 +28,7 @@ final class DownloadPfsTournamentHtmlCommand extends Command
         private readonly PfsTournamentCalendarParser $calendarParser,
         #[Autowire('%kernel.project_dir%')]
         private readonly string $projectDir,
+        private readonly ?\App\Service\PfsTournamentArchive $archive = null,
     ) {
         parent::__construct();
     }
@@ -134,6 +135,11 @@ final class DownloadPfsTournamentHtmlCommand extends Command
         $usedFilenames = [];
 
         foreach ($tournaments as $tournament) {
+            if ($this->archive !== null) {
+                $path = $this->archive->download($tournament);
+                $rows[] = ['pfsId' => $tournament->urlId, 'date' => $tournament->startDate->format('Y-m-d'), 'name' => $tournament->name, 'city' => $tournament->location, 'file' => basename($path)];
+                continue;
+            }
             $html = $this->websiteClient->fetchTournamentHtml($tournament->urlId);
             $filename = $this->buildUniqueFilename($tournament, $usedFilenames);
             $path = sprintf('%s/%s', $outputDir, $filename);

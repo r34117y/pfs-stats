@@ -18,6 +18,7 @@ final readonly class ParsedTournamentResults
         public array $standings,
         public array $roundGames,
         public array $ranking,
+        public array $warnings = [],
     ) {
     }
 

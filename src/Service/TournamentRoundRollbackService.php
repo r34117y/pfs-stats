@@ -43,7 +43,11 @@ final readonly class TournamentRoundRollbackService
             throw new RuntimeException('No tournament round import audit record was found.');
         }
 
-        return $this->connection->transactional(function (Connection $connection) use ($latestAudit): array {
+        return $this->connection->transactional(function (Connection $connection) use ($latestAudit, $orgId): array {
+            if (($connection->getParams()['driver'] ?? '') === 'pdo_pgsql') {
+                $connection->executeStatement('SELECT pg_advisory_xact_lock(73673, ?)', [$orgId]);
+                $latestAudit = $this->fetchLatestImportAudit($orgId) ?? throw new RuntimeException('No tournament round import audit record was found.');
+            }
 
             $deletedRanking = $connection->executeStatement(
                 'DELETE FROM ranking WHERE organization_id = :organizationId AND tournament_id = :tournamentId',

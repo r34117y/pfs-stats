@@ -8,6 +8,41 @@ use Symfony\Component\HttpFoundation\Request;
 
 final class ApiColdCacheRegressionTest extends ApiEndpointTestCase
 {
+    public function testCliAndHttpDebugModesShareDatasetVersion(): void
+    {
+        if (!str_ends_with((string) getenv('REDIS_URL'), '/14')) {
+            self::markTestSkipped('Use isolated Redis database 14 for cache publication regression.');
+        }
+        self::createApiClient();
+        $publisher = self::getContainer()->get(\App\Service\DatasetVersionService::class);
+        $version = $publisher->bumpVersion();
+        $debugKernel = new \App\Kernel('test', true);
+        $debugKernel->boot();
+        try {
+            $reader = new \App\Service\DatasetVersionService($debugKernel->getContainer()->get('cache.app'));
+            self::assertSame($version, $reader->getVersion());
+        } finally {
+            $debugKernel->shutdown();
+        }
+    }
+
+    public function testDatasetPublicationReplacesWarmOldRankingWithoutWarmup(): void
+    {
+        if (!str_ends_with((string) getenv('REDIS_URL'), '/14')) { self::markTestSkipped('Use isolated Redis database 14 for cache publication regression.'); }
+        $client=self::createApiClient();self::clearApiCache();
+        $cache=self::getContainer()->get('app.dataset_cache');
+        $version=self::getContainer()->get(\App\Service\DatasetVersionService::class);
+        $cache->get('api.ranking.old.v3.21',static fn()=>new \App\ApiResource\Ranking\GetRanking([], 'STALE_IMPORT_CHECK', -1));
+        $warm=$client->handle(Request::create('/api/old-rank?org=21','GET',server:['HTTP_ACCEPT'=>'application/ld+json']));
+        self::assertResponseStatus($warm,200);
+        self::assertSame('STALE_IMPORT_CHECK',self::decodeJson($warm)['lastTournamentName']);
+        $version->bumpVersion();
+        $fresh=$client->handle(Request::create('/api/old-rank?org=21','GET',server:['HTTP_ACCEPT'=>'application/ld+json']));
+        self::assertResponseStatus($fresh,200);self::assertPublicApiCacheHeaders($fresh);
+        self::assertNotSame('STALE_IMPORT_CHECK',self::decodeJson($fresh)['lastTournamentName']);
+        self::clearApiCache();
+    }
+
     public function testCacheableEndpointRemainsValidAfterPrimeAndClear(): void
     {
         $client = self::createApiClient();

@@ -121,10 +121,9 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
     private function getLatestRankingTournamentId(int $organizationId, string $rankingType): ?int
     {
         $value = $this->connection->fetchOne(
-            "SELECT MAX(tournament_id)
-             FROM ranking
-             WHERE organization_id = :organizationId
-               AND rtype = :rankingType",
+            "SELECT t.id FROM tournament t
+             WHERE t.organization_id=:organizationId AND EXISTS (SELECT 1 FROM ranking r WHERE r.tournament_id=t.id AND r.organization_id=t.organization_id AND r.rtype=:rankingType)
+             ORDER BY t.dt DESC,t.id DESC LIMIT 1",
             [
                 'organizationId' => $organizationId,
                 'rankingType' => $rankingType,
@@ -147,13 +146,13 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
     private function getPreviousRankingTournamentId(int $organizationId, int $latestTournamentId, string $rankingType): ?int
     {
         $value = $this->connection->fetchOne(
-            "SELECT MAX(previous.tournament_id)
+            "SELECT previous.tournament_id
              FROM (
-                SELECT DISTINCT r.tournament_id
-                FROM ranking r
+                SELECT DISTINCT r.tournament_id,t.dt
+                FROM ranking r JOIN tournament t ON t.id=r.tournament_id AND t.organization_id=r.organization_id
                 WHERE r.organization_id = :organizationId
                   AND r.rtype = :rankingType
-                  AND r.tournament_id < :latestTournamentId
+                  AND (t.dt,t.id) < (SELECT dt,id FROM tournament WHERE id=:latestTournamentId)
              ) previous
              WHERE EXISTS (
                 SELECT 1
@@ -168,7 +167,7 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
                   AND latest.tournament_id = :latestTournamentId
                   AND latest.player_id IS NOT NULL
                   AND (latest.position <> prev.position OR latest.rank <> prev.rank)
-             )",
+             ) ORDER BY previous.dt DESC, previous.tournament_id DESC LIMIT 1",
             [
                 'organizationId' => $organizationId,
                 'latestTournamentId' => $latestTournamentId,
@@ -181,11 +180,11 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
         }
 
         $fallback = $this->connection->fetchOne(
-            "SELECT MAX(tournament_id)
-             FROM ranking
-             WHERE organization_id = :organizationId
-               AND rtype = :rankingType
-               AND tournament_id < :latestTournamentId",
+            "SELECT t.id FROM tournament t
+             WHERE t.organization_id=:organizationId
+               AND (t.dt,t.id) < (SELECT dt,id FROM tournament WHERE id=:latestTournamentId)
+               AND EXISTS (SELECT 1 FROM ranking r WHERE r.tournament_id=t.id AND r.organization_id=t.organization_id AND r.rtype=:rankingType)
+             ORDER BY t.dt DESC,t.id DESC LIMIT 1",
             [
                 'organizationId' => $organizationId,
                 'latestTournamentId' => $latestTournamentId,
@@ -206,11 +205,11 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
     private function getPreviousNavigationTournamentId(int $organizationId, int $tournamentId, string $rankingType): ?int
     {
         $value = $this->connection->fetchOne(
-            "SELECT MAX(tournament_id)
-             FROM ranking
-             WHERE organization_id = :organizationId
-               AND rtype = :rankingType
-               AND tournament_id < :tournamentId",
+            "SELECT t.id FROM tournament t
+             WHERE t.organization_id=:organizationId
+               AND (t.dt,t.id) < (SELECT dt,id FROM tournament WHERE id=:tournamentId)
+               AND EXISTS (SELECT 1 FROM ranking r WHERE r.tournament_id=t.id AND r.organization_id=t.organization_id AND r.rtype=:rankingType)
+             ORDER BY t.dt DESC,t.id DESC LIMIT 1",
             [
                 'organizationId' => $organizationId,
                 'tournamentId' => $tournamentId,
@@ -231,11 +230,11 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
     private function getNextNavigationTournamentId(int $organizationId, int $tournamentId, string $rankingType): ?int
     {
         $value = $this->connection->fetchOne(
-            "SELECT MIN(tournament_id)
-             FROM ranking
-             WHERE organization_id = :organizationId
-               AND rtype = :rankingType
-               AND tournament_id > :tournamentId",
+            "SELECT t.id FROM tournament t
+             WHERE t.organization_id=:organizationId
+               AND (t.dt,t.id) > (SELECT dt,id FROM tournament WHERE id=:tournamentId)
+               AND EXISTS (SELECT 1 FROM ranking r WHERE r.tournament_id=t.id AND r.organization_id=t.organization_id AND r.rtype=:rankingType)
+             ORDER BY t.dt ASC,t.id ASC LIMIT 1",
             [
                 'organizationId' => $organizationId,
                 'tournamentId' => $tournamentId,

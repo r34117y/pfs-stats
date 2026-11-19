@@ -12,7 +12,7 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
     private const int MIN_GAMES_FOR_LIST = 30;
     private const int MAX_GAMES_INCLUDED = 200;
     private const int MIN_TOURNAMENT_RANK = 100;
-    private const int NEW_METHOD_START_TOURNAMENT_ID = 9367;
+    private const int NEW_METHOD_PFS_ID = 1271;
     private const string OLD_METHOD_RANKING_TYPE = RankingType::NORMAL;
     private const string ORGANIZATION_CODE = 'PFS';
 
@@ -98,7 +98,7 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
     public function calculateRankingSnapshotAfterTournament(int $organizationId, int $tournamentId): ?array
     {
         $snapshotAfterTournament = null;
-        foreach ($this->calculateRankingSnapshotsUntilTournament($organizationId, $tournamentId) as $snapshot) {
+        foreach ($this->calculateRankingSnapshotsUntilTournament($organizationId, $tournamentId, true) as $snapshot) {
             if ((int) $snapshot['referenceTournamentId'] === $tournamentId) {
                 $snapshotAfterTournament = $snapshot;
             }
@@ -107,18 +107,20 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
         return $snapshotAfterTournament;
     }
 
-    private function calculateRankingSnapshotsUntilTournament(int $organizationId, int $referenceTournamentId): iterable
+    private function calculateRankingSnapshotsUntilTournament(int $organizationId, int $referenceTournamentId, bool $targetOnly = false): iterable
     {
         $playerNames = $this->loadPlayerNames($organizationId);
         $historyByPlayer = $this->loadHistoricalTournamentResultsBeforeNewMethod($organizationId);
         $careerStatsByPlayer = $this->buildCareerStatsFromHistory($historyByPlayer);
         $snapshotByPlayer = $this->loadOldMethodSnapshotBeforeNewMethod($organizationId);
 
-        foreach ($this->loadTournamentsForSimulation($organizationId, $referenceTournamentId) as $tournament) {
+        $tournaments = $this->loadTournamentsForSimulation($organizationId, $referenceTournamentId);
+        [$participantsByTournament, $gamesByTournament] = $this->loadSimulationData($organizationId, array_column($tournaments, 'id'));
+        foreach ($tournaments as $tournament) {
             $tournamentId = (int) $tournament['id'];
             $tournamentDateInt = (int) $tournament['dt'];
 
-            $participants = $this->loadTournamentParticipants($organizationId, $tournamentId);
+            $participants = $participantsByTournament[$tournamentId] ?? [];
             if ($participants !== []) {
                 $preTournamentRankByPlayer = [];
                 foreach ($participants as $playerId) {
@@ -130,7 +132,7 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
                     );
                 }
 
-                $games = $this->loadUniqueTournamentGames($organizationId, $tournamentId);
+                $games = $gamesByTournament[$tournamentId] ?? [];
                 $tournamentPerformance = $this->calculateTournamentPerformance(
                     $participants,
                     $games,
@@ -166,6 +168,9 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
 
             $snapshot = $this->rebuildSnapshot($historyByPlayer, $tournamentDateInt, $tournamentId);
             $snapshotByPlayer = $snapshot['main'];
+            if ($targetOnly && $tournamentId !== $referenceTournamentId) {
+                continue;
+            }
             $referenceDate = DateTimeImmutable::createFromFormat('Ymd', (string) $tournamentDateInt);
             if ($referenceDate === false) {
                 continue;
@@ -250,10 +255,9 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
     private function loadLatestStoredOldMethodRankingTournamentId(int $organizationId): ?int
     {
         $value = $this->connection->fetchOne(
-            'SELECT MAX(tournament_id)
-             FROM ranking
-             WHERE organization_id = :organizationId
-               AND rtype = :rankingType',
+            'SELECT r.tournament_id FROM ranking r JOIN tournament t ON t.id=r.tournament_id AND t.organization_id=r.organization_id
+             WHERE r.organization_id = :organizationId AND r.rtype = :rankingType
+             ORDER BY t.dt DESC,t.id DESC LIMIT 1',
             [
                 'organizationId' => $organizationId,
                 'rankingType' => self::OLD_METHOD_RANKING_TYPE,
@@ -388,10 +392,9 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
     private function loadLatestRankingTournamentId(int $organizationId): ?int
     {
         $value = $this->connection->fetchOne(
-            "SELECT MAX(tournament_id)
-             FROM ranking
-             WHERE organization_id = :organizationId
-               AND rtype = :rtype",
+            "SELECT r.tournament_id FROM ranking r JOIN tournament t ON t.id=r.tournament_id AND t.organization_id=r.organization_id
+             WHERE r.organization_id = :organizationId AND r.rtype = :rtype
+             ORDER BY t.dt DESC,t.id DESC LIMIT 1",
             [
                 'organizationId' => $organizationId,
                 'rtype' => RankingType::FUCKED
@@ -424,11 +427,11 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
             WHERE tw.organization_id = :organizationId
               AND tw.player_id IS NOT NULL
               AND tw.tournament_id IS NOT NULL
-              AND tw.tournament_id < :newMethodStartTournamentId
+              AND (t.dt,t.id) < (SELECT dt,id FROM tournament WHERE id = :newMethodStartTournamentId)
             ORDER BY tw.player_id ASC, t.dt ASC, t.id ASC",
             [
                 'organizationId' => $organizationId,
-                'newMethodStartTournamentId' => self::NEW_METHOD_START_TOURNAMENT_ID,
+                'newMethodStartTournamentId' => $this->loadMethodSplitId($organizationId),
             ]
         );
 
@@ -488,14 +491,15 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
     private function loadOldMethodSnapshotBeforeNewMethod(int $organizationId): array
     {
         $tournamentId = $this->connection->fetchOne(
-            "SELECT MAX(tournament_id)
-             FROM ranking
-             WHERE organization_id = :organizationId
-               AND rtype = :rtype
-               AND tournament_id < :newMethodStartTournamentId",
+            "SELECT r.tournament_id
+             FROM ranking r JOIN tournament t ON t.id = r.tournament_id AND t.organization_id = r.organization_id
+             WHERE r.organization_id = :organizationId
+               AND r.rtype = :rtype
+               AND (t.dt,t.id) < (SELECT dt,id FROM tournament WHERE id = :newMethodStartTournamentId)
+             ORDER BY t.dt DESC,t.id DESC LIMIT 1",
             [
                 'organizationId' => $organizationId,
-                'newMethodStartTournamentId' => self::NEW_METHOD_START_TOURNAMENT_ID,
+                'newMethodStartTournamentId' => $this->loadMethodSplitId($organizationId),
                 'rtype' => RankingType::FUCKED
             ]
         );
@@ -539,12 +543,12 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
             "SELECT id, dt, COALESCE(fullname, name) AS name
              FROM tournament
              WHERE organization_id = :organizationId
-               AND id >= :newMethodStartTournamentId
-               AND id <= :referenceTournamentId
+               AND (dt,id) >= (SELECT dt,id FROM tournament WHERE id = :newMethodStartTournamentId)
+               AND (dt,id) <= (SELECT dt,id FROM tournament WHERE id = :referenceTournamentId)
              ORDER BY dt ASC, id ASC",
             [
                 'organizationId' => $organizationId,
-                'newMethodStartTournamentId' => self::NEW_METHOD_START_TOURNAMENT_ID,
+                'newMethodStartTournamentId' => $this->loadMethodSplitId($organizationId),
                 'referenceTournamentId' => $referenceTournamentId,
             ]
         );
@@ -553,6 +557,34 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
     /**
      * @return list<int>
      */
+    private function loadMethodSplitId(int $organizationId): int
+    {
+        $rows = $this->connection->fetchFirstColumn("SELECT id FROM tournament WHERE organization_id = ? AND (urlid = ? OR fullname = 'II Wielicki Turniej w Scrabble') ORDER BY dt,id", [$organizationId, self::NEW_METHOD_PFS_ID]);
+        if (count($rows) !== 1) {
+            throw new \RuntimeException('Missing or ambiguous old-ranking method split event (PFS 1271).');
+        }
+        return (int) $rows[0];
+    }
+
+    /** @return array{array<int,list<int>>,array<int,list<array<string,int>>>} */
+    private function loadSimulationData(int $org, array $ids): array
+    {
+        $participants = []; $games = [];
+        foreach (array_chunk($ids, 100) as $chunk) {
+            $params = ['org' => $org, 'ids' => array_map('intval', $chunk)];
+            $types = ['ids' => \Doctrine\DBAL\ArrayParameterType::INTEGER];
+            foreach ($this->connection->fetchAllAssociative('SELECT DISTINCT tournament_id,player_id FROM tournament_result WHERE organization_id=:org AND tournament_id IN (:ids) AND player_id IS NOT NULL', $params, $types) as $r) {
+                $participants[(int) $r['tournament_id']][] = (int) $r['player_id'];
+            }
+            $rows = $this->connection->fetchAllAssociative('SELECT DISTINCT ON (tournament_id,round_no,table_no,LEAST(player1_id,player2_id),GREATEST(player1_id,player2_id)) tournament_id,player1_id AS player1,player2_id AS player2,result1,result2 FROM tournament_game WHERE organization_id=:org AND tournament_id IN (:ids) AND player1_id IS NOT NULL AND player2_id IS NOT NULL AND ((result1>0 AND result2>0) OR ranko IS NOT NULL) ORDER BY tournament_id,round_no,table_no,LEAST(player1_id,player2_id),GREATEST(player1_id,player2_id),player1_id', $params, $types);
+            foreach ($rows as $r) {
+                $tid = (int) $r['tournament_id']; unset($r['tournament_id']);
+                $games[$tid][] = array_map('intval', $r);
+            }
+        }
+        return [$participants, $games];
+    }
+
     private function loadTournamentParticipants(int $organizationId, int $tournamentId): array
     {
         $values = $this->connection->fetchFirstColumn(
@@ -776,7 +808,7 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
             for ($i = count($history) - 1; $i >= 0; $i--) {
                 $record = $history[$i];
 
-                if ($record['tournamentId'] > $currentTournamentId) {
+                if ($record['dateInt'] === $currentDateInt && $record['tournamentId'] > $currentTournamentId) {
                     continue;
                 }
 
@@ -810,6 +842,9 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
                 $tournaments++;
             }
 
+            if ($games === 0) {
+                continue;
+            }
             if ($games < self::MIN_GAMES_FOR_LIST) {
                 $waitingSnapshot[$playerId] = [
                     'rank' => $scalps / $games,

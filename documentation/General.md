@@ -76,3 +76,70 @@ Due to the specific nature of this projects (rare updates, heavy computation rel
 - You can execute commands in docker containers to verify that your code works as intended
     - Containers for this project are prefixed with `scrabble-stats-api-`, for example `scrabble-stats-api-php-1`
     - Credentials can usually be found in `.env` or `.env.local`
+
+## Validated single-tournament PFS imports
+
+`app:pfs:tournaments:import --pfsid=<PFS URL id> --year=<year>` imports exactly one
+completed tournament. PFS URL IDs are registration IDs, not database IDs or
+chronological ordering. Use the dated sequence in
+`specs/002-fix-pfs-import/quickstart.md`; for simultaneous tournaments preserve the
+existing service order, so the second old-method snapshot includes the first.
+
+The importer validates classification, player HH blocks, round results and both
+official ranking lists. Significant unrecognized source rows block import with a
+section/line diagnostic. Complete `tournament_html` snapshots are reused;
+announcements are refreshed. Source metadata includes PFS ID, URL and SHA-256;
+legacy snapshots have a verification timestamp and unknown original fetch time.
+HTML bytes are retained. HH scalps rounded per game can differ from the published
+classification total; both source values are retained and the discrepancy is
+reported. Legacy 400:0 walkovers may still have HH scalps: their result is retained
+but they do not contribute ranking games. New non-ranking game rows have null
+`ranko`; existing historical representation is preserved.
+
+The read-only `bin/verify-pfs-import.php` has `preflight` and `verify` modes. It
+creates a source/history manifest and compares all participants, classification,
+logical games and f/w/n/u, using an independent old-method reference calculation.
+A normal expected append does not invalidate the manifest. Historical corrections,
+source or identity mapping changes require preflight again. Baseline fingerprints
+are bound to the original tournament set, so explicitly planned historical
+additions can be verified without treating them as unexpected mutations.
+
+Confirmed mappings live in `config/pfs_player_aliases.yaml`; context mappings can
+use source city to disambiguate a confirmed identity. Similar names alone do not
+authorize merging profiles. Ranking-only debutants require a verified participant
+source; evidence from a second same-day tournament permits creating a profile and
+official ranking entry, without importing its games ahead of that tournament.
+Unresolved identities block the operation and are listed in the preflight report.
+
+The CLI returns `unchanged` for a fully matching import, with no database/audit
+writes or cache publication. Partial/conflicting imports require explicit repair.
+Tournament data, new profiles, all ranking types and audit are transactional.
+Audit excludes authorization tokens. Organization locks serialize imports,
+rollback and old-ranking repairs.
+
+Dataset version publication happens synchronously after commit.
+`framework.cache.prefix_seed` is fixed per environment so CLI and HTTP share the
+same version key even when their debug flags differ. Rebuild the Symfony container
+for the selected environment/debug mode when deploying constructor/config changes.
+`PFS_IMPORT_MANIFEST_PATH` can select a manifest belonging to a separate acceptance
+database; each copy must also use its own Redis database.
+`--no-cache-warmup` skips only optional warming. A publication failure reports
+`committed-cache-error`: repair the cache using
+`app:cache:refresh-after-import --org=<organization id>`, then resume; do not
+reimport or roll back valid tournament data to repair cache. Delayed warming uses
+`--reuse-version` and cannot restore an obsolete version.
+
+If preflight establishes missing older ranking events, the explicit
+`--include-history-repairs` option adds those sources to a confirmed repair plan;
+it still performs no database imports. Preserve legacy composite events: MP
+eliminations may already be rounds 1–15 of a combined 30-round championship, and a
+PFS source can map to multiple historical local events. After necessary repairs,
+`app:ranking:backfill-old-method-snapshots --changed-only` updates only divergent
+n/u snapshots and leaves equal historical rows untouched. Regenerate preflight
+before further verification after this intentional history correction.
+
+Use an isolated PostgreSQL database ending in `_test` via
+`PFS_IMPORT_TEST_DATABASE_URL` for writing integration tests. For API tests set
+`APP_ENV=test` explicitly in Compose and use isolated Redis database 14; acceptance
+runs use a restored database and separate Redis database 13. Production deployment
+continues to use `bin/deploy-prod.sh`; these tools do not deploy the application.

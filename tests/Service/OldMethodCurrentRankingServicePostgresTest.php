@@ -15,7 +15,6 @@ final class OldMethodCurrentRankingServicePostgresTest extends TestCase
         $connection = $this->createStub(Connection::class);
         $service = new OldMethodCurrentRankingServicePostgres($connection);
         $method = new \ReflectionMethod($service, 'rebuildSnapshot');
-        $method->setAccessible(true);
 
         $snapshot = $method->invoke($service, [
             1 => [
@@ -38,12 +37,38 @@ final class OldMethodCurrentRankingServicePostgresTest extends TestCase
         self::assertSame(90.0, $snapshot['waiting'][2]['rank']);
     }
 
+    public function testWholeTournamentCapStopsAndKeepsInclusiveWindow(): void
+    {
+        $service = new OldMethodCurrentRankingServicePostgres($this->createStub(Connection::class));
+        $m = new \ReflectionMethod($service, 'rebuildSnapshot');
+        $r = $m->invoke($service, [1 => [
+            ['tournamentId' => 9000, 'dateInt' => 20240101, 'games' => 1, 'achievedRank' => 100.0],
+            ['tournamentId' => 9001, 'dateInt' => 20250101, 'games' => 12, 'achievedRank' => 200.0],
+            ['tournamentId' => 9002, 'dateInt' => 20260101, 'games' => 199, 'achievedRank' => 150.0],
+        ]], 20260101, 9002);
+        self::assertSame(199, $r['main'][1]['games']);
+        self::assertSame(150.0, $r['main'][1]['rank']);
+        $r = $m->invoke($service, [1 => [
+            ['tournamentId' => 9003, 'dateInt' => 20240101, 'games' => 1, 'achievedRank' => 100.0],
+            ['tournamentId' => 9002, 'dateInt' => 20260101, 'games' => 199, 'achievedRank' => 150.0],
+        ]], 20260101, 9002);
+        self::assertSame(200, $r['main'][1]['games']);
+        self::assertEqualsWithDelta(149.75, $r['main'][1]['rank'], 0.0001);
+    }
+
+    public function testNoDivisionByZeroForOversizedTournament(): void
+    {
+        $service = new OldMethodCurrentRankingServicePostgres($this->createStub(Connection::class));
+        $m = new \ReflectionMethod($service, 'rebuildSnapshot');
+        $r = $m->invoke($service, [1 => [['tournamentId' => 9002, 'dateInt' => 20260101, 'games' => 201, 'achievedRank' => 150.0]]], 20260101, 9002);
+        self::assertSame(['main' => [], 'waiting' => []], $r);
+    }
+
     public function testRebuildSnapshotReturnsEmptySetsForInvalidDate(): void
     {
         $connection = $this->createStub(Connection::class);
         $service = new OldMethodCurrentRankingServicePostgres($connection);
         $method = new \ReflectionMethod($service, 'rebuildSnapshot');
-        $method->setAccessible(true);
 
         self::assertSame(['main' => [], 'waiting' => []], $method->invoke($service, [], 0, 9367));
     }

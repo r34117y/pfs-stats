@@ -6,7 +6,7 @@ final readonly class PfsNameNormalizer
 {
     public function normalizeForMatch(string $value): string
     {
-        $value = strtolower(strtr($value, [
+        $value = strtolower(strtr(mb_strtolower($value, 'UTF-8'), [
             'Ą' => 'ą',
             'Ć' => 'ć',
             'Ę' => 'ę',

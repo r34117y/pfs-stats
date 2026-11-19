@@ -25,12 +25,14 @@ final class BackfillOldMethodRankingSnapshotsCommand extends Command
         private readonly OldMethodCurrentRankingServiceInterface $oldMethodCurrentRankingService,
         #[Autowire(service: 'doctrine.dbal.default_connection')]
         private readonly Connection $connection,
+        private readonly ?\App\Service\DatasetVersionService $datasetVersion = null,
     ) {
         parent::__construct();
     }
 
     protected function configure(): void
     {
+        $this->addOption('changed-only', null, InputOption::VALUE_NONE, 'Repair only snapshots whose semantic rows differ; retain unchanged historical rows.');
         $this->addOption('dry-run', null, InputOption::VALUE_NONE, 'Calculate and write rows, then roll the transaction back.');
     }
 
@@ -38,6 +40,8 @@ final class BackfillOldMethodRankingSnapshotsCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $dryRun = (bool) $input->getOption('dry-run');
+        $changedOnly = (bool) $input->getOption('changed-only');
+        $changedSnapshots = 0;
 
         $snapshotCount = 0;
         $insertedRows = [
@@ -52,6 +56,10 @@ final class BackfillOldMethodRankingSnapshotsCommand extends Command
         $this->connection->beginTransaction();
 
         try {
+            if (($this->connection->getParams()['driver'] ?? '') === 'pdo_pgsql') {
+                $org = (int) $this->connection->fetchOne("SELECT id FROM organization WHERE lower(code)='pfs'");
+                $this->connection->executeStatement('SELECT pg_advisory_xact_lock(73673, ?)', [$org]);
+            }
             foreach ($this->oldMethodCurrentRankingService->calculateRankingSnapshots() as $snapshot) {
                 $snapshotCount++;
                 $organizationId ??= (int) $snapshot['organizationId'];
@@ -59,10 +67,24 @@ final class BackfillOldMethodRankingSnapshotsCommand extends Command
                 $firstTournamentId ??= $tournamentId;
                 $lastTournamentId = $tournamentId;
 
-                if ($snapshotCount === 1) {
+                if (!$changedOnly && $snapshotCount === 1) {
                     $deletedRows = $this->deleteExistingRows($organizationId);
                 }
 
+                if ($changedOnly) {
+                    $wanted = [];
+                    foreach (['rows' => 'n', 'waitingRows' => 'u'] as $list => $type) {
+                        foreach ($snapshot[$list] ?? [] as $row) { $wanted[] = [$type, (int) $row['playerId'], (int) $row['position'], round((float) $row['rankExact'], 2), (int) $row['games']]; }
+                    }
+                    $actual = [];
+                    foreach ($this->connection->fetchAllAssociative("SELECT rtype,player_id,position,rank,games FROM ranking WHERE organization_id=? AND tournament_id=? AND rtype IN ('n','u')", [$organizationId, $tournamentId]) as $row) {
+                        $actual[] = [$row['rtype'], (int) $row['player_id'], (int) $row['position'], round((float) $row['rank'], 2), (int) $row['games']];
+                    }
+                    sort($wanted); sort($actual);
+                    if ($wanted === $actual) { continue; }
+                    $deletedRows += $this->connection->executeStatement("DELETE FROM ranking WHERE organization_id=? AND tournament_id=? AND rtype IN ('n','u')", [$organizationId, $tournamentId]);
+                }
+                $changedSnapshots++;
                 foreach ([
                     RankingType::NORMAL => $snapshot['rows'],
                     RankingType::NORMAL_WAITING => $snapshot['waitingRows'] ?? [],
@@ -104,6 +126,7 @@ final class BackfillOldMethodRankingSnapshotsCommand extends Command
                 $io->warning('Dry-run mode enabled: transaction rolled back.');
             } else {
                 $this->connection->commit();
+                if ($changedSnapshots > 0) { $this->datasetVersion?->bumpVersion(); }
             }
         } catch (\Throwable $exception) {
             if ($this->connection->isTransactionActive()) {
@@ -122,6 +145,7 @@ final class BackfillOldMethodRankingSnapshotsCommand extends Command
                 ['Ranking type', RankingType::NORMAL],
                 ['Waiting ranking type', RankingType::NORMAL_WAITING],
                 ['Snapshots', (string) $snapshotCount],
+                ['Changed snapshots', (string) $changedSnapshots],
                 ['Inserted ranking rows', (string) $insertedRows[RankingType::NORMAL]],
                 ['Inserted waiting rows', (string) $insertedRows[RankingType::NORMAL_WAITING]],
                 ['Deleted previous rows', (string) $deletedRows],

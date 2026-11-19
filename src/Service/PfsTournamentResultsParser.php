@@ -12,6 +12,39 @@ use App\PfsTournamentImport\ParsedTournamentStandingRow;
 
 final readonly class PfsTournamentResultsParser
 {
+    public function diagnose(string $html): \App\PfsTournamentImport\PfsTournamentParseDiagnostics
+    {
+        $sections = [];
+        foreach (['p_klasyfikacja', 'p_hh', 'p_rundy', 'p_ranking'] as $section) {
+            $text = null;
+            foreach ($section === 'p_ranking' ? ['p_ranking', 'ranking'] : [$section] as $container) {
+                if (preg_match("~<div id=['\"]" . preg_quote($container, '~') . "['\"][^>]*>\\s*<pre>(.*?)</pre>~su", $html, $raw)) { $text = $raw[1]; break; }
+            }
+            if ($text === null) { throw new \RuntimeException('Missing source section: ' . $section); }
+            foreach (preg_split('/\R/u', $text) as $i => $line) {
+                $t = trim(str_replace(["\u{FEFF}", "\u{00A0}"], ['', ' '], html_entity_decode($line, ENT_QUOTES | ENT_HTML5, 'UTF-8')));
+                $kind = 'unknown';
+                if ($t === '' || preg_match('/^[-\s]+$/u', $t)) {
+                    $kind = 'separator';
+                } elseif (preg_match('/^(?:Wyniki|Lp\.|Runda(?: nr)?\b|Stół\b|Lista rankingowa|Ranking\b|Poczekalnia\b|.*-\s+POCZEKALNIA)/u', $t)) {
+                    $kind = 'header';
+                } elseif ($section === 'p_hh' && ($this->isPlayerHeader($t) || preg_match('/^\d+\s*\/\s*\d+\s+[\d.]+$/u', $t))) {
+                    $kind = 'data';
+                } elseif ($section === 'p_hh') {
+                    try { $this->parseGameRow($t); $kind = 'data'; } catch (\RuntimeException) {}
+                } elseif ($section === 'p_rundy' && preg_match('/^\d+\s+.+?\s+-\s+(?:.+?\s+\d+:\s*\d+|PAUZA|BYE(?:\s+BYE)?)(?:\s+\d+:\s*\d+)?$/u', $t)) {
+                    $kind = 'data';
+                } elseif ($section === 'p_klasyfikacja' && preg_match('/^\d+\s+.+?\s+\d+\.\d{2}\s+\d+\.\d\s+\d+\s+\d+\s+-?\d+$/u', $t)) {
+                    $kind = 'data';
+                } elseif ($section === 'p_ranking' && preg_match('/^\d+\.?\s+.+?\s+\d+\.\d{2}\s+-?\d+\s+\d+$/u', $t)) {
+                    $kind = 'data';
+                }
+                $sections[$section][] = ['line' => $i + 1, 'text' => $line, 'kind' => $kind];
+            }
+        }
+        return new \App\PfsTournamentImport\PfsTournamentParseDiagnostics($sections);
+    }
+
     public function parse(string $html): ParsedTournamentResults
     {
         $details = $this->parseDetails($html);
@@ -384,7 +417,7 @@ final readonly class PfsTournamentResultsParser
      */
     private function resolveRankingIdentity(string $identityPart): array
     {
-        $chunks = preg_split('/\s+/u', trim($identityPart)) ?: [];
+        $chunks = preg_split('/\s{2,}/u', trim($identityPart)) ?: [];
         $chunks = array_values(array_filter($chunks, static fn (string $chunk): bool => $chunk !== ''));
 
         if (count($chunks) >= 3) {
@@ -623,7 +656,7 @@ final readonly class PfsTournamentResultsParser
         }
 
         if (!preg_match(
-            '/^(\d+)\s+(\d+)\s+(.+?)\s+(\d+\.\d{2})\s+([+\-=])\s+(\d+):\s*(\d+)\s+(\d+)$/u',
+            '/^(\d+)\s+(\d+)\s+(.+?)\s+(\d+\.\d{2})\s+([+\-=])\s+(\d+):\s*(\d+)\s+(\d+|-)$/u',
             $line,
             $match
         )) {
@@ -638,7 +671,7 @@ final readonly class PfsTournamentResultsParser
             result: $match[5],
             pointsFor: (int) $match[6],
             pointsAgainst: (int) $match[7],
-            scalp: (int) $match[8],
+            scalp: $match[8] === '-' ? null : (int) $match[8],
             isBye: false,
         );
     }

@@ -25,6 +25,7 @@ final class RefreshCacheAfterImportCommand extends Command
     protected function configure(): void
     {
         $this
+            ->addOption('reuse-version', null, InputOption::VALUE_NONE, 'Warm the current published dataset without bumping or restoring a stale version.')
             ->addOption('dataset-version', null, InputOption::VALUE_REQUIRED, 'Explicit dataset version value to set.')
             ->addOption('clear-cache-app', null, InputOption::VALUE_NONE, 'Clear cache.app pool before bumping version.')
             ->addOption('warmup', null, InputOption::VALUE_NONE, 'Warm selected public API endpoints after version bump.')
@@ -45,7 +46,8 @@ final class RefreshCacheAfterImportCommand extends Command
             reporter: static function (string $message) use (&$messages): void {
                 $messages[] = $message;
             },
-            orgId: $orgId
+            orgId: $orgId,
+            reuseVersion: (bool) $input->getOption('reuse-version'),
         );
 
         foreach ($messages as $message) {

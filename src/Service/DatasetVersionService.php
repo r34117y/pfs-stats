@@ -38,11 +38,13 @@ final class DatasetVersionService
     {
         $newVersion = $version !== null && trim($version) !== ''
             ? trim($version)
-            : 'v' . (new DateTimeImmutable('now', new DateTimeZone('UTC')))->format('YmdHisv');
+            : 'v' . (new DateTimeImmutable('now', new DateTimeZone('UTC')))->format('YmdHisv') . '-' . bin2hex(random_bytes(6));
 
         $item = $this->cachePool->getItem(self::CACHE_KEY);
         $item->set($newVersion);
-        $this->cachePool->save($item);
+        if (!$this->cachePool->save($item)) {
+            throw new \RuntimeException('Could not publish dataset version to cache.');
+        }
 
         return $newVersion;
     }
