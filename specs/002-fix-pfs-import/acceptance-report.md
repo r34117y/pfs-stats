@@ -75,3 +75,7 @@ Pliki robocze znajdują się w ignorowanym `var/pfs-import/`:
 - `test-results.txt`, `test-results.md`, `performance-before.json`, `performance-after.json`.
 
 Baza użytkownika została uzupełniona. Próby akceptacyjne i zastosowanie lokalne są zakończone. Nie wykonano wdrożenia na zewnętrzny serwer.
+
+## Aktualizacja po wdrożeniu produkcyjnym
+
+Podczas serwerowego preflight potwierdzono dodatkowe warianty Jacek Jendrulok → Jacek Jędrulok i Iwona Skubis → Iwona Skubis-Galus na podstawie tych samych występów i wyników. Dwa wcześniejsze lokalne profile wyłącznie rankingowe połączono z właściwymi osobami w bazie aplikacji i obu kopiach. Ponowiono pełną weryfikację 19 importów i porównanie kopii: zero różnic. Szczegóły oraz wynik zastosowania na serwerze są w [raporcie wdrożenia](production-deployment-report.md).
