@@ -123,7 +123,7 @@ try {
         $idsByYear[$year] = $mode === 'apply' ? $service->apply($p) : array_map(static fn(array $v): int => $v['id'], $p['phases']);
         $allIds = array_merge($allIds, array_values($idsByYear[$year]));
     }
-    $changed = count(array_filter($plans, static fn(array $p): bool => !$p['alreadySplit']));
+    $changed = count(array_filter($plans, static fn(array $p): bool => !$p['alreadySplit'] || $p['officialRankingsDiffer']));
     if ($mode === 'apply' && $changed > 0) {
         $command = new App\Command\BackfillOldMethodRankingSnapshotsCommand(new OldMethodCurrentRankingServicePostgres($c), $c);
         if ($command->run(new ArrayInput(['--changed-only' => true]), new ConsoleOutput()) !== 0) {

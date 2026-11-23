@@ -70,8 +70,15 @@ final class PfsChampionshipPhaseSplitTest extends PfsImportDatabaseTestCase
         self::assertSame(2, (int) $this->db->fetchOne("SELECT COUNT(*) FROM ranking WHERE rtype='f' AND tournament_id IN (?,?)", array_values($ids)));
         $second = $service->plan(21, $this->source(false), $this->source(true));
         self::assertTrue($second['alreadySplit']);
+        self::assertFalse($second['officialRankingsDiffer']);
         self::assertSame($ids, $service->apply($second));
         self::assertSame(1, (int) $this->db->fetchOne('SELECT COUNT(*) FROM text_resource WHERE resource_type=9002'));
+        $this->db->executeStatement("UPDATE ranking SET rank=149.99 WHERE tournament_id=? AND rtype='f'", [$ids['eliminations']]);
+        $repair = $service->plan(21, $this->source(false), $this->source(true));
+        self::assertTrue($repair['officialRankingsDiffer']);
+        $service->apply($repair);
+        self::assertSame(150.0, (float) $this->db->fetchOne("SELECT rank FROM ranking WHERE tournament_id=? AND rtype='f'", [$ids['eliminations']]));
+        self::assertSame($before, $this->db->fetchAllAssociative('SELECT id,gcg FROM tournament_game ORDER BY id'));
         $this->db->rollBack();
         self::assertSame(30, (int) $this->db->fetchOne('SELECT rounds FROM tournament WHERE id=500'));
         self::assertSame(0, (int) $this->db->fetchOne('SELECT COUNT(*) FROM tournament WHERE urlid=1298'));

@@ -142,8 +142,22 @@ final readonly class PfsChampionshipPhaseSplitService
         if (array_values(array_unique($resultPlayers)) !== $sourcePlayers) {
             throw new \RuntimeException('Legacy and PFS participant sets differ.');
         }
+        $officialRankingsDiffer = false;
+        foreach ($phases as &$phase) {
+            $expected = array_map(static fn(array $r): array => array_values($r), $phase['ranking']);
+            $actual = [];
+            if ($phase['id'] !== null) {
+                foreach ($c->fetchAllAssociative("SELECT rtype,player_id,position,rank,games FROM ranking WHERE organization_id=? AND tournament_id=? AND rtype IN ('f','w')", [$org, $phase['id']]) as $r) {
+                    $actual[] = [$r['rtype'], (int) $r['player_id'], (int) $r['position'], round((float) $r['rank'], 2), (int) $r['games']];
+                }
+            }
+            sort($expected); sort($actual);
+            $phase['officialRankingMatches'] = $expected === $actual;
+            $officialRankingsDiffer = $officialRankingsDiffer || !$phase['officialRankingMatches'];
+        }
+        unset($phase);
         return ['organizationId' => $org, 'alreadySplit' => $alreadySplit, 'original' => $original, 'phases' => $phases,
-            'preservedGameIds' => array_map('intval', array_column($existingGames, 'id'))];
+            'officialRankingsDiffer' => $officialRankingsDiffer, 'preservedGameIds' => array_map('intval', array_column($existingGames, 'id'))];
     }
 
     /** Caller must hold the organization advisory lock and own the outer transaction. */
@@ -154,6 +168,11 @@ final readonly class PfsChampionshipPhaseSplitService
             throw new \LogicException('Phase splitting requires a transaction.');
         }
         if ($plan['alreadySplit']) {
+            foreach ($plan['phases'] as $phase) {
+                if (!$phase['officialRankingMatches']) {
+                    $this->replaceOfficialRankings($plan['organizationId'], $phase['id'], $phase['ranking']);
+                }
+            }
             return ['final' => $plan['phases']['final']['id'], 'eliminations' => $plan['phases']['eliminations']['id']];
         }
         $org = $plan['organizationId'];
@@ -191,16 +210,21 @@ final readonly class PfsChampionshipPhaseSplitService
             }
         }
         foreach ($plan['phases'] as $role => $phase) {
-            $c->executeStatement("DELETE FROM ranking WHERE organization_id=? AND tournament_id=? AND rtype IN ('f','w')", [$org, $ids[$role]]);
-            foreach ($phase['ranking'] as $r) {
-                $c->insert('ranking', ['organization_id' => $org, 'tournament_id' => $ids[$role]] + $r);
-            }
+            $this->replaceOfficialRankings($org, $ids[$role], $phase['ranking']);
         }
         $c->insert('text_resource', ['organization_id' => $org, 'resource_type' => self::AUDIT_RESOURCE_TYPE, 'legacy_id' => $ids['final'],
             'data' => json_encode(['operation' => 'split-mp-phases', 'originalTournament' => $plan['original'], 'phaseIds' => $ids,
                 'sources' => array_map(static fn(array $p): array => ['url' => $p['sourceUrl'], 'sha256' => $p['sourceSha256']], $plan['phases']),
                 'preservedGameIds' => $plan['preservedGameIds'], 'repairedAt' => gmdate('c')], JSON_THROW_ON_ERROR)]);
         return $ids;
+    }
+
+    private function replaceOfficialRankings(int $org, int $id, array $rows): void
+    {
+        $this->connection->executeStatement("DELETE FROM ranking WHERE organization_id=? AND tournament_id=? AND rtype IN ('f','w')", [$org, $id]);
+        foreach ($rows as $r) {
+            $this->connection->insert('ranking', ['organization_id' => $org, 'tournament_id' => $id] + $r);
+        }
     }
 
     private static function gameKey(array $g): string
