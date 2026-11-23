@@ -8,7 +8,7 @@ use Doctrine\DBAL\Connection;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 final readonly class OldMethodCurrentRankingServicePostgres implements OldMethodCurrentRankingServiceInterface {
-    private const int WINDOW_YEARS = 2;
+    private const int WINDOW_DAYS = 730;
     private const int MIN_GAMES_FOR_LIST = 30;
     private const int MAX_GAMES_INCLUDED = 200;
     private const int MIN_TOURNAMENT_RANK = 100;
@@ -74,7 +74,7 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
             'referenceTournamentName' => $referenceTournament['name'] ?? '',
             'referenceDate' => $referenceDate !== false ? $referenceDate->format('Y-m-d') : '',
             'windowStartDate' => $referenceDate !== false
-                ? $referenceDate->modify(sprintf('-%d years', self::WINDOW_YEARS))->format('Y-m-d')
+                ? $referenceDate->modify(sprintf('-%d days', self::WINDOW_DAYS))->format('Y-m-d')
                 : '',
             'rows' => $this->loadStoredOldMethodRankingRows($organizationId, $referenceTournamentId),
         ];
@@ -181,7 +181,7 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
                 'referenceTournamentId' => $tournamentId,
                 'referenceTournamentName' => (string) $tournament['name'],
                 'referenceDate' => $referenceDate->format('Y-m-d'),
-                'windowStartDate' => $referenceDate->modify(sprintf('-%d years', self::WINDOW_YEARS))->format('Y-m-d'),
+                'windowStartDate' => $referenceDate->modify(sprintf('-%d days', self::WINDOW_DAYS))->format('Y-m-d'),
                 'rows' => $this->buildRankingRows($snapshotByPlayer, $playerNames),
                 'waitingRows' => $this->buildRankingRows($snapshot['waiting'], $playerNames),
             ];
@@ -576,7 +576,7 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
             foreach ($this->connection->fetchAllAssociative('SELECT DISTINCT tournament_id,player_id FROM tournament_result WHERE organization_id=:org AND tournament_id IN (:ids) AND player_id IS NOT NULL', $params, $types) as $r) {
                 $participants[(int) $r['tournament_id']][] = (int) $r['player_id'];
             }
-            $rows = $this->connection->fetchAllAssociative('SELECT DISTINCT ON (tournament_id,round_no,table_no,LEAST(player1_id,player2_id),GREATEST(player1_id,player2_id)) tournament_id,player1_id AS player1,player2_id AS player2,result1,result2 FROM tournament_game WHERE organization_id=:org AND tournament_id IN (:ids) AND player1_id IS NOT NULL AND player2_id IS NOT NULL AND ((result1>0 AND result2>0) OR ranko IS NOT NULL) ORDER BY tournament_id,round_no,table_no,LEAST(player1_id,player2_id),GREATEST(player1_id,player2_id),player1_id', $params, $types);
+            $rows = $this->connection->fetchAllAssociative('SELECT DISTINCT ON (tournament_id,round_no,table_no,LEAST(player1_id,player2_id),GREATEST(player1_id,player2_id)) tournament_id,player1_id AS player1,player2_id AS player2,result1,result2 FROM tournament_game WHERE organization_id=:org AND tournament_id IN (:ids) AND player1_id IS NOT NULL AND player2_id IS NOT NULL AND ((result1>0 AND result2>0) OR ranko IS NOT NULL) AND NOT ((result1=400 AND result2=0) OR (result1=0 AND result2=400)) ORDER BY tournament_id,round_no,table_no,LEAST(player1_id,player2_id),GREATEST(player1_id,player2_id),player1_id', $params, $types);
             foreach ($rows as $r) {
                 $tid = (int) $r['tournament_id']; unset($r['tournament_id']);
                 $games[$tid][] = array_map('intval', $r);
@@ -628,6 +628,7 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
                   AND h.tournament_id = :tournamentId
                   AND h.player1_id IS NOT NULL
                   AND h.player2_id IS NOT NULL
+                  AND NOT ((h.result1=400 AND h.result2=0) OR (h.result1=0 AND h.result2=400))
             )
             SELECT
                 player1,
@@ -792,7 +793,7 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
             return ['main' => [], 'waiting' => []];
         }
 
-        $windowStartInt = (int) $currentDate->modify(sprintf('-%d years', self::WINDOW_YEARS))->format('Ymd');
+        $windowStartInt = (int) $currentDate->modify(sprintf('-%d days', self::WINDOW_DAYS))->format('Ymd');
 
         $mainSnapshot = [];
         $waitingSnapshot = [];

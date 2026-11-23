@@ -21,6 +21,13 @@ round up), with a minimum of 100 for every participant, including waiting-list
 and returning players. Ranking-list averages remain unrounded during calculation
 and sorting; stored snapshots retain two decimal places.
 
+Old-method lists use an inclusive cutoff exactly 730 days before the reference
+tournament date, rather than subtracting two calendar years. Non-ranking 400:0
+and 0:400 forfeits never contribute games or scalps, even when legacy `ranko` is
+populated. Actual game records are retained. Other scores with a zero are not
+automatically treated as forfeits. Returning players' temporary starting ranks
+can still use earlier career results outside the 730-day list window.
+
 There are 4 types of PFS ranking types:
 - f - the main new ranking (also all the rankings from before the rules changed)
 - w - the new ranking waiting list

@@ -48,6 +48,11 @@ final readonly class OldRankingReferenceCalculator
         $rows = $this->connection->fetchAllAssociative('SELECT g.tournament_id,g.round_no,g.table_no,g.player1_id,g.player2_id,g.result1,g.result2 FROM tournament_game g JOIN tournament t ON t.id=g.tournament_id WHERE g.organization_id=? AND g.player1_id IS NOT NULL AND g.player2_id IS NOT NULL AND ((g.result1>0 AND g.result2>0) OR g.ranko IS NOT NULL) AND (t.dt,t.id)>=(?,?) AND (t.dt,t.id)<=(?,?) ORDER BY t.dt,t.id,g.round_no,g.table_no,g.id', [$org, $split['dt'], $split['id'], $end['dt'], $end['id']]);
         $seen = [];
         foreach ($rows as $g) {
+            // Independently exclude legacy non-ranking forfeits even when ranko was populated.
+            if (((int) $g['result1'] === 400 && (int) $g['result2'] === 0)
+                || ((int) $g['result1'] === 0 && (int) $g['result2'] === 400)) {
+                continue;
+            }
             $a = (int) $g['player1_id'];
             $b = (int) $g['player2_id'];
             $key = implode(':', [$g['tournament_id'], $g['round_no'], $g['table_no'], min($a, $b), max($a, $b)]);
@@ -135,7 +140,7 @@ final readonly class OldRankingReferenceCalculator
     }
     public static function lists(array $history, int $date): array
     {
-        $from = (int) \DateTimeImmutable::createFromFormat('!Ymd', (string) $date)->modify('-2 years')->format('Ymd');
+        $from = (int) \DateTimeImmutable::createFromFormat('!Ymd', (string) $date)->sub(new \DateInterval('P730D'))->format('Ymd');
         $lists = ['rows' => [], 'waitingRows' => []];
         foreach ($history as $player => $records) {
             $games = 0;

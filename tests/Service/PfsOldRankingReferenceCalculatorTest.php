@@ -20,10 +20,22 @@ final class PfsOldRankingReferenceCalculatorTest extends TestCase
 
     public function testIndependentWeightedWindowAndThresholds(): void
     {
-        $r = Ref::lists([1 => [['date' => 20240101, 'games' => 20, 'scalps' => 2400], ['date' => 20260101, 'games' => 10, 'scalps' => 1800]], 2 => [['date' => 20260101, 'games' => 29, 'scalps' => 2900]]], 20260101);
+        $r = Ref::lists([1 => [['date' => 20240102, 'games' => 20, 'scalps' => 2400], ['date' => 20260101, 'games' => 10, 'scalps' => 1800]], 2 => [['date' => 20260101, 'games' => 29, 'scalps' => 2900]]], 20260101);
         self::assertSame(140.0, $r['rows'][0]['rankExact']);
         self::assertSame(30, $r['rows'][0]['games']);
         self::assertSame(29, $r['waitingRows'][0]['games']);
+    }
+
+    public function testFixed730DayWindowCanMovePlayerToWaitingList(): void
+    {
+        $r = Ref::lists([1 => [
+            ['date' => 20230101, 'games' => 20, 'scalps' => 2400],
+            ['date' => 20230102, 'games' => 19, 'scalps' => 2280],
+            ['date' => 20250101, 'games' => 10, 'scalps' => 1800],
+        ]], 20250101);
+        self::assertSame([], $r['rows']);
+        self::assertSame(29, $r['waitingRows'][0]['games']);
+        self::assertEqualsWithDelta(4080 / 29, $r['waitingRows'][0]['rankExact'], 1e-10);
     }
     public function testCareerFallbackAndScalpRules(): void
     {

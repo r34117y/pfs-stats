@@ -91,18 +91,39 @@ final class OldMethodCurrentRankingServicePostgresTest extends TestCase
         $service = new OldMethodCurrentRankingServicePostgres($this->createStub(Connection::class));
         $m = new \ReflectionMethod($service, 'rebuildSnapshot');
         $r = $m->invoke($service, [1 => [
-            ['tournamentId' => 9000, 'dateInt' => 20240101, 'games' => 1, 'achievedRank' => 100.0],
+            ['tournamentId' => 9000, 'dateInt' => 20240102, 'games' => 1, 'achievedRank' => 100.0],
             ['tournamentId' => 9001, 'dateInt' => 20250101, 'games' => 12, 'achievedRank' => 200.0],
             ['tournamentId' => 9002, 'dateInt' => 20260101, 'games' => 199, 'achievedRank' => 150.0],
         ]], 20260101, 9002);
         self::assertSame(199, $r['main'][1]['games']);
         self::assertSame(150.0, $r['main'][1]['rank']);
         $r = $m->invoke($service, [1 => [
-            ['tournamentId' => 9003, 'dateInt' => 20240101, 'games' => 1, 'achievedRank' => 100.0],
+            ['tournamentId' => 9003, 'dateInt' => 20240102, 'games' => 1, 'achievedRank' => 100.0],
             ['tournamentId' => 9002, 'dateInt' => 20260101, 'games' => 199, 'achievedRank' => 150.0],
         ]], 20260101, 9002);
         self::assertSame(200, $r['main'][1]['games']);
         self::assertEqualsWithDelta(149.75, $r['main'][1]['rank'], 0.0001);
+    }
+
+    #[DataProvider('fixedWindowDates')]
+    public function testWindowIncludesDay730ButExcludesDay731(int $date, int $cutoff, int $expired): void
+    {
+        $service = new OldMethodCurrentRankingServicePostgres($this->createStub(Connection::class));
+        $snapshot = (new \ReflectionMethod($service, 'rebuildSnapshot'))->invoke($service, [1 => [
+            ['tournamentId' => 1, 'dateInt' => $expired, 'games' => 15, 'achievedRank' => 200.0],
+            ['tournamentId' => 2, 'dateInt' => $cutoff, 'games' => 20, 'achievedRank' => 120.0],
+            ['tournamentId' => 3, 'dateInt' => $date, 'games' => 10, 'achievedRank' => 180.0],
+        ]], $date, 3);
+
+        self::assertSame(30, $snapshot['main'][1]['games']);
+        self::assertSame(140.0, $snapshot['main'][1]['rank']);
+    }
+
+    public static function fixedWindowDates(): iterable
+    {
+        yield 'window spans leap day' => [20250101, 20230102, 20230101];
+        yield 'reference is leap day' => [20240229, 20220301, 20220228];
+        yield 'day after leap day' => [20240301, 20220302, 20220301];
     }
 
     public function testNoDivisionByZeroForOversizedTournament(): void
