@@ -143,6 +143,21 @@ PFS source can map to multiple historical local events. After necessary repairs,
 n/u snapshots and leaves equal historical rows untouched. Regenerate preflight
 before further verification after this intentional history correction.
 
+For MP championships at or after the old-method split (May 2023), eliminations
+and finals must be separate PFS events. Run
+`php -d memory_limit=1G bin/split-pfs-championship-phases.php --mode=plan`, then
+`--mode=apply --dry-run`, and finally `--mode=apply` after taking a database backup.
+The tool discovers combined MP records from that boundary, validates the official
+PFS calendar and both result pages, preserves final tournament IDs and every
+existing game ID/GCG/photo, and renumbers final games from 16–30 to 1–15.
+It restores separate classifications and official f/w lists, adds omitted bye
+records, and rebuilds n/u in the same transaction. Unrelated data and annotations
+are fingerprinted; all repaired phases are compared with PFS and every old-method
+snapshot with an independent calculator before commit. Older championships are
+excluded. The source hashes, original metadata, repair audit and reports are kept.
+Use `--mode=verify` to repeat validation without changes. Reapplying is a no-op;
+cache version publication runs only after a committed repair.
+
 Use an isolated PostgreSQL database ending in `_test` via
 `PFS_IMPORT_TEST_DATABASE_URL` for writing integration tests. For API tests set
 `APP_ENV=test` explicitly in Compose and use isolated Redis database 14; acceptance

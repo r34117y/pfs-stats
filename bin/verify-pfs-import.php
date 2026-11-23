@@ -167,7 +167,7 @@ try {
                     $baseName = trim(preg_replace('/\s*[—–-]\s*faza eliminacyjna/u', '', $e->name));
                     $combined = $c->fetchAssociative('SELECT id,dt,rounds,players_count FROM tournament WHERE organization_id=? AND fullname=? AND dt BETWEEN ? AND ? AND rounds>=30', [$org, $baseName, $dt, (int) $e->endDate->modify('+10 days')->format('Ymd')]);
                     if ($combined) {
-                        $historicalGroups[] = ['pfsId' => $e->urlId, 'localIds' => [(int) $combined['id']], 'reason' => 'Legacy MP combines elimination rounds 1-15 and final rounds 16-30; do not import eliminations twice', 'evidence' => $combined, 'calendar' => $f];
+                        $missing[] = ['pfsId' => $e->urlId, 'localIds' => [(int) $combined['id']], 'reason' => 'Legacy MP combines eliminations and finals; run bin/split-pfs-championship-phases.php before importing history', 'evidence' => $combined, 'calendar' => $f];
                         continue;
                     }
                 }
