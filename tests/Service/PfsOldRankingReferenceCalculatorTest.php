@@ -7,6 +7,17 @@ use App\Service\PfsImportVerification\OldRankingReferenceCalculator as Ref;
 use PHPUnit\Framework\TestCase;
 final class PfsOldRankingReferenceCalculatorTest extends TestCase
 {
+    public function testStartingRanksAreRoundedAndFlooredForEveryPlayerCategory(): void
+    {
+        self::assertSame(100.0, Ref::beforeEvent(85.54, []));
+        self::assertSame(149.0, Ref::beforeEvent(149.49, []));
+        self::assertSame(150.0, Ref::beforeEvent(149.5, []));
+        self::assertSame(100.0, Ref::beforeEvent(null, [['games' => 32, 'scalps' => 2720]]));
+        self::assertSame(150.0, Ref::beforeEvent(null, [['games' => 32, 'scalps' => 4784]]));
+        self::assertSame(100.0, Ref::beforeEvent(null, [['games' => 10, 'scalps' => 850]]));
+        self::assertSame(111.0, Ref::beforeEvent(null, [['games' => 10, 'scalps' => 1315]]));
+    }
+
     public function testIndependentWeightedWindowAndThresholds(): void
     {
         $r = Ref::lists([1 => [['date' => 20240101, 'games' => 20, 'scalps' => 2400], ['date' => 20260101, 'games' => 10, 'scalps' => 1800]], 2 => [['date' => 20260101, 'games' => 29, 'scalps' => 2900]]], 20260101);

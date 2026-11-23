@@ -668,25 +668,20 @@ final readonly class OldMethodCurrentRankingServicePostgres implements OldMethod
     ): float {
         if (isset($snapshotByPlayer[$playerId])) {
             $rank = $snapshotByPlayer[$playerId]['rank'];
+        } else {
+            $career = $careerStatsByPlayer[$playerId] ?? ['games' => 0, 'scalps' => 0.0];
+            $careerGames = $career['games'];
 
-            return $rank < self::MIN_TOURNAMENT_RANK ? (float) self::MIN_TOURNAMENT_RANK : $rank;
+            if ($careerGames >= self::MIN_GAMES_FOR_LIST) {
+                $rank = $this->calculateFallbackRankFromRecentCareerResults($playerId, $historyByPlayer);
+            } else {
+                $missingGames = self::MIN_GAMES_FOR_LIST - $careerGames;
+                $rank = ($career['scalps'] + $missingGames * self::MIN_TOURNAMENT_RANK) / self::MIN_GAMES_FOR_LIST;
+            }
         }
 
-        $career = $careerStatsByPlayer[$playerId] ?? ['games' => 0, 'scalps' => 0.0];
-        $careerGames = $career['games'];
-
-        if ($careerGames >= self::MIN_GAMES_FOR_LIST) {
-            return $this->calculateFallbackRankFromRecentCareerResults($playerId, $historyByPlayer);
-        }
-
-        if ($careerGames > 0) {
-            $missingGames = self::MIN_GAMES_FOR_LIST - $careerGames;
-            $adjustedScalps = $career['scalps'] + ($missingGames * self::MIN_TOURNAMENT_RANK);
-
-            return $adjustedScalps / self::MIN_GAMES_FOR_LIST;
-        }
-
-        return (float) self::MIN_TOURNAMENT_RANK;
+        // Only the tournament starting rank is rounded; list averages stay exact for ordering.
+        return round(max((float) self::MIN_TOURNAMENT_RANK, $rank), 0, PHP_ROUND_HALF_UP);
     }
 
     /**

@@ -103,12 +103,12 @@ final readonly class OldRankingReferenceCalculator
     public static function beforeEvent(?float $rank, array $history): float
     {
         if ($rank !== null) {
-            return max(100.0, $rank);
+            return round(max(100.0, $rank), 0, PHP_ROUND_HALF_UP);
         }
         $games = array_sum(array_column($history, 'games'));
         $scalps = array_sum(array_column($history, 'scalps'));
         if ($games < 30) {
-            return ($scalps + (30 - $games) * 100) / 30;
+            return round(max(100.0, ($scalps + (30 - $games) * 100) / 30), 0, PHP_ROUND_HALF_UP);
         }
         $n = 0;
         $total = 0.0;
@@ -119,7 +119,7 @@ final readonly class OldRankingReferenceCalculator
                 break;
             }
         }
-        return $total / $n;
+        return round(max(100.0, $total / $n), 0, PHP_ROUND_HALF_UP);
     }
     public static function scalps(float $a, float $b, int $pa, int $pb): array
     {

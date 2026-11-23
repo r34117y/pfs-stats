@@ -16,6 +16,11 @@ The official ranking rules (in Polish) can be found in https://www.pfs.org.pl/ra
 
 This project maintains also the previous ranging (reffered as "Old ranking"), which had a bit differet rules. Instead of picking the best tournaments from the 2 years window, the last tournaments were picked (with the same rule that the total number of games can't exceed 200). The first tournament to apply the new ranking was "II Wielicki Turniej w Scrabble" - the ranking after this tournament is the first that differs from the old ranking.
 
+Old-method tournament starting ranks are rounded to the nearest integer (halves
+round up), with a minimum of 100 for every participant, including waiting-list
+and returning players. Ranking-list averages remain unrounded during calculation
+and sorting; stored snapshots retain two decimal places.
+
 There are 4 types of PFS ranking types:
 - f - the main new ranking (also all the rankings from before the rules changed)
 - w - the new ranking waiting list
