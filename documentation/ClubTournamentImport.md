@@ -61,7 +61,7 @@ The previous data for the corrected standings and starting-player fields is back
 
 Blubry imports fetch the post-tournament list from `https://scrabble.stats.org.pl/blubry/karank.php?t=YYYYMMDD0&r=f`. Ranking values, positions, player identities, page completeness, and the requested source date are validated before writing. Source HTML, URL, SHA-256, and resolved rows are retained.
 
-A source game count of zero means that the page does not supply the count. It does **not** invalidate the supplied ranking values and positions. Complete lists are stored in `ranking` as `rtype=f`, with audit type 9004. Lists with missing game counts are stored separately in `text_resource` type 9006, with JSON `games: null`. They are available for ranking comparisons and navigation; the API and browser show their unknown game counts as null / a dash, never an invented zero. When a complete list later becomes available, it takes precedence.
+A source game count of zero means that the page does not supply the count. It does **not** invalidate the supplied ranking values and positions. Complete lists are stored in `ranking` as `rtype=f`, with audit type 9004. Lists with missing game counts are stored separately in `text_resource` type 9006, with JSON `games: null`. They are available for ranking comparisons and navigation; the original unknown counts remain null in the source audit. For Blubry, the API and browser calculate game counts from imported HH game records using the rules below. When a complete list later becomes available, it takes precedence.
 
 Tournament results and either kind of ranking data are stored in one transaction. Unknown identities or conflicting existing values abort the transaction. If the source cannot be fetched at all, results may be saved with an explicit warning. New player profiles receive slugs so that the ranking API can display them.
 
@@ -82,4 +82,10 @@ The directory date for Klymenia remains 2026-05-25. The old source lists that ev
 
 The corpus has six lists with complete game counts (140 rows) and 32 lists with ranking values and unknown counts (726 rows). Sanidyn (17 November) compares to Amsonia (10 November): Jakub Błażejewski changes from 161.00 to 163.70, or +2.70; Adam Grzelec remains at 156.03, or zero change. Their previous September-based changes were misleading.
 
-`tests/Browser/club-ranking-comparison.cjs` verifies the actual home page, displayed changes, previous/next navigation to Amsonia, and unknown game-count rendering. Integration tests cover missing predecessors, unchanged consecutive snapshots, partial source data, and authoritative directory metadata in console and multipart imports.
+`tests/Browser/club-ranking-comparison.cjs` verifies the actual home page, displayed changes, previous/next navigation to Amsonia, calculated game counts, and absence of the removed messages. Integration tests cover missing predecessors, unchanged consecutive snapshots, partial source data, and authoritative directory metadata in console and multipart imports.
+
+### Blubry ranking game counts
+
+The displayed count uses the six calendar months ending on the selected tournament, including the boundary date (clamped to the last day of the month). Following the PFS selection rule, whole tournaments are ordered by achieved tournament ranking, highest first; the lowest-performing tournaments are discarded until the total is at most 60. No tournament is split or skipped to fill unused places. Ties use date and tournament ID, newest first. Later tournaments, including those later on the same date, are excluded.
+
+Count actual player-perspective HH games with an opponent and ranking contribution. Byes and non-ranking 400:0 / 0:400 forfeits do not count. Confirmed Blubry aliases are resolved for this calculation. The source ranking values, positions and audit records remain intact. Other organizations retain their existing counting rules.

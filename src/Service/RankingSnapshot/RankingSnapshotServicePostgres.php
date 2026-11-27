@@ -3,6 +3,7 @@
 namespace App\Service\RankingSnapshot;
 
 use App\Ranking\Domain\RankingType;
+use App\Service\BlubryRankingGameCountService;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -12,6 +13,7 @@ final readonly class RankingSnapshotServicePostgres implements RankingSnapshotSe
     public function __construct(
         #[Autowire(service: 'doctrine.dbal.default_connection')]
         private Connection $connection,
+        private ?BlubryRankingGameCountService $gameCountService = null,
     ) {
     }
 
@@ -65,13 +67,17 @@ final readonly class RankingSnapshotServicePostgres implements RankingSnapshotSe
             );
         }
 
+        $computedCounts = $rankingType === RankingType::FUCKED && $rows !== []
+            ? ($this->gameCountService ?? new BlubryRankingGameCountService($this->connection))->countAfterTournament($organizationId, $tournamentId, array_column($rows, 'player_id'))
+            : null;
+
         $ranking = [];
         foreach ($rows as $row) {
             $ranking[] = [
                 'playerId' => (int) $row['player_id'],
                 'position' => (int) $row['position'],
                 'rank' => (float) $row['rank'],
-                'games' => $row['games'] === null ? null : (int) $row['games'],
+                'games' => $computedCounts !== null ? $computedCounts[(int) $row['player_id']] : ($row['games'] === null ? null : (int) $row['games']),
                 'nameShow' => (string) $row['name_show'],
                 'nameAlph' => (string) $row['name_alph'],
                 'photo' => $row['photo'],
