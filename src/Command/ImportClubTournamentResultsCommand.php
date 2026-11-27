@@ -27,6 +27,7 @@ final class ImportClubTournamentResultsCommand extends Command
         private readonly ClubTournamentResultsParser        $parser,
         private readonly ClubTournamentResultsImportService $importService,
         private readonly ?DatasetVersionService $datasetVersion = null,
+        private readonly ?\App\Service\ClubTournamentMetadataResolver $metadataResolver = null,
     ) {
         parent::__construct();
     }
@@ -82,6 +83,8 @@ final class ImportClubTournamentResultsCommand extends Command
                 $standings = $this->fileDecoder->decode($standings);
             }
             $parsed = $this->parser->parse($this->fileDecoder->decode($raw), $standings);
+            $metadata = $this->metadataResolver ?? new \App\Service\ClubTournamentMetadataResolver();
+            $parsed = $metadata->apply($parsed, $metadata->directoryFromPath($path));
             $result = $this->importService->import($parsed, $organizationId);
         } catch (\Throwable $exception) {
             $io->error(sprintf('Could not import tournament: %s', $exception->getMessage()));

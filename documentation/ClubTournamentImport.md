@@ -17,7 +17,9 @@ HH uses `PAUZA` for both an awarded pause and an absence. A pause earns 350 smal
 
 If a player has several pauses and only some earned points, the files identify their number but not their rounds. Their points and game totals are retained in `tournament_result`. Their counts are also recorded as `byesWithoutKnownRound` in the import audit (`text_resource`, type 9002). No game with a guessed round is inserted. Known-round awarded pauses have one game row; a played game has two rows, one from each player's perspective. HH does not identify the starting player, so `host` remains null. A pause has no opponent ranking.
 
-Source headings are retained, including existing discrepancies with directory names (for example, Klymenia is named `Blubry549_Klymenia` inside both source files).
+The tournament directory is authoritative for date and name, including its `BlubryXXX` number. The console derives it from the HH path; in the browser select the tournament directory or supply its name in the “Katalog turnieju” field (`sourceDirectory` in multipart requests). Raw HH/final files are still cross-validated together before canonical directory metadata is applied. `2505.2026` is accepted as the legacy spelling of `25052026`.
+
+The canonical corpus forms a chronological consecutive sequence 528–565. In particular, directory names resolve the conflicting file headings as Regosol 535, Hipoksja 536, and Klymenia 540. Directory metadata is included in the import audit.
 
 Players already belonging to the target club are matched first. Other existing global profiles are reused and linked to the club; genuinely new names create new profiles. Ambiguous matches fail instead of choosing an arbitrary profile. Players, organization links, tournament, games, standings, and audit are written in one transaction.
 
@@ -55,21 +57,29 @@ All 38 source tournaments preceding `24112026_Blubry566_GP3_Halacha` are present
 
 The previous data for the corrected standings and starting-player fields is backed up locally under `var/club-import/`. Temporary browser tournaments and the temporary administrator account were removed after verification.
 
-## Published ranking snapshots
+## Ranking values and consecutive comparisons
 
-The home page reads saved `ranking` rows (`rtype=f`); importing tournament results alone does not advance that page. Blubry imports now fetch the published post-tournament ranking from `https://scrabble.stats.org.pl/blubry/karank.php?t=YYYYMMDD0&r=f` and save it in the same transaction as the results. Its source HTML, SHA-256, URL, and resolved rows are retained in audit resources of type 9004. Player matching requires exactly one existing organization profile for each published name; unresolved identities or conflicting existing snapshots abort the transaction.
+Blubry imports fetch the post-tournament list from `https://scrabble.stats.org.pl/blubry/karank.php?t=YYYYMMDD0&r=f`. Ranking values, positions, player identities, page completeness, and the requested source date are validated before writing. Source HTML, URL, SHA-256, and resolved rows are retained.
 
-The source also serves placeholder lists with starting ranks and **zero games**. These must not be used as post-tournament rankings. If the source is unavailable or only such a placeholder is published, tournament results can be saved, but both the console and browser explicitly report that the home page ranking remains at the last available snapshot. A malformed or incorrectly dated ranking is rejected. New player profiles receive slugs so that a newly ranked player can be displayed by the ranking API.
+A source game count of zero means that the page does not supply the count. It does **not** invalidate the supplied ranking values and positions. Complete lists are stored in `ranking` as `rtype=f`, with audit type 9004. Lists with missing game counts are stored separately in `text_resource` type 9006, with JSON `games: null`. They are available for ranking comparisons and navigation; the API and browser show their unknown game counts as null / a dash, never an invented zero. When a complete list later becomes available, it takes precedence.
 
-For existing tournaments, fetch and validate snapshots first:
+Tournament results and either kind of ranking data are stored in one transaction. Unknown identities or conflicting existing values abort the transaction. If the source cannot be fetched at all, results may be saved with an explicit warning. New player profiles receive slugs so that the ranking API can display them.
+
+The ranking service compares with the **immediately preceding tournament** in chronological `(dt,id)` order. It does not skip an unchanged ranking and does not accumulate changes across a missing snapshot. If the preceding values are absent, rank and position changes remain null. The API exposes `comparisonTournamentId`, `comparisonTournamentName`, `comparisonAvailable`, and `gameCountsAvailable`; the page names the actual comparison tournament.
+
+For existing tournaments, validate and then import the missing values:
 
 ```bash
 php bin/console app:clubs:rankings:import 4 \
-  --from=2026-02-24 --to=2026-11-17 --skip-unpublished --dry-run
+  --from=2026-02-24 --to=2026-11-17 --dry-run
+php bin/console app:clubs:rankings:import 4 \
+  --from=2026-02-24 --to=2026-11-17
 ```
 
-Then omit `--dry-run` to write the complete snapshots in one transaction. The explicit `--skip-unpublished` option reports and skips unavailable/placeholder lists; without it, any missing published list aborts the operation. Repeating the import of identical snapshots does not write rows or publish another cache version. The upper date bound deliberately excludes Halacha on 2026-11-24.
+All validated snapshots are stored in one transaction. Identical snapshots are a no-op, including cache publication. `--skip-unpublished` explicitly permits skipping unavailable source pages; it is not needed merely because a source omits game counts. The upper bound excludes Halacha on 2026-11-24.
 
-The original Klymenia files have an erroneous date, 2026-05-25, whereas the published event is 2026-05-26. The ranking source lookup contains this explicit date mapping; it does not accept an arbitrary date returned by a source page.
+The directory date for Klymenia remains 2026-05-25. The old source lists that event under 2026-05-26, so the source URL lookup uses that explicit alias without changing the authoritative directory date or number 540.
 
-On 2026-11-27 the complete available snapshots in this range were 17 March, 28 April, 9 June, 28 July, 22 September, and 17 November: 140 main-ranking rows in total. The other source pages contained zero-game placeholders and were not promoted to rankings. The 17 November snapshot has 24 players and is headed by Jakub Błażejewski (163.70). Regression coverage includes the actual home-page ranking service, API endpoint, and browser rendering, in addition to tournament-list checks.
+The corpus has six lists with complete game counts (140 rows) and 32 lists with ranking values and unknown counts (726 rows). Sanidyn (17 November) compares to Amsonia (10 November): Jakub Błażejewski changes from 161.00 to 163.70, or +2.70; Adam Grzelec remains at 156.03, or zero change. Their previous September-based changes were misleading.
+
+`tests/Browser/club-ranking-comparison.cjs` verifies the actual home page, displayed changes, previous/next navigation to Amsonia, and unknown game-count rendering. Integration tests cover missing predecessors, unchanged consecutive snapshots, partial source data, and authoritative directory metadata in console and multipart imports.

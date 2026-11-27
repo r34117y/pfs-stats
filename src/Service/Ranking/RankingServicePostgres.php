@@ -30,7 +30,7 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
         }
 
         $lastTournament = $this->loadTournamentMeta($organizationId, $rankingTournamentId);
-        $previousTournamentId = $this->getPreviousRankingTournamentId($organizationId, $rankingTournamentId, $rankingType);
+        $previousTournamentId = $this->getPreviousRankingTournamentId($organizationId, $rankingTournamentId);
         $previousNavigationTournamentId = $this->getPreviousNavigationTournamentId($organizationId, $rankingTournamentId, $rankingType);
         $nextNavigationTournamentId = $this->getNextNavigationTournamentId($organizationId, $rankingTournamentId, $rankingType);
 
@@ -38,6 +38,11 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
         $previousRanking = $previousTournamentId !== null
             ? $this->rankingSnapshotService->getRankingAfterTournament($organizationId, $previousTournamentId, $rankingType)
             : [];
+
+        $comparisonAvailable = $previousRanking !== [];
+        $comparisonTournament = $previousTournamentId !== null
+            ? $this->loadTournamentMeta($organizationId, $previousTournamentId)
+            : ['id' => null, 'name' => null];
 
         $previousRankingByPlayer = [];
         foreach ($previousRanking as $row) {
@@ -60,7 +65,7 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
                 $currentPosition = $row['position'];
                 $rankDelta = $this->formatDecimal($currentRank - $previous['rank']);
                 $positionDelta = $previous['position'] - $currentPosition;
-            } elseif ($previousTournamentId !== null) {
+            } elseif ($comparisonAvailable) {
                 $positionDelta = '+';
             }
 
@@ -84,6 +89,10 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
             $lastTournament['id'],
             $previousNavigationTournamentId,
             $nextNavigationTournamentId,
+            $comparisonTournament['id'],
+            $comparisonTournament['name'],
+            $comparisonAvailable,
+            !array_any($latestRanking, static fn (array $row): bool => $row['games'] === null),
         );
     }
 
@@ -122,7 +131,7 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
     {
         $value = $this->connection->fetchOne(
             "SELECT t.id FROM tournament t
-             WHERE t.organization_id=:organizationId AND EXISTS (SELECT 1 FROM ranking r WHERE r.tournament_id=t.id AND r.organization_id=t.organization_id AND r.rtype=:rankingType)
+             WHERE t.organization_id=:organizationId AND ".$this->availableRankingSql()."
              ORDER BY t.dt DESC,t.id DESC LIMIT 1",
             [
                 'organizationId' => $organizationId,
@@ -138,65 +147,19 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
     }
 
     /**
-     * Returns the best previous comparison snapshot.
-     * Prefers the latest earlier snapshot with at least one rank/position change
-     * versus the latest snapshot; falls back to the immediate previous snapshot.
-     * @throws Exception
+     * Compare consecutive tournaments. A missing snapshot means unknown deltas;
+     * it must never turn changes across several tournaments into a one-event change.
      */
-    private function getPreviousRankingTournamentId(int $organizationId, int $latestTournamentId, string $rankingType): ?int
+    private function getPreviousRankingTournamentId(int $organizationId, int $latestTournamentId): ?int
     {
         $value = $this->connection->fetchOne(
-            "SELECT previous.tournament_id
-             FROM (
-                SELECT DISTINCT r.tournament_id,t.dt
-                FROM ranking r JOIN tournament t ON t.id=r.tournament_id AND t.organization_id=r.organization_id
-                WHERE r.organization_id = :organizationId
-                  AND r.rtype = :rankingType
-                  AND (t.dt,t.id) < (SELECT dt,id FROM tournament WHERE id=:latestTournamentId)
-             ) previous
-             WHERE EXISTS (
-                SELECT 1
-                FROM ranking latest
-                INNER JOIN ranking prev
-                    ON prev.organization_id = latest.organization_id
-                   AND prev.player_id = latest.player_id
-                   AND prev.rtype = :rankingType
-                   AND prev.tournament_id = previous.tournament_id
-                WHERE latest.organization_id = :organizationId
-                  AND latest.rtype = :rankingType
-                  AND latest.tournament_id = :latestTournamentId
-                  AND latest.player_id IS NOT NULL
-                  AND (latest.position <> prev.position OR latest.rank <> prev.rank)
-             ) ORDER BY previous.dt DESC, previous.tournament_id DESC LIMIT 1",
-            [
-                'organizationId' => $organizationId,
-                'latestTournamentId' => $latestTournamentId,
-                'rankingType' => $rankingType,
-            ]
-        );
-
-        if ($value !== false && $value !== null) {
-            return (int) $value;
-        }
-
-        $fallback = $this->connection->fetchOne(
-            "SELECT t.id FROM tournament t
+            'SELECT t.id FROM tournament t
              WHERE t.organization_id=:organizationId
                AND (t.dt,t.id) < (SELECT dt,id FROM tournament WHERE id=:latestTournamentId)
-               AND EXISTS (SELECT 1 FROM ranking r WHERE r.tournament_id=t.id AND r.organization_id=t.organization_id AND r.rtype=:rankingType)
-             ORDER BY t.dt DESC,t.id DESC LIMIT 1",
-            [
-                'organizationId' => $organizationId,
-                'latestTournamentId' => $latestTournamentId,
-                'rankingType' => $rankingType,
-            ]
+             ORDER BY t.dt DESC,t.id DESC LIMIT 1',
+            ['organizationId' => $organizationId, 'latestTournamentId' => $latestTournamentId],
         );
-
-        if ($fallback === false || $fallback === null) {
-            return null;
-        }
-
-        return (int) $fallback;
+        return $value === false || $value === null ? null : (int) $value;
     }
 
     /**
@@ -208,7 +171,7 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
             "SELECT t.id FROM tournament t
              WHERE t.organization_id=:organizationId
                AND (t.dt,t.id) < (SELECT dt,id FROM tournament WHERE id=:tournamentId)
-               AND EXISTS (SELECT 1 FROM ranking r WHERE r.tournament_id=t.id AND r.organization_id=t.organization_id AND r.rtype=:rankingType)
+               AND ".$this->availableRankingSql()."
              ORDER BY t.dt DESC,t.id DESC LIMIT 1",
             [
                 'organizationId' => $organizationId,
@@ -233,7 +196,7 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
             "SELECT t.id FROM tournament t
              WHERE t.organization_id=:organizationId
                AND (t.dt,t.id) > (SELECT dt,id FROM tournament WHERE id=:tournamentId)
-               AND EXISTS (SELECT 1 FROM ranking r WHERE r.tournament_id=t.id AND r.organization_id=t.organization_id AND r.rtype=:rankingType)
+               AND ".$this->availableRankingSql()."
              ORDER BY t.dt ASC,t.id ASC LIMIT 1",
             [
                 'organizationId' => $organizationId,
@@ -247,6 +210,15 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
         }
 
         return (int) $value;
+    }
+
+    private function availableRankingSql(): string
+    {
+        return "(EXISTS (SELECT 1 FROM ranking r WHERE r.tournament_id=t.id AND r.organization_id=t.organization_id AND r.rtype=:rankingType)
+            OR (:rankingType='f' AND EXISTS (
+                SELECT 1 FROM text_resource c WHERE c.organization_id=t.organization_id AND c.resource_type=9006
+                  AND c.data::jsonb->>'tournamentDbId'=t.id::text
+            )))";
     }
 
     private function formatDecimal(float $value): string

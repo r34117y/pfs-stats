@@ -62,6 +62,13 @@
                         <p class="help" x-show="preprocessing" x-cloak>Przetwarzanie pliku...</p>
                     </div>
 
+                    <div class="field">
+                        <label class="label">Katalog turnieju</label>
+                        <input class="input" type="text" x-model="sourceDirectoryName" placeholder="DDMMYYYY_BlubryXXX_Nazwa">
+                        <p class="help">Nazwa katalogu określa datę i numer turnieju. Możesz wybrać cały katalog poniżej albo wpisać jego nazwę po wybraniu dwóch plików.</p>
+                        <input class="input mt-2" type="file" webkitdirectory multiple x-on:change="preprocessResultsFile" x-bind:disabled="!selectedOrganizationId || preprocessing">
+                    </div>
+
                     <div class="notification is-light mt-5">
                         <p class="has-text-weight-semibold mb-2">Ostatnie importy</p>
                         <template x-if="recentImportsForSelectedOrganization().length === 0">
@@ -126,6 +133,8 @@
                 previewModalOpen: false,
                 pendingResultsFile: null,
                 pendingStandingsFile: null,
+                sourceDirectoryName: '',
+                pendingSourceDirectory: '',
                 pendingOrganizationId: '',
                 async load() {
                     this.loading = true;
@@ -171,14 +180,26 @@
                     );
                 },
                 async preprocessResultsFile(event) {
+                    this.warning = '';
                     this.error = '';
                     this.success = '';
                     this.pendingResultsFile = null;
                     this.pendingStandingsFile = null;
+                    this.pendingSourceDirectory = '';
                     this.pendingOrganizationId = '';
                     const files = Array.from(event.target.files ?? []);
-                    const file = files.find((item) => /HH\.txt$/i.test(item.name)) ?? files[0];
-                    const standingsFile = files.find((item) => item !== file);
+                    const hhFiles = files.filter((item) => /HH\.txt$/i.test(item.name));
+                    if (hhFiles.length > 1) {
+                        this.error = 'Wybierz katalog jednego turnieju.';
+                        event.target.value = '';
+                        return;
+                    }
+                    const file = hhFiles[0] ?? files[0];
+                    if (file?.webkitRelativePath) {
+                        const parts = file.webkitRelativePath.split('/');
+                        this.sourceDirectoryName = parts[parts.length - 2] ?? '';
+                    }
+                    const standingsFile = files.find((item) => item !== file && item.name === file?.name.replace(/HH\.txt$/i, '.txt')) ?? files.find((item) => item !== file && /\.txt$/i.test(item.name));
                     if (!file) {
                         return;
                     }
@@ -191,6 +212,7 @@
 
                     const formData = new FormData();
                     formData.append('results', file);
+                    if (this.sourceDirectoryName) formData.append('sourceDirectory', this.sourceDirectoryName);
                     if (standingsFile) formData.append('standings', standingsFile);
                     formData.append('organizationId', this.selectedOrganizationId);
                     this.preprocessing = true;
@@ -210,6 +232,7 @@
 
                         this.pendingResultsFile = file;
                         this.pendingStandingsFile = standingsFile ?? null;
+                        this.pendingSourceDirectory = this.sourceDirectoryName;
                         this.pendingOrganizationId = this.selectedOrganizationId;
                         this.previewHtml = text;
                         this.previewModalOpen = true;
@@ -246,6 +269,7 @@
 
                     const formData = new FormData();
                     formData.append('results', this.pendingResultsFile);
+                    if (this.pendingSourceDirectory) formData.append('sourceDirectory', this.pendingSourceDirectory);
                     if (this.pendingStandingsFile) formData.append('standings', this.pendingStandingsFile);
                     formData.append('organizationId', this.pendingOrganizationId);
 
@@ -286,6 +310,7 @@
                     this.previewHtml = '';
                     this.pendingResultsFile = null;
                     this.pendingStandingsFile = null;
+                    this.pendingSourceDirectory = '';
                     this.pendingOrganizationId = '';
                 }
             };

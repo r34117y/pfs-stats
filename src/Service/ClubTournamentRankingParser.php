@@ -11,8 +11,8 @@ use RuntimeException;
 
 final readonly class ClubTournamentRankingParser
 {
-    /** @return list<array{position:int,name:string,rank:float,games:int}> */
-    public function parse(string $html, int $dateCode): array
+    /** @return list<array{position:int,name:string,rank:float,games:?int}> */
+    public function parse(string $html, int $dateCode, bool $allowUnknownGames = false): array
     {
         if (!str_contains(strtolower($html), '</body>')) {
             throw new RuntimeException('Club ranking HTML is incomplete.');
@@ -38,20 +38,20 @@ final readonly class ClubTournamentRankingParser
             $name = trim(preg_replace('/\s+/u', ' ', $cells->item(1)?->textContent ?? ''));
             $rank = trim($cells->item(2)?->textContent ?? '');
             $games = trim($cells->item(3)?->textContent ?? '');
-            // The legacy site also renders placeholder lists with starting ranks
-            // and zero games. These are not published post-tournament snapshots.
-            if ($games === '0') {
+            // Zero means an unavailable game count, not zero played games.
+            // Keep these values separately from complete ranking snapshots.
+            if ($games === '0' && !$allowUnknownGames) {
                 throw new ClubTournamentRankingUnavailable('The club source has not published a complete ranking for this tournament (zero games).');
             }
             if (!ctype_digit($position) || (int) $position !== count($rows) + 1 || $name === '' || isset($names[$name])
-                || !preg_match('/^\d+\.\d{2}$/', $rank) || !ctype_digit($games) || (int) $games <= 0) {
+                || !preg_match('/^\d+\.\d{2}$/', $rank) || !ctype_digit($games) || (int) $games < 0) {
                 throw new RuntimeException(sprintf('Invalid or duplicated club ranking row: position=%s, name=%s, rank=%s, games=%s.', $position, $name, $rank, $games));
             }
             if ($rows !== [] && (float) $rank > $rows[array_key_last($rows)]['rank']) {
                 throw new RuntimeException('Club ranking rows must be ordered by ranking position.');
             }
             $names[$name] = true;
-            $rows[] = ['position' => (int) $position, 'name' => $name, 'rank' => (float) $rank, 'games' => (int) $games];
+            $rows[] = ['position' => (int) $position, 'name' => $name, 'rank' => (float) $rank, 'games' => $games === '0' ? null : (int) $games];
         }
         if ($rows === [] || $xpath->query('//tr[@id="sum"]')->length === 0) {
             throw new RuntimeException('Club ranking has no complete ranking table.');

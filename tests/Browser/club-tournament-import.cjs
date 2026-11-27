@@ -4,6 +4,7 @@
 // CLUB_IMPORT_HH=... CLUB_IMPORT_STANDINGS=... node tests/Browser/club-tournament-import.cjs
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const fs = require('node:fs');
+const path = require('node:path');
 const assert = require('node:assert/strict');
 
 (async () => {
@@ -36,22 +37,27 @@ const assert = require('node:assert/strict');
         await organization.selectOption(organizationId);
         const beforeList = await (await context.request.get(`/api/tournaments?org=${organizationId}`)).json();
         const beforeIds = new Set(beforeList.tournaments.map(tournament => tournament.id));
-        const input = page.locator('input[type=file]');
+        const pairInput = page.locator('input[x-ref=resultsInput]');
+        const directory = process.env.CLUB_IMPORT_DIRECTORY;
+        const input = directory ? page.locator('input[webkitdirectory]') : pairInput;
         const preprocessURL = '/api/user/tournament-results/preprocess-club-results';
         const importURL = '/api/user/tournament-results/import-club-results';
         const upload = async files => {
             const response = page.waitForResponse(r => r.url().endsWith(preprocessURL));
-            await input.setInputFiles(files);
+            await input.setInputFiles(directory ? directory : files);
             return response;
         };
         // HH alone cannot distinguish absence from an awarded pause.
-        assert.equal((await upload(hh)).status(), 400);
+        const missingStandings = page.waitForResponse(r => r.url().endsWith(preprocessURL));
+        await pairInput.setInputFiles(hh);
+        assert.equal((await missingStandings).status(), 400);
         const response = await upload([standings, hh]); // File order must not matter.
         assert.equal(response.status(), 200);
         const modal = page.locator('.modal.is-active');
         await modal.waitFor({ state: 'visible' });
         const heading = await modal.locator('h2').innerText();
         assert.ok(heading.startsWith('Blubry'));
+        if (directory) assert.equal(heading, path.basename(directory).replace(/^\d{4}\.?\d{4}_/, ''), 'Directory metadata must override the HH heading');
         assert.ok(await modal.locator('tbody tr').count() > 0);
         // Cancelling must not write the tournament.
         await modal.getByRole('button', { name: 'Anuluj', exact: true }).click();
@@ -75,6 +81,7 @@ const assert = require('node:assert/strict');
         assert.equal((await upload([hh, standings])).status(), 409);
         const multipart = {
             organizationId,
+            ...(directory ? { sourceDirectory: path.basename(directory) } : {}),
             results: { name: 'resultsHH.txt', mimeType: 'text/plain', buffer: fs.readFileSync(hh) },
             standings: { name: 'results.txt', mimeType: 'text/plain', buffer: fs.readFileSync(standings) },
         };
@@ -86,7 +93,7 @@ const assert = require('node:assert/strict');
         if (process.env.CLUB_IMPORT_SCREENSHOT) await page.screenshot({ path: process.env.CLUB_IMPORT_SCREENSHOT, fullPage: true });
         const detail = await page.goto(`/tournaments/${payload.tournamentId}`);
         assert.equal(detail.status(), 200);
-        console.log(JSON.stringify({ status: 'passed', tournamentId: payload.tournamentId, heading, players: payload.playersCount, games: payload.gamesCount, checks: ['login', 'missing final standings', 'preview', 'cancel', 'confirm', 'recent imports', 'duplicate prevention', 'missing file', 'invalid organization', 'permissions', 'tournament page', 'cache publication', 'home ranking updated'] }));
+        console.log(JSON.stringify({ status: 'passed', tournamentId: payload.tournamentId, heading, players: payload.playersCount, games: payload.gamesCount, checks: ['login', 'missing final standings', 'preview', 'cancel', 'confirm', 'recent imports', 'duplicate prevention', 'missing file', 'invalid organization', 'permissions', 'tournament page', 'cache publication', 'home ranking updated', ...(directory ? ['directory metadata overrides file heading'] : [])] }));
     } finally {
         await browser.close();
     }

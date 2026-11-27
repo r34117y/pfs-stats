@@ -13,13 +13,15 @@ final readonly class ClubTournamentResultsPreprocessor
         private ClubTournamentResultsFileDecoder $fileDecoder,
         private ClubTournamentResultsParser $parser,
         private ClubTournamentStandingsBuilder $standingsBuilder,
+        private ?ClubTournamentMetadataResolver $metadataResolver = null,
     ) {
     }
 
-    public function preprocess(string $raw, ?string $standings = null): ClubTournamentResultsPreview
+    public function preprocess(string $raw, ?string $standings = null, ?string $sourceDirectory = null): ClubTournamentResultsPreview
     {
         $decoded = $this->fileDecoder->decode($raw);
         $results = $this->parser->parse($decoded, $standings !== null ? $this->fileDecoder->decode($standings) : null);
+        $results = ($this->metadataResolver ?? new ClubTournamentMetadataResolver())->apply($results, $sourceDirectory);
 
         return new ClubTournamentResultsPreview(
             results: $results,

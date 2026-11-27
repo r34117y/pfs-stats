@@ -34,7 +34,7 @@ final class ImportClubRankingsCommand extends Command
         $this->addArgument('organization-id', InputArgument::REQUIRED)
             ->addOption('from', null, InputOption::VALUE_REQUIRED, 'First tournament date, YYYY-MM-DD (required).')
             ->addOption('to', null, InputOption::VALUE_REQUIRED, 'Last tournament date, YYYY-MM-DD (required).')
-            ->addOption('skip-unpublished', null, InputOption::VALUE_NONE, 'Explicitly skip unavailable or zero-game placeholder lists.')
+            ->addOption('skip-unpublished', null, InputOption::VALUE_NONE, 'Explicitly skip unavailable ranking sources.')
             ->addOption('dry-run', null, InputOption::VALUE_NONE, 'Fetch and validate all rankings without database writes.');
     }
 
@@ -69,7 +69,7 @@ final class ImportClubRankingsCommand extends Command
                 }
                 $this->importer->validateSnapshot($snapshot, $org, (int) $tournament['id']);
                 $snapshots[] = [$tournament, $snapshot];
-                $io->writeln(sprintf('Validated %s: %d ranking rows.', $tournament['name'], count($snapshot->rows)));
+                $io->writeln(sprintf('Validated %s: %d ranking rows (%s).', $tournament['name'], count($snapshot->rows), $snapshot->hasGameCounts() ? 'complete' : 'game counts unavailable'));
             }
             if ($snapshots === []) {
                 throw new \RuntimeException('No complete published ranking snapshots were found.');

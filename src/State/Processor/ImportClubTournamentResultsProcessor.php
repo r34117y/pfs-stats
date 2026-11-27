@@ -30,6 +30,7 @@ final readonly class ImportClubTournamentResultsProcessor implements ProcessorIn
         private ClubTournamentResultsParser $parser,
         private ClubTournamentResultsImportService $importService,
         private ?DatasetVersionService $datasetVersion = null,
+        private ?\App\Service\ClubTournamentMetadataResolver $metadataResolver = null,
     ) {
     }
 
@@ -67,6 +68,7 @@ final readonly class ImportClubTournamentResultsProcessor implements ProcessorIn
                 }
             }
             $parsed = $this->parser->parse($this->fileDecoder->decode($raw), $standings !== null ? $this->fileDecoder->decode($standings) : null);
+            $parsed = ($this->metadataResolver ?? new \App\Service\ClubTournamentMetadataResolver())->apply($parsed, $request?->request->get('sourceDirectory'));
             $result = $this->importService->import($parsed, $organizationId);
         } catch (HttpExceptionInterface $exception) {
             return new Response($exception->getMessage(), $exception->getStatusCode());

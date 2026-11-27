@@ -174,13 +174,13 @@ final class ClubTournamentResultsImportTest extends PfsImportDatabaseTestCase
         }
     }
 
-    public function testUnpublishedRankingIsExplicitlyReportedWithoutInventedRows(): void
+    public function testUnknownGameCountsRetainRankingValuesWithoutInventingCounts(): void
     {
         $this->db->update('organization', ['code'=>'BLUBRY'], ['id'=>21]);
         $importer = new \App\Service\ClubTournamentRankingImportService($this->db, new \App\Service\ClubTournamentRankingParser(), fn () => str_replace('<td>60', '<td>0', $this->rankingHtml()));
         $result = $this->service($importer)->import($this->parsedFixture(), 21);
-        self::assertSame(0, $result->rankingRowsCount);
-        self::assertStringContainsString('Strona główna', $result->rankingWarning);
+        self::assertSame(2, $result->rankingRowsCount);
+        self::assertStringContainsString('liczby partii', $result->rankingWarning);
         self::assertSame(0, (int) $this->db->fetchOne('SELECT COUNT(*) FROM ranking'));
         self::assertSame(1, (int) $this->db->fetchOne('SELECT COUNT(*) FROM tournament'));
     }
@@ -253,6 +253,38 @@ final class ClubTournamentResultsImportTest extends PfsImportDatabaseTestCase
         self::assertSame(400, $this->processor(new Request([], ['organizationId' => '21']))->process(null, new Post())->getStatusCode());
         self::assertSame(400, $this->processor(new Request())->process(null, new Post())->getStatusCode());
         self::assertSame(0, (int) $this->db->fetchOne('SELECT COUNT(*) FROM tournament'));
+    }
+
+    public function testMultipartUsesAuthoritativeDirectoryForDateAndNumber(): void
+    {
+        $request = $this->upload();
+        $request->request->set('sourceDirectory', '18032026_Blubry535_Katalog');
+        $response = $this->processor($request)->process(null, new Post());
+        self::assertSame(200, $response->getStatusCode());
+        $row = $this->db->fetchAssociative('SELECT dt,fullname FROM tournament');
+        self::assertSame(20260318, $row['dt']);
+        self::assertSame('Blubry535_Katalog', $row['fullname']);
+        self::assertSame(409, $this->processor($request)->process(null, new Post())->getStatusCode());
+    }
+
+    public function testConsoleUsesDirectoryInsteadOfConflictingHhFilename(): void
+    {
+        $parent = sys_get_temp_dir().'/club-directory-'.bin2hex(random_bytes(5));
+        $directory = $parent.'/2505.2026_Blubry540_Klymenia';
+        mkdir($directory, 0775, true);
+        $fixture = dirname(__DIR__).'/Fixtures/club_tournament_results/2505.2026_Blubry540_Klymenia';
+        $hh = $directory.'/2505.2026_Blubry549_KlymeniaHH.txt';
+        $final = str_replace('HH.txt', '.txt', $hh);
+        copy($fixture.'HH.txt', $hh);
+        copy($fixture.'.txt', $final);
+        try {
+            self::assertSame(0, $this->command()->execute(['path'=>$hh, 'organization-id'=>21]));
+            $row = $this->db->fetchAssociative('SELECT dt,fullname FROM tournament');
+            self::assertSame(20260525, $row['dt']);
+            self::assertSame('Blubry540_Klymenia', $row['fullname']);
+        } finally {
+            unlink($hh);unlink($final);rmdir($directory);rmdir($parent);
+        }
     }
 
     public function testMultipartRejectsUnpairedHhWithoutWriting(): void

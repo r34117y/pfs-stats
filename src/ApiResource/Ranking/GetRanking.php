@@ -25,6 +25,10 @@ class GetRanking
         public ?int $lastTournamentId = null,
         public ?int $previousTournamentId = null,
         public ?int $nextTournamentId = null,
+        public ?int $comparisonTournamentId = null,
+        public ?string $comparisonTournamentName = null,
+        public bool $comparisonAvailable = false,
+        public bool $gameCountsAvailable = true,
     ) {
     }
 }

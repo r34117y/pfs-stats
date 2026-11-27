@@ -45,10 +45,20 @@ final class ClubTournamentRankingParserTest extends TestCase
         (new ClubTournamentRankingParser())->parse(str_replace('<td>2<td>', '<td>3<td>', $this->fixture()), 20261117);
     }
 
-    public function testRejectsUnpublishedZeroGamePlaceholder(): void
+    public function testStrictModeRejectsUnknownGameCounts(): void
     {
         $this->expectException(\App\ClubTournamentImport\ClubTournamentRankingUnavailable::class);
         (new ClubTournamentRankingParser())->parse(str_replace('<td>60', '<td>0', $this->fixture()), 20261117);
+    }
+
+    public function testRetainsPreviousTournamentValuesWithoutInventingGameCounts(): void
+    {
+        $html = file_get_contents(dirname(__DIR__).'/Fixtures/club_rankings/20261110.html');
+        $rows = (new ClubTournamentRankingParser())->parse($html, 20261110, true);
+        self::assertCount(24, $rows);
+        self::assertSame('Jakub Błażejewski', $rows[0]['name']);
+        self::assertSame(161.0, $rows[0]['rank']);
+        self::assertNull($rows[0]['games']);
     }
 
     private function fixture(): string

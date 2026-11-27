@@ -14,6 +14,7 @@ use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 final readonly class ClubTournamentRankingImportService
 {
     public const int AUDIT_RESOURCE_TYPE = 9004;
+    public const int COMPARISON_RESOURCE_TYPE = 9006;
 
     public function __construct(
         #[Autowire(service: 'doctrine.dbal.default_connection')]
@@ -42,7 +43,7 @@ final readonly class ClubTournamentRankingImportService
             throw new ClubTournamentRankingUnavailable('Could not fetch the published club ranking: '.$url);
         }
 
-        return new ClubTournamentRankingSnapshot($dateCode, $url, $html, $this->parser->parse($html, $sourceDate));
+        return new ClubTournamentRankingSnapshot($dateCode, $url, $html, $this->parser->parse($html, $sourceDate, true));
     }
 
     /** Returns inserted row count; an identical saved snapshot is a no-op. */
@@ -51,19 +52,25 @@ final readonly class ClubTournamentRankingImportService
         return $this->connection->transactional(function (Connection $db) use ($snapshot, $organizationId, $tournamentId): int {
             $db->executeStatement('SELECT pg_advisory_xact_lock(73674, ?)', [$organizationId]);
             $wanted = $this->validateSnapshot($snapshot, $organizationId, $tournamentId);
-            $actual = $db->fetchAllAssociative("SELECT player_id,position,rank,games FROM ranking WHERE organization_id=? AND tournament_id=? AND rtype='f' ORDER BY position", [$organizationId, $tournamentId]);
+            $actual = $this->storedRows($organizationId, $tournamentId, $snapshot->hasGameCounts());
             if ($actual !== []) {
                 return 0;
             }
-            foreach ($wanted as $row) {
-                $db->insert('ranking', ['organization_id' => $organizationId, 'tournament_id' => $tournamentId, 'rtype' => 'f'] + $row);
+            if (!$snapshot->hasGameCounts() && $this->storedRows($organizationId, $tournamentId, true) !== []) {
+                return 0; // An incomplete source cannot downgrade a complete snapshot.
+            }
+            if ($snapshot->hasGameCounts()) {
+                foreach ($wanted as $row) {
+                    $db->insert('ranking', ['organization_id' => $organizationId, 'tournament_id' => $tournamentId, 'rtype' => 'f'] + $row);
+                }
             }
             $db->insert('text_resource', [
                 'organization_id' => $organizationId,
-                'resource_type' => self::AUDIT_RESOURCE_TYPE,
+                'resource_type' => $snapshot->hasGameCounts() ? self::AUDIT_RESOURCE_TYPE : self::COMPARISON_RESOURCE_TYPE,
                 'data' => json_encode([
                     'tournamentDbId' => $tournamentId,
                     'sourceUrl' => $snapshot->sourceUrl,
+                    'gameCountsAvailable' => $snapshot->hasGameCounts(),
                     'sourceSha256' => hash('sha256', $snapshot->html),
                     'sourceHtml' => $snapshot->html,
                     'rankingRows' => $wanted,
@@ -75,7 +82,7 @@ final readonly class ClubTournamentRankingImportService
         });
     }
 
-    /** @return list<array{player_id:int,position:int,rank:float,games:int}> */
+    /** @return list<array{player_id:int,position:int,rank:float,games:?int}> */
     public function validateSnapshot(ClubTournamentRankingSnapshot $snapshot, int $organizationId, int $tournamentId): array
     {
         $db = $this->connection;
@@ -94,13 +101,23 @@ final readonly class ClubTournamentRankingImportService
             $seen[$id] = true;
             $wanted[] = ['player_id' => $id, 'position' => $row['position'], 'rank' => $row['rank'], 'games' => $row['games']];
         }
-        $actual = $db->fetchAllAssociative("SELECT player_id,position,rank,games FROM ranking WHERE organization_id=? AND tournament_id=? AND rtype='f' ORDER BY position", [$organizationId, $tournamentId]);
-        if ($actual !== []) {
-            if ($actual != $wanted) {
-                throw new ConflictHttpException('A different club ranking already exists for tournament '.$tournamentId);
-            }
+        $actual = $this->storedRows($organizationId, $tournamentId, $snapshot->hasGameCounts());
+        if ($actual !== [] && $actual != $wanted) {
+            throw new ConflictHttpException('Different club ranking data already exists for tournament '.$tournamentId);
         }
 
         return $wanted;
+    }
+
+    private function storedRows(int $organizationId, int $tournamentId, bool $complete): array
+    {
+        if ($complete) {
+            return $this->connection->fetchAllAssociative("SELECT player_id,position,rank,games FROM ranking WHERE organization_id=? AND tournament_id=? AND rtype='f' ORDER BY position", [$organizationId, $tournamentId]);
+        }
+        $data = $this->connection->fetchOne(
+            "SELECT data FROM text_resource WHERE organization_id=? AND resource_type=? AND data::jsonb->>'tournamentDbId'=? ORDER BY id DESC LIMIT 1",
+            [$organizationId, self::COMPARISON_RESOURCE_TYPE, (string) $tournamentId],
+        );
+        return $data === false ? [] : json_decode($data, true, flags: JSON_THROW_ON_ERROR)['rankingRows'];
     }
 }

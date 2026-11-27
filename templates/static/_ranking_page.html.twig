@@ -13,6 +13,11 @@
                 <span x-text="lastTournamentName"></span>
             </template>
         </h6>
+        <p class="has-text-centered ranking-comparison" x-show="comparisonTournamentId">
+            <span x-show="comparisonAvailable">Zmiany względem turnieju: <a :href="`/tournaments/${comparisonTournamentId}`" x-text="comparisonTournamentName"></a></span>
+            <span x-show="!comparisonAvailable">Brak rankingu po poprzednim turnieju; zmiany nie są wyliczone.</span>
+        </p>
+        <p class="has-text-centered" x-show="!gameCountsAvailable">Źródło nie podaje liczby partii w tym zestawieniu.</p>
         <div class="ranking-tournament-nav">
             <button
                 class="button is-small"
@@ -83,7 +88,7 @@
                             </div>
                         </td>
                         <td class="has-text-centered" x-text="row.rank"></td>
-                        <td class="has-text-centered" x-text="row.numberOfGames"></td>
+                        <td class="has-text-centered" x-text="formatMobilePlain(row.numberOfGames)"></td>
                         <td class="has-text-centered" x-text="formatSigned(row.rankDelta, 2)"></td>
                         <td class="has-text-centered" x-text="formatSigned(row.positionDelta)"></td>
                     </tr>
@@ -107,11 +112,15 @@
             lastTournamentId: null,
             previousTournamentId: null,
             nextTournamentId: null,
+            comparisonTournamentId: null,
+            comparisonTournamentName: '',
+            comparisonAvailable: false,
+            gameCountsAvailable: true,
             loading: true,
             async fetchRanking() {
                 try {
                     const requestUrl = new URL(apiEndpoint, window.location.origin);
-                    requestUrl.searchParams.set('rankingNavVersion', '1');
+                    requestUrl.searchParams.set('rankingNavVersion', '2');
 
                     const currentPageUrl = new URL(window.location.href);
                     const requestedTournamentId = currentPageUrl.searchParams.get('tournamentId');
@@ -129,6 +138,10 @@
                     this.lastTournamentId = data.lastTournamentId ?? null;
                     this.previousTournamentId = data.previousTournamentId ?? null;
                     this.nextTournamentId = data.nextTournamentId ?? null;
+                    this.comparisonTournamentId = data.comparisonTournamentId ?? null;
+                    this.comparisonTournamentName = data.comparisonTournamentName ?? '';
+                    this.comparisonAvailable = data.comparisonAvailable ?? false;
+                    this.gameCountsAvailable = data.gameCountsAvailable ?? true;
                 } catch (error) {
                     console.error('Błąd:', error);
                 } finally {

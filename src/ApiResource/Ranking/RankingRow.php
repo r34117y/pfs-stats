@@ -11,7 +11,7 @@ final readonly class RankingRow
         public int $playerId,
         public ?string $photo,
         public string $rank,
-        public int $numberOfGames,
+        public ?int $numberOfGames,
         public ?string $rankDelta,
         /** '+' if player just entered the ranking */
         public int|string|null $positionDelta,

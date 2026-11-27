@@ -67,6 +67,10 @@ final readonly class ClubTournamentResultsImportService
             $rankingWarning = 'Wyniki są zapisane, ale pełny ranking po tym turnieju nie jest jeszcze dostępny. Strona główna pokazuje ostatni dostępny ranking.';
         }
 
+        if ($rankingSnapshot !== null && !$rankingSnapshot->hasGameCounts()) {
+            $rankingWarning = 'Źródło udostępnia ranking i pozycje bez liczby partii. Brakujące liczby partii są oznaczone kreską.';
+        }
+
         return $this->connection->transactional(function (Connection $connection) use ($results, $organizationId, $dateCode, $fullname, $rankingSnapshot, $rankingWarning): ClubTournamentImportResult {
             $catalog = $this->playerCatalogService->loadClubImportPlayerCatalog($organizationId);
 
@@ -168,6 +172,7 @@ final readonly class ClubTournamentResultsImportService
                 'resource_type' => self::AUDIT_RESOURCE_TYPE,
                 'data' => json_encode([
                     'tournamentDbId' => $tournamentId,
+                    'sourceDirectory' => $results->sourceDirectory,
                     'rankingRowsCount' => count($rankingSnapshot?->rows ?? []),
                     'rankingWarning' => $rankingWarning,
                     'byesWithoutKnownRound' => $this->byesWithoutKnownRound($playersByPosition),

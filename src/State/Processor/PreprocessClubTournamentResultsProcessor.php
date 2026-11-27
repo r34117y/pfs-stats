@@ -62,7 +62,7 @@ final readonly class PreprocessClubTournamentResultsProcessor implements Process
                     throw new \RuntimeException('Could not read final standings file.');
                 }
             }
-            $preview = $this->preprocessor->preprocess($raw, $standings);
+            $preview = $this->preprocessor->preprocess($raw, $standings, $request?->request->get('sourceDirectory'));
         } catch (\Throwable $exception) {
             return new Response(
                 'Nie udalo sie przetworzyc pliku: ' . $exception->getMessage(),

@@ -15,6 +15,7 @@ final readonly class ParsedClubTournamentResults
         public string $name,
         public DateTimeImmutable $date,
         public array $players,
+        public ?string $sourceDirectory = null,
     ) {
     }
 
