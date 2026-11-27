@@ -17,7 +17,7 @@ HH uses `PAUZA` for both an awarded pause and an absence. A pause earns 350 smal
 
 If a player has several pauses and only some earned points, the files identify their number but not their rounds. Their points and game totals are retained in `tournament_result`. Their counts are also recorded as `byesWithoutKnownRound` in the import audit (`text_resource`, type 9002). No game with a guessed round is inserted. Known-round awarded pauses have one game row; a played game has two rows, one from each player's perspective. HH does not identify the starting player, so `host` remains null. A pause has no opponent ranking.
 
-The tournament directory is authoritative for date and name, including its `BlubryXXX` number. The console derives it from the HH path; in the browser select the tournament directory or supply its name in the “Katalog turnieju” field (`sourceDirectory` in multipart requests). Raw HH/final files are still cross-validated together before canonical directory metadata is applied. `2505.2026` is accepted as the legacy spelling of `25052026`.
+The tournament directory is authoritative for date and name, including its `BlubryXXX` number. The console derives it from the HH path; in the browser select the tournament directory or supply its name in the “Katalog turnieju” field (`sourceDirectory` is required for Blubry multipart requests). Raw HH/final files are still cross-validated together before canonical directory metadata is applied. `2505.2026` is accepted as the legacy spelling of `25052026`.
 
 The canonical corpus forms a chronological consecutive sequence 528–565. In particular, directory names resolve the conflicting file headings as Regosol 535, Hipoksja 536, and Klymenia 540. Directory metadata is included in the import audit.
 

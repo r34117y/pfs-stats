@@ -21,7 +21,7 @@ final readonly class ClubTournamentResultsPreprocessor
     {
         $decoded = $this->fileDecoder->decode($raw);
         $results = $this->parser->parse($decoded, $standings !== null ? $this->fileDecoder->decode($standings) : null);
-        $results = ($this->metadataResolver ?? new ClubTournamentMetadataResolver())->apply($results, $sourceDirectory);
+        $results = ($this->metadataResolver ?? new ClubTournamentMetadataResolver())->apply($results, $sourceDirectory, true);
 
         return new ClubTournamentResultsPreview(
             results: $results,

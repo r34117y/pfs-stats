@@ -16,9 +16,14 @@ final readonly class ClubTournamentMetadataResolver
         return preg_match('/^\d{4}\.?\d{4}_Blubry\d+_/u', $directory) ? $directory : null;
     }
 
-    public function apply(ParsedClubTournamentResults $results, ?string $directory): ParsedClubTournamentResults
+    public function apply(ParsedClubTournamentResults $results, ?string $directory, bool $requireDirectory = false): ParsedClubTournamentResults
     {
-        if ($directory === null || trim($directory) === '') return $results;
+        if ($directory === null || trim($directory) === '') {
+            if ($requireDirectory && preg_match('/^Blubry\d+/', $results->name)) {
+                throw new RuntimeException('Wybierz katalog turnieju Blubry albo podaj jego nazwę w polu Katalog turnieju.');
+            }
+            return $results;
+        }
         $directory = trim($directory);
         if (!preg_match('/^(\d{2})(\d{2})\.?(\d{4})_(Blubry\d+_[^\/\\\\]+)$/u', $directory, $match)) {
             throw new RuntimeException('Nazwa katalogu musi mieć format DDMMYYYY_BlubryXXX_Nazwa.');

@@ -68,7 +68,7 @@ final readonly class ImportClubTournamentResultsProcessor implements ProcessorIn
                 }
             }
             $parsed = $this->parser->parse($this->fileDecoder->decode($raw), $standings !== null ? $this->fileDecoder->decode($standings) : null);
-            $parsed = ($this->metadataResolver ?? new \App\Service\ClubTournamentMetadataResolver())->apply($parsed, $request?->request->get('sourceDirectory'));
+            $parsed = ($this->metadataResolver ?? new \App\Service\ClubTournamentMetadataResolver())->apply($parsed, $request?->request->get('sourceDirectory'), true);
             $result = $this->importService->import($parsed, $organizationId);
         } catch (HttpExceptionInterface $exception) {
             return new Response($exception->getMessage(), $exception->getStatusCode());

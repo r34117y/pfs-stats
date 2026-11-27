@@ -230,7 +230,7 @@ final class ClubTournamentResultsImportTest extends PfsImportDatabaseTestCase
 
     private function upload(): Request
     {
-        return new Request([], ['organizationId' => '21'], [], [], ['results' => new UploadedFile($this->fixture(), 'resultsHH.txt', 'text/plain', null, true), 'standings' => new UploadedFile(str_replace('HH.txt', '.txt', $this->fixture()), 'results.txt', 'text/plain', null, true)]);
+        return new Request([], ['organizationId' => '21', 'sourceDirectory' => '17032026_Blubry531_Kuczbaj'], [], [], ['results' => new UploadedFile($this->fixture(), 'resultsHH.txt', 'text/plain', null, true), 'standings' => new UploadedFile(str_replace('HH.txt', '.txt', $this->fixture()), 'results.txt', 'text/plain', null, true)]);
     }
 
     public function testMultipartImportReturnsDatabaseIdAndDuplicateConflict(): void
@@ -252,6 +252,16 @@ final class ClubTournamentResultsImportTest extends PfsImportDatabaseTestCase
     {
         self::assertSame(400, $this->processor(new Request([], ['organizationId' => '21']))->process(null, new Post())->getStatusCode());
         self::assertSame(400, $this->processor(new Request())->process(null, new Post())->getStatusCode());
+        self::assertSame(0, (int) $this->db->fetchOne('SELECT COUNT(*) FROM tournament'));
+    }
+
+    public function testMultipartRequiresDirectoryMetadataForBlubry(): void
+    {
+        $request = $this->upload();
+        $request->request->remove('sourceDirectory');
+        $response = $this->processor($request)->process(null, new Post());
+        self::assertSame(400, $response->getStatusCode());
+        self::assertStringContainsString('Katalog turnieju', $response->getContent());
         self::assertSame(0, (int) $this->db->fetchOne('SELECT COUNT(*) FROM tournament'));
     }
 

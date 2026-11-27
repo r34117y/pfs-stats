@@ -39,6 +39,8 @@ const assert = require('node:assert/strict');
         const beforeIds = new Set(beforeList.tournaments.map(tournament => tournament.id));
         const pairInput = page.locator('input[x-ref=resultsInput]');
         const directory = process.env.CLUB_IMPORT_DIRECTORY;
+        const sourceDirectory = directory ? path.basename(directory) : (process.env.CLUB_IMPORT_SOURCE_DIRECTORY || path.basename(path.dirname(hh)));
+        if (!directory) await page.locator('input[x-model=sourceDirectoryName]').fill(sourceDirectory);
         const input = directory ? page.locator('input[webkitdirectory]') : pairInput;
         const preprocessURL = '/api/user/tournament-results/preprocess-club-results';
         const importURL = '/api/user/tournament-results/import-club-results';
@@ -81,7 +83,7 @@ const assert = require('node:assert/strict');
         assert.equal((await upload([hh, standings])).status(), 409);
         const multipart = {
             organizationId,
-            ...(directory ? { sourceDirectory: path.basename(directory) } : {}),
+            sourceDirectory,
             results: { name: 'resultsHH.txt', mimeType: 'text/plain', buffer: fs.readFileSync(hh) },
             standings: { name: 'results.txt', mimeType: 'text/plain', buffer: fs.readFileSync(standings) },
         };

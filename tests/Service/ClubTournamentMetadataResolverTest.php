@@ -32,6 +32,15 @@ final class ClubTournamentMetadataResolverTest extends TestCase
         (new ClubTournamentMetadataResolver())->apply(new ParsedClubTournamentResults('Test',new \DateTimeImmutable(),[]),'31022026_Blubry535_Test');
     }
 
+    public function testBrowserCannotSilentlyFallBackToAConflictingFileHeading(): void
+    {
+        $fixture = dirname(__DIR__).'/Fixtures/club_tournament_results/2505.2026_Blubry540_Klymenia';
+        $preprocessor = new \App\Service\ClubTournamentResultsPreprocessor(new \App\Service\ClubTournamentResultsFileDecoder(), new \App\Service\ClubTournamentResultsParser(), new \App\Service\ClubTournamentStandingsBuilder());
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Katalog turnieju');
+        $preprocessor->preprocess(file_get_contents($fixture.'HH.txt'), file_get_contents($fixture.'.txt'));
+    }
+
     public function testBrowserPreviewUsesTheSameDirectoryMetadata(): void
     {
         $fixture = dirname(__DIR__).'/Fixtures/club_tournament_results/2505.2026_Blubry540_Klymenia';
