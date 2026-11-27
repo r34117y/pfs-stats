@@ -12,25 +12,87 @@ use RuntimeException;
 
 final readonly class ClubTournamentResultsParser
 {
-    public function parse(string $text): ParsedClubTournamentResults
+    public function parse(string $text, ?string $finalStandings = null): ParsedClubTournamentResults
     {
         $text = $this->normalizeText($text);
         $lines = preg_split('/\n/u', $text) ?: [];
         $heading = $this->firstNonEmptyLine($lines);
-        if ($heading === null || !preg_match('/^(\d{2})(\d{2})(\d{4})_(.+)$/u', $heading, $match)) {
+        if ($heading === null || !preg_match('/^(\d{2})(\d{2})\.?(\d{4})_(.+)$/u', $heading, $match)) {
             throw new RuntimeException('Could not parse HH heading.');
         }
 
         $date = DateTimeImmutable::createFromFormat('!dmY', $match[1] . $match[2] . $match[3]);
-        if (!$date instanceof DateTimeImmutable) {
+        if (!$date instanceof DateTimeImmutable || $date->format('dmY') !== $match[1] . $match[2] . $match[3]) {
             throw new RuntimeException(sprintf('Could not parse tournament date from heading "%s".', $heading));
         }
 
         return new ParsedClubTournamentResults(
             name: $match[4],
             date: $date,
-            players: $this->parsePlayers($lines),
+            players: $this->reconcilePauses($this->parsePlayers($lines), $finalStandings, $heading),
         );
+    }
+
+    /** @param list<ParsedClubPlayer> $players @return list<ParsedClubPlayer> */
+    private function reconcilePauses(array $players, ?string $finalStandings, string $heading): array
+    {
+        if ($finalStandings === null) {
+            foreach ($players as $player) {
+                foreach ($player->games as $game) {
+                    if ($game->isBye) {
+                        throw new RuntimeException('Plik HH zawiera PAUZA. Dodaj także plik klasyfikacji końcowej (bez HH w nazwie), aby odróżnić pauzy od nieobecności.');
+                    }
+                }
+            }
+            return $players;
+        }
+
+        $text = $this->normalizeText($finalStandings);
+        if (!str_starts_with($text, $heading . ' - ')) {
+            throw new RuntimeException('Pliki HH i klasyfikacji końcowej dotyczą różnych turniejów.');
+        }
+        $totals = [];
+        foreach (explode("\n", $text) as $line) {
+            if (preg_match('/^\s*\d+\.(.+?)\s+(\d+)\s+\S.*?\s+(\d+)\s+(\d+\.\d)\s*$/u', $line, $match)) {
+                $name = $this->normalizeInlineWhitespace($match[1]);
+                if (isset($totals[$name])) {
+                    throw new RuntimeException('Duplicate player in final standings: '.$name);
+                }
+                $totals[$name] = ['points' => (int) $match[3], 'big' => (float) $match[4]];
+            }
+        }
+        if (count($totals) !== count($players)) {
+            throw new RuntimeException('Liczba zawodników w HH i klasyfikacji końcowej jest różna.');
+        }
+
+        $resolved = [];
+        foreach ($players as $player) {
+            $total = $totals[$player->name] ?? null;
+            if ($total === null) {
+                throw new RuntimeException('Missing final standings for '.$player->name);
+            }
+            $played = array_values(array_filter($player->games, static fn (ParsedClubGame $game): bool => !$game->isBye));
+            $pauses = array_values(array_filter($player->games, static fn (ParsedClubGame $game): bool => $game->isBye));
+            $points = array_sum(array_map(static fn (ParsedClubGame $game): int => $game->pointsFor, $played));
+            $big = array_sum(array_map(static fn (ParsedClubGame $game): float => $game->result === '+' ? 1.0 : ($game->result === '=' ? 0.5 : 0.0), $played));
+            $extra = $total['points'] - $points;
+            $awarded = intdiv($extra, 350);
+            if ($extra < 0 || $extra % 350 !== 0 || $awarded > count($pauses) || $big + $awarded * 0.5 !== $total['big']) {
+                throw new RuntimeException('HH scores disagree with final standings for '.$player->name);
+            }
+            if ($awarded === count($pauses)) {
+                $games = $player->games;
+            } else {
+                $games = $played;
+                // The two files identify how many pauses earned points, but do not
+                // identify their rounds. Preserve that uncertainty instead of guessing.
+                for ($i = 0; $i < $awarded; $i++) {
+                    $games[] = new ParsedClubGame(null, null, null, 'PAUZA', null, null, null, null, null, true);
+                }
+            }
+            $resolved[] = new ParsedClubPlayer($player->position, $player->name, $player->initialRank, $player->city, $games, $player->achievedRank);
+        }
+        return $resolved;
     }
 
     /**
@@ -105,7 +167,7 @@ final readonly class ClubTournamentResultsParser
             if ($this->isPlayerHeader($line)) {
                 break;
             }
-            $index++;
+            throw new RuntimeException(sprintf('Could not parse game row for player %s: %s', trim($match[2]), $trimmed));
         }
 
         if ($achievedRank === null) {
@@ -156,7 +218,7 @@ final readonly class ClubTournamentResultsParser
         }
 
         if (!preg_match(
-            '/^(\d+)\s+(\d+)\s+(\d+)\s+(.+?)\s+(\d+)\s+([+\-=])\s+(\d+):(\d+)\s+(\d+)$/u',
+            '/^(\d+)\s+(\d+)\s+(\d+)\s+(.+?)\s+(\d+)\s+([+\-=])\s+(\d+)\s*:\s*(\d+)\s+(\d+)$/u',
             $line,
             $match,
         )) {

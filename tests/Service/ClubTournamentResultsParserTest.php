@@ -6,6 +6,8 @@ namespace App\Tests\Service;
 
 use App\ClubTournamentImport\ParsedClubTournamentResults;
 use App\Service\ClubTournamentResultsParser;
+use App\Service\ClubTournamentResultsFileDecoder;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 final class ClubTournamentResultsParserTest extends TestCase
@@ -13,7 +15,7 @@ final class ClubTournamentResultsParserTest extends TestCase
     public function testParsesHhFileAndComputesSameStandingsAsFinalResultsFile(): void
     {
         $parser = new ClubTournamentResultsParser();
-        $parsed = $parser->parse($this->readFixture('blubry_wyniki/10032026_Blubry530_GP7_ZafuHH.txt'));
+        $parsed = $parser->parse($this->readFixture('blubry_wyniki/10032026_Blubry530_GP7_ZafuHH.txt'), $this->readFixture('blubry_wyniki/10032026_Blubry530_GP7_Zafu.txt'));
 
         self::assertSame('Blubry530_GP7_Zafu', $parsed->name);
         self::assertSame('2026-03-10', $parsed->date->format('Y-m-d'));
@@ -31,7 +33,7 @@ final class ClubTournamentResultsParserTest extends TestCase
     public function testParsesAnotherFixtureWithPolishCharacters(): void
     {
         $parser = new ClubTournamentResultsParser();
-        $parsed = $parser->parse($this->readFixture('blubry_wyniki/17032026_Blubry531_KuczbajHH.txt'));
+        $parsed = $parser->parse($this->readFixture('blubry_wyniki/17032026_Blubry531_KuczbajHH.txt'), $this->readFixture('blubry_wyniki/17032026_Blubry531_Kuczbaj.txt'));
 
         self::assertSame('Blubry531_Kuczbaj', $parsed->name);
         self::assertSame('Przemysław Kuczyński', $parsed->players[7]->name);
@@ -40,6 +42,66 @@ final class ClubTournamentResultsParserTest extends TestCase
             $this->parseFinalStandings($this->readFixture('blubry_wyniki/17032026_Blubry531_Kuczbaj.txt')),
             $this->computeStandings($parsed),
         );
+    }
+
+    public static function extendedFixtures(): iterable
+    {
+        foreach (glob(dirname(__DIR__).'/Fixtures/club_tournament_results/*HH.txt') as $path) {
+            yield basename($path) => [$path];
+        }
+    }
+
+    #[DataProvider('extendedFixtures')]
+    public function testRealFilesWithPaddedScoresAndDottedDate(string $path): void
+    {
+        $decoder = new ClubTournamentResultsFileDecoder();
+        $parsed = (new ClubTournamentResultsParser())->parse($decoder->decode(file_get_contents($path)), $decoder->decode(file_get_contents(str_replace('HH.txt', '.txt', $path))));
+        $final = $decoder->decode(file_get_contents(str_replace('HH.txt', '.txt', $path)));
+        self::assertSame($this->parseFinalStandings($final), $this->computeStandings($parsed));
+        if (str_contains($path, 'Klymenia')) {
+            self::assertSame('2026-05-25', $parsed->date->format('Y-m-d'));
+        }
+    }
+
+    public function testRejectsImpossibleDate(): void
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Could not parse tournament date');
+        (new ClubTournamentResultsParser())->parse('31022026_Invalid');
+    }
+
+    public function testRequiresFinalStandingsForAmbiguousPauses(): void
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('PAUZA');
+        (new ClubTournamentResultsParser())->parse($this->readFixture('blubry_wyniki/17032026_Blubry531_KuczbajHH.txt'));
+    }
+
+    public function testRejectsFinalStandingsFromAnotherTournament(): void
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('różnych turniejów');
+        (new ClubTournamentResultsParser())->parse(
+            $this->readFixture('blubry_wyniki/17032026_Blubry531_KuczbajHH.txt'),
+            $this->readFixture('blubry_wyniki/10032026_Blubry530_GP7_Zafu.txt'),
+        );
+    }
+
+    public function testRejectsScoresInconsistentWithFinalStandings(): void
+    {
+        $hh = $this->readFixture('blubry_wyniki/17032026_Blubry531_KuczbajHH.txt');
+        $hh = preg_replace('/\d+:\d+/', '999:999', $hh, 1);
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('disagree with final standings');
+        (new ClubTournamentResultsParser())->parse($hh, $this->readFixture('blubry_wyniki/17032026_Blubry531_Kuczbaj.txt'));
+    }
+
+    public function testRejectsUnrecognizedGameInsteadOfSilentlyLosingIt(): void
+    {
+        $text = $this->readFixture('blubry_wyniki/17032026_Blubry531_KuczbajHH.txt');
+        $text = preg_replace('/\d+:\d+/', 'invalid-score', $text, 1);
+        $this->expectException(\RuntimeException::class);
+        (new ClubTournamentResultsParser())->parse($text);
     }
 
     private function readFixture(string $path): string

@@ -16,10 +16,10 @@ final readonly class ClubTournamentResultsPreprocessor
     ) {
     }
 
-    public function preprocess(string $raw): ClubTournamentResultsPreview
+    public function preprocess(string $raw, ?string $standings = null): ClubTournamentResultsPreview
     {
         $decoded = $this->fileDecoder->decode($raw);
-        $results = $this->parser->parse($decoded);
+        $results = $this->parser->parse($decoded, $standings !== null ? $this->fileDecoder->decode($standings) : null);
 
         return new ClubTournamentResultsPreview(
             results: $results,
@@ -30,7 +30,7 @@ final readonly class ClubTournamentResultsPreprocessor
 
     /**
      * @param list<ParsedClubPlayer> $players
-     * @return array<int, array{source:ParsedClubPlayer,playerId:int,legacyPlayerId:int,nameShow:string,nameAlph:string}>
+     * @return array<int, array{source:ParsedClubPlayer,playerId:int,nameShow:string,nameAlph:string}>
      */
     private function playersByPosition(array $players): array
     {
@@ -39,7 +39,6 @@ final readonly class ClubTournamentResultsPreprocessor
             $playersByPosition[$player->position] = [
                 'source' => $player,
                 'playerId' => $player->position,
-                'legacyPlayerId' => $player->position,
                 'nameShow' => $player->name,
                 'nameAlph' => $player->name,
             ];

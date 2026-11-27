@@ -46,6 +46,7 @@
                         <div class="control">
                             <input
                                 type="file"
+                                multiple
                                 class="input"
                                 accept=".txt,text/plain"
                                 x-ref="resultsInput"
@@ -53,7 +54,7 @@
                                 x-on:change="preprocessResultsFile"
                             >
                         </div>
-                        <p class="help" x-show="!preprocessing">Wybierz plik HH z wynikami turnieju.</p>
+                        <p class="help" x-show="!preprocessing">Wybierz jednocześnie plik HH i plik klasyfikacji końcowej (bez HH w nazwie).</p>
                         <p class="help" x-show="preprocessing" x-cloak>Przetwarzanie pliku...</p>
                     </div>
 
@@ -111,7 +112,7 @@
                 loading: true,
                 error: '',
                 success: '',
-                data: null,
+                data: { title: '', description: '', organizations: [], recentImports: [] },
                 profile: null,
                 selectedOrganizationId: '',
                 preprocessing: false,
@@ -119,6 +120,7 @@
                 previewHtml: '',
                 previewModalOpen: false,
                 pendingResultsFile: null,
+                pendingStandingsFile: null,
                 pendingOrganizationId: '',
                 async load() {
                     this.loading = true;
@@ -166,8 +168,11 @@
                     this.error = '';
                     this.success = '';
                     this.pendingResultsFile = null;
+                    this.pendingStandingsFile = null;
                     this.pendingOrganizationId = '';
-                    const file = event.target.files?.[0];
+                    const files = Array.from(event.target.files ?? []);
+                    const file = files.find((item) => /HH\.txt$/i.test(item.name)) ?? files[0];
+                    const standingsFile = files.find((item) => item !== file);
                     if (!file) {
                         return;
                     }
@@ -180,6 +185,7 @@
 
                     const formData = new FormData();
                     formData.append('results', file);
+                    if (standingsFile) formData.append('standings', standingsFile);
                     formData.append('organizationId', this.selectedOrganizationId);
                     this.preprocessing = true;
 
@@ -197,6 +203,7 @@
                         }
 
                         this.pendingResultsFile = file;
+                        this.pendingStandingsFile = standingsFile ?? null;
                         this.pendingOrganizationId = this.selectedOrganizationId;
                         this.previewHtml = text;
                         this.previewModalOpen = true;
@@ -233,6 +240,7 @@
 
                     const formData = new FormData();
                     formData.append('results', this.pendingResultsFile);
+                    if (this.pendingStandingsFile) formData.append('standings', this.pendingStandingsFile);
                     formData.append('organizationId', this.pendingOrganizationId);
 
                     try {
@@ -270,6 +278,7 @@
                     this.previewModalOpen = false;
                     this.previewHtml = '';
                     this.pendingResultsFile = null;
+                    this.pendingStandingsFile = null;
                     this.pendingOrganizationId = '';
                 }
             };

@@ -7,7 +7,8 @@ namespace App\ClubTournamentImport;
 final readonly class ParsedClubGame
 {
     public function __construct(
-        public int $round,
+        // Null when final standings prove an awarded pause but not its round.
+        public ?int $round,
         public ?int $table,
         public ?int $opponentPosition,
         public string $opponentName,

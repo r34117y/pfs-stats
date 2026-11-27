@@ -48,4 +48,23 @@ final readonly class PlayerCatalogService
             ];
         }, $rows);
     }
+
+    /** @return list<array{playerId:int,nameShow:string,nameAlph:string,normalized:string,isInOrganization:bool}> */
+    public function loadClubImportPlayerCatalog(int $organizationId): array
+    {
+        $rows = $this->connection->fetchAllAssociative(
+            'SELECT p.id, p.name_show, p.name_alph,
+                EXISTS (SELECT 1 FROM player_organization po WHERE po.player_id = p.id AND po.organization_id = :organizationId) AS is_in_organization
+             FROM player p WHERE p.name_show IS NOT NULL ORDER BY p.id',
+            ['organizationId' => $organizationId],
+        );
+
+        return array_map(fn (array $row): array => [
+            'playerId' => (int) $row['id'],
+            'nameShow' => (string) $row['name_show'],
+            'nameAlph' => (string) ($row['name_alph'] ?? ''),
+            'normalized' => $this->nameNormalizer->normalizeForMatch((string) $row['name_show']),
+            'isInOrganization' => (bool) $row['is_in_organization'],
+        ], $rows);
+    }
 }

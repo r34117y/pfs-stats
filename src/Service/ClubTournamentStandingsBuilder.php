@@ -9,7 +9,7 @@ use App\ClubTournamentImport\ParsedClubPlayer;
 final readonly class ClubTournamentStandingsBuilder
 {
     /**
-     * @param array<int, array{source:ParsedClubPlayer,playerId:int,legacyPlayerId:int,nameShow:string,nameAlph:string}> $playersByPosition
+     * @param array<int, array{source:ParsedClubPlayer,playerId:int,nameShow:string,nameAlph:string}> $playersByPosition
      * @return list<array<string, int|float|string>>
      */
     public function buildStandings(array $playersByPosition): array
@@ -51,7 +51,6 @@ final readonly class ClubTournamentStandingsBuilder
             $standings[] = [
                 'position' => $position,
                 'playerId' => $player['playerId'],
-                'legacyPlayerId' => $player['legacyPlayerId'],
                 'nameShow' => $player['nameShow'],
                 'initialRank' => $source->initialRank,
                 'achievedRank' => $source->achievedRank,

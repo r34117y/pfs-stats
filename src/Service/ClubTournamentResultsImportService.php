@@ -57,7 +57,7 @@ final readonly class ClubTournamentResultsImportService
         }
 
         return $this->connection->transactional(function (Connection $connection) use ($results, $organizationId, $dateCode, $fullname): ClubTournamentImportResult {
-            $catalog = $this->playerCatalogService->loadPlayerCatalog($organizationId);
+            $catalog = $this->playerCatalogService->loadClubImportPlayerCatalog($organizationId);
 
             $createdPlayerIds = [];
             $linkedPlayerIds = [];
@@ -153,6 +153,7 @@ final readonly class ClubTournamentResultsImportService
                 'resource_type' => self::AUDIT_RESOURCE_TYPE,
                 'data' => json_encode([
                     'tournamentDbId' => $tournamentId,
+                    'byesWithoutKnownRound' => $this->byesWithoutKnownRound($playersByPosition),
                     'createdPlayerIds' => array_values(array_unique($createdPlayerIds)),
                     'linkedPlayerIds' => array_values(array_unique($linkedPlayerIds)),
                     'importedAt' => (new DateTimeImmutable())->format(DateTimeInterface::ATOM),
@@ -185,6 +186,12 @@ final readonly class ClubTournamentResultsImportService
         foreach ($playersByPosition as $position => $player) {
             foreach ($player['source']->games as $game) {
                 if ($game->isBye) {
+                    // Final standings prove the points, but HH does not always
+                    // identify the awarded round. Keep those byes in standings
+                    // and the audit instead of inventing a tournament game round.
+                    if ($game->round === null) {
+                        continue;
+                    }
                     $this->insertGameRow(
                         $connection,
                         $organizationId,
@@ -194,7 +201,6 @@ final readonly class ClubTournamentResultsImportService
                         null,
                         350,
                         0,
-                        1,
                     );
                     $inserted++;
                     continue;
@@ -221,8 +227,8 @@ final readonly class ClubTournamentResultsImportService
                     throw new BadRequestHttpException(sprintf('Missing score in round %d table %d.', $game->round, $game->table ?? 0));
                 }
 
-                $this->insertGameRow($connection, $organizationId, $tournamentId, $game, $player1, $player2, $score1, $score2, 1);
-                $this->insertGameRow($connection, $organizationId, $tournamentId, $game, $player2, $player1, $score2, $score1, 2);
+                $this->insertGameRow($connection, $organizationId, $tournamentId, $game, $player1, $player2, $score1, $score2);
+                $this->insertGameRow($connection, $organizationId, $tournamentId, $game, $player2, $player1, $score2, $score1);
                 $inserted++;
             }
         }
@@ -244,7 +250,6 @@ final readonly class ClubTournamentResultsImportService
         ?array         $player2,
         int            $score1,
         int            $score2,
-        int            $host,
     ): void {
         $connection->insert('tournament_game', [
             'organization_id' => $organizationId,
@@ -255,11 +260,32 @@ final readonly class ClubTournamentResultsImportService
             'table_no' => $game->table,
             'result1' => $score1,
             'result2' => $score2,
-            'ranko' => $player2 !== null ? $player2['source']->initialRank : 100,
-            'host' => $host,
+            'ranko' => $player2 !== null ? $player2['source']->initialRank : null,
+            // HH does not identify the starting player.
+            'host' => null,
             'gcg' => null,
             'gcg_updated_at' => null,
         ]);
+    }
+
+    /**
+     * @param array<int, array{source:ParsedClubPlayer,playerId:int,nameShow:string,nameAlph:string}> $playersByPosition
+     * @return list<array{playerId:int,count:int}>
+     */
+    private function byesWithoutKnownRound(array $playersByPosition): array
+    {
+        $byes = [];
+        foreach ($playersByPosition as $player) {
+            $count = count(array_filter(
+                $player['source']->games,
+                static fn (ParsedClubGame $game): bool => $game->isBye && $game->round === null,
+            ));
+            if ($count > 0) {
+                $byes[] = ['playerId' => $player['playerId'], 'count' => $count];
+            }
+        }
+
+        return $byes;
     }
 
     /**
@@ -309,6 +335,23 @@ final readonly class ClubTournamentResultsImportService
      * @return array{playerId:int,nameShow:string,nameAlph:string,normalized:string,isInOrganization:bool}|null
      */
     private function resolvePlayer(array $catalog, string $playerName): ?array
+    {
+        $organizationCatalog = array_values(array_filter($catalog, static fn (array $candidate): bool => $candidate['isInOrganization']));
+        if ($organizationCatalog !== []) {
+            $match = $this->matchPlayer($organizationCatalog, $playerName);
+            if ($match !== null) {
+                return $match;
+            }
+        }
+
+        return $this->matchPlayer($catalog, $playerName);
+    }
+
+    /**
+     * @param list<array{playerId:int,nameShow:string,nameAlph:string,normalized:string,isInOrganization:bool}> $catalog
+     * @return array{playerId:int,nameShow:string,nameAlph:string,normalized:string,isInOrganization:bool}|null
+     */
+    private function matchPlayer(array $catalog, string $playerName): ?array
     {
         $exactMatches = array_values(array_filter(
             $catalog,

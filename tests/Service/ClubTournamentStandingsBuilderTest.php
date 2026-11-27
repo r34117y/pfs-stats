@@ -14,15 +14,15 @@ final class ClubTournamentStandingsBuilderTest extends TestCase
     public function testBuildsAndSortsStandings(): void
     {
         $standings = (new ClubTournamentStandingsBuilder())->buildStandings([
-            1 => $this->player('Anna', 101, 201, [
+            1 => $this->player('Anna', 101, [
                 $this->game(result: '+', pointsFor: 430, pointsAgainst: 300),
                 $this->game(result: '=', pointsFor: 360, pointsAgainst: 360),
             ]),
-            2 => $this->player('Bartek', 102, 202, [
+            2 => $this->player('Bartek', 102, [
                 $this->game(result: '+', pointsFor: 450, pointsAgainst: 300),
                 $this->game(isBye: true),
             ]),
-            3 => $this->player('Celina', 103, 203, [
+            3 => $this->player('Celina', 103, [
                 $this->game(result: '-', pointsFor: 300, pointsAgainst: 430),
                 $this->game(result: '=', pointsFor: 360, pointsAgainst: 360),
             ]),
@@ -41,9 +41,9 @@ final class ClubTournamentStandingsBuilderTest extends TestCase
 
     /**
      * @param list<ParsedClubGame> $games
-     * @return array{source:ParsedClubPlayer,playerId:int,legacyPlayerId:int,nameShow:string,nameAlph:string}
+     * @return array{source:ParsedClubPlayer,playerId:int,nameShow:string,nameAlph:string}
      */
-    private function player(string $name, int $playerId, int $legacyPlayerId, array $games): array
+    private function player(string $name, int $playerId, array $games): array
     {
         return [
             'source' => new ParsedClubPlayer(
@@ -55,7 +55,6 @@ final class ClubTournamentStandingsBuilderTest extends TestCase
                 achievedRank: 160.0,
             ),
             'playerId' => $playerId,
-            'legacyPlayerId' => $legacyPlayerId,
             'nameShow' => $name,
             'nameAlph' => $name,
         ];

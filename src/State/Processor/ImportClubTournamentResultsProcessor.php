@@ -10,6 +10,7 @@ use App\Entity\User;
 use App\Service\ClubTournamentResultsFileDecoder;
 use App\Service\ClubTournamentResultsImportService;
 use App\Service\ClubTournamentResultsParser;
+use App\Service\DatasetVersionService;
 use App\Service\UserOrganizationAdminChecker;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -28,6 +29,7 @@ final readonly class ImportClubTournamentResultsProcessor implements ProcessorIn
         private ClubTournamentResultsFileDecoder $fileDecoder,
         private ClubTournamentResultsParser $parser,
         private ClubTournamentResultsImportService $importService,
+        private ?DatasetVersionService $datasetVersion = null,
     ) {
     }
 
@@ -56,7 +58,15 @@ final readonly class ImportClubTournamentResultsProcessor implements ProcessorIn
         }
 
         try {
-            $parsed = $this->parser->parse($this->fileDecoder->decode($raw));
+            $standingsFile = $request?->files->get('standings');
+            $standings = null;
+            if ($standingsFile instanceof UploadedFile) {
+                $standings = file_get_contents($standingsFile->getPathname());
+                if ($standings === false) {
+                    throw new \RuntimeException('Could not read final standings file.');
+                }
+            }
+            $parsed = $this->parser->parse($this->fileDecoder->decode($raw), $standings !== null ? $this->fileDecoder->decode($standings) : null);
             $result = $this->importService->import($parsed, $organizationId);
         } catch (HttpExceptionInterface $exception) {
             return new Response($exception->getMessage(), $exception->getStatusCode());
@@ -67,10 +77,16 @@ final readonly class ImportClubTournamentResultsProcessor implements ProcessorIn
             );
         }
 
+        $message = sprintf('Zaimportowano turniej %s.', $parsed->name);
+        try {
+            $this->datasetVersion?->bumpVersion();
+        } catch (\Throwable) {
+            $message .= ' Turniej jest zapisany, ale odświeżenie statystyk wymaga pomocy administratora.';
+        }
+
         return new JsonResponse([
-            'message' => sprintf('Zaimportowano turniej %s.', $parsed->name),
+            'message' => $message,
             'tournamentId' => $result->tournamentId,
-            'legacyTournamentId' => $result->legacyTournamentId,
             'playersCount' => $result->playersCount,
             'gamesCount' => $result->gamesCount,
             'createdPlayerIds' => $result->createdPlayerIds,
