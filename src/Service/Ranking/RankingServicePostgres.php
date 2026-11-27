@@ -39,7 +39,9 @@ final readonly class RankingServicePostgres implements RankingServiceInterface
             ? $this->rankingSnapshotService->getRankingAfterTournament($organizationId, $previousTournamentId, $rankingType)
             : [];
 
-        $comparisonAvailable = $previousRanking !== [];
+        // A valid preceding snapshot can become empty after eligibility filtering.
+        $comparisonAvailable = $previousTournamentId !== null
+            && $previousNavigationTournamentId === $previousTournamentId;
         $comparisonTournament = $previousTournamentId !== null
             ? $this->loadTournamentMeta($organizationId, $previousTournamentId)
             : ['id' => null, 'name' => null];

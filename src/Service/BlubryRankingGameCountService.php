@@ -11,6 +11,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 final readonly class BlubryRankingGameCountService
 {
+    public const int MIN_GAMES = 10;
     private const int MAX_GAMES = 60;
     // Confirmed source aliases, scoped to BLUBRY. The legacy profile p=57 is
     // Bartosz Bartczak; HH exports use Bartek. Maciej's canonical name is hidden.

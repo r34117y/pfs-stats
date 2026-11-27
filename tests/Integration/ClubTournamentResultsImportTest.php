@@ -142,7 +142,7 @@ final class ClubTournamentResultsImportTest extends PfsImportDatabaseTestCase
         );
     }
 
-    public function testPublishedRankingMakesImportedTournamentLatestOnHomePage(): void
+    public function testPublishedRankingMakesTournamentLatestButInsufficientGamesAreExcluded(): void
     {
         $this->db->update('organization', ['code'=>'BLUBRY'], ['id'=>21]);
         $importer = new \App\Service\ClubTournamentRankingImportService($this->db, new \App\Service\ClubTournamentRankingParser(), fn () => $this->rankingHtml());
@@ -152,8 +152,9 @@ final class ClubTournamentResultsImportTest extends PfsImportDatabaseTestCase
         $ranking = (new \App\Service\Ranking\RankingServicePostgres($this->db, new \App\Service\RankingSnapshot\RankingSnapshotServicePostgres($this->db)))->getRanking(21);
         self::assertSame($result->tournamentId, $ranking->lastTournamentId);
         self::assertSame('Blubry531_Kuczbaj', $ranking->lastTournamentName);
-        self::assertCount(2, $ranking->rows);
-        self::assertSame('163.70', $ranking->rows[0]->rank);
+        // A single fixture event provides fewer than ten counted games per player.
+        self::assertSame([], $ranking->rows);
+        self::assertSame(163.70, (float) $this->db->fetchOne('SELECT MAX(rank) FROM ranking'));
         $snapshot = $importer->fetchSnapshot(21, 20260317);
         self::assertSame(0, $importer->store($snapshot, 21, $result->tournamentId));
         self::assertSame(2, (int) $this->db->fetchOne('SELECT COUNT(*) FROM ranking'));

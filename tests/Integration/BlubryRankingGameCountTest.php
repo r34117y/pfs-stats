@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Integration;
 
 use App\Service\BlubryRankingGameCountService;
+use App\Service\Ranking\RankingServicePostgres;
 use App\Service\RankingSnapshot\RankingSnapshotServicePostgres;
 
 final class BlubryRankingGameCountTest extends PfsImportDatabaseTestCase
@@ -14,7 +15,7 @@ final class BlubryRankingGameCountTest extends PfsImportDatabaseTestCase
         parent::setUp();
         $this->db->update('organization', ['code' => 'BLUBRY'], ['id' => 21]);
         foreach ([10 => 'Bartosz Bartczak', 11 => 'Opponent', 12 => 'Bartek Bartczak', 13 => 'No history'] as $id => $name) {
-            $this->db->insert('player', ['id' => $id, 'name_show' => $name, 'name_alph' => $name]);
+            $this->db->insert('player', ['id' => $id, 'name_show' => $name, 'name_alph' => $name, 'slug' => 'test-player-'.$id]);
             $this->db->insert('player_organization', ['player_id' => $id, 'organization_id' => 21]);
         }
     }
@@ -24,7 +25,7 @@ final class BlubryRankingGameCountTest extends PfsImportDatabaseTestCase
         $this->db->insert('tournament', ['id' => $id, 'organization_id' => 21, 'dt' => $date, 'name' => 'Test', 'fullname' => 'Test']);
         $this->db->insert('tournament_result', ['organization_id' => 21, 'tournament_id' => $id, 'player_id' => $player, 'place' => 1, 'games' => $games, 'trank' => $performance]);
         for ($round = 1; $round <= $games; ++$round) {
-            $this->db->insert('tournament_game', ['organization_id' => 21, 'tournament_id' => $id, 'player1_id' => $player, 'player2_id' => 11, 'round_no' => $round, 'result1' => 350, 'result2' => 300, 'ranko' => 100]);
+            $this->db->insert('tournament_game', ['organization_id' => 21, 'tournament_id' => $id, 'player1_id' => $player, 'player2_id' => $player === 11 ? 10 : 11, 'round_no' => $round, 'result1' => 350, 'result2' => 300, 'ranko' => 100]);
         }
     }
 
@@ -89,10 +90,10 @@ final class BlubryRankingGameCountTest extends PfsImportDatabaseTestCase
 
     public function testCompleteSnapshotUsesCalculatedCountAndPreservesSourceRecord(): void
     {
-        $this->event(101, 20261117, 4, 200);
+        $this->event(101, 20261117, 10, 200);
         $this->db->insert('ranking', ['organization_id' => 21, 'tournament_id' => 101, 'player_id' => 10, 'rtype' => 'f', 'position' => 1, 'rank' => 163.70, 'games' => 60]);
         $rows = (new RankingSnapshotServicePostgres($this->db))->getRankingAfterTournament(21, 101);
-        self::assertSame(4, $rows[0]['games']);
+        self::assertSame(10, $rows[0]['games']);
         self::assertSame(163.70, $rows[0]['rank']);
         self::assertSame(60, (int) $this->db->fetchOne('SELECT games FROM ranking'));
         $this->db->update('organization', ['code' => 'PFS'], ['id' => 21]);
@@ -101,10 +102,71 @@ final class BlubryRankingGameCountTest extends PfsImportDatabaseTestCase
 
     public function testIncompleteSnapshotGetsCalculatedCountWithoutChangingAudit(): void
     {
-        $this->event(101, 20261117, 4, 200);
+        $this->event(101, 20261117, 10, 200);
         $payload = json_encode(['tournamentDbId' => 101, 'rankingRows' => [['player_id' => 10, 'position' => 1, 'rank' => 163.70, 'games' => null]]], JSON_THROW_ON_ERROR);
         $this->db->insert('text_resource', ['organization_id' => 21, 'resource_type' => 9006, 'data' => $payload]);
-        self::assertSame(4, (new RankingSnapshotServicePostgres($this->db))->getRankingAfterTournament(21, 101)[0]['games']);
+        self::assertSame(10, (new RankingSnapshotServicePostgres($this->db))->getRankingAfterTournament(21, 101)[0]['games']);
         self::assertSame($payload, $this->db->fetchOne('SELECT data FROM text_resource'));
+    }
+
+    private function snapshot(int $tournamentId, array $playerIds): void
+    {
+        foreach ($playerIds as $index => $playerId) {
+            $this->db->insert('ranking', ['organization_id' => 21, 'tournament_id' => $tournamentId, 'player_id' => $playerId, 'rtype' => 'f', 'position' => $index + 1, 'rank' => 160 - $index, 'games' => 60]);
+        }
+    }
+
+    public function testEligibilityExcludesZeroAndNineGamesAndIncludesExactlyTen(): void
+    {
+        $this->event(100, 20261110, 9, 200, 10);
+        $this->event(101, 20261117, 10, 200, 11);
+        $this->snapshot(101, [13, 10, 11]);
+        $rows = (new RankingSnapshotServicePostgres($this->db))->getRankingAfterTournament(21, 101);
+        self::assertSame([11], array_column($rows, 'playerId'));
+        self::assertSame([10], array_column($rows, 'games'));
+        self::assertSame([1], array_column($rows, 'position'));
+        self::assertSame(3, (int) $this->db->fetchOne('SELECT COUNT(*) FROM ranking'));
+        $this->db->update('organization', ['code' => 'PFS'], ['id' => 21]);
+        self::assertCount(3, (new RankingSnapshotServicePostgres($this->db))->getRankingAfterTournament(21, 101));
+    }
+
+    public function testEligibilityAlsoAppliesToIncompleteSourceSnapshots(): void
+    {
+        $this->event(101, 20261117, 9, 200);
+        $payload = json_encode(['tournamentDbId' => 101, 'rankingRows' => [['player_id' => 10, 'position' => 1, 'rank' => 163.70, 'games' => null]]], JSON_THROW_ON_ERROR);
+        $this->db->insert('text_resource', ['organization_id' => 21, 'resource_type' => 9006, 'data' => $payload]);
+        self::assertSame([], (new RankingSnapshotServicePostgres($this->db))->getRankingAfterTournament(21, 101));
+        self::assertSame($payload, $this->db->fetchOne('SELECT data FROM text_resource'));
+    }
+
+    public function testReachingTenGamesIsEntryEvenIfPreviousEligibleListWasEmpty(): void
+    {
+        $this->event(100, 20261110, 9, 200);
+        $this->event(101, 20261117, 1, 200);
+        $this->snapshot(100, [10]);
+        $this->snapshot(101, [10]);
+        $service = new RankingServicePostgres($this->db, new RankingSnapshotServicePostgres($this->db));
+        self::assertSame([], $service->getRanking(21, 'f', 100)->rows);
+        $current = $service->getRanking(21, 'f', 101);
+        self::assertTrue($current->comparisonAvailable);
+        self::assertSame(100, $current->previousTournamentId);
+        self::assertSame(10, $current->rows[0]->numberOfGames);
+        self::assertSame('+', $current->rows[0]->positionDelta);
+        self::assertNull($current->rows[0]->rankDelta);
+    }
+
+    public function testPositionChangesUseEligiblePreviousAndCurrentLists(): void
+    {
+        $this->event(99, 20261101, 1, 200, 13);
+        $this->event(100, 20261110, 10, 200, 10);
+        $this->event(101, 20261117, 10, 200, 11);
+        $this->snapshot(100, [13, 10, 11]);
+        $this->snapshot(101, [13, 11, 10]);
+        $result = (new RankingServicePostgres($this->db, new RankingSnapshotServicePostgres($this->db)))->getRanking(21, 'f', 101);
+        self::assertSame([11, 10], array_column($result->rows, 'playerId'));
+        self::assertSame([1, 2], array_column($result->rows, 'position'));
+        self::assertSame('+', $result->rows[0]->positionDelta);
+        self::assertSame(-1, $result->rows[1]->positionDelta);
+        self::assertSame('-1.00', $result->rows[1]->rankDelta);
     }
 }

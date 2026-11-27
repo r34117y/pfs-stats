@@ -86,6 +86,10 @@ The corpus has six lists with complete game counts (140 rows) and 32 lists with 
 
 ### Blubry ranking game counts
 
+Blubry ranking eligibility requires at least **10 counted games**. Players with 0–9 games are omitted from both current and historical rankings. Remaining positions are numbered consecutively, and position changes compare the eligible lists for both tournaments. Eligibility filtering does not modify imported source snapshots.
+
 The displayed count uses the six calendar months ending on the selected tournament, including the boundary date (clamped to the last day of the month). Following the PFS selection rule, whole tournaments are ordered by achieved tournament ranking, highest first; the lowest-performing tournaments are discarded until the total is at most 60. No tournament is split or skipped to fill unused places. Ties use date and tournament ID, newest first. Later tournaments, including those later on the same date, are excluded.
 
 Count actual player-perspective HH games with an opponent and ranking contribution. Byes and non-ranking 400:0 / 0:400 forfeits do not count. Confirmed Blubry aliases are resolved for this calculation. The source ranking values, positions and audit records remain intact. Other organizations retain their existing counting rules.
+
+Daniel Ziarnik illustrates why source-list membership cannot establish eligibility: the imported Amsonia ranking (10 November 2026) includes him at 112.14. His last recorded club appearance is Itajara (3 March 2026, five games), outside the 10 May–10 November window. His computed count is therefore zero and he is omitted under the 10-game rule. Previously the count was recalculated but the source membership was retained, incorrectly displaying this stale entry.

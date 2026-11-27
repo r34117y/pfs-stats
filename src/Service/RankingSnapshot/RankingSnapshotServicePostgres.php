@@ -73,11 +73,15 @@ final readonly class RankingSnapshotServicePostgres implements RankingSnapshotSe
 
         $ranking = [];
         foreach ($rows as $row) {
+            $games = $computedCounts !== null ? $computedCounts[(int) $row['player_id']] : ($row['games'] === null ? null : (int) $row['games']);
+            if ($computedCounts !== null && $games < BlubryRankingGameCountService::MIN_GAMES) {
+                continue;
+            }
             $ranking[] = [
                 'playerId' => (int) $row['player_id'],
-                'position' => (int) $row['position'],
+                'position' => $computedCounts !== null ? count($ranking) + 1 : (int) $row['position'],
                 'rank' => (float) $row['rank'],
-                'games' => $computedCounts !== null ? $computedCounts[(int) $row['player_id']] : ($row['games'] === null ? null : (int) $row['games']),
+                'games' => $games,
                 'nameShow' => (string) $row['name_show'],
                 'nameAlph' => (string) $row['name_alph'],
                 'photo' => $row['photo'],
