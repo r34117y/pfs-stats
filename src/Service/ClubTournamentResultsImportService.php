@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\ClubTournamentImport\ClubTournamentImportResult;
+use App\ClubTournamentImport\ClubTournamentRankingUnavailable;
 use App\ClubTournamentImport\ParsedClubGame;
 use App\ClubTournamentImport\ParsedClubPlayer;
 use App\ClubTournamentImport\ParsedClubTournamentResults;
@@ -16,6 +17,7 @@ use LogicException;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
+use Symfony\Component\String\Slugger\AsciiSlugger;
 
 final readonly class ClubTournamentResultsImportService
 {
@@ -27,7 +29,8 @@ final readonly class ClubTournamentResultsImportService
         private PfsNameNormalizer $nameNormalizer,
         private ClubTournamentStandingsBuilder $standingsBuilder,
         private ClubTournamentExistingTournamentFinder $existingTournamentFinder,
-        private PlayerCatalogService $playerCatalogService
+        private PlayerCatalogService $playerCatalogService,
+        private ?ClubTournamentRankingImportService $rankingImport = null,
     ) {
     }
 
@@ -56,7 +59,15 @@ final readonly class ClubTournamentResultsImportService
             throw new ConflictHttpException(sprintf('Tournament already exists with id %d.', $existingTournamentId));
         }
 
-        return $this->connection->transactional(function (Connection $connection) use ($results, $organizationId, $dateCode, $fullname): ClubTournamentImportResult {
+        $rankingWarning = null;
+        try {
+            $rankingSnapshot = $this->rankingImport?->fetchSnapshot($organizationId, $dateCode);
+        } catch (ClubTournamentRankingUnavailable) {
+            $rankingSnapshot = null;
+            $rankingWarning = 'Wyniki są zapisane, ale pełny ranking po tym turnieju nie jest jeszcze dostępny. Strona główna pokazuje ostatni dostępny ranking.';
+        }
+
+        return $this->connection->transactional(function (Connection $connection) use ($results, $organizationId, $dateCode, $fullname, $rankingSnapshot, $rankingWarning): ClubTournamentImportResult {
             $catalog = $this->playerCatalogService->loadClubImportPlayerCatalog($organizationId);
 
             $createdPlayerIds = [];
@@ -148,11 +159,17 @@ final readonly class ClubTournamentResultsImportService
                 ]);
             }
 
+            if ($rankingSnapshot !== null) {
+                $this->rankingImport->store($rankingSnapshot, $organizationId, $tournamentId);
+            }
+
             $connection->insert('text_resource', [
                 'organization_id' => $organizationId,
                 'resource_type' => self::AUDIT_RESOURCE_TYPE,
                 'data' => json_encode([
                     'tournamentDbId' => $tournamentId,
+                    'rankingRowsCount' => count($rankingSnapshot?->rows ?? []),
+                    'rankingWarning' => $rankingWarning,
                     'byesWithoutKnownRound' => $this->byesWithoutKnownRound($playersByPosition),
                     'createdPlayerIds' => array_values(array_unique($createdPlayerIds)),
                     'linkedPlayerIds' => array_values(array_unique($linkedPlayerIds)),
@@ -166,6 +183,8 @@ final readonly class ClubTournamentResultsImportService
                 gamesCount: $gamesCount,
                 createdPlayerIds: array_values(array_unique($createdPlayerIds)),
                 linkedPlayerIds: array_values(array_unique($linkedPlayerIds)),
+                rankingRowsCount: count($rankingSnapshot?->rows ?? []),
+                rankingWarning: $rankingWarning,
             );
         });
     }
@@ -389,14 +408,18 @@ final readonly class ClubTournamentResultsImportService
     {
         $nameShow = $this->trimToLength($nameShow, 40);
         $nameAlph = $this->trimToLength($this->nameNormalizer->toAlphabeticalName($nameShow), 40);
+        $parts = explode(' ', $nameShow);
         $playerId = (int) $connection->fetchOne(
-            'INSERT INTO player (name_show, name_alph, city)
-             VALUES (:nameShow, :nameAlph, :city)
+            'INSERT INTO player (name_show, name_alph, city, first_name, last_name, slug)
+             VALUES (:nameShow, :nameAlph, :city, :firstName, :lastName, :slug)
              RETURNING id',
             [
                 'nameShow' => $nameShow,
                 'nameAlph' => $nameAlph,
                 'city' => $this->trimToLength($city, 256),
+                'firstName' => count($parts) === 2 ? $parts[0] : null,
+                'lastName' => count($parts) === 2 ? $parts[1] : null,
+                'slug' => (new AsciiSlugger('pl'))->slug($nameShow)->lower()->toString(),
             ],
         );
 

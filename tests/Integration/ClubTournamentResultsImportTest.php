@@ -40,10 +40,10 @@ final class ClubTournamentResultsImportTest extends PfsImportDatabaseTestCase
         return dirname(__DIR__, 2).'/blubry_wyniki/17032026_Blubry531_KuczbajHH.txt';
     }
 
-    private function service(): ClubTournamentResultsImportService
+    private function service(?\App\Service\ClubTournamentRankingImportService $rankingImport = null): ClubTournamentResultsImportService
     {
         $normalizer = new PfsNameNormalizer();
-        return new ClubTournamentResultsImportService($this->db, $normalizer, new ClubTournamentStandingsBuilder(), new ClubTournamentExistingTournamentFinder($this->db), new PlayerCatalogService($this->db, $normalizer));
+        return new ClubTournamentResultsImportService($this->db, $normalizer, new ClubTournamentStandingsBuilder(), new ClubTournamentExistingTournamentFinder($this->db), new PlayerCatalogService($this->db, $normalizer), $rankingImport);
     }
 
     private function command(?DatasetVersionService $datasetVersion = null): CommandTester
@@ -123,6 +123,95 @@ final class ClubTournamentResultsImportTest extends PfsImportDatabaseTestCase
         foreach (['player', 'player_organization', 'tournament', 'tournament_game', 'tournament_result', 'text_resource'] as $table) {
             self::assertSame(0, (int) $this->db->fetchOne('SELECT COUNT(*) FROM '.$table), $table);
         }
+    }
+
+    private function rankingHtml(string $secondName = 'Bartek Bartczak'): string
+    {
+        return '<html><body><h2><a href="ktour.php?t=202603170">Blubry531 Kuczbaj</a></h2><table>'
+            .'<tr><td>1<td><a href="zindex.php?p=6">Jakub Błażejewski</a><td>163.70<td>60'
+            .'<tr><td>2<td><a href="zindex.php?p=57">'.$secondName.'</a><td>144.67<td>60'
+            .'<tr id="sum"><td>-<td>Średni ranking</table></body></html>';
+    }
+
+    private function parsedFixture(): \App\ClubTournamentImport\ParsedClubTournamentResults
+    {
+        $decoder = new ClubTournamentResultsFileDecoder();
+        return (new ClubTournamentResultsParser())->parse(
+            $decoder->decode(file_get_contents($this->fixture())),
+            $decoder->decode(file_get_contents(str_replace('HH.txt', '.txt', $this->fixture()))),
+        );
+    }
+
+    public function testPublishedRankingMakesImportedTournamentLatestOnHomePage(): void
+    {
+        $this->db->update('organization', ['code'=>'BLUBRY'], ['id'=>21]);
+        $importer = new \App\Service\ClubTournamentRankingImportService($this->db, new \App\Service\ClubTournamentRankingParser(), fn () => $this->rankingHtml());
+        $result = $this->service($importer)->import($this->parsedFixture(), 21);
+        self::assertSame(2, $result->rankingRowsCount);
+        self::assertNull($result->rankingWarning);
+        $ranking = (new \App\Service\Ranking\RankingServicePostgres($this->db, new \App\Service\RankingSnapshot\RankingSnapshotServicePostgres($this->db)))->getRanking(21);
+        self::assertSame($result->tournamentId, $ranking->lastTournamentId);
+        self::assertSame('Blubry531_Kuczbaj', $ranking->lastTournamentName);
+        self::assertCount(2, $ranking->rows);
+        self::assertSame('163.70', $ranking->rows[0]->rank);
+        $snapshot = $importer->fetchSnapshot(21, 20260317);
+        self::assertSame(0, $importer->store($snapshot, 21, $result->tournamentId));
+        self::assertSame(2, (int) $this->db->fetchOne('SELECT COUNT(*) FROM ranking'));
+    }
+
+    public function testRankingIdentityFailureRollsBackTournamentAndGames(): void
+    {
+        $this->db->update('organization', ['code'=>'BLUBRY'], ['id'=>21]);
+        $importer = new \App\Service\ClubTournamentRankingImportService($this->db, new \App\Service\ClubTournamentRankingParser(), fn () => $this->rankingHtml('Unknown Player'));
+        try {
+            $this->service($importer)->import($this->parsedFixture(), 21);
+            self::fail('Unknown identity must fail.');
+        } catch (\RuntimeException $exception) {
+            self::assertStringContainsString('Unknown Player', $exception->getMessage());
+        }
+        foreach (['player','tournament','tournament_result','tournament_game','ranking','text_resource'] as $table) {
+            self::assertSame(0, (int) $this->db->fetchOne('SELECT COUNT(*) FROM '.$table));
+        }
+    }
+
+    public function testUnpublishedRankingIsExplicitlyReportedWithoutInventedRows(): void
+    {
+        $this->db->update('organization', ['code'=>'BLUBRY'], ['id'=>21]);
+        $importer = new \App\Service\ClubTournamentRankingImportService($this->db, new \App\Service\ClubTournamentRankingParser(), fn () => str_replace('<td>60', '<td>0', $this->rankingHtml()));
+        $result = $this->service($importer)->import($this->parsedFixture(), 21);
+        self::assertSame(0, $result->rankingRowsCount);
+        self::assertStringContainsString('Strona główna', $result->rankingWarning);
+        self::assertSame(0, (int) $this->db->fetchOne('SELECT COUNT(*) FROM ranking'));
+        self::assertSame(1, (int) $this->db->fetchOne('SELECT COUNT(*) FROM tournament'));
+    }
+
+    public function testRankingBackfillValidatesRangeAndIsIdempotent(): void
+    {
+        $this->db->update('organization', ['code'=>'BLUBRY'], ['id'=>21]);
+        $this->service()->import($this->parsedFixture(), 21);
+        $importer = new \App\Service\ClubTournamentRankingImportService($this->db, new \App\Service\ClubTournamentRankingParser(), fn () => $this->rankingHtml());
+        $command = new CommandTester(new \App\Command\ImportClubRankingsCommand($this->db, $importer, $this->datasetVersion()));
+        $arguments = ['organization-id'=>21, '--from'=>'2026-03-17', '--to'=>'2026-03-17'];
+        self::assertSame(0, $command->execute($arguments + ['--dry-run'=>true]));
+        self::assertSame(0, (int) $this->db->fetchOne('SELECT COUNT(*) FROM ranking'));
+        self::assertSame(0, $command->execute($arguments));
+        $version = $this->datasetVersion()->getVersion();
+        self::assertSame(2, (int) $this->db->fetchOne('SELECT COUNT(*) FROM ranking'));
+        self::assertSame(0, $command->execute($arguments));
+        self::assertSame($version, $this->datasetVersion()->getVersion());
+        self::assertSame(2, $command->execute(['organization-id'=>21, '--from'=>'2026-02-30', '--to'=>'2026-03-17']));
+    }
+
+    public function testKlymeniaSourceDateCorrectionIsExplicitlyBoundToItsLocalDate(): void
+    {
+        $this->db->update('organization', ['code'=>'BLUBRY'], ['id'=>21]);
+        $importer = new \App\Service\ClubTournamentRankingImportService($this->db, new \App\Service\ClubTournamentRankingParser(), function (string $url): string {
+            self::assertStringContainsString('t=202605260', $url);
+            return str_replace('202603170', '202605260', $this->rankingHtml());
+        });
+        $snapshot = $importer->fetchSnapshot(21, 20260525);
+        self::assertSame(20260525, $snapshot->dateCode);
+        self::assertCount(2, $snapshot->rows);
     }
 
     private function processor(Request $request, bool $admin = true, ?DatasetVersionService $datasetVersion = null): ImportClubTournamentResultsProcessor

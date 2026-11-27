@@ -54,3 +54,22 @@ The browser test covers login, missing final classification, preview, cancellati
 All 38 source tournaments preceding `24112026_Blubry566_GP3_Halacha` are present in local organization 4: 35 newly imported (34 through the console and Sanidyn through Chrome), two earlier imports corrected, and one earlier import already correct. Final verification matched the standings and every known-round game against all 38 pairs of source files: 420 tournament results and 1,905 game rows. The excluded tournament has no database entry.
 
 The previous data for the corrected standings and starting-player fields is backed up locally under `var/club-import/`. Temporary browser tournaments and the temporary administrator account were removed after verification.
+
+## Published ranking snapshots
+
+The home page reads saved `ranking` rows (`rtype=f`); importing tournament results alone does not advance that page. Blubry imports now fetch the published post-tournament ranking from `https://scrabble.stats.org.pl/blubry/karank.php?t=YYYYMMDD0&r=f` and save it in the same transaction as the results. Its source HTML, SHA-256, URL, and resolved rows are retained in audit resources of type 9004. Player matching requires exactly one existing organization profile for each published name; unresolved identities or conflicting existing snapshots abort the transaction.
+
+The source also serves placeholder lists with starting ranks and **zero games**. These must not be used as post-tournament rankings. If the source is unavailable or only such a placeholder is published, tournament results can be saved, but both the console and browser explicitly report that the home page ranking remains at the last available snapshot. A malformed or incorrectly dated ranking is rejected. New player profiles receive slugs so that a newly ranked player can be displayed by the ranking API.
+
+For existing tournaments, fetch and validate snapshots first:
+
+```bash
+php bin/console app:clubs:rankings:import 4 \
+  --from=2026-02-24 --to=2026-11-17 --skip-unpublished --dry-run
+```
+
+Then omit `--dry-run` to write the complete snapshots in one transaction. The explicit `--skip-unpublished` option reports and skips unavailable/placeholder lists; without it, any missing published list aborts the operation. Repeating the import of identical snapshots does not write rows or publish another cache version. The upper date bound deliberately excludes Halacha on 2026-11-24.
+
+The original Klymenia files have an erroneous date, 2026-05-25, whereas the published event is 2026-05-26. The ranking source lookup contains this explicit date mapping; it does not accept an arbitrary date returned by a source page.
+
+On 2026-11-27 the complete available snapshots in this range were 17 March, 28 April, 9 June, 28 July, 22 September, and 17 November: 140 main-ranking rows in total. The other source pages contained zero-game placeholders and were not promoted to rankings. The 17 November snapshot has 24 players and is headed by Jakub Błażejewski (163.70). Regression coverage includes the actual home-page ranking service, API endpoint, and browser rendering, in addition to tournament-list checks.

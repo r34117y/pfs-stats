@@ -20,6 +20,10 @@
                     <div class="message-body" x-text="success"></div>
                 </article>
 
+                <article class="message is-warning" x-show="warning" x-cloak>
+                    <div class="message-body" x-text="warning"></div>
+                </article>
+
                 <div class="box" x-show="loading" x-cloak>
                     Ladowanie...
                 </div>
@@ -112,6 +116,7 @@
                 loading: true,
                 error: '',
                 success: '',
+                warning: '',
                 data: { title: '', description: '', organizations: [], recentImports: [] },
                 profile: null,
                 selectedOrganizationId: '',
@@ -126,6 +131,7 @@
                     this.loading = true;
                     this.error = '';
                     this.success = '';
+                    this.warning = '';
 
                     try {
                         const response = await fetch('/api/user/tournament-results/add/data', {
@@ -267,6 +273,7 @@
                         this.closePreviewModal();
                         await this.load();
                         this.success = payload.message ?? 'Turniej zostal zaimportowany.';
+                        this.warning = payload.rankingWarning ?? '';
                     } catch (e) {
                         this.closePreviewModal();
                         this.error = 'Blad podczas importu turnieju.';

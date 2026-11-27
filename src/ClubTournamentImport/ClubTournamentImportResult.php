@@ -16,6 +16,8 @@ final readonly class ClubTournamentImportResult
         public int $gamesCount,
         public array $createdPlayerIds,
         public array $linkedPlayerIds,
+        public int $rankingRowsCount = 0,
+        public ?string $rankingWarning = null,
     ) {
     }
 }

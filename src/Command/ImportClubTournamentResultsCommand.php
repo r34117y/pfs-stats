@@ -105,10 +105,15 @@ final class ImportClubTournamentResultsCommand extends Command
             [
                 ['Players', (string) $result->playersCount],
                 ['Games', (string) $result->gamesCount],
+                ['Published ranking rows', (string) $result->rankingRowsCount],
                 ['Created players', (string) count($result->createdPlayerIds)],
                 ['Linked existing players to organization', (string) count($result->linkedPlayerIds)],
             ],
         );
+
+        if ($result->rankingWarning !== null) {
+            $io->warning($result->rankingWarning);
+        }
 
         return Command::SUCCESS;
     }

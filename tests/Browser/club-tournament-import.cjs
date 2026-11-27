@@ -66,6 +66,10 @@ const assert = require('node:assert/strict');
         const afterList = await (await context.request.get(`/api/tournaments?org=${organizationId}`)).json();
         assert.ok(afterList.tournaments.some(tournament => tournament.id === payload.tournamentId), 'Import must invalidate the primed tournament list cache');
         assert.equal(payload.legacyTournamentId, undefined);
+        const homeRanking = await (await context.request.get(`/api/ranking?org=${organizationId}`)).json();
+        assert.equal(homeRanking.lastTournamentId, payload.tournamentId, 'Home page ranking must reference the imported tournament');
+        assert.ok(homeRanking.rows.length > 0);
+        assert.ok(payload.rankingRowsCount > 0);
         await page.locator('.message.is-success:visible').waitFor();
         await page.getByRole('link', { name: heading, exact: true }).waitFor();
         assert.equal((await upload([hh, standings])).status(), 409);
@@ -82,7 +86,7 @@ const assert = require('node:assert/strict');
         if (process.env.CLUB_IMPORT_SCREENSHOT) await page.screenshot({ path: process.env.CLUB_IMPORT_SCREENSHOT, fullPage: true });
         const detail = await page.goto(`/tournaments/${payload.tournamentId}`);
         assert.equal(detail.status(), 200);
-        console.log(JSON.stringify({ status: 'passed', tournamentId: payload.tournamentId, heading, players: payload.playersCount, games: payload.gamesCount, checks: ['login', 'missing final standings', 'preview', 'cancel', 'confirm', 'recent imports', 'duplicate prevention', 'missing file', 'invalid organization', 'permissions', 'tournament page', 'cache publication'] }));
+        console.log(JSON.stringify({ status: 'passed', tournamentId: payload.tournamentId, heading, players: payload.playersCount, games: payload.gamesCount, checks: ['login', 'missing final standings', 'preview', 'cancel', 'confirm', 'recent imports', 'duplicate prevention', 'missing file', 'invalid organization', 'permissions', 'tournament page', 'cache publication', 'home ranking updated'] }));
     } finally {
         await browser.close();
     }

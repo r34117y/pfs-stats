@@ -89,6 +89,8 @@ final readonly class ImportClubTournamentResultsProcessor implements ProcessorIn
             'tournamentId' => $result->tournamentId,
             'playersCount' => $result->playersCount,
             'gamesCount' => $result->gamesCount,
+            'rankingRowsCount' => $result->rankingRowsCount,
+            'rankingWarning' => $result->rankingWarning,
             'createdPlayerIds' => $result->createdPlayerIds,
             'linkedPlayerIds' => $result->linkedPlayerIds,
         ]);
